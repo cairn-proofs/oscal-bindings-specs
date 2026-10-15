@@ -10,8 +10,8 @@ are.
 
 - [x] 1.1 Create the standalone repository and register it as an OpenSpec store. Verify `openspec store list` shows the
       new store id.
-- [x] 1.2 Move this change directory, including its `.openspec.yaml`, from the Python repo's `openspec/changes/` into the
-      store's `openspec/changes/`. Verify `openspec validate "reverse-engineer-oscal-bindings-spec" --strict --store
+- [x] 1.2 Move this change directory, including its `.openspec.yaml`, from the Python repo's `openspec/changes/` into
+      the store's `openspec/changes/`. Verify `openspec validate "reverse-engineer-oscal-bindings-spec" --strict --store
       <id>` passes. Also verify `openspec list` in the Python repo no longer shows the change.
 - [x] 1.3 Remove the identifier rules and the archive guidance from the Python repo's `openspec/config.yaml`. Keep the
       general writing rules. Verify the store's config holds the removed rules (task 1.7).
@@ -35,8 +35,8 @@ are.
 ## 2. Record the artifact version
 
 - [ ] 2.1 Record the first spec artifact version as a Semantic Version with the OSCAL release as build metadata, per the
-      schema-versioning spec. An example is `0.1.0+oscal.1.2.3`. Verify the version string carries the `+oscal.<release>`
-      build metadata.
+      schema-versioning spec. An example is `0.1.0+oscal.1.2.3`. Verify the version string carries the
+      `+oscal.<release>` build metadata.
 
 ## 3. Resolve the canonical-JSON rules (design Open Question)
 
