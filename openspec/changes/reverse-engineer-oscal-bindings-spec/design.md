@@ -251,5 +251,5 @@ a one-line revert of the `generate` source path.
   tooling.
 - Per-language OpenSpec tooling. Each binding repo will probably need OpenSpec tools in its own language. One example
   is a check that each spec citation in that repo, such as `[PRS-001]`, names a live identifier in the pinned spec
-  artifact. The store's tooling is TypeScript (tasks 1.4 and 1.5). A Python identifier checker is available in this
-  repo (task 7.3). Deferrable: it does not change the specs, and phase 1 needs only the store's checker.
+  artifact. The store's tooling is TypeScript (tasks 1.6 and 1.7). A Python identifier checker is available in the
+  Python repo (task 7.3). Deferrable: it does not change the specs, and phase 1 needs only the store's checker.
