@@ -1,0 +1,3 @@
+version: 1
+id: oscal-bindings-specs
+remote: https://github.com/cairn-proofs/oscal-bindings-specs.git
