@@ -62,16 +62,16 @@ and MUST stay as root-model wrappers: the top-level document union and the `Mapp
 ### Requirement: MDL-004 Structurally identical types deduplicate to a single canonical type
 
 OSCAL defines shared element types that several document types use. Examples are `metadata`, `property`, `link`, and
-`hash`. Consider two schema definitions with the same local name and the same structure. The derivation SHALL produce a single
-canonical type for them, not one type per namespace. "Same structure" means the same fields, the same field types, and
-the same constraints. This outcome is required regardless of the input topology. It holds whether the input is the single
-complete OSCAL schema or the set of per-document schemas.
+`hash`. Consider two schema definitions with the same local name and the same structure. The derivation SHALL produce a
+single canonical type for them, not one type per namespace. "Same structure" means the same fields, the same field
+types, and the same constraints. This outcome is required regardless of the input topology. It holds whether the input
+is the single complete OSCAL schema or the set of per-document schemas.
 
 The complete OSCAL schema defines each shared type once in a common namespace and references it from each document type.
-Deduplication is therefore already present in that input. The per-document schemas instead inline a separate copy of each
-shared type. An implementation that derives from the per-document schemas MUST still produce one canonical type for each
-structurally identical set. It MUST NOT emit a per-document duplicate, such as a separate Metadata type for each document
-type.
+Deduplication is therefore already present in that input. The per-document schemas instead inline a separate copy of
+each shared type. An implementation that derives from the per-document schemas MUST still produce one canonical type for
+each structurally identical set. It MUST NOT emit a per-document duplicate, such as a separate Metadata type for each
+document type.
 
 This requirement is the counterpart of the name-collision requirement, and the two MUST NOT be conflated. Same local
 name with the same structure deduplicates to one type. Same local name with a different structure stays as two distinct
@@ -97,9 +97,9 @@ types that the name-collision override map renames.
 This requirement handles the opposite case from deduplication. These definitions share a short local name but are
 genuinely different types, so the derivation MUST keep them distinct rather than merge them. Several OSCAL definitions
 share a short local name across different namespaces. For example, `control-implementation` appears under both the
-Component Definition and the System Security Plan namespaces, with different structures. The implementation SHALL carry a
-fixed override map. The map assigns a namespace-qualified name to each colliding definition, so each resolves to a distinct,
-stable canonical name. The overrides are `ComponentDefinitionControlImplementation` versus
+Component Definition and the System Security Plan namespaces, with different structures. The implementation SHALL carry
+a fixed override map. The map assigns a namespace-qualified name to each colliding definition, so each resolves to a
+distinct, stable canonical name. The overrides are `ComponentDefinitionControlImplementation` versus
 `SspControlImplementation`, `CatalogGroup` versus `ProfileGroup`, `ComponentDefinitionImplementedRequirement` versus
 `SspImplementedRequirement`, `ControlCommonSelectControlById` versus `AssessmentCommonSelectControlById`,
 `ComponentDefinitionStatement` versus `SspStatement`, and the inline-collision overrides `SspStatus`,
@@ -117,9 +117,9 @@ stable canonical name. The overrides are `ComponentDefinitionControlImplementati
 
 ### Requirement: MDL-006 A fixed variant-rename map names split-constraint variants
 
-OSCAL sometimes expresses a type as several mutually exclusive constraint variants, such as the profile `merge` modes and
-the catalog `group` forms. A code generator produces numbered variant names for these. The implementation SHALL rename
-them to stable, meaningful names through a fixed variant-rename map. The variant renames are `MergeFlat`,
+OSCAL sometimes expresses a type as several mutually exclusive constraint variants, such as the profile `merge` modes
+and the catalog `group` forms. A code generator produces numbered variant names for these. The implementation SHALL
+rename them to stable, meaningful names through a fixed variant-rename map. The variant renames are `MergeFlat`,
 `MergeAsIs`, `MergeCustom`, `CatalogGroupWithGroups`, and `CatalogGroupWithControls`.
 
 #### Scenario: MDL-006.01 Numbered variant gets a meaningful name
@@ -131,10 +131,10 @@ them to stable, meaningful names through a fixed variant-rename map. The variant
 
 The derivation SHALL fail loudly rather than emit wrong or colliding types. Three guards are required:
 
-1. An ambiguous wrapper MUST abort the derivation and name the offending wrapper. A wrapper is ambiguous when it does not
-   have exactly one body field after the `$schema` directive field is excluded.
-2. A mismatch between the count of derived document wrappers and the count of top-level document types in the schema MUST
-   abort the derivation.
+1. An ambiguous wrapper MUST abort the derivation and name the offending wrapper. A wrapper is ambiguous when it does
+   not have exactly one body field after the `$schema` directive field is excluded.
+2. A mismatch between the count of derived document wrappers and the count of top-level document types in the schema
+   MUST abort the derivation.
 3. Any duplicate canonical type name that remains after renaming, and that the override map does not cover, MUST abort
    the derivation. The report MUST list all uncovered collisions at once, not only the first.
 
@@ -156,9 +156,9 @@ The derivation SHALL fail loudly rather than emit wrong or colliding types. Thre
 ### Requirement: MDL-008 Models reject unknown fields (strict coverage)
 
 Every object type SHALL reject unknown input fields. A binding is generated from one vendored OSCAL release. The binding
-therefore rejects a later-release document that carries a field the vendored release did not define. "Supports OSCAL 1.x"
-therefore means "supports the vendored release and earlier." An implementation MUST NOT silently accept and drop unknown
-fields, because a later serialization would then lose them.
+therefore rejects a later-release document that carries a field the vendored release did not define. "Supports OSCAL
+1.x" therefore means "supports the vendored release and earlier." An implementation MUST NOT silently accept and drop
+unknown fields, because a later serialization would then lose them.
 
 #### Scenario: MDL-008.01 Unknown field is rejected
 

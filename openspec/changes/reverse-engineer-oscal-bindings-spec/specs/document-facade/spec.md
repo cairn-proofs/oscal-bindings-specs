@@ -7,9 +7,9 @@ assessment period without branching on the concrete document type.
 
 ### Requirement: FAC-001 A uniform facade wraps any document type
 
-The implementation SHALL provide a facade that wraps any of the eight document wrappers, or the top-level document value.
-The facade exposes uniform access to the wrapper, the body, the metadata block, the OSCAL version, and the body-level
-unique identifier. The facade MUST reject a value that is not an OSCAL document wrapper.
+The implementation SHALL provide a facade that wraps any of the eight document wrappers, or the top-level document
+value. The facade exposes uniform access to the wrapper, the body, the metadata block, the OSCAL version, and the
+body-level unique identifier. The facade MUST reject a value that is not an OSCAL document wrapper.
 
 #### Scenario: FAC-001.01 Facade wraps a parsed document
 

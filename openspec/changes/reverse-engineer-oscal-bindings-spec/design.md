@@ -129,10 +129,8 @@ release carried as SemVer build metadata:
   - A breaking OSCAL bump (1.x → 2.0: new type names, removed fields) → MAJOR:
     `3.0.0+oscal.2.0.0`. This aligns with the repo's existing rule that OSCAL 2.0
     is the trigger for a second version package (`v2`).
-- **The two-axis idea survives as a human-readable git tag.** A tag like
-  `oscal-1.2.3/spec-4` may label the release for people; it need not equal the
-  SemVer artifact version. The tag is a label, the artifact version is the
-  contract (and, with D5's sha256, the hash is the pin).
+- **One git tag per release: `v<artifact version>`,** for example `v0.1.0+oscal.1.2.3`. The tag is a label. With
+  D5's sha256, the hash is the pin.
 
 - **Why not encode the OSCAL release into the SemVer digits** (e.g. artifact
   version `1.2.3` = OSCAL 1.2.3)? It reads like SemVer but lies about
@@ -143,7 +141,8 @@ release carried as SemVer build metadata:
 - **Why not a bespoke single two-axis string** (`oscal-1.2.3/spec-4`) as the
   artifact version? It captures provenance but states no compatibility promise,
   and package registries (D5's deferred packages path) can't consume it.
-  Retained only as an optional human-facing tag, not as the artifact version.
+  Rejected, also as a second tag: the SemVer version already names the OSCAL
+  release, and a second tag is one more ref to keep in step.
 
 ### D5 — Distribution: tarball at a tag, pinned by recorded sha256
 

@@ -62,9 +62,9 @@ reaches the body through the wrapper.
 
 ### Requirement: PRS-004 Unknown fields are rejected during parsing
 
-Parsing SHALL reject any field that the vendored schema release does not define, at any depth. An implementation MUST NOT
-silently ignore unknown fields. This ties the accepted input to the vendored release, consistent with the strict-coverage
-rule in the model-derivation capability.
+Parsing SHALL reject any field that the vendored schema release does not define, at any depth. An implementation MUST
+NOT silently ignore unknown fields. This ties the accepted input to the vendored release, consistent with the
+strict-coverage rule in the model-derivation capability.
 
 #### Scenario: PRS-004.01 Unknown field at the top level is rejected
 
@@ -79,9 +79,10 @@ rule in the model-derivation capability.
 ### Requirement: PRS-005 Input uses OSCAL property keys, not internal field names
 
 OSCAL input SHALL use the OSCAL property keys, for example `media-type` and `document-ids`. A key that matches an
-implementation's internal field name, but not the OSCAL property key, MUST be rejected as an unknown field. This holds in
-every input mode and at every depth. This requirement states the intended behavior. A known defect in one Python runtime
-drops such a key in one input mode instead of rejecting it. That defect is tracked separately and is not the contract.
+implementation's internal field name, but not the OSCAL property key, MUST be rejected as an unknown field. This holds
+in every input mode and at every depth. This requirement states the intended behavior. A known defect in one Python
+runtime drops such a key in one input mode instead of rejecting it. That defect is tracked separately and is not the
+contract.
 
 #### Scenario: PRS-005.01 OSCAL property key is accepted
 

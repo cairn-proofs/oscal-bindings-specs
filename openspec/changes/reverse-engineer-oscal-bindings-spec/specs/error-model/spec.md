@@ -10,8 +10,8 @@ then reports the same conditions, even though each language surfaces errors in i
 The implementation SHALL distinguish the following error categories. The categories stay the same regardless of how a
 language surfaces them, whether as an exception, a returned result, or an error value:
 
-1. **Parse error** — the input is not valid JSON, is not valid UTF-8, or does not conform to the schema. A schema-conformance
-   parse error carries structured per-location detail.
+1. **Parse error** — the input is not valid JSON, is not valid UTF-8, or does not conform to the schema. A
+   schema-conformance parse error carries structured per-location detail.
 2. **Document-type mismatch** — a typed parser received a document of a different type. This is a parse error whose
    message names the expected type.
 3. **Not-found** — a file-path parse operation received a path that does not exist. This is distinct from a parse error

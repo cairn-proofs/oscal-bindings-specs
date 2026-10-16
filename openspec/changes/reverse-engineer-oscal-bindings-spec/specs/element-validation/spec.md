@@ -7,10 +7,10 @@ a fragment, such as an observation or a back-matter block, without parsing a who
 
 ### Requirement: ELV-001 Validate a standalone element against a named type
 
-The implementation SHALL provide an element-validation operation. It takes an element value and an element-type name, and
-returns a result that states whether the element is valid. The result lists the failures when the element is not valid.
-Each failure identifies a location and a message. The operation validates the element against the named OSCAL type's
-constraints.
+The implementation SHALL provide an element-validation operation. It takes an element value and an element-type name,
+and returns a result that states whether the element is valid. The result lists the failures when the element is not
+valid. Each failure identifies a location and a message. The operation validates the element against the named OSCAL
+type's constraints.
 
 #### Scenario: ELV-001.01 Valid element returns a valid result
 
@@ -40,8 +40,9 @@ that returns the full sorted list of supported element-type names.
 
 ### Requirement: ELV-003 An unknown element type is reported, not silently accepted
 
-When the caller names an element type the binding does not recognize, the operation SHALL report the unknown-element-type
-error from the error-model capability. It MUST NOT return a valid or invalid result for an unknown type.
+When the caller names an element type the binding does not recognize, the operation SHALL report the
+unknown-element-type error from the error-model capability. It MUST NOT return a valid or invalid result for an unknown
+type.
 
 #### Scenario: ELV-003.01 Unknown element type is rejected
 

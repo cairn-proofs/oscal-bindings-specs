@@ -18,7 +18,8 @@
     "version:self-test": "tsx scripts/check-version.ts --self-test",
     "corpus:check": "tsx scripts/check-corpus.ts",
     "corpus:write": "tsx scripts/check-corpus.ts --write",
-    "canonical:self-test": "tsx scripts/check-canonical-json.ts"
+    "canonical:self-test": "tsx scripts/check-canonical-json.ts",
+    "archive": "tsx scripts/build-archive.ts"
   },
   "dependencies": {
     "ajv": "8.20.0",

@@ -39,9 +39,9 @@ can implement and be checked against.
   versions the *contract's own compatibility* (a type rename, stricter rule, or
   changed error category is MAJOR), and the OSCAL release rides as SemVer
   **build metadata** (`+oscal.1.2.3`), which SemVer ignores for precedence, so
-  it carries provenance without masquerading as a compatibility signal. A
-  human-readable two-axis git tag (`oscal-1.2.3/spec-4`) may label the release
-  for people, but the artifact's version is SemVer-clean. Distribution is a
+  it carries provenance without masquerading as a compatibility signal. The
+  git tag is `v` plus the artifact version, for example `v0.1.0+oscal.1.2.3`.
+  Distribution is a
   **tarball-at-a-tag model** with a recorded `sha256`, so consumers pin and
   hash-verify the spec artifacts the way the Python repo already pins its lockfiles.
 - Lay out a **phased rollout** in three phases. This change is phase 1. Phases 2 and 3 are separate future changes, each
