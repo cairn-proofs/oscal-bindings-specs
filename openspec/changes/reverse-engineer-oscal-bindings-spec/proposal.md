@@ -30,7 +30,7 @@ can implement and be checked against.
   canonical type name, wrapper → body field, the collision overrides, variant
   renames, and enums. This is the shared source of truth so every port derives
   identical type names. (Generating it from Python's post-processor is a
-  follow-up change to this repo, not part of this one.)
+  follow-up change to the Python repo, not part of this one.)
 - Define a **conformance corpus**: valid documents paired with expected
   canonical round-trip output, invalid documents paired with their expected
   error category, and element-validation cases. Every port runs the same corpus.
@@ -43,18 +43,20 @@ can implement and be checked against.
   human-readable two-axis git tag (`oscal-1.2.3/spec-4`) may label the release
   for people, but the artifact's version is SemVer-clean. Distribution is a
   **tarball-at-a-tag model** with a recorded `sha256`, so consumers pin and
-  hash-verify the spec artifacts the way this repo already pins its lockfiles.
+  hash-verify the spec artifacts the way the Python repo already pins its lockfiles.
 - Lay out a **phased rollout** in three phases. This change is phase 1. Phases 2 and 3 are separate future changes, each
   with its own proposal:
-  1. Phase 1 (this change) creates the store, authors the contract and corpus into it, publishes the first pinned
-     artifact, and adds a Python conformance runner. Python keeps its vendored schemas and its post-processor.
+  1. Phase 1 creates the store, authors the contract and corpus into it, and publishes the first pinned artifact. This
+     change holds that work. A local change in the Python repo adds a Python conformance runner. Python keeps its
+     vendored schemas and its post-processor.
   2. Phase 2 adds a manifest emitter to Python's post-processor and brings up a second port that consumes the manifest.
   3. Phase 3 makes the store the schema authority. Python's codegen then reads schema and manifest from the pinned
      spec checkout.
 
-This change keeps this repo's build as it is. `scripts/postprocess_models.py`, `hatch run generate`, and the vendored
-`schemas/` directory stay the same. The only addition to this repo is the conformance runner. It reads the pinned corpus
-and does not touch any existing build input.
+Phase 1 keeps the Python repo's build as it is. `scripts/postprocess_models.py`, `hatch run generate`, and the vendored
+`schemas/` directory stay the same. The only addition to the Python repo is the conformance runner, in a local change of
+that repo. It reads the pinned corpus and does not touch any existing build input. This change makes no edit to the
+Python repo.
 
 ## Capabilities
 
@@ -95,8 +97,10 @@ and does not touch any existing build input.
 - **New repo (created by this change):** a standalone OpenSpec store that holds `openspec/specs/`, `schemas/<release>/`,
   `manifest/<release>/`, and `corpus/<release>/`. This change moves itself into the store after the store exists, and
   is archived there. The Python repo therefore never holds a second copy of the contract.
-- **This Python repo (this change):** a conformance runner over the pinned corpus. No other change to this repo.
-- **This Python repo (phases 2 and 3, separate changes):** a manifest emitter in `scripts/postprocess_models.py`. Later,
+- **Python repo (phase 1, a local change in that repo):** a conformance runner over the pinned corpus. The Python
+  repo declares this store under `references` in its `openspec/config.yaml`. This change makes no edit to the Python
+  repo.
+- **Python repo (phases 2 and 3, separate changes):** a manifest emitter in `scripts/postprocess_models.py`. Later,
   `hatch run generate` reads schema and manifest from a pinned spec checkout instead of the vendored `schemas/`
   directory.
 - **Future port repos (TS/JS, Go, Java, Rust):** each consumes the pinned spec

@@ -1,10 +1,9 @@
 # Tasks
 
 Scope note: this change is phase 1 of the migration plan in design.md. Phases 2 and 3 are separate future changes, each
-with its own proposal. Two repos take part. The store is `cairn-proofs/oscal-bindings-specs` (issue #1). The Python repo
-is `cairn-proofs/oscal-bindings-python` (issue #14). In the Python repo, this change adds only the conformance runner in
-task group 6. Its `scripts/postprocess_models.py`, `hatch run generate`, and vendored `schemas/` directory stay as they
-are.
+with its own proposal. These tasks run in the store, `cairn-proofs/oscal-bindings-specs` (issue #1). Tasks 1.2 and 1.3
+also touched the Python repo, `cairn-proofs/oscal-bindings-python` (issue #14), to move this change out of it. The
+Python repo's phase 1 work is a separate local change in that repo (design.md D8). Task 6.1 creates it.
 
 ## 1. Stand up the standalone spec store
 
@@ -68,22 +67,28 @@ are.
 - [ ] 5.3 Write the two-axis human-readable tag (`oscal-<release>/spec-<n>`) alongside the SemVer artifact version.
       Verify the tag and the artifact version both resolve to the same archive.
 
-## 6. First conformance runner (Python reference)
+## 6. Hand off to the Python repo
 
-- [ ] 6.1 Add a conformance runner to the Python repo that reads the corpus. It verifies parse, serialize, round-trip,
-      error-category, and element-validation outcomes against the expected results. Run it with `hatch test` and verify
-      it executes against the pinned corpus.
-- [ ] 6.2 Record the Python reference's conformance result, including the expected failure on the known-defect fixture
-      from task 4.4. Verify the run reports that fixture as a known, tracked gap rather than an unexpected failure.
+- [ ] 6.1 After task 5.1, create a local OpenSpec change in the Python repo, for example `add-conformance-runner`. Its
+      proposal cites the store's main specs. Its tasks cover only work in the Python repo:
+      1. A conformance runner that reads the corpus from the pinned artifact. It verifies parse, serialize, round-trip,
+         error-category, and element-validation outcomes against the expected results. It runs with `hatch test`.
+      2. The recorded conformance result. The run reports the known-defect fixture from task 4.4 as a known, tracked
+         gap, not as an unexpected failure.
+      3. A clean-checkout run that fetches the artifact by its recorded hash and does not read the Python repo's
+         vendored `schemas/` directory.
+      4. A decision on the parked `scripts/check_spec_ids.py` and `tests/test_check_spec_ids.py`. If there is a use,
+         such as the per-language OpenSpec tooling in design.md, Open Questions, keep them, declare PyYAML, and add a
+         `hatch run` script. If there is no use, delete them.
+
+      Verify `openspec validate --strict` passes for the local change in the Python repo, and its tasks name no store
+      work.
 
 ## 7. Verify and close phase 1
 
-- [ ] 7.1 From a clean checkout, fetch the distribution artifact by its recorded hash and run the Python conformance
-      runner against it. Verify the result matches task 6.2. Verify the whole path works without reading from the
-      Python repo's vendored `schemas/` directory. This proves the store is self-contained for phase 1.
+- [ ] 7.1 Verify the Python repo's local change reports its conformance result from a clean checkout, and the only
+      failure is the known-defect fixture from task 4.4. This proves one binding can use the artifact, and the store is
+      self-contained for phase 1.
 - [ ] 7.2 Archive this change in the store. If any requirement or scenario changed after task 5.1, update the ledger in
       the archive commit. Verify the store's `openspec/specs/` holds the eight capabilities, and the identifier checker
       passes. Also verify the Python repo has no `openspec/specs/` content for them.
-- [ ] 7.3 Decide the future of the Python repo's `scripts/check_spec_ids.py` and `tests/test_check_spec_ids.py`. One
-      possible use is the per-language OpenSpec tooling in design.md, Open Questions. If there is a use, keep them,
-      declare PyYAML, and add a `hatch run` script. If there is no use, delete them. Verify `hatch run release` passes.

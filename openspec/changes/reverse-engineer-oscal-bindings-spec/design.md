@@ -30,21 +30,22 @@ that shape this design:
   overrides and wrapper names resolve identically in every language.
 - A distribution and versioning model that matches the Python repo's
   pinned-and-hashed discipline and is uniform across all five languages.
-- A rollout that starts without breaking this repo. The disruptive step is making the store the schema authority. The
-  rollout defers it until a second consumer exists to prove the manifest format.
-- Phase 1 of that rollout, delivered by this change:
+- A rollout that starts without breaking the Python repo. The disruptive step is making the store the schema authority.
+  The rollout defers it until a second consumer exists to prove the manifest format.
+- Phase 1 of that rollout, delivered by this change and one local change in the Python repo (D8):
   1. Create and register the standalone store.
   2. Move the capability specs and this change into the store.
   3. Vendor the active schema bundle into the store with a recorded hash.
   4. Build the conformance corpus.
   5. Publish the first pinned, hash-verified artifact.
-  6. Add a Python conformance runner that passes against that artifact, with the known gap recorded.
+  6. In the Python repo's local change: add a Python conformance runner that passes against that artifact, with the
+     known gap recorded.
 
 **Non-Goals:**
 
 - Phases 2 and 3. Each is a separate future change with its own proposal (see Migration Plan).
-- Any edit to this repo's `scripts/postprocess_models.py`, `hatch run generate`, or `schemas/` layout. Those belong to
-  phases 2 and 3.
+- Any edit to the Python repo's `scripts/postprocess_models.py`, `hatch run generate`, or `schemas/` layout. Those
+  belong to phases 2 and 3.
 - A finalized `names.json` format. Phase 1 ships a manifest placeholder. Phase 2 fixes the format against two real
   consumers (D6).
 - Specifying Python-only mechanics. The contract records intent; pydantic
@@ -52,7 +53,7 @@ that shape this design:
 
 ## Decisions
 
-### D1 — Standalone OpenSpec store, not this repo's `openspec/`
+### D1 — Standalone OpenSpec store, not the Python repo's `openspec/`
 
 Host the contract in a separate repo registered as an OpenSpec store, shared by
 all five language repos.
@@ -62,7 +63,7 @@ all five language repos.
   store makes Python one implementation among equals, checked against the corpus
   like the others. The user owns the ports now but others will get involved, so
   a neutral home matters.
-- **Alternative considered:** keep the spec in this repo's `openspec/`. Simplest
+- **Alternative considered:** keep the spec in the Python repo's `openspec/`. Simplest
   short-term, but entrenches Python as the owner and forces cross-repo coupling.
   Rejected.
 
@@ -150,10 +151,14 @@ Consumers fetch a `.tar.gz` for a given tag and verify a recorded `sha256`.
 Codegen pulls only `schemas/` + `names.json`; the conformance runner pulls the
 full corpus.
 
-- **Why:** this matches the repo's pinned-and-hashed discipline exactly and is
+- **Why:** this matches the Python repo's pinned-and-hashed discipline exactly and is
   uniform across all five languages. The tag is a label; the sha256 is the lock
   (a git tag can be force-moved, so the hash is what actually pins). A small
-  `hatch run` fetch-verify script is the kind of thing this repo already does.
+  `hatch run` fetch-verify script is the kind of thing the Python repo already does.
+- **Not an OpenSpec reference:** a code repo can also declare the store in its `openspec/config.yaml` under
+  `references`. That gives the repo's planning read-only access to the store's main specs. It is not a build input:
+  OpenSpec never clones or pulls, and it reads the local checkout as-is, with no pin. Use both. The reference serves
+  planning. The tarball serves builds and conformance runs.
 - **Alternatives considered:**
   - *Git submodule* — identical mechanism everywhere, but invisible to the
     lockfile discipline (nothing in `requirements.txt`/`mise.lock` pins it) and
@@ -191,6 +196,21 @@ Eight capabilities (see proposal.md — Capabilities): `model-derivation`,
   differently (Go `(T, error)`, Rust `Result`, Java exceptions) and the taxonomy
   must stand apart from any one representation.
 
+### D8 — Each code repo implements the contract in its own local change
+
+This change holds the contract and the store work only. Work in a code repo goes into a local OpenSpec change in that
+repo. The code repo declares the store under `references` in its `openspec/config.yaml`. The local change cites the
+store's main specs and lists only that repo's tasks. Each local change is applied, reviewed, and archived in its own
+repo.
+
+- **Why:** OpenSpec does not route the tasks of a store change to code repos. A store change that lists code-repo
+  tasks cannot be applied in the code repo, and its review mixes two repos. The OpenSpec stores guide recommends this
+  pattern for shared contracts.
+- **Phase 1:** the Python repo gets one local change, created after the contract is in the store's main specs. It
+  adds the conformance runner, records the conformance result, verifies the clean-checkout path, and decides the
+  future of the parked Python identifier checker.
+- **Alternative considered:** keep the Python tasks in this change. Rejected for the reasons above.
+
 ## Risks / Trade-offs
 
 - **Regex dialect divergence** → The spec must carry an explicit pattern-portability
@@ -222,7 +242,7 @@ lands, because each depends on what the earlier phase produced.
 1. **Phase 1 (this change)** — Stand up the spec store with the prose capabilities, the vendored schema bundle, and the
    conformance corpus. Move this change into the store once the store exists, and archive it there. The Python repo
    then never holds a second copy of the specs. Python keeps its vendored `schemas/` and its post-processor as they
-   are. It adds a conformance runner over the pinned corpus.
+   are. A local change in the Python repo adds a conformance runner over the pinned corpus (D8).
 2. **Phase 2 (separate changes)** — Likely three changes in three repos:
    1. A manifest-format change in the store (a minor spec increment).
    2. A `names.json` emitter in `scripts/postprocess_models.py`, in the Python repo.
@@ -251,5 +271,6 @@ a one-line revert of the `generate` source path.
   tooling.
 - Per-language OpenSpec tooling. Each binding repo will probably need OpenSpec tools in its own language. One example
   is a check that each spec citation in that repo, such as `[PRS-001]`, names a live identifier in the pinned spec
-  artifact. The store's tooling is TypeScript (tasks 1.6 and 1.7). A Python identifier checker is available in the
-  Python repo (task 7.3). Deferrable: it does not change the specs, and phase 1 needs only the store's checker.
+  artifact. The store's tooling is TypeScript (tasks 1.6 and 1.7). A Python identifier checker is parked in the
+  Python repo, and the Python repo's local change decides its future (D8). Deferrable: it does not change the specs,
+  and phase 1 needs only the store's checker.
