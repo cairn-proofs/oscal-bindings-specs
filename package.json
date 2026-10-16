@@ -1,0 +1,27 @@
+{
+  "name": "oscal-bindings-specs",
+  "private": true,
+  "description": "Tooling for the OSCAL bindings spec store. Not published.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": {
+    "node": "24.22.0"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "spec-ids": "tsx scripts/check-spec-ids.ts",
+    "spec-ids:self-test": "tsx scripts/check-spec-ids.ts --self-test",
+    "schemas:verify": "cd schemas/1.2.3 && shasum -a 256 -c SHA256SUMS",
+    "validate": "openspec validate --all --strict",
+    "check": "npm run typecheck && npm run spec-ids:self-test && npm run spec-ids && npm run schemas:verify && npm run validate"
+  },
+  "dependencies": {
+    "github-slugger": "2.0.0",
+    "yaml": "2.9.1"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2"
+  }
+}

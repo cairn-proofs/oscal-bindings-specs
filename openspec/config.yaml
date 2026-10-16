@@ -1,32 +1,51 @@
 schema: spec-driven
 
 # Project context (optional)
-# This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+# Add only constraints that should guide OpenSpec artifacts and workflows.
+# Include constraints an agent cannot infer by reading the files.
+# Keep general project documentation and discoverable facts out.
+context: |
+  Write all artifacts using the `/asd-ste100` skill. If you can't find it, stop and ask.
+  If you add line breaks to Markdown, break at 120 columns, not 80.
+  List style: prefer NUMBERED lists (`1.`, `2.`) over bullets for any enumerable prose so each item is referenceable.
+  Proposals and designs cite GitHub issues, discussions, etc. Specs do not.
 
 # Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+rules:
+  specs:
+    - >-
+      Historical narration, temporal tags and statements of what changed relative to previous requirements are
+      prohibited in specs. You MUST NOT introduce such language. You MUST replace or delete such language when you
+      find it in a spec, without changing intent. If that seems unsafe, flag it for user review, but do not ignore
+      it. A spec is not a change log. It defines the intended steady state.
+    - >-
+      Inside requirement text, use NUMBERED lists (`1.`, `2.`) for enumerable prose, such as conditions,
+      constraints and allowed values, so each item is referenceable. Never renumber scenario lines.
+    - >-
+      When you reference a section of the proposal, the design or another document in the project, use a link with
+      a GitHub-compatible (github-slugger) anchor. Prefer references over duplication. Never copy normative content
+      from one spec to another. In spec deltas, write links so that they resolve after archive.
+    - >-
+      Each requirement heading and each scenario heading starts with an identifier, for example
+      `### Requirement: PRS-001 Parse a document from bytes` and `#### Scenario: PRS-001.01 Invalid UTF-8`. The
+      prefix is the prefix of the capability in `openspec/spec-ids.yaml`. The requirement number has three digits.
+      The scenario identifier is the requirement identifier, a `.` and a two-digit number.
+    - >-
+      A new requirement takes the `next` number of the prefix of its capability in `openspec/spec-ids.yaml`. A new
+      capability gets a new prefix of two to five uppercase letters, and its requirements start at 001. A new
+      scenario takes the number after the highest live or retired scenario of its requirement. Change the ledger
+      only in the commit that syncs or archives the change into the main specs.
+    - >-
+      Never reuse an identifier. Cite a requirement as `[PREFIX-NNN]` and a scenario as `[PREFIX-NNN.MM]`.
+      `npm run spec-ids` checks the identifier rules on the main specs.
 
 # Per-operation guidance (optional)
-# Add advisory guidance for how apply and archive work should be conducted.
-# This is separate from artifact rules above.
-# Example:
-#   operations:
-#     apply:
-#       guidance:
-#         - Keep test summaries concise
-#     archive:
-#       guidance:
-#         - Summarize the archive outcome before finishing
+operations:
+  archive:
+    guidance:
+      - >-
+        In the commit that syncs or archives a change into the main specs, update `openspec/spec-ids.yaml`. Add the
+        prefix of each new capability. Set `next` above each requirement number that the change adds. Add a
+        `retired` entry, with a reason, for each requirement identifier that the change removes. A retired
+        requirement covers its scenarios. A removed scenario of a requirement that stays needs its own entry. Add
+        `replaced_by` when the requirement moves to another identifier. Then run `npm run spec-ids`.

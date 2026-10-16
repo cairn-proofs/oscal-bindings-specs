@@ -1,0 +1,38 @@
+name: CI
+# Runs on each pull request update, on each push to main, and by hand.
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+# A newer push to the same pull request cancels its superseded run.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Full history: the identifier checker reads the main specs at the base ref.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      # Node and the OpenSpec CLI from mise.toml, installed from mise.lock and its .mise/locks sidecar (the action
+      # adds --locked when a lockfile is present). mise itself is pinned. The action is pinned by commit.
+      - name: Install toolchain (mise)
+        uses: jdx/mise-action@9b200bcecbfd6303e69a4a261b2e09e3757440a7  # v5.2.0
+        with:
+          version: 2026.9.15
+      # Installs exactly what package-lock.json records, with integrity hashes. .npmrc disables install scripts.
+      - name: Install dependencies
+        run: npm ci
+      # On a pull request, a scenario identifier on the target branch must not vanish. On a push to main, the base
+      # is the commit before the push.
+      - name: Check
+        env:
+          SPEC_IDS_BASE: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || github.event.before || 'HEAD' }}
+        run: npm run check

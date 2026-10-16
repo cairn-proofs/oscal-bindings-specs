@@ -1,0 +1,10 @@
+# Identifier ledger for the main specs in openspec/specs/.
+# The rules are in openspec/config.yaml. `npm run spec-ids` (scripts/check-spec-ids.ts) enforces them.
+# A prefix entry is permanent. `next` is the next free requirement number.
+# Update this file in the commit that syncs or archives a change into the main specs.
+
+# One entry for each capability in openspec/specs/: prefix -> { capability, next }.
+prefixes: {}
+
+# One entry for each retired identifier: id, reason and, for a relocation, replaced_by.
+retired: []
