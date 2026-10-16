@@ -18,7 +18,7 @@ Python repo's phase 1 work is a separate local change in that repo (design.md D8
       `corpus/<release>/`. Verify the tree matches the layout in proposal.md, Impact.
 - [x] 1.5 Vendor the active OSCAL release schema bundle into `schemas/<release>/`, byte-for-byte. Record a `sha256` and
       the NIST source URL beside it. Verify the recorded hash matches the vendored file.
-- [ ] 1.6 Set up the store toolchain in TypeScript on Node. The OpenSpec CLI needs Node, so the store uses one runtime.
+- [x] 1.6 Set up the store toolchain in TypeScript on Node. The OpenSpec CLI needs Node, so the store uses one runtime.
       Pin Node and the OpenSpec CLI with mise, and lock npm dependencies with integrity hashes. Add a CI workflow that
       runs the store checks on each pull request. Protect `main` and require that workflow. Verify a clean checkout
       installs with the locked versions only.
