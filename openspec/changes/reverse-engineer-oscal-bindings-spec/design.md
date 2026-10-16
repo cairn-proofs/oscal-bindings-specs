@@ -211,6 +211,27 @@ repo.
   future of the parked Python identifier checker.
 - **Alternative considered:** keep the Python tasks in this change. Rejected for the reasons above.
 
+### D9 — Canonical JSON: RFC 8785 with XSD datetime normalization
+
+Conformance compares canonical forms, which `docs/canonical-json.md` in the store defines: RFC 8785 (JCS) serialization,
+after each datetime gets the canonical form of the XML Schema 1.1 `xs:dateTime` type, with the offset kept.
+
+- **Why JCS:** any language can reproduce it without the schema. It fixes key order, whitespace, string escapes, and
+  number format in one published standard.
+- **Why the `xs:dateTime` form:** OSCAL bases its datetime types on `xs:dateTime`. Its canonical form writes a zero
+  offset as `Z` and drops trailing fraction zeros, so the padding differences between serializers do not fail a
+  comparison. The offset stays because `xs:dateTime` treats equal instants with different offsets as equal but not
+  identical.
+- **Numbers:** OSCAL 1.2.3 uses `xs:decimal` only for the mapping model's 0 to 1 scores. JCS writes IEEE 754 doubles,
+  which agree with `xs:decimal` for 15 or fewer significant digits. The corpus uses only such values.
+- **Alternatives considered:**
+  - *Schema key order* — matches the XSD `xs:sequence` order and the Python output, but a comparator then needs the
+    schema to order keys. Rejected for comparison. A binding can still write schema order.
+  - *Exact datetime strings* — rejected: a binding that pads fractions to six digits fails with no change in value.
+- **Python reference gap:** the Python binding truncates fractional seconds after six digits, which changes the
+  instant. The corpus records this as a known defect (task 4.5), tracked in
+  cairn-proofs/oscal-bindings-python#16.
+
 ## Risks / Trade-offs
 
 - **Regex dialect divergence** → The spec must carry an explicit pattern-portability
@@ -218,9 +239,9 @@ repo.
   limits, JS `u` flag), not just "validate the pattern." Captured as a
   requirement in `document-parsing`/`element-validation`.
 - **Round-trip definition ambiguity** → Byte-exact round-trip is unachievable
-  across serializers (key order, float formatting). Decision: conformance means
-  **semantic equality plus canonical key order**, not byte-identical. The corpus
-  stores canonicalized expected output. Specified in `serialization`.
+  across serializers (key order, float formatting). Decision: conformance compares
+  **canonical forms** (D9), not raw bytes. The corpus stores canonicalized expected
+  output. Specified in `serialization`.
 - **`oneOf` unions are awkward in Go/Java** → Mitigated by making the
   `document-facade` capability a required part of the contract, so consumers get
   uniform access without each hand-rolling union dispatch.
@@ -265,10 +286,6 @@ a one-line revert of the `generate` source path.
 - Per-language distribution beyond the tarball (which ecosystems, if any, get a
   published package in a later phase) — deferrable; does not change the specs or
   the phase-1/2 approach.
-- Exact canonical-JSON rules (key sort locale, number formatting) for the
-  round-trip comparison — needs pinning before the corpus is built in phase 1,
-  but does not change the capability specs' requirements, only the corpus
-  tooling.
 - Per-language OpenSpec tooling. Each binding repo will probably need OpenSpec tools in its own language. One example
   is a check that each spec citation in that repo, such as `[PRS-001]`, names a live identifier in the pinned spec
   artifact. The store's tooling is TypeScript (tasks 1.6 and 1.7). A Python identifier checker is parked in the

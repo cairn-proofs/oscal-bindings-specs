@@ -39,7 +39,7 @@ Python repo's phase 1 work is a separate local change in that repo (design.md D8
 
 ## 3. Resolve the canonical-JSON rules (design Open Question)
 
-- [ ] 3.1 Write down the canonical key order and number formatting for round-trip comparison. Record it as a short rule
+- [x] 3.1 Write down the canonical key order and number formatting for round-trip comparison. Record it as a short rule
       document in the store. Verify the rule covers key sort, number formatting, and datetime offset handling. Also
       verify it matches the serialization and document-parsing specs. This unblocks the corpus work in group 4.
 
@@ -55,6 +55,9 @@ Python repo's phase 1 work is a separate local change in that repo (design.md D8
 - [ ] 4.4 Add the known-defect fixture: a name-keyed field that the contract requires a binding to reject. Verify the
       fixture is marked as the case the Python JSON path currently fails, so a port does not mistake it for a Python
       bug.
+- [ ] 4.5 Add the second known-defect fixture: a datetime with seven fraction digits, which [SER-005.03] requires a
+      binding to keep. Verify the fixture is marked as the case the Python binding fails, with a link to
+      cairn-proofs/oscal-bindings-python#16.
 
 ## 5. Publish the distribution artifact
 

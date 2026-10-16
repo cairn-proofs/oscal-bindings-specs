@@ -12,7 +12,9 @@ This repo is an [OpenSpec store](https://github.com/Fission-AI/OpenSpec/blob/mai
 2. `schemas/<release>/`: the NIST OSCAL JSON Schema files of one release, byte-for-byte, with `sha256` sums.
 3. `manifest/<release>/`: the naming manifest.
 4. `corpus/<release>/`: the conformance corpus.
-5. `scripts/`: the store tooling.
+5. `docs/`: shared rule documents that the specs cite, such as
+   [canonical JSON for conformance comparison](docs/canonical-json.md).
+6. `scripts/`: the store tooling.
 
 ## Use the store
 

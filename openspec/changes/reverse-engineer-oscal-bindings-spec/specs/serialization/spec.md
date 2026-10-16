@@ -51,30 +51,42 @@ request. Both forms represent the same document and differ only in whitespace.
 - **WHEN** the caller requests compact output
 - **THEN** the output has no insignificant whitespace and represents the same document
 
-### Requirement: SER-004 Round-trip equivalence is semantic, with canonical key order
+### Requirement: SER-004 Round-trip equivalence uses the shared canonical form
 
-A document that is parsed and then serialized SHALL be equivalent to its canonical form. Equivalence is defined as
-semantic JSON equality under a canonical key order, not byte-for-byte identity, because key order and number formatting
-differ across language serializers. The implementation SHALL define the canonical key order and the number formatting it
-uses, so that conformance output is comparable across languages.
+A document that is parsed and then serialized SHALL be equivalent to the input document. Two documents are equivalent
+when their canonical forms are the same bytes. The canonical form is defined in
+[Canonical JSON for conformance comparison](../../../docs/canonical-json.md#rules). It sorts the object keys, removes
+insignificant whitespace, and uses one number format, so that the output of each language binding is comparable.
+The canonical form applies to comparison only. A binding MAY write any key order, whitespace, or number format.
 
-#### Scenario: SER-004.01 Parse then serialize yields the canonical form
+#### Scenario: SER-004.01 Parse then serialize yields an equivalent document
 
 - **WHEN** a valid OSCAL document is parsed and then serialized
-- **THEN** the output equals the document's canonical form under semantic JSON equality
+- **THEN** the canonical form of the output is the same bytes as the canonical form of the input
 
 #### Scenario: SER-004.02 Byte differences in key order do not fail equivalence
 
 - **WHEN** two bindings serialize the same document with different physical key order
 - **THEN** both outputs are equivalent after canonical key ordering
 
-### Requirement: SER-005 Datetime round-trip behavior is defined
+### Requirement: SER-005 A datetime keeps its instant and offset
 
-Serialization of a timezone-qualified datetime SHALL follow the round-trip rule the parsing capability defines. The
-implementation MUST state whether the serialized datetime preserves the original offset or normalizes it, so that a
-conformance fixture can assert the correct output.
+Serialization of a datetime SHALL keep its instant and its timezone offset. Serialization MUST NOT convert the datetime
+to another offset, and MUST NOT remove or round a significant fraction digit. A binding MAY write a zero offset as `Z`
+or as `+00:00`, and MAY add or remove trailing zeros of the fractional seconds. The canonical form in
+[Canonical JSON for conformance comparison](../../../docs/canonical-json.md#datetimes) treats these forms as the same.
 
-#### Scenario: SER-005.01 Serialized datetime matches the declared round-trip rule
+#### Scenario: SER-005.01 Offset is kept
 
-- **WHEN** a document with a timezone-qualified datetime is parsed and serialized
-- **THEN** the serialized datetime follows the binding's declared offset-preservation or normalization rule
+- **WHEN** a document with the datetime `2024-01-02T03:04:05-05:00` is parsed and serialized
+- **THEN** the serialized datetime has the offset `-05:00` and the same instant
+
+#### Scenario: SER-005.02 Zero offset and trailing zeros are equivalent
+
+- **WHEN** a binding serializes `2024-01-02T03:04:05.120+00:00` as `2024-01-02T03:04:05.12Z`
+- **THEN** the output is equivalent to the input
+
+#### Scenario: SER-005.03 Significant fraction digits are kept
+
+- **WHEN** a document with the datetime `2024-01-02T03:04:05.1234567Z` is parsed and serialized
+- **THEN** the serialized datetime keeps all seven fraction digits
