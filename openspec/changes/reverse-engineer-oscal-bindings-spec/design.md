@@ -230,7 +230,7 @@ after each datetime gets the canonical form of the XML Schema 1.1 `xs:dateTime` 
   - *Exact datetime strings* — rejected: a binding that pads fractions to six digits fails with no change in value.
 - **Python reference gap:** the Python binding truncates fractional seconds after six digits, which changes the
   instant. The corpus records this as a known defect (task 4.5), tracked in
-  cairn-proofs/oscal-bindings-python#16.
+  cairn-proofs/oscal-bindings-python#19.
 
 ## Risks / Trade-offs
 

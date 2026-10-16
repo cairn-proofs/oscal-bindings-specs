@@ -57,7 +57,7 @@ Python repo's phase 1 work is a separate local change in that repo (design.md D8
       bug.
 - [ ] 4.5 Add the second known-defect fixture: a datetime with seven fraction digits, which [SER-005.03] requires a
       binding to keep. Verify the fixture is marked as the case the Python binding fails, with a link to
-      cairn-proofs/oscal-bindings-python#16.
+      cairn-proofs/oscal-bindings-python#19.
 
 ## 5. Publish the distribution artifact
 
