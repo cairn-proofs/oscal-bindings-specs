@@ -65,14 +65,14 @@ Python repo's phase 1 work is a separate local change in that repo (design.md D8
       same commit, add the eight prefixes to the store's ledger, each with `next` one above its highest requirement
       number: BMB 4, FAC 5, PRS 9, ELV 4, ERR 4, MDL 10, VER 6, SER 6. Verify `openspec list --specs --store <id>`
       shows the eight capabilities, and the identifier checker passes.
-- [ ] 5.2 Produce a tagged archive of the store, holding the main specs, schemas, manifest placeholder, and corpus.
+- [x] 5.2 Produce a tagged archive of the store, holding the main specs, schemas, manifest placeholder, and corpus.
       Record its `sha256`. Verify a consumer can fetch the archive by tag and verify the recorded hash.
-- [ ] 5.3 Verify the release tag is `v` plus the content of `VERSION`, and the archive file name carries the same
+- [x] 5.3 Verify the release tag is `v` plus the content of `VERSION`, and the archive file name carries the same
       version. The release has one tag only.
 
 ## 6. Hand off to the Python repo
 
-- [ ] 6.1 After task 5.1, create a local OpenSpec change in the Python repo, for example `add-conformance-runner`. Its
+- [x] 6.1 After task 5.1, create a local OpenSpec change in the Python repo, for example `add-conformance-runner`. Its
       proposal cites the store's main specs. Its tasks cover only work in the Python repo:
       1. A conformance runner that reads the corpus from the pinned artifact. It verifies parse, serialize, round-trip,
          error-category, and element-validation outcomes against the expected results. It runs with `hatch test`.
@@ -89,9 +89,9 @@ Python repo's phase 1 work is a separate local change in that repo (design.md D8
 
 ## 7. Verify and close phase 1
 
-- [ ] 7.1 Verify the Python repo's local change reports its conformance result from a clean checkout, and the only
+- [x] 7.1 Verify the Python repo's local change reports its conformance result from a clean checkout, and the only
       failure is the known-defect fixture from task 4.4. This proves one binding can use the artifact, and the store is
       self-contained for phase 1.
-- [ ] 7.2 Archive this change in the store. If any requirement or scenario changed after task 5.1, update the ledger in
+- [x] 7.2 Archive this change in the store. If any requirement or scenario changed after task 5.1, update the ledger in
       the archive commit. Verify the store's `openspec/specs/` holds the eight capabilities, and the identifier checker
       passes. Also verify the Python repo has no `openspec/specs/` content for them.
