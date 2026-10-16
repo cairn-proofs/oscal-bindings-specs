@@ -126,8 +126,9 @@ deviation.
 
 ### Requirement: PRS-008 Timezone-aware datetimes are enforced where OSCAL requires them
 
-Where OSCAL requires a timezone-qualified datetime, the implementation SHALL reject a datetime that has no timezone. The
-implementation MUST define whether the original timezone offset is preserved across a parse-then-serialize round trip.
+Where OSCAL requires a timezone-qualified datetime, the implementation SHALL reject a datetime that has no timezone.
+Parsing MUST keep the instant, the timezone offset, and each fraction digit of a datetime, so that serialization can
+write them as the serialization capability requires.
 
 #### Scenario: PRS-008.01 Datetime without timezone is rejected
 
