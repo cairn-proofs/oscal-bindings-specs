@@ -13,11 +13,16 @@
     "spec-ids:self-test": "tsx scripts/check-spec-ids.ts --self-test",
     "schemas:verify": "cd schemas/1.2.3 && shasum -a 256 -c SHA256SUMS",
     "validate": "openspec validate --all --strict",
-    "check": "npm run typecheck && npm run spec-ids:self-test && npm run spec-ids && npm run version:self-test && npm run version:check && npm run schemas:verify && npm run validate",
+    "check": "npm run typecheck && npm run spec-ids:self-test && npm run spec-ids && npm run version:self-test && npm run version:check && npm run schemas:verify && npm run canonical:self-test && npm run corpus:check && npm run validate",
     "version:check": "tsx scripts/check-version.ts",
-    "version:self-test": "tsx scripts/check-version.ts --self-test"
+    "version:self-test": "tsx scripts/check-version.ts --self-test",
+    "corpus:check": "tsx scripts/check-corpus.ts",
+    "corpus:write": "tsx scripts/check-corpus.ts --write",
+    "canonical:self-test": "tsx scripts/check-canonical-json.ts"
   },
   "dependencies": {
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
     "github-slugger": "2.0.0",
     "yaml": "2.9.1"
   },

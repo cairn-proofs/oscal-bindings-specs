@@ -1,0 +1,14 @@
+{
+  "resources": [
+    {
+      "uuid": "b78aa3ec-915d-475b-8097-46813fae1825",
+      "description": "NIST Special Publication 800-53 Revision 5: Moderate Baseline Profile",
+      "rlinks": [
+        {
+          "href": "https://github.com/usnistgov/oscal-content/archive/refs/tags/v1.3.0.zip",
+          "media-type": "application/oscal.catalog+zip"
+        }
+      ]
+    }
+  ]
+}

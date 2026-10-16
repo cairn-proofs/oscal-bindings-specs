@@ -1,0 +1,11 @@
+{
+  "catalog": {
+    "uuid": "not-a-uuid",
+    "metadata": {
+      "title": "Minimal catalog",
+      "last-modified": "2024-01-02T03:04:05Z",
+      "version": "1.0",
+      "oscal-version": "1.2.3"
+    }
+  }
+}

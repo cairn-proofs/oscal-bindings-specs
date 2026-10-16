@@ -1,0 +1,307 @@
+{
+  "oscal-release": "1.2.3",
+  "categories": ["parse-error", "document-type-mismatch", "not-found", "access-error", "unknown-element-type"],
+  "cases": [
+    {
+      "id": "round-trip/catalog",
+      "operation": "round-trip",
+      "input": "documents/valid/catalog.json",
+      "document-type": "catalog",
+      "expected": "expected/catalog.json",
+      "requirements": ["PRS-001.01", "PRS-003.01", "SER-004.01"],
+      "source": {
+        "repository": "https://github.com/usnistgov/oscal-content",
+        "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
+        "path": "examples/catalog/json/basic_catalog.json",
+        "sha256": "2b74b56389e1cbb0ecd402805f4988af46b51761b64c6da05b9894264815d37d"
+      }
+    },
+    {
+      "id": "round-trip/profile",
+      "operation": "round-trip",
+      "input": "documents/valid/profile.json",
+      "document-type": "profile",
+      "expected": "expected/profile.json",
+      "requirements": ["PRS-001.01", "SER-004.01"],
+      "source": {
+        "repository": "https://github.com/usnistgov/oscal-content",
+        "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
+        "path": "examples/profile/json/basic_profile.json",
+        "sha256": "3cae5cd5d4b3e64364773b78ca0b2ece8c55f2a52b4c65522134097c681b5a92"
+      }
+    },
+    {
+      "id": "round-trip/component-definition",
+      "operation": "round-trip",
+      "input": "documents/valid/component-definition.json",
+      "document-type": "component-definition",
+      "expected": "expected/component-definition.json",
+      "requirements": ["PRS-001.01", "SER-004.01"],
+      "source": {
+        "repository": "https://github.com/usnistgov/oscal-content",
+        "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
+        "path": "examples/component-definition/json/example-component.json",
+        "sha256": "78ca344c640d7fe5498076486355a4b6a18d234c313db44b0b07c0e81eb49f0d"
+      }
+    },
+    {
+      "id": "round-trip/system-security-plan",
+      "operation": "round-trip",
+      "input": "documents/valid/system-security-plan.json",
+      "document-type": "system-security-plan",
+      "expected": "expected/system-security-plan.json",
+      "requirements": ["PRS-001.01", "SER-004.01"],
+      "source": {
+        "repository": "https://github.com/usnistgov/oscal-content",
+        "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
+        "path": "examples/ssp/json/ssp-example.json",
+        "sha256": "af97587d6d14b0f1a297899b3f6a09b61675063f3279c7b7ffe16578f8859197"
+      }
+    },
+    {
+      "id": "round-trip/assessment-plan",
+      "operation": "round-trip",
+      "input": "documents/valid/assessment-plan.json",
+      "document-type": "assessment-plan",
+      "expected": "expected/assessment-plan.json",
+      "requirements": ["PRS-001.01", "SER-004.01", "SER-005.01"],
+      "source": {
+        "repository": "https://github.com/usnistgov/oscal-content",
+        "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
+        "path": "examples/ap/json/ifa_assessment-plan.json",
+        "sha256": "66380f4279eb60905f7ec2684b5f885ee1743d648cf6315acaddaaf232d4501d"
+      }
+    },
+    {
+      "id": "round-trip/assessment-results",
+      "operation": "round-trip",
+      "input": "documents/valid/assessment-results.json",
+      "document-type": "assessment-results",
+      "expected": "expected/assessment-results.json",
+      "requirements": ["PRS-001.01", "SER-004.01", "SER-005.01"],
+      "source": {
+        "repository": "https://github.com/usnistgov/oscal-content",
+        "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
+        "path": "examples/ar/json/ifa_assessment-results.json",
+        "sha256": "b7e429db3f25f9a70b2da549dbdf70ab28ab70250c0377dc8a93612da711a455"
+      }
+    },
+    {
+      "id": "round-trip/plan-of-action-and-milestones",
+      "operation": "round-trip",
+      "input": "documents/valid/plan-of-action-and-milestones.json",
+      "document-type": "plan-of-action-and-milestones",
+      "expected": "expected/plan-of-action-and-milestones.json",
+      "requirements": ["PRS-001.01", "SER-004.01"],
+      "source": {
+        "repository": "https://github.com/usnistgov/oscal-content",
+        "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
+        "path": "examples/poam/json/ifa_plan-of-action-and-milestones.json",
+        "sha256": "1d5cb45cce37adaa53cb994564f747a0d9559bae0747a780d6035bd9e16dbe14"
+      }
+    },
+    {
+      "id": "round-trip/mapping-collection",
+      "operation": "round-trip",
+      "input": "documents/valid/mapping-collection.json",
+      "document-type": "mapping-collection",
+      "expected": "expected/mapping-collection.json",
+      "requirements": ["PRS-001.01", "SER-004.01"],
+      "notes": "Written for this corpus. NIST publishes no mapping-collection example. The source text 0.50 has the canonical form 0.5."
+    },
+    {
+      "id": "round-trip/minimal-catalog",
+      "operation": "round-trip",
+      "input": "documents/valid/minimal-catalog.json",
+      "document-type": "catalog",
+      "expected": "expected/minimal-catalog.json",
+      "requirements": ["PRS-001.01", "SER-002.01", "SER-004.01"],
+      "notes": "Written for this corpus. The base document of each invalid case."
+    },
+    {
+      "id": "round-trip/datetime-forms",
+      "operation": "round-trip",
+      "input": "documents/valid/datetime-forms.json",
+      "document-type": "catalog",
+      "expected": "expected/datetime-forms.json",
+      "requirements": ["SER-005.01", "SER-005.02"],
+      "notes": "Written for this corpus. A +00:00 offset with a trailing fraction zero, and a -05:00 offset."
+    },
+    {
+      "id": "round-trip/seven-fraction-digits",
+      "operation": "round-trip",
+      "input": "documents/valid/seven-fraction-digits.json",
+      "document-type": "catalog",
+      "expected": "expected/seven-fraction-digits.json",
+      "requirements": ["PRS-008", "SER-005.03"],
+      "notes": "Written for this corpus.",
+      "known-defects": [
+        {
+          "binding": "oscal-bindings-python",
+          "issue": "https://github.com/cairn-proofs/oscal-bindings-python/issues/19",
+          "observed": "The round trip keeps six fraction digits and drops the seventh."
+        }
+      ]
+    },
+    {
+      "id": "parse/not-json",
+      "operation": "parse",
+      "input": "documents/invalid/not-json.json",
+      "expected-category": "parse-error",
+      "requirements": ["ERR-001.01"]
+    },
+    {
+      "id": "parse/invalid-utf8",
+      "operation": "parse",
+      "input": "documents/invalid/invalid-utf8.json",
+      "input-form": "bytes",
+      "expected-category": "parse-error",
+      "requirements": ["PRS-001.03"]
+    },
+    {
+      "id": "parse/unknown-root",
+      "operation": "parse",
+      "input": "documents/invalid/unknown-root.json",
+      "expected-category": "parse-error",
+      "requirements": ["ERR-001.01"]
+    },
+    {
+      "id": "parse/unknown-field-top",
+      "operation": "parse",
+      "input": "documents/invalid/unknown-field-top.json",
+      "expected-category": "parse-error",
+      "requirements": ["PRS-004.01", "MDL-008.01"]
+    },
+    {
+      "id": "parse/unknown-field-nested",
+      "operation": "parse",
+      "input": "documents/invalid/unknown-field-nested.json",
+      "expected-category": "parse-error",
+      "requirements": ["PRS-004.02"]
+    },
+    {
+      "id": "parse/name-keyed-field",
+      "operation": "parse",
+      "input": "documents/invalid/name-keyed-field.json",
+      "expected-category": "parse-error",
+      "requirements": ["PRS-005.02"],
+      "notes": "The rlink carries media_type, an internal field name, in place of the OSCAL key media-type.",
+      "known-defects": [
+        {
+          "binding": "oscal-bindings-python",
+          "issue": "https://github.com/cairn-proofs/oscal-bindings-python/issues/6",
+          "observed": "With pydantic 2.13.x, parsing from JSON text or bytes drops the media_type key and succeeds."
+        }
+      ]
+    },
+    {
+      "id": "parse/missing-required-field",
+      "operation": "parse",
+      "input": "documents/invalid/missing-required-field.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "requirements": ["PRS-006.01", "ERR-003.01"]
+    },
+    {
+      "id": "parse/two-failures",
+      "operation": "parse",
+      "input": "documents/invalid/two-failures.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 2,
+      "requirements": ["PRS-006.01", "ERR-003.01"]
+    },
+    {
+      "id": "parse/invalid-uuid",
+      "operation": "parse",
+      "input": "documents/invalid/invalid-uuid.json",
+      "expected-category": "parse-error",
+      "requirements": ["PRS-007.01"]
+    },
+    {
+      "id": "parse/datetime-without-timezone",
+      "operation": "parse",
+      "input": "documents/invalid/datetime-without-timezone.json",
+      "expected-category": "parse-error",
+      "requirements": ["PRS-008.01"]
+    },
+    {
+      "id": "parse-typed/wrong-document-type",
+      "operation": "parse-typed",
+      "input": "documents/valid/profile.json",
+      "document-type": "catalog",
+      "expected-category": "document-type-mismatch",
+      "requirements": ["PRS-003.02", "ERR-001.02"]
+    },
+    {
+      "id": "parse-file/missing-file",
+      "operation": "parse-file",
+      "input": "documents/does-not-exist.json",
+      "expected-category": "not-found",
+      "requirements": ["PRS-002.02", "ERR-001.03"]
+    },
+    {
+      "id": "assessment-period/catalog",
+      "operation": "assessment-period",
+      "input": "documents/valid/catalog.json",
+      "expected-category": "access-error",
+      "requirements": ["FAC-004.04", "ERR-001.04"]
+    },
+    {
+      "id": "element/observation-valid",
+      "operation": "validate-element",
+      "input": "elements/observation-valid.json",
+      "element-type": "observation",
+      "expected-valid": true,
+      "requirements": ["ELV-001.01"]
+    },
+    {
+      "id": "element/observation-missing-collected",
+      "operation": "validate-element",
+      "input": "elements/observation-missing-collected.json",
+      "element-type": "observation",
+      "expected-valid": false,
+      "requirements": ["ELV-001.02"]
+    },
+    {
+      "id": "element/property-valid",
+      "operation": "validate-element",
+      "input": "elements/property-valid.json",
+      "element-type": "property",
+      "expected-valid": true,
+      "requirements": ["ELV-001.01"]
+    },
+    {
+      "id": "element/property-invalid-name",
+      "operation": "validate-element",
+      "input": "elements/property-invalid-name.json",
+      "element-type": "property",
+      "expected-valid": false,
+      "requirements": ["ELV-001.02", "PRS-007.01"],
+      "notes": "A property name is a token, and a token has no spaces."
+    },
+    {
+      "id": "element/back-matter-valid",
+      "operation": "validate-element",
+      "input": "elements/back-matter-valid.json",
+      "element-type": "back-matter",
+      "expected-valid": true,
+      "requirements": ["ELV-001.01", "ELV-002.02"]
+    },
+    {
+      "id": "element/back-matter-empty-resources",
+      "operation": "validate-element",
+      "input": "elements/back-matter-empty-resources.json",
+      "element-type": "back-matter",
+      "expected-valid": false,
+      "requirements": ["ELV-001.02"]
+    },
+    {
+      "id": "element/unknown-element-type",
+      "operation": "validate-element",
+      "input": "elements/property-valid.json",
+      "element-type": "no-such-element",
+      "expected-category": "unknown-element-type",
+      "requirements": ["ELV-003.01", "ERR-001.05"]
+    }
+  ]
+}

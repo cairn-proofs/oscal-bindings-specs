@@ -1,0 +1,57 @@
+{
+  "mapping-collection": {
+    "uuid": "5c8e2b1a-9d3f-4a7e-b6c0-2e4f8a1d3b40",
+    "metadata": {
+      "title": "Example mapping collection",
+      "last-modified": "2024-01-02T03:04:05Z",
+      "version": "1.0",
+      "oscal-version": "1.2.3"
+    },
+    "provenance": {
+      "method": "human",
+      "matching-rationale": "semantic",
+      "status": "complete",
+      "confidence-score": {
+        "percentage": 0.75
+      },
+      "coverage": {
+        "target-coverage": 0.50
+      },
+      "mapping-description": "An example mapping from one control catalog to another."
+    },
+    "mappings": [
+      {
+        "uuid": "6d9f3c2b-0e4a-4b8f-a7d1-3f5a9b2e4c50",
+        "source-resource": {
+          "type": "catalog",
+          "href": "https://example.com/source-catalog.json"
+        },
+        "target-resource": {
+          "type": "catalog",
+          "href": "https://example.com/target-catalog.json"
+        },
+        "maps": [
+          {
+            "uuid": "7e0a4d3c-1f5b-4c9a-b8e2-4a6b0c3f5d60",
+            "relationship": "equivalent-to",
+            "sources": [
+              {
+                "type": "control",
+                "id-ref": "ac-1"
+              }
+            ],
+            "targets": [
+              {
+                "type": "control",
+                "id-ref": "pr.aa-01"
+              }
+            ],
+            "confidence-score": {
+              "percentage": 0.9
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
