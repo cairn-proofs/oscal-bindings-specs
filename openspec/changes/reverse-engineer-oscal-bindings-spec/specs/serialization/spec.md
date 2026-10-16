@@ -23,8 +23,8 @@ OSCAL.
 
 ### Requirement: SER-002 Serialization never emits null
 
-Serialization SHALL omit any field whose value is absent rather than writing a null, because OSCAL forbids null. An unset
-optional field MUST be absent from the output, and no option MAY cause a null to be written.
+Serialization SHALL omit any field whose value is absent rather than writing a null, because OSCAL forbids null. An
+unset optional field MUST be absent from the output, and no option MAY cause a null to be written.
 
 #### Scenario: SER-002.01 Absent optional field is omitted
 

@@ -1,7 +1,7 @@
 ## Purpose
 
-Defines how an OSCAL binding scopes its namespace to the OSCAL major version and records the exact vendored release. Also
-defines how the shared spec artifacts carry a Semantic Version, with the OSCAL release held as build metadata.
+Defines how an OSCAL binding scopes its namespace to the OSCAL major version and records the exact vendored release.
+Also defines how the shared spec artifacts carry a Semantic Version, with the OSCAL release held as build metadata.
 
 ## ADDED Requirements
 
@@ -24,10 +24,10 @@ version namespace. A routine minor or patch refresh MUST NOT create a new namesp
 
 ### Requirement: VER-002 A binding is generated from exactly one active OSCAL release
 
-Each binding set SHALL be generated from exactly one vendored OSCAL release at a time. An explicit identifier selects the
-active release, not a scan or a "newest wins" rule. The binding MUST record the exact release it was generated from. This
-makes the strict-coverage boundary visible to a consumer: a binding supports the vendored release and earlier, as the
-model-derivation capability states.
+Each binding set SHALL be generated from exactly one vendored OSCAL release at a time. An explicit identifier selects
+the active release, not a scan or a "newest wins" rule. The binding MUST record the exact release it was generated from.
+This makes the strict-coverage boundary visible to a consumer: a binding supports the vendored release and earlier, as
+the model-derivation capability states.
 
 #### Scenario: VER-002.01 Active release is explicit
 
@@ -41,12 +41,12 @@ model-derivation capability states.
 
 ### Requirement: VER-003 The shared spec artifact uses Semantic Versioning for its own compatibility
 
-The shared spec artifact SHALL carry a Semantic Version. The artifact is the prose contract, the naming manifest, and the
-conformance corpus together. The major, minor, and patch components describe the compatibility of the contract itself,
-independent of OSCAL's numbering:
+The shared spec artifact SHALL carry a Semantic Version. The artifact is the prose contract, the naming manifest, and
+the conformance corpus together. The major, minor, and patch components describe the compatibility of the contract
+itself, independent of OSCAL's numbering:
 
-1. A **major** increment marks a breaking change to the contract a port implements. Examples are a canonical type rename,
-   a stricter parse rule, or a changed error category.
+1. A **major** increment marks a breaking change to the contract a port implements. Examples are a canonical type
+   rename, a stricter parse rule, or a changed error category.
 2. A **minor** increment marks a backward-compatible addition, such as a new corpus case, a new optional capability, or
    newly specified behavior.
 3. A **patch** increment marks a fix that does not change the contract, such as a corpus fixture correction or a prose
@@ -64,8 +64,8 @@ independent of OSCAL's numbering:
 
 ### Requirement: VER-004 The OSCAL release is recorded as Semantic Versioning build metadata
 
-The spec artifact version SHALL carry the OSCAL release it describes as Semantic Versioning build metadata. An example is
-`2.4.1+oscal.1.2.3`. Build metadata is ignored for version precedence. The OSCAL release therefore records provenance
+The spec artifact version SHALL carry the OSCAL release it describes as Semantic Versioning build metadata. An example
+is `2.4.1+oscal.1.2.3`. Build metadata is ignored for version precedence. The OSCAL release therefore records provenance
 without acting as a compatibility signal. A new OSCAL release SHALL always update this build metadata. It SHALL drive a
 version increment only to the degree it changes the contract. A backward-compatible OSCAL release is a minor increment.
 A new OSCAL major version is a major increment.

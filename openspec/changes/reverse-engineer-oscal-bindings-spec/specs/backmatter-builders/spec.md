@@ -28,9 +28,9 @@ caller omits it. Invalid input MUST report a validation error.
 
 ### Requirement: BMB-002 Build a back-matter rlink value
 
-The implementation SHALL provide an rlink builder. It takes a target reference, and optionally a media type and a list of
-hashes, and returns a validated rlink element. Omitted optional inputs MUST be absent from the result rather than present
-as null.
+The implementation SHALL provide an rlink builder. It takes a target reference, and optionally a media type and a list
+of hashes, and returns a validated rlink element. Omitted optional inputs MUST be absent from the result rather than
+present as null.
 
 #### Scenario: BMB-002.01 Build an rlink with only a reference
 

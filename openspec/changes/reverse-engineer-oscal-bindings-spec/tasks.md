@@ -61,7 +61,7 @@ Python repo's phase 1 work is a separate local change in that repo (design.md D8
 
 ## 5. Publish the distribution artifact
 
-- [ ] 5.1 Sync this change's delta specs into the store's main `openspec/specs/` without archiving the change. In the
+- [x] 5.1 Sync this change's delta specs into the store's main `openspec/specs/` without archiving the change. In the
       same commit, add the eight prefixes to the store's ledger, each with `next` one above its highest requirement
       number: BMB 4, FAC 5, PRS 9, ELV 4, ERR 4, MDL 10, VER 6, SER 6. Verify `openspec list --specs --store <id>`
       shows the eight capabilities, and the identifier checker passes.
