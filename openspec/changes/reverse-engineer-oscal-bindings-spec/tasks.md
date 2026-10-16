@@ -14,9 +14,9 @@ Python repo's phase 1 work is a separate local change in that repo (design.md D8
       <id>` passes. Also verify `openspec list` in the Python repo no longer shows the change.
 - [x] 1.3 Remove the identifier rules and the archive guidance from the Python repo's `openspec/config.yaml`. Keep the
       general writing rules. Verify the store's config holds the removed rules (task 1.7).
-- [ ] 1.4 Lay out the top-level directories: `openspec/`, `schemas/<release>/`, `manifest/<release>/`, and
-      `corpus/<release>/`. Verify the tree matches the layout in design.md.
-- [ ] 1.5 Vendor the active OSCAL release schema bundle into `schemas/<release>/`, byte-for-byte. Record a `sha256` and
+- [x] 1.4 Lay out the top-level directories: `openspec/`, `schemas/<release>/`, `manifest/<release>/`, and
+      `corpus/<release>/`. Verify the tree matches the layout in proposal.md, Impact.
+- [x] 1.5 Vendor the active OSCAL release schema bundle into `schemas/<release>/`, byte-for-byte. Record a `sha256` and
       the NIST source URL beside it. Verify the recorded hash matches the vendored file.
 - [ ] 1.6 Set up the store toolchain in TypeScript on Node. The OpenSpec CLI needs Node, so the store uses one runtime.
       Pin Node and the OpenSpec CLI with mise, and lock npm dependencies with integrity hashes. Add a CI workflow that
