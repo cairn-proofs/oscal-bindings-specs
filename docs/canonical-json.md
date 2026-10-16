@@ -26,8 +26,14 @@ Two documents are equivalent when step 4 gives the same bytes for both.
 
 ## Datetimes
 
-A string value is a datetime when the vendored schema gives its field the type `DateTimeWithTimezoneDatatype` or
-`DateTimeDatatype`. Other strings, including `DateDatatype` values, stay as they are.
+A value is a datetime when it is a string and its object key is one of these names: `collected`, `date`, `deadline`,
+`end`, `expires`, `last-modified`, `published`, `start`. Other values, including `DateDatatype` values, stay as they
+are.
+
+The list is the set of property names that the OSCAL 1.2.3 schema gives the type `DateTimeWithTimezoneDatatype` or
+`DateTimeDatatype`. No other property in that schema uses these names for a string. The `start` and `end` of a
+`port-range` are integers, so the string condition excludes them. A comparator therefore needs no schema. A new OSCAL
+release can change the list.
 
 OSCAL bases these types on the XML Schema type `xs:dateTime`. The normalization below is the canonical form of
 `xs:dateTime` from XML Schema 1.1, with one difference: the timezone offset stays as written.
