@@ -67,8 +67,8 @@ Python repo's phase 1 work is a separate local change in that repo (design.md D8
       shows the eight capabilities, and the identifier checker passes.
 - [ ] 5.2 Produce a tagged archive of the store, holding the main specs, schemas, manifest placeholder, and corpus.
       Record its `sha256`. Verify a consumer can fetch the archive by tag and verify the recorded hash.
-- [ ] 5.3 Write the two-axis human-readable tag (`oscal-<release>/spec-<n>`) alongside the SemVer artifact version.
-      Verify the tag and the artifact version both resolve to the same archive.
+- [ ] 5.3 Verify the release tag is `v` plus the content of `VERSION`, and the archive file name carries the same
+      version. The release has one tag only.
 
 ## 6. Hand off to the Python repo
 

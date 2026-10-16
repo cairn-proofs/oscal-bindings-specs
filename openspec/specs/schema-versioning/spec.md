@@ -89,10 +89,9 @@ A new OSCAL major version is a major increment.
 
 ### Requirement: VER-005 Spec artifacts are distributed pinned and hash-verified
 
-The spec artifact SHALL be distributed as a tagged archive. A consumer pins it by a recorded content hash, so a build
-stays reproducible even if a tag moves. A human-readable two-axis label, carrying the OSCAL release and the spec
-revision, MAY accompany the release for people. The pinned, hash-verified artifact version is the contract a consumer
-builds against.
+The spec artifact SHALL be distributed as a tagged archive. The tag is `v` followed by the artifact version, for
+example `v0.1.0+oscal.1.2.3`. A consumer pins the archive by a recorded content hash, so a build stays reproducible
+even if a tag moves. The pinned, hash-verified artifact version is the contract a consumer builds against.
 
 #### Scenario: VER-005.01 Consumer pins by content hash
 
