@@ -22,7 +22,7 @@ Python repo's phase 1 work is a separate local change in that repo (design.md D8
       Pin Node and the OpenSpec CLI with mise, and lock npm dependencies with integrity hashes. Add a CI workflow that
       runs the store checks on each pull request. Protect `main` and require that workflow. Verify a clean checkout
       installs with the locked versions only.
-- [ ] 1.7 Add the spec identifier tooling to the store:
+- [x] 1.7 Add the spec identifier tooling to the store:
       1. Port `check-spec-ids.ts`, `spec-ids.ts`, and `spec-markdown.ts` from the source project. Remove the
          `liveRequirements` export and the source project's prefixes from the self-test fixtures.
       2. Name the checker command in the identifier rules and the archive guidance in `openspec/config.yaml`.
