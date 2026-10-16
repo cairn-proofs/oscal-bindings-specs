@@ -1,12 +1,16 @@
 name: CI
-# Runs on each pull request update, on each push to main, and by hand.
+# Runs on each pull request update, on each push to main, on each `v*` tag, and by hand. A `v*` tag also builds the
+# spec artifact and attaches it to a draft GitHub release. A person reviews and publishes the draft. Nothing rebuilds
+# after that: the published archive is the one CI built and hashed here.
 on:
   push:
     branches: ["main"]
+    # Required: once `branches` is set, tag pushes do not trigger the workflow unless listed.
+    tags: ["v*"]
   pull_request:
     branches: ["main"]
   workflow_dispatch:
-# A newer push to the same pull request cancels its superseded run.
+# A newer push to the same pull request cancels its superseded run. Runs for main and tags are never cancelled.
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
@@ -16,11 +20,26 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # Full history: the identifier checker reads the main specs at the base ref.
+      # Full history: the identifier checker reads the main specs at the base ref, and the tag check reads main.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
+      # Releases come only from main, and the tag must name the version in VERSION. Runs before the expensive steps.
+      - name: Check release tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "::error::Tag $TAG points at $GITHUB_SHA, which is not on main. Tag a commit on main."
+            exit 1
+          fi
+          version="$(cat VERSION)"
+          if [ "$TAG" != "v$version" ]; then
+            echo "::error::Tag $TAG does not match VERSION $version (expected v$version)."
+            exit 1
+          fi
       # Node and the OpenSpec CLI from mise.toml, installed from mise.lock and its .mise/locks sidecar (the action
       # adds --locked when a lockfile is present). mise itself is pinned. The action is pinned by commit.
       - name: Install toolchain (mise)
@@ -30,9 +49,47 @@ jobs:
       # Installs exactly what package-lock.json records, with integrity hashes. .npmrc disables install scripts.
       - name: Install dependencies
         run: npm ci
-      # On a pull request, a scenario identifier on the target branch must not vanish. On a push to main, the base
-      # is the commit before the push.
+      # On a pull request, a scenario identifier on the target branch must not vanish. On a push, the base is the
+      # commit before the push. A tag push has no such commit, so it checks against itself.
       - name: Check
         env:
-          SPEC_IDS_BASE: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || github.event.before || 'HEAD' }}
+          SPEC_IDS_BASE: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || (startsWith(github.ref, 'refs/tags/') && 'HEAD') || github.event.before || 'HEAD' }}
         run: npm run check
+      - name: Build the spec artifact
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          TAG: ${{ github.ref_name }}
+        run: npm run archive -- "$TAG"
+      - name: Keep the spec artifact
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: spec-artifact
+          path: dist/
+          if-no-files-found: error
+  draft-release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # create the release and upload its assets
+    steps:
+      - name: Download the spec artifact
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8.0.2
+        with:
+          name: spec-artifact
+          path: dist/
+      # Draft only: a person reviews and publishes. --verify-tag refuses to create the tag if it is missing.
+      - name: Create a draft release with the artifact attached
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          sum="$(cat dist/SHA256SUMS)"
+          printf 'Spec artifact `%s`.\n\nPin the archive by its sha256:\n\n```\n%s\n```\n' "${TAG#v}" "$sum" > notes.md
+          gh release create "$TAG" dist/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --draft \
+            --verify-tag \
+            --title "$TAG" \
+            --notes-file notes.md

@@ -49,3 +49,13 @@ A reference is planning context only. Builds and conformance runs use the tagged
 
 `VERSION` holds the spec artifact version: a Semantic Version with the OSCAL release as build metadata, for example
 `0.1.0+oscal.1.2.3`.
+
+## Release
+
+1. Set the new version in `VERSION`, and merge the pull request.
+2. Push the tag `v<VERSION>` on that commit of `main`, for example `v0.1.0+oscal.1.2.3`.
+3. CI runs `npm run check`, builds the archive with `npm run archive`, and attaches the archive and `SHA256SUMS` to a
+   draft GitHub release. CI fails when the tag is not on `main` or does not match `VERSION`.
+4. Review the draft and publish it.
+
+A consumer pins the archive by the `sha256` in `SHA256SUMS`, not by the tag.
