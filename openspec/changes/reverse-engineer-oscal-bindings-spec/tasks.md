@@ -45,17 +45,17 @@ Python repo's phase 1 work is a separate local change in that repo (design.md D8
 
 ## 4. Build the conformance corpus
 
-- [ ] 4.1 Assemble the valid-document fixtures, one per OSCAL document type. Pair each with its expected canonical
+- [x] 4.1 Assemble the valid-document fixtures, one per OSCAL document type. Pair each with its expected canonical
       round-trip output under the task 3.1 rules. Verify each expected output is in canonical form.
-- [ ] 4.2 Assemble the invalid-document fixtures, each paired with its expected error category from the error-model
+- [x] 4.2 Assemble the invalid-document fixtures, each paired with its expected error category from the error-model
       spec. Verify every error category in the taxonomy has at least one fixture, including the unknown-field, the
       name-keyed-field, and the wrong-document-type cases.
-- [ ] 4.3 Assemble the element-validation fixtures, each paired with a valid or invalid outcome and the named element
+- [x] 4.3 Assemble the element-validation fixtures, each paired with a valid or invalid outcome and the named element
       type. Verify at least one unknown-element-type fixture is present.
-- [ ] 4.4 Add the known-defect fixture: a name-keyed field that the contract requires a binding to reject. Verify the
+- [x] 4.4 Add the known-defect fixture: a name-keyed field that the contract requires a binding to reject. Verify the
       fixture is marked as the case the Python JSON path currently fails, so a port does not mistake it for a Python
       bug.
-- [ ] 4.5 Add the second known-defect fixture: a datetime with seven fraction digits, which [SER-005.03] requires a
+- [x] 4.5 Add the second known-defect fixture: a datetime with seven fraction digits, which [SER-005.03] requires a
       binding to keep. Verify the fixture is marked as the case the Python binding fails, with a link to
       cairn-proofs/oscal-bindings-python#19.
 

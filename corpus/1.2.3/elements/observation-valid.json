@@ -1,0 +1,20 @@
+{
+  "uuid": "8807eb6e-0c05-43bc-8438-799739615e34",
+  "title": "AwesomeCloud IAM Roles Test - SYSTEM1234 System Engineer Role",
+  "description": "Test AwesomeCloud IAM Roles for least privilege design and implementation.",
+  "methods": [
+    "TEST"
+  ],
+  "types": [
+    "finding"
+  ],
+  "subjects": [
+    {
+      "subject-uuid": "551b9706-d6a4-4d25-8207-f2ccec548b89",
+      "type": "component"
+    }
+  ],
+  "collected": "2023-06-02T08:31:20-04:00",
+  "expires": "2023-07-01T00:00:00-04:00",
+  "remarks": "The assessor's security automation platform analyzed all roles specific to the SYSTEM1234 Product Team, not those managed by the Office of Information Technology. The `IFA-SYSTEM1234-SystemEngineer` role in their respective AwesomeCloud account permitted use of the following high-risk actions.\n\n* awesomecloud:auditlog:DeleteAccountAuditLog\n* awesomecloud:secmon:AdministerConfigurations\n\n\nBoth of these actions are overly permissive and not appropriate for the business function of the staff member assigned this role."
+}

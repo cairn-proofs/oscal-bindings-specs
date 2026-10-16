@@ -1,0 +1,11 @@
+{
+  "catalog": {
+    "uuid": "4b2c0a8f-3d5e-4f7a-9c1b-6d8e0f2a4c30",
+    "metadata": {
+      "title": "Seven fraction digits",
+      "last-modified": "2024-01-02T03:04:05.1234567Z",
+      "version": "1.0",
+      "oscal-version": "1.2.3"
+    }
+  }
+}
