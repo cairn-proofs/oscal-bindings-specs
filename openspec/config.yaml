@@ -37,6 +37,7 @@ rules:
       only in the commit that syncs or archives the change into the main specs.
     - >-
       Never reuse an identifier. Cite a requirement as `[PREFIX-NNN]` and a scenario as `[PREFIX-NNN.MM]`.
+      `npm run spec-ids` checks the identifier rules on the main specs.
 
 # Per-operation guidance (optional)
 operations:
@@ -47,4 +48,4 @@ operations:
         prefix of each new capability. Set `next` above each requirement number that the change adds. Add a
         `retired` entry, with a reason, for each requirement identifier that the change removes. A retired
         requirement covers its scenarios. A removed scenario of a requirement that stays needs its own entry. Add
-        `replaced_by` when the requirement moves to another identifier. Then run the identifier checker.
+        `replaced_by` when the requirement moves to another identifier. Then run `npm run spec-ids`.

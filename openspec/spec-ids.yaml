@@ -1,5 +1,5 @@
 # Identifier ledger for the main specs in openspec/specs/.
-# The rules are in openspec/config.yaml. The identifier checker enforces them.
+# The rules are in openspec/config.yaml. `npm run spec-ids` (scripts/check-spec-ids.ts) enforces them.
 # A prefix entry is permanent. `next` is the next free requirement number.
 # Update this file in the commit that syncs or archives a change into the main specs.
 
