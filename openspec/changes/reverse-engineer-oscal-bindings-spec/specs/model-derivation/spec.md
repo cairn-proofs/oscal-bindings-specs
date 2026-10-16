@@ -99,7 +99,7 @@ genuinely different types, so the derivation MUST keep them distinct rather than
 share a short local name across different namespaces. For example, `control-implementation` appears under both the
 Component Definition and the System Security Plan namespaces, with different structures. The implementation SHALL carry a
 fixed override map. The map assigns a namespace-qualified name to each colliding definition, so each resolves to a distinct,
-stable canonical name. The current overrides include `ComponentDefinitionControlImplementation` versus
+stable canonical name. The overrides are `ComponentDefinitionControlImplementation` versus
 `SspControlImplementation`, `CatalogGroup` versus `ProfileGroup`, `ComponentDefinitionImplementedRequirement` versus
 `SspImplementedRequirement`, `ControlCommonSelectControlById` versus `AssessmentCommonSelectControlById`,
 `ComponentDefinitionStatement` versus `SspStatement`, and the inline-collision overrides `SspStatus`,
@@ -119,7 +119,7 @@ stable canonical name. The current overrides include `ComponentDefinitionControl
 
 OSCAL sometimes expresses a type as several mutually exclusive constraint variants, such as the profile `merge` modes and
 the catalog `group` forms. A code generator produces numbered variant names for these. The implementation SHALL rename
-them to stable, meaningful names through a fixed variant-rename map. The current variant renames are `MergeFlat`,
+them to stable, meaningful names through a fixed variant-rename map. The variant renames are `MergeFlat`,
 `MergeAsIs`, `MergeCustom`, `CatalogGroupWithGroups`, and `CatalogGroupWithControls`.
 
 #### Scenario: MDL-006.01 Numbered variant gets a meaningful name
