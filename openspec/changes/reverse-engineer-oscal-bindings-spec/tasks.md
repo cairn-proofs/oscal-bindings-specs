@@ -33,7 +33,7 @@ Python repo's phase 1 work is a separate local change in that repo (design.md D8
 
 ## 2. Record the artifact version
 
-- [ ] 2.1 Record the first spec artifact version as a Semantic Version with the OSCAL release as build metadata, per the
+- [x] 2.1 Record the first spec artifact version as a Semantic Version with the OSCAL release as build metadata, per the
       schema-versioning spec. An example is `0.1.0+oscal.1.2.3`. Verify the version string carries the
       `+oscal.<release>` build metadata.
 

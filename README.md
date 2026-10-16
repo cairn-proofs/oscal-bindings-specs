@@ -35,5 +35,9 @@ A reference is planning context only. Builds and conformance runs use the tagged
 2. `npm ci`
 3. `npm run check`
 
-`npm run check` runs the TypeScript typecheck, the identifier checker self-test, the identifier checker, the schema
-`sha256` check, and `openspec validate --all --strict`. CI runs the same command on each pull request.
+`npm run check` runs the TypeScript typecheck, the identifier checker and its self-test, the `VERSION` check and its
+self-test, the schema `sha256` check, and `openspec validate --all --strict`. CI runs the same command on each pull
+request.
+
+`VERSION` holds the spec artifact version: a Semantic Version with the OSCAL release as build metadata, for example
+`0.1.0+oscal.1.2.3`.

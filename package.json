@@ -13,7 +13,9 @@
     "spec-ids:self-test": "tsx scripts/check-spec-ids.ts --self-test",
     "schemas:verify": "cd schemas/1.2.3 && shasum -a 256 -c SHA256SUMS",
     "validate": "openspec validate --all --strict",
-    "check": "npm run typecheck && npm run spec-ids:self-test && npm run spec-ids && npm run schemas:verify && npm run validate"
+    "check": "npm run typecheck && npm run spec-ids:self-test && npm run spec-ids && npm run version:self-test && npm run version:check && npm run schemas:verify && npm run validate",
+    "version:check": "tsx scripts/check-version.ts",
+    "version:self-test": "tsx scripts/check-version.ts --self-test"
   },
   "dependencies": {
     "github-slugger": "2.0.0",
