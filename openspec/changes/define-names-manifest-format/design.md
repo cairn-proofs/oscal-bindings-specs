@@ -320,7 +320,10 @@ A pull request controls every store file, including the previous release manifes
    rejects an unknown `format` and a different `oscal-release`. Amend [NAM-004]: the JSON Schemas also constrain
    pointers, `property`, `body-field`, and `schema.file`, and a consumer writes these strings only as escaped literals.
 2. [T2: A pull request changes names in `overrides.json` or `names.json`] → [NAM-006] and [NAM-008]. Task: CODEOWNERS
-   review for `manifest/`, `schemas/`, `scripts/`, and `.github/`.
+   review for `manifest/`, `schemas/`, `scripts/`, and `.github/`. Before a name is released, only review protects
+   it. Task: CI lists each added, changed, and removed name against the pull request base, with its cause, in the job
+   summary. Task: a pull request template asks for the reason of each override change, and `.gitattributes` marks
+   `names.json` as generated, so that reviewers read `overrides.json` and the name diff.
 3. [T3: A pull request edits the previous release manifest to steer [NAM-007]] → Amend [NAM-006]: the checks
    regenerate the manifest of each release, in release order. The generator validates the previous manifest before it
    uses it.

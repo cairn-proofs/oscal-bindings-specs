@@ -91,9 +91,15 @@ regeneration check needs the committed files from group 3.
       `v0.10.0` after `v0.9.0`.
 - [ ] 4.4 Add a check that fails when a file under a released `schemas/<release>/` differs from the same file at the
       baseline tag of task 4.3. Verify with a self-test that changes one byte.
-- [ ] 4.5 Add the new checks and self-tests to `npm run check`. Set `timeout-minutes` on the CI `build` job. Keep the
-      new steps out of the `draft-release` job, and add no npm dependency. Verify `npm run check` passes locally and
-      `git diff package-lock.json` is empty.
+- [ ] 4.5 Add a name diff for reviewers. It compares each `names.json` with the same file at the base ref that
+      `SPEC_IDS_BASE` names, and lists each added, changed, and removed name with its pointer and its cause: rule,
+      override name, singular local name, or merge. It writes the list to the output, and to `$GITHUB_STEP_SUMMARY`
+      when that is set. It reports and does not fail. It complements task 4.3, which compares with the latest release
+      and enforces the version rule. Verify with a self-test that changes one override and expects one changed name
+      with the cause "override name".
+- [ ] 4.6 Add the checks and self-tests of tasks 4.1 to 4.5 to `npm run check`. Set `timeout-minutes` on the CI
+      `build` job. Keep the new steps out of the `draft-release` job, and add no npm dependency. Verify
+      `npm run check` passes locally and `git diff package-lock.json` is empty.
 
 ## 5. Repository governance
 
@@ -102,6 +108,11 @@ regeneration check needs the committed files from group 3.
 - [ ] 5.2 Ask the user, as repository admin, to confirm that `main` requires a reviewed pull request, a code owner
       review, and the `build` check, and to add a ruleset that blocks update and deletion of `v*` tags. Verify the user
       confirms each setting.
+- [ ] 5.3 Add `.github/pull_request_template.md` with a manifest section that asks for: the reason for each change to
+      `overrides.json`, the Metaschema file and definition for each new singular local name, and, when a released name
+      changes, the `VERSION` increment. Add `.gitattributes` with `manifest/*/names.json linguist-generated=true`, so
+      that GitHub collapses the generated diff and reviewers read `overrides.json` and the name diff of task 4.5.
+      Verify that a new pull request shows the template, and that GitHub marks `names.json` as generated in its diff.
 
 ## 6. Sync and release `0.2.0+oscal.1.2.3`
 

@@ -84,7 +84,7 @@
         { "key": "custom:likelihood", "value": "Possible" },
         { "key": "custom:attackVector", "value": "Network" },
         { "key": "custom:attackComplexity", "value": "Low" },
-        { "key": "Comments", "value": "NAM-006 catches a hand edit of names.json. NAM-008 catches a rename or swap of a released name. Before the first release that holds names.json, only review protects the names." }
+        { "key": "Comments", "value": "NAM-006 catches a hand edit of names.json. NAM-008 catches a rename or swap of a released name. Before the first release that holds names.json, and for any name that is not released yet, only review protects the names. The name diff against the pull request base (M17) and the pull request template with names.json marked as generated (M18) focus that review on overrides.json and the changed names." }
       ]
     },
     {
@@ -457,6 +457,32 @@
       ]
     },
     {
+      "id": "043cb760-ff39-442c-b22a-596369f76668",
+      "numericId": 17,
+      "content": "On each pull request, CI lists each added, changed, and removed name of names.json against the pull request base, with its pointer and its cause (rule, override name, singular local name, or merge), and writes the list to the GitHub job summary. The list reports and does not fail.",
+      "status": "mitigationIdentified",
+      "tags": ["task", "review"],
+      "metadata": [
+        { "key": "custom:mitigationType", "value": "Detective" },
+        { "key": "custom:mitigationCost", "value": "Low" },
+        { "key": "custom:mitigationEffectiveness", "value": "Medium" },
+        { "key": "Comments", "value": "Task 4.5. Covers names that are not released yet, which the release name check (M15) does not see." }
+      ]
+    },
+    {
+      "id": "50b7ca80-b335-43bf-a0b2-ac961e2e2d3e",
+      "numericId": 18,
+      "content": "A pull request template asks for the reason for each overrides.json change, the Metaschema source of each new singular local name, and the VERSION increment when a released name changes. .gitattributes marks names.json as generated, so that reviewers read overrides.json and the name diff.",
+      "status": "mitigationIdentified",
+      "tags": ["task", "review", "governance"],
+      "metadata": [
+        { "key": "custom:mitigationType", "value": "Preventive" },
+        { "key": "custom:mitigationCost", "value": "Low" },
+        { "key": "custom:mitigationEffectiveness", "value": "Low" },
+        { "key": "Comments", "value": "Task 5.3. A template prompts and does not enforce. It depends on M7 (code owner review) and M17 (name diff)." }
+      ]
+    },
+    {
       "id": "f0beff66-67af-4041-89b8-db2f7a66c258",
       "numericId": 16,
       "content": "CI baseline stays: contents: read, persist-credentials: false, actions pinned by commit, npm ci with ignore-scripts. The generator and checks run only in the build job through npm run check, and add no new dependency.",
@@ -486,6 +512,8 @@
     { "mitigationId": "0da7bcee-c673-43fb-adb5-2d6bc42dd3f5", "linkedId": "65f3c227-5fa0-4681-b22a-b04e749e912e" },
     { "mitigationId": "6b6c9ecb-3676-4fd1-a105-c67b1a2e88f6", "linkedId": "3242c4f1-3c6e-4522-a7d6-8bb93e0982ca" },
     { "mitigationId": "6b6c9ecb-3676-4fd1-a105-c67b1a2e88f6", "linkedId": "467cb223-39ed-48d2-955c-df14cdadfc7e" },
+    { "mitigationId": "043cb760-ff39-442c-b22a-596369f76668", "linkedId": "196e3a5c-4d92-42e6-b874-b4883fcc7947" },
+    { "mitigationId": "50b7ca80-b335-43bf-a0b2-ac961e2e2d3e", "linkedId": "196e3a5c-4d92-42e6-b874-b4883fcc7947" },
     { "mitigationId": "72bbe791-2d4a-4ddf-bc4f-b239182cc28b", "linkedId": "3242c4f1-3c6e-4522-a7d6-8bb93e0982ca" },
     { "mitigationId": "72bbe791-2d4a-4ddf-bc4f-b239182cc28b", "linkedId": "65f3c227-5fa0-4681-b22a-b04e749e912e" },
     { "mitigationId": "72bbe791-2d4a-4ddf-bc4f-b239182cc28b", "linkedId": "13d3aa03-64d6-4afa-9980-5aa4a8a2fe37" },
