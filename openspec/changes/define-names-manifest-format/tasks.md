@@ -116,11 +116,11 @@ regeneration check needs the committed files from group 3.
 
 ## 6. Sync and release `0.2.0+oscal.1.2.3`
 
-- [ ] 6.1 Sync the deltas of this change into the main specs without archiving the change. In the same commit, update
+- [x] 6.1 Sync the deltas of this change into the main specs without archiving the change. In the same commit, update
       `openspec/spec-ids.yaml`: add the prefix `NAM` for `naming-manifest` with `next: 9`, set `MDL` `next` to 14, and
       add a retired entry for `MDL-004` with a reason and `replaced_by: MDL-013`. Verify `npm run spec-ids` passes and
       `openspec list --specs --store oscal-bindings-specs` shows nine capabilities.
-- [ ] 6.2 Update the store `README.md` for the manifest files and the generator commands. Set `VERSION` to
+- [x] 6.2 Update the store `README.md` for the manifest files and the generator commands. Set `VERSION` to
       `0.2.0+oscal.1.2.3`. Verify `npm run check` passes.
 - [ ] 6.3 With the user's approval, push the branch, open the pull request, and after the merge tag `v0.2.0+oscal.1.2.3`
       on `main`. Verify CI builds the archive with `names.json` and creates the draft release. The user publishes it.
