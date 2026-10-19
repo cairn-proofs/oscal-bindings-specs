@@ -348,7 +348,9 @@ A pull request controls every store file, including the previous release manifes
    review for `manifest/`, `schemas/`, `scripts/`, and `.github/`. Before a name is released, only review protects
    it. Task: CI lists each added, changed, and removed name against the pull request base, with its cause, in the job
    summary. Task: a pull request template asks for the reason of each override change, and `.gitattributes` marks
-   `names.json` as generated, so that reviewers read `overrides.json` and the name diff.
+   `names.json` as generated, so that reviewers read `overrides.json` and the name diff. Known gap: the store has one
+   maintainer, so `main` cannot require an approval or a code owner review yet (task 5.2). Until a second maintainer
+   joins, the one maintainer is the only reviewer.
 3. [T3: A pull request edits the previous release manifest to steer [NAM-007]] → Amend [NAM-006]: the checks
    regenerate the manifest of each release, in release order. The generator validates the previous manifest before it
    uses it.

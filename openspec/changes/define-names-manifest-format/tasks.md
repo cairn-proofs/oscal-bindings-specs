@@ -108,6 +108,14 @@ regeneration check needs the committed files from group 3.
 - [ ] 5.2 Ask the user, as repository admin, to confirm that `main` requires a reviewed pull request, a code owner
       review, and the `build` check, and to add a ruleset that blocks update and deletion of `v*` tags. Verify the user
       confirms each setting.
+      Status (checked with `gh api`):
+      1. Done: `main` requires the `build` check (strict, admins included) and a pull request.
+      2. Done: the active tag ruleset "Protect release tags" (id 25416793) blocks update and deletion of
+         `refs/tags/v*`, with no bypass actors.
+      3. Open: one approval and code owner review. The repository has one maintainer, and GitHub does not let an author
+         approve their own pull request, so these settings would block every merge. When a second maintainer joins:
+         create a team such as `@cairn-proofs/maintainers`, point CODEOWNERS at it, add both maintainers, and require
+         one approval and code owner review on `main`.
 - [ ] 5.3 Add `.github/pull_request_template.md` with a manifest section that asks for: the reason for each change to
       `overrides.json`, the Metaschema file and definition for each new singular local name, and, when a released name
       changes, the `VERSION` increment. Add `.gitattributes` with `manifest/*/names.json linguist-generated=true`, so

@@ -14,7 +14,7 @@
     {
       "id": "285b956b-3b89-4f3f-835e-d2a74c62e197",
       "numericId": 1,
-      "content": "Maintainers with write access are trusted. The main branch requires a reviewed pull request and the CI build check before merge. Not verified for this store repository in this analysis.",
+      "content": "Maintainers with write access are trusted. The main branch requires a pull request and the CI build check before merge (verified with gh api). It does not yet require an approval or a code owner review: the store has one maintainer, and an author cannot approve their own pull request. Until a second maintainer joins, review of names depends on that maintainer, with the name diff (M17) and the template (M18) as aids. A tag ruleset blocks update and deletion of v* tags (verified).",
       "tags": ["governance"]
     },
     {
