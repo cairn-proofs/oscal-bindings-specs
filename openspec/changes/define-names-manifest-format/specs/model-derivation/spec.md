@@ -86,7 +86,7 @@ name has precedence, as the naming-manifest capability defines.
 
 #### Scenario: MDL-005.02 Override map is the single source of truth
 
-- **WHEN** two ports generate their types from the same naming manifest
+- **WHEN** two bindings generate their types from the same naming manifest
 - **THEN** both use the module-prefixed names that the manifest records, so the qualified names match across every
   language binding
 
@@ -181,18 +181,18 @@ binding consumes. Those outputs are:
 
 The naming-manifest capability defines the format of the manifest. Casing conventions remain language-specific. For
 example, one language uses PascalCase types and another uses snake_case fields. The identity of each type and the
-collision resolutions MUST come from the shared manifest, not from each port re-deriving them. Because the manifest
-records the deduplicated canonical set, a port consumes one entry per canonical type and does not re-run a structural
+collision resolutions MUST come from the shared manifest, not from each binding re-deriving them. Because the manifest
+records the deduplicated canonical set, a binding consumes one entry per canonical type and does not re-run a structural
 comparison across places.
 
-#### Scenario: MDL-009.01 Two ports agree on a collision name
+#### Scenario: MDL-009.01 Two bindings agree on a collision name
 
 - **WHEN** a Go binding and a Rust binding both generate from the same schema and manifest
 - **THEN** both resolve the colliding `control-implementation` definitions to the same two canonical identities
 
-#### Scenario: MDL-009.02 A port does not re-derive names
+#### Scenario: MDL-009.02 A binding does not re-derive names
 
-- **WHEN** a port generates its types from the schema and the naming manifest
+- **WHEN** a binding generates its types from the schema and the naming manifest
 - **THEN** it takes every canonical type name from the manifest, and it does not apply the naming rules itself
 
 ## ADDED Requirements
@@ -351,4 +351,4 @@ and [MDL-007] handle.
 complete schema. Deduplication from the per-document schemas and deduplication by equal structure alone are not part
 of the contract.
 
-**Migration**: [MDL-013] holds the deduplication rule. A port reads the merged places from the naming manifest.
+**Migration**: [MDL-013] holds the deduplication rule. A binding reads the merged places from the naming manifest.

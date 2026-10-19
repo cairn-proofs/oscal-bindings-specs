@@ -185,7 +185,7 @@ type and the collision resolutions MUST come from the shared manifest, not from 
 manifest records the deduplicated canonical set, a port consumes one entry per canonical type and does not re-run a
 structural comparison across namespaces.
 
-#### Scenario: MDL-009.01 Two ports agree on a collision name
+#### Scenario: MDL-009.01 Two bindings agree on a collision name
 
 - **WHEN** a Go binding and a Rust binding both generate from the same schema and manifest
 - **THEN** both resolve the colliding `control-implementation` definitions to the same two canonical identities

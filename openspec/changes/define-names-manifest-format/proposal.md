@@ -11,9 +11,9 @@ format, the Python post-processor's naming maps written out as data, does not ke
    The ordinals depend on the generator's walk order.
 3. The generator merges structurally equal inline schemas and keeps no record of it.
 
-A manifest that records these names makes generator ordinals part of a cross-language contract. Each port then must
+A manifest that records these names makes generator ordinals part of a cross-language contract. Each binding then must
 copy names that have no meaning in OSCAL, and a later fix is a breaking change. The fix costs least now, before the
-second port (cairn-proofs/oscal-bindings-python#17) consumes the manifest.
+second binding (cairn-proofs/oscal-bindings-python#17) consumes the manifest.
 
 ## What Changes
 
@@ -27,7 +27,7 @@ second port (cairn-proofs/oscal-bindings-python#17) consumes the manifest.
    5. The "single item or list" form (`mappings`) is a kind of its own.
 2. Identify every type by JSON pointers into the complete OSCAL schema. One entry can hold several pointers when the
    schema copies one type into several places.
-3. Define the format of `names.json`: the complete, generated table of canonical types. Ports read only this file.
+3. Define the format of `names.json`: the complete, generated table of canonical types. Bindings read only this file.
 4. Define the format of `overrides.json`: the only naming data that a person edits. It holds the singular local names
    of list items, explicit merges, and names that replace a rule-derived name.
 5. Add a manifest generator to the store's TypeScript tooling. Its inputs are the schema, `overrides.json`, and the
@@ -52,7 +52,7 @@ second port (cairn-proofs/oscal-bindings-python#17) consumes the manifest.
 ### Modified Capabilities
 
 - `model-derivation`: canonical names for inline types, enums, and union branches. Deduplication by union-branch copy
-  and by explicit merge only. Collision handling for definitions. Extra derivation guards. Ports take type identity
+  and by explicit merge only. Collision handling for definitions. Extra derivation guards. Bindings take type identity
   from the naming manifest.
 
 ## Impact
@@ -66,7 +66,7 @@ second port (cairn-proofs/oscal-bindings-python#17) consumes the manifest.
    1. cairn-proofs/oscal-bindings-python#16 changes scope. Python consumes `names.json` instead of emitting it, and
       `models.py` changes. The issue needs new acceptance criteria.
    2. The rename is a breaking change for users of the 0.x Python package.
-3. Second port: cairn-proofs/oscal-bindings-python#17 runs the code-generation spike that settles the format.
+3. Second binding: cairn-proofs/oscal-bindings-python#17 runs the code-generation spike that settles the format.
 4. Not in scope: the closed-enum parse rule. Python accepts an out-of-set value for a closed enum, for example
    `how-many: "seven"`, and no corpus case tests it. A separate change adds the rule to `document-parsing` and adds
    corpus cases.

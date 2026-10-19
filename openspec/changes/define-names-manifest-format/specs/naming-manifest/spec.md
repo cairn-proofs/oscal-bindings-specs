@@ -2,7 +2,8 @@
 
 Defines the naming manifest: the machine-readable record of every canonical OSCAL type, its kind, and the places in the
 schema that define it. Also defines the hand-edited override data, how the manifest is generated and checked, and how
-published names stay stable across releases.
+published names stay stable across releases. A binding is an implementation of the OSCAL bindings contract in one
+programming language. A consumer is a program that reads the manifest, for example the code generator of a binding.
 
 ## ADDED Requirements
 

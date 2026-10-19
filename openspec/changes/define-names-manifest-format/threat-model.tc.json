@@ -2,13 +2,13 @@
   "schema": 1,
   "applicationInfo": {
     "name": "oscal-bindings-specs: define-names-manifest-format",
-    "description": "The OpenSpec change `define-names-manifest-format` adds a TypeScript generator to the spec store. The generator reads the vendored OSCAL 1.2.3 complete JSON Schema, the hand-edited `manifest/1.2.3/overrides.json`, and the manifest of the previous OSCAL release when the store holds one. It writes `manifest/1.2.3/names.json`, the complete table of canonical type names keyed by JSON pointers.\n\nCI regenerates the manifest and fails on a diff ([NAM-006]). CI also compares the names with the manifest at the latest released `v*` tag, read from git history ([NAM-008]). The spec artifact tarball, pinned by sha256, carries `names.json` to the language ports. Each port uses the names as identifiers in generated code (Python, TypeScript, Go, Rust). [NAM-003] requires each name to match `^[A-Z][A-Za-z0-9]*$` and requires a consumer to reject an invalid manifest. Residual ratings in this model assume that each listed mitigation lands, as a requirement amendment or as a task."
+    "description": "The OpenSpec change `define-names-manifest-format` adds a TypeScript generator to the spec store. The generator reads the vendored OSCAL 1.2.3 complete JSON Schema, the hand-edited `manifest/1.2.3/overrides.json`, and the manifest of the previous OSCAL release when the store holds one. It writes `manifest/1.2.3/names.json`, the complete table of canonical type names keyed by JSON pointers.\n\nCI regenerates the manifest and fails on a diff ([NAM-006]). CI also compares the names with the manifest at the latest released `v*` tag, read from git history ([NAM-008]). The spec artifact tarball, pinned by sha256, carries `names.json` to the language bindings. Each binding uses the names as identifiers in generated code (Python, TypeScript, Go, Rust). [NAM-003] requires each name to match `^[A-Z][A-Za-z0-9]*$` and requires a consumer to reject an invalid manifest. Residual ratings in this model assume that each listed mitigation lands, as a requirement amendment or as a task."
   },
   "architecture": {
-    "description": "### Components touched\n\n1. `manifest/1.2.3/overrides.json`: hand-edited naming input ([NAM-005]). Holds singular local names, replacement names, and explicit merges, keyed by JSON pointer.\n2. `manifest/1.2.3/names.json`: generated, published manifest ([NAM-002]).\n3. `manifest/names.schema.json` and `manifest/overrides.schema.json`: JSON Schemas that the store checks apply with `ajv` ([NAM-004]).\n4. The names generator and check script under `scripts/` (TypeScript on Node 24, run with `tsx`). Added to `npm run check`.\n5. The release name check: reads `names.json` at the latest `v*` tag on `main` from git history ([NAM-008], design D5).\n6. Existing release path: `.github/workflows/build.yml` (`build` job with `contents: read`, `draft-release` job with `contents: write` on tag pushes only), `scripts/build-archive.ts` (`git archive` of a ref plus `SHA256SUMS`). A person publishes the draft release.\n7. Consumers: language ports that read `names.json` from the pinned tarball and emit types in generated code."
+    "description": "### Components touched\n\n1. `manifest/1.2.3/overrides.json`: hand-edited naming input ([NAM-005]). Holds singular local names, replacement names, and explicit merges, keyed by JSON pointer.\n2. `manifest/1.2.3/names.json`: generated, published manifest ([NAM-002]).\n3. `manifest/names.schema.json` and `manifest/overrides.schema.json`: JSON Schemas that the store checks apply with `ajv` ([NAM-004]).\n4. The names generator and check script under `scripts/` (TypeScript on Node 24, run with `tsx`). Added to `npm run check`.\n5. The release name check: reads `names.json` at the latest `v*` tag on `main` from git history ([NAM-008], design D5).\n6. Existing release path: `.github/workflows/build.yml` (`build` job with `contents: read`, `draft-release` job with `contents: write` on tag pushes only), `scripts/build-archive.ts` (`git archive` of a ref plus `SHA256SUMS`). A person publishes the draft release.\n7. Consumers: language bindings that read `names.json` from the pinned tarball and emit types in generated code."
   },
   "dataflow": {
-    "description": "### New and changed flows\n\n1. A pull request edits `overrides.json`, `names.json`, the previous release manifest, the vendored schema with its `SHA256SUMS`, the scripts, or `VERSION`. Every store file is under the control of the pull request author until review and the store checks pass.\n2. The CI `build` job verifies the schema hashes, validates both files against their JSON Schemas, runs the generator, and compares its output with the committed `names.json`.\n3. The release name check reads `names.json` from the latest `v*` tag on `main`. Maintainers with write access can create, move, or delete tags.\n4. On a tag push, CI builds the tarball and `SHA256SUMS` and creates a draft release. A person publishes it.\n5. A port downloads the tarball, checks its sha256, validates the manifest, and generates code from the names.\n\n### Trust-boundary DFD\n\n```mermaid\nflowchart LR\n    subgraph untrusted [\"Untrusted input: pull request\"]\n        PR[\"overrides.json, names.json, scripts, VERSION\"]\n        PREV[\"previous release names.json\"]\n        SCH[\"vendored schema + SHA256SUMS\"]\n    end\n    subgraph upstream [\"Upstream: NIST OSCAL 1.2.3\"]\n        NIST[\"oscal_complete_schema.json\"]\n    end\n    subgraph ci [\"Trusted processing: CI build job, contents read\"]\n        V[\"schemas:verify + JSON Schema checks\"]\n        GEN[\"names generator\"]\n        REGEN[\"regeneration check\"]\n        REL[\"release name check\"]\n    end\n    subgraph history [\"Git history: tags writable by maintainers\"]\n        TAG[\"names.json at latest v* tag on main\"]\n    end\n    subgraph release [\"Build and release: tag push, contents write\"]\n        ARC[\"build-archive + SHA256SUMS\"]\n        DR[\"draft release, person publishes\"]\n    end\n    subgraph ports [\"Consumers: language ports\"]\n        PORT[\"port codegen: hash + manifest validation\"]\n        CODE[\"generated code\"]\n    end\n    NIST -->|\"vendored copy\"| SCH\n    PR --> V\n    SCH --> V\n    V --> GEN\n    PREV --> GEN\n    GEN --> REGEN\n    REGEN --> REL\n    TAG --> REL\n    REL -->|\"review, merge, tag\"| ARC\n    ARC --> DR\n    DR -->|\"tarball pinned by sha256\"| PORT\n    PORT --> CODE\n    style untrusted fill:#fdd,stroke:#c00\n    style history fill:#ffd,stroke:#aa0\n    style ports fill:#eef,stroke:#00c\n```\n\nCrossings and threats: PR to checks (T1, T2, T5, T6, T8), previous manifest to generator (T3), upstream to vendored schema (T7), tags to release check (T4), CI privilege (T9), release check output to reviewers (T10), tarball to port codegen (T1, T7)."
+    "description": "### New and changed flows\n\n1. A pull request edits `overrides.json`, `names.json`, the previous release manifest, the vendored schema with its `SHA256SUMS`, the scripts, or `VERSION`. Every store file is under the control of the pull request author until review and the store checks pass.\n2. The CI `build` job verifies the schema hashes, validates both files against their JSON Schemas, runs the generator, and compares its output with the committed `names.json`.\n3. The release name check reads `names.json` from the latest `v*` tag on `main`. Maintainers with write access can create, move, or delete tags.\n4. On a tag push, CI builds the tarball and `SHA256SUMS` and creates a draft release. A person publishes it.\n5. A binding downloads the tarball, checks its sha256, validates the manifest, and generates code from the names.\n\n### Trust-boundary DFD\n\n```mermaid\nflowchart LR\n    subgraph untrusted [\"Untrusted input: pull request\"]\n        PR[\"overrides.json, names.json, scripts, VERSION\"]\n        PREV[\"previous release names.json\"]\n        SCH[\"vendored schema + SHA256SUMS\"]\n    end\n    subgraph upstream [\"Upstream: NIST OSCAL 1.2.3\"]\n        NIST[\"oscal_complete_schema.json\"]\n    end\n    subgraph ci [\"Trusted processing: CI build job, contents read\"]\n        V[\"schemas:verify + JSON Schema checks\"]\n        GEN[\"names generator\"]\n        REGEN[\"regeneration check\"]\n        REL[\"release name check\"]\n    end\n    subgraph history [\"Git history: tags writable by maintainers\"]\n        TAG[\"names.json at latest v* tag on main\"]\n    end\n    subgraph release [\"Build and release: tag push, contents write\"]\n        ARC[\"build-archive + SHA256SUMS\"]\n        DR[\"draft release, person publishes\"]\n    end\n    subgraph bindings [\"Consumers: language bindings\"]\n        PORT[\"binding codegen: hash + manifest validation\"]\n        CODE[\"generated code\"]\n    end\n    NIST -->|\"vendored copy\"| SCH\n    PR --> V\n    SCH --> V\n    V --> GEN\n    PREV --> GEN\n    GEN --> REGEN\n    REGEN --> REL\n    TAG --> REL\n    REL -->|\"review, merge, tag\"| ARC\n    ARC --> DR\n    DR -->|\"tarball pinned by sha256\"| PORT\n    PORT --> CODE\n    style untrusted fill:#fdd,stroke:#c00\n    style history fill:#ffd,stroke:#aa0\n    style bindings fill:#eef,stroke:#00c\n```\n\nCrossings and threats: PR to checks (T1, T2, T5, T6, T8), previous manifest to generator (T3), upstream to vendored schema (T7), tags to release check (T4), CI privilege (T9), release check output to reviewers (T10), tarball to binding codegen (T1, T7)."
   },
   "assumptions": [
     {
@@ -26,7 +26,7 @@
     {
       "id": "bcde4494-2178-49bc-94c3-fbe8256630b8",
       "numericId": 3,
-      "content": "Ports get the spec artifact only from a published GitHub release of the store, and pin the tarball by its sha256.",
+      "content": "Bindings get the spec artifact only from a published GitHub release of the store, and pin the tarball by its sha256.",
       "tags": ["consumers"]
     },
     {
@@ -46,13 +46,13 @@
     {
       "id": "3242c4f1-3c6e-4522-a7d6-8bb93e0982ca",
       "numericId": 1,
-      "threatSource": "contributor or attacker who controls manifest content that a port consumes",
-      "prerequisites": "who gets a manifest string past the store checks or past a port's own validation",
+      "threatSource": "contributor or attacker who controls manifest content that a binding consumes",
+      "prerequisites": "who gets a manifest string past the store checks or past a binding's own validation",
       "threatAction": "put a name, branch type, item type, property, body field, pointer, or schema file name with code syntax into names.json",
-      "threatImpact": "code injection into the generated bindings of a port, for example a newline that Python re.match or Ruby $ accepts",
+      "threatImpact": "code injection into the generated code of a binding, for example a newline that Python re.match or Ruby $ accepts",
       "impactedGoal": ["integrity", "authorization"],
-      "impactedAssets": ["names.json", "port generated code", "port release artifacts"],
-      "statement": "A contributor or attacker who controls manifest content that a port consumes who gets a manifest string past the store checks or past a port's own validation can put a name, branch type, item type, property, body field, pointer, or schema file name with code syntax into names.json, which leads to code injection into the generated bindings of a port, for example a newline that Python re.match or Ruby $ accepts, resulting in reduced integrity and authorization of names.json, port generated code, and port release artifacts",
+      "impactedAssets": ["names.json", "binding generated code", "binding release artifacts"],
+      "statement": "A contributor or attacker who controls manifest content that a binding consumes who gets a manifest string past the store checks or past a binding's own validation can put a name, branch type, item type, property, body field, pointer, or schema file name with code syntax into names.json, which leads to code injection into the generated code of a binding, for example a newline that Python re.match or Ruby $ accepts, resulting in reduced integrity and authorization of names.json, binding generated code, and binding release artifacts",
       "status": "threatIdentified",
       "tags": ["names.json", "consumers", "codegen"],
       "metadata": [
@@ -62,7 +62,7 @@
         { "key": "custom:likelihood", "value": "Unlikely" },
         { "key": "custom:attackVector", "value": "Network" },
         { "key": "custom:attackComplexity", "value": "High" },
-        { "key": "Comments", "value": "Inherent impact is Critical (code in shipped bindings). NAM-003 constrains only canonical names. It does not say the pattern is a full-string match, and it does not cover variants[].type, item, document-union members, property, body-field, pointers, or schema.file. The store uses ajv (JS RegExp, $ is end of input) so the official artifact is safe today. The gap is in consumer validation, which ports implement. Residual stays Medium because port behavior is outside the store." }
+        { "key": "Comments", "value": "Inherent impact is Critical (code in shipped bindings). NAM-003 constrains only canonical names. It does not say the pattern is a full-string match, and it does not cover variants[].type, item, document-union members, property, body-field, pointers, or schema.file. The store uses ajv (JS RegExp, $ is end of input) so the official artifact is safe today. The gap is in consumer validation, which bindings implement. Residual stays Medium because binding behavior is outside the store." }
       ]
     },
     {
@@ -71,10 +71,10 @@
       "threatSource": "pull request author",
       "prerequisites": "with a change to overrides.json or names.json",
       "threatAction": "rename, swap, or add misleading canonical names",
-      "threatImpact": "ports that generate types with wrong or broken names",
+      "threatImpact": "bindings that generate types with wrong or broken names",
       "impactedGoal": ["integrity"],
       "impactedAssets": ["overrides.json", "names.json"],
-      "statement": "A pull request author with a change to overrides.json or names.json can rename, swap, or add misleading canonical names, which leads to ports that generate types with wrong or broken names, resulting in reduced integrity of overrides.json and names.json",
+      "statement": "A pull request author with a change to overrides.json or names.json can rename, swap, or add misleading canonical names, which leads to bindings that generate types with wrong or broken names, resulting in reduced integrity of overrides.json and names.json",
       "status": "threatIdentified",
       "tags": ["overrides.json", "names.json"],
       "metadata": [
@@ -150,7 +150,7 @@
         { "key": "custom:likelihood", "value": "Unlikely" },
         { "key": "custom:attackVector", "value": "Network" },
         { "key": "custom:attackComplexity", "value": "Low" },
-        { "key": "Comments", "value": "Example: obj['constructor'] on a parsed JSON object returns Object, so #/definitions/constructor 'resolves'. A port in another language then fails to resolve it. Percent-encoded fragments (RFC 6901 URI fragment form) can also decode differently in the store and in a port." }
+        { "key": "Comments", "value": "Example: obj['constructor'] on a parsed JSON object returns Object, so #/definitions/constructor 'resolves'. A binding in another language then fails to resolve it. Percent-encoded fragments (RFC 6901 URI fragment form) can also decode differently in the store and in a binding." }
       ]
     },
     {
@@ -178,13 +178,13 @@
     {
       "id": "65f3c227-5fa0-4681-b22a-b04e749e912e",
       "numericId": 7,
-      "threatSource": "pull request author or a port defect",
-      "prerequisites": "with a change to the vendored schema and its SHA256SUMS, or a port that hashes a different file than it parses",
+      "threatSource": "pull request author or a binding defect",
+      "prerequisites": "with a change to the vendored schema and its SHA256SUMS, or a binding that hashes a different file than it parses",
       "threatAction": "pair names.json with a schema other than the one its pointers describe",
       "threatImpact": "names bound to the wrong places, or names derived from schema keys that NIST did not publish",
       "impactedGoal": ["integrity", "authenticity"],
-      "impactedAssets": ["oscal_complete_schema.json", "names.json schema.sha256", "port generated code"],
-      "statement": "A pull request author or a port defect with a change to the vendored schema and its SHA256SUMS, or a port that hashes a different file than it parses can pair names.json with a schema other than the one its pointers describe, which leads to names bound to the wrong places, or names derived from schema keys that NIST did not publish, resulting in reduced integrity and authenticity of oscal_complete_schema.json, names.json schema.sha256, and port generated code",
+      "impactedAssets": ["oscal_complete_schema.json", "names.json schema.sha256", "binding generated code"],
+      "statement": "A pull request author or a binding defect with a change to the vendored schema and its SHA256SUMS, or a binding that hashes a different file than it parses can pair names.json with a schema other than the one its pointers describe, which leads to names bound to the wrong places, or names derived from schema keys that NIST did not publish, resulting in reduced integrity and authenticity of oscal_complete_schema.json, names.json schema.sha256, and binding generated code",
       "status": "threatIdentified",
       "tags": ["schema", "NAM-002"],
       "metadata": [
@@ -246,11 +246,11 @@
       "numericId": 10,
       "threatSource": "pull request author",
       "prerequisites": "with a breaking VERSION increment in the same pull request",
-      "threatAction": "rename released types without a record that reviewers and ports see",
+      "threatAction": "rename released types without a record that reviewers and bindings see",
       "threatImpact": "a rename that no reviewer notices and no release note names",
       "impactedGoal": ["non-repudiation"],
       "impactedAssets": ["release name check", "VERSION", "release notes"],
-      "statement": "A pull request author with a breaking VERSION increment in the same pull request can rename released types without a record that reviewers and ports see, which leads to a rename that no reviewer notices and no release note names, resulting in reduced non-repudiation of release name check, VERSION, and release notes",
+      "statement": "A pull request author with a breaking VERSION increment in the same pull request can rename released types without a record that reviewers and bindings see, which leads to a rename that no reviewer notices and no release note names, resulting in reduced non-repudiation of release name check, VERSION, and release notes",
       "status": "threatIdentified",
       "tags": ["release-check", "NAM-008"],
       "metadata": [
@@ -306,7 +306,7 @@
     {
       "id": "72bbe791-2d4a-4ddf-bc4f-b239182cc28b",
       "numericId": 4,
-      "content": "Baseline release path: CI builds the tarball from a tag on main with git archive, records SHA256SUMS, and attaches it to a draft that a person publishes. Ports pin the tarball by sha256.",
+      "content": "Baseline release path: CI builds the tarball from a tag on main with git archive, records SHA256SUMS, and attaches it to a draft that a person publishes. Bindings pin the tarball by sha256.",
       "status": "mitigationIdentified",
       "tags": ["existing", "release"],
       "metadata": [
@@ -420,7 +420,7 @@
     {
       "id": "639bc3a0-76d0-487f-869f-60f56a2055f9",
       "numericId": 13,
-      "content": "The generator computes schema.sha256 from the exact bytes it parses. A store check fails when a schemas/<release>/ file differs from the same file at the latest release tag. Port guidance: hash the bytes that the port parses.",
+      "content": "The generator computes schema.sha256 from the exact bytes it parses. A store check fails when a schemas/<release>/ file differs from the same file at the latest release tag. Binding guidance: hash the bytes that the binding parses.",
       "status": "mitigationIdentified",
       "tags": ["task", "schema"],
       "metadata": [

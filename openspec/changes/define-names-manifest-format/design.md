@@ -29,7 +29,7 @@ See [proposal.md, Why](proposal.md#why). These facts about the 1.2.3 inputs shap
 
 **Goals:**
 
-1. A manifest format that a port can consume without the Python code and without the naming rules.
+1. A manifest format that a binding can consume without the Python code and without the naming rules.
 2. Names that a reader can predict from OSCAL, and that stay the same when OSCAL adds types.
 3. A small hand-edited input, and a check that the committed manifest is the generator output.
 
@@ -37,7 +37,7 @@ See [proposal.md, Why](proposal.md#why). These facts about the 1.2.3 inputs shap
 
 1. Field names, enum values, and enum member names. They come from the schema and each language's casing rules.
 2. Scalar types. A binding exposes them as constrained values ([MDL-003]).
-3. How a port represents a union. The manifest names every branch. A port can use a tagged union, or one type with
+3. How a binding represents a union. The manifest names every branch. A binding can use a tagged union, or one type with
    fields that exclude each other. The corpus checks behavior.
 4. The parse rule for closed enums. A separate change adds it to `document-parsing` with corpus cases.
 5. Reading Metaschema in the generator.
@@ -54,7 +54,7 @@ Each entry holds the pointers of the places that define the type ([NAM-001]).
   1. *Key by `$id`.* Covers definitions only. 113 Python types have no `$id`. Rejected.
   2. *Key by generated class name.* Ties the contract to one generator. Rejected (see proposal).
   3. *Accept per-document schemas.* Each per-document schema has its own pointers, so one type would have eight
-     identities. Rejected. A port that reads per-document schemas maps them to the complete schema itself.
+     identities. Rejected. A binding that reads per-document schemas maps them to the complete schema itself.
 
 ### D2 — Names follow OSCAL name scopes
 
@@ -86,7 +86,7 @@ type in a union branch uses the name of the union, because a branch is a variant
   the overridden names then differ in form from their siblings: `FindingTargetStatusState` next to `StatusReason`.
   Rejected, because consistent names are worth more than short names.
 - **Why always qualify inline types:** a rule that qualifies only on a clash renames an existing type when OSCAL adds
-  a type with the same local name. That rename is a breaking change for each port. Longer names cost less.
+  a type with the same local name. That rename is a breaking change for each binding. Longer names cost less.
 - **Why definitions keep the bare local name:** a module prefix on every definition gives `CatalogCatalog` and
   `MetadataMetadata`. Rejected. Pinning (D5) protects definition names from later clashes instead.
 - **First manifest and the clash rule:** 1.2.3 has no previous manifest. The five definition clashes (`group`,
@@ -112,15 +112,15 @@ type in a union branch uses the name of the union, because a branch is a variant
  +----------------------------+       +--------------------------------+
  | local-names: ptr -> local  |  gen  | one entry per canonical type   |
  | names:       ptr -> Name   | ----> | name, kind, sites[], kind data |
- | merges:      [ptr, ptr...] |       | ports read only this file      |
+ | merges:      [ptr, ptr...] |       | bindings read only this file      |
  +----------------------------+       +--------------------------------+
         ^                                    |
         | schema + previous release names    | CI: regenerate == committed
 ```
 
-- **Why:** a manifest of exceptions only would make each port run the naming rules. Prose rules drift between ports,
-  which is the reason the manifest exists (phase 1, D2). A complete file also lets a port skip the structural
-  comparison for merges ([MDL-009]).
+- **Why:** a manifest of exceptions only would make each binding run the naming rules. Prose rules drift between
+  bindings, which is the reason the manifest exists (phase 1, D2). A complete file also lets a binding skip the
+  structural comparison for merges ([MDL-009]).
 - **Why a separate hand-edited file:** people review a short file of decisions, not a generated table of about 300
   entries. The regeneration check ([NAM-006]) keeps the two files in step.
 
@@ -210,7 +210,7 @@ holds the formal name ("Revision History Entry"), which is not an identifier. 41
 - **Alternatives considered:**
   1. *Vendor Metaschema and read the names from it.* Rejected for the reasons above. Revisit if a release adds many
      lists.
-  2. *Singularize the plural with a heuristic.* Ports would disagree on irregular words. Rejected.
+  2. *Singularize the plural with a heuristic.* Bindings would disagree on irregular words. Rejected.
 
 ### D8 — Merges: automatic only for branch copies
 
@@ -237,7 +237,7 @@ are explicit entries in `overrides.json`.
  #16 Python adopts the names (one breaking rename)
 ```
 
-- **Why the spike and not the full port:** the spike tests the format: that a second language can generate types from
+- **Why the spike and not the full binding:** the spike tests the format: that a second language can generate types from
   it. The full corpus tests parsing and serialization, which do not depend on the format.
 - **Why Python adopts last:** the Python names reach real users. A format fix after Python adopts would rename Python
   types twice. The store change costs little to revise at 0.x.
@@ -264,8 +264,8 @@ are explicit entries in `overrides.json`.
 
 See [threat-model.tc.json](./threat-model.tc.json). Open it in Threat Composer for the full model.
 
-This change moves strings from store files into the generated code of each port. The store checks are the first gate.
-The validation in each port is the second gate, and the specs must make the two gates equal.
+This change moves strings from store files into the generated code of each binding. The store checks are the first gate.
+The validation in each binding is the second gate, and the specs must make the two gates equal.
 
 ```mermaid
 flowchart LR
@@ -290,8 +290,8 @@ flowchart LR
         ARC["build-archive + SHA256SUMS"]
         DR["draft release, person publishes"]
     end
-    subgraph ports ["Consumers: language ports"]
-        PORT["port codegen: hash + manifest validation"]
+    subgraph bindings ["Consumers: language bindings"]
+        PORT["binding codegen: hash + manifest validation"]
         CODE["generated code"]
     end
     NIST -->|"vendored copy"| SCH
@@ -308,17 +308,17 @@ flowchart LR
     PORT --> CODE
     style untrusted fill:#fdd,stroke:#c00
     style history fill:#ffd,stroke:#aa0
-    style ports fill:#eef,stroke:#00c
+    style bindings fill:#eef,stroke:#00c
 ```
 
 A pull request controls every store file, including the previous release manifest (red). Maintainers can move tags
-(yellow). The CI checks gate the merge, and each port validates the manifest again before it generates code.
+(yellow). The CI checks gate the merge, and each binding validates the manifest again before it generates code.
 
-1. [T1: A manifest string puts code into a port] → [NAM-003] rejects names outside the pattern. Amend [NAM-003]: the
-   pattern matches the full string, because in Python and Ruby `$` also matches before a newline. Each name reference
-   (`variants[].type`, `item`, document-union members) matches the pattern and names an entry. A consumer rejects an
-   unknown `format` and a different `oscal-release`. Amend [NAM-004]: the JSON Schemas also constrain pointers,
-   `property`, `body-field`, and `schema.file`, and a consumer writes these strings only as escaped literals.
+1. [T1: A manifest string puts code into a binding] → [NAM-003] rejects names outside the pattern. Amend [NAM-003]:
+   the pattern matches the full string, because in Python and Ruby `$` also matches before a newline. Each name
+   reference (`variants[].type`, `item`, document-union members) matches the pattern and names an entry. A consumer
+   rejects an unknown `format` and a different `oscal-release`. Amend [NAM-004]: the JSON Schemas also constrain
+   pointers, `property`, `body-field`, and `schema.file`, and a consumer writes these strings only as escaped literals.
 2. [T2: A pull request changes names in `overrides.json` or `names.json`] → [NAM-006] and [NAM-008]. Task: CODEOWNERS
    review for `manifest/`, `schemas/`, `scripts/`, and `.github/`.
 3. [T3: A pull request edits the previous release manifest to steer [NAM-007]] → Amend [NAM-006]: the checks
@@ -331,7 +331,7 @@ A pull request controls every store file, including the previous release manifes
    own properties only, and use `Map` or null-prototype tables. Self-tests cover these keys, `~0`, `~1`, and `%`.
 6. [T6: A `$ref` cycle (`group`, `part`) makes the walk or the merge comparison loop] → Task: the walk does not follow
    `$ref`, and the comparison compares `$ref` strings. The CI job sets `timeout-minutes`.
-7. [T7: The manifest pairs with a schema other than the one that a port parses] → [NAM-002.03]. Task: the generator
+7. [T7: The manifest pairs with a schema other than the one that a binding parses] → [NAM-002.03]. Task: the generator
    hashes the bytes that it parses. A check fails when a released `schemas/<release>/` file changes.
 8. [T8: Output that is not byte-stable trains people to commit generator output without review] → Task: sort by code
    unit, not `localeCompare`, and compare in memory in check mode. A self-test compares two runs ([NAM-006.02]).
@@ -369,5 +369,5 @@ until the spike. After Python adopts the names, a rollback is a breaking change 
 
 1. The exact text of the names that task 3.4 replaces with overrides. It depends on the generated list, and the user
    approves it. It does not change the specs or the format.
-2. Per-port handling of names that clash with language keywords or built-ins, for example `Map` in JavaScript. The
+2. Per-binding handling of names that clash with language keywords or built-ins, for example `Map` in JavaScript. The
    spike decides whether the manifest needs data for this. If it does, that is a format fix under D9, step 3.
