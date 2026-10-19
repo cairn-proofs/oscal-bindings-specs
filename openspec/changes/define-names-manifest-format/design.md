@@ -7,11 +7,15 @@ See [proposal.md, Why](proposal.md#why). These facts about the 1.2.3 inputs shap
    `*Datatype` definitions have no `$id` and are scalars.
 2. 19 definitions with a namespace are scalars. 8 definitions are unions (`anyOf` with object branches). One
    definition, `assessment-common:risk-status`, is an open enum. The other definitions are objects.
-3. The schema has 51 inline object places, 13 unions (8 definitions, 5 inline), 53 enum places (27 open in `anyOf`,
-   26 closed in `allOf`), 1 single-or-many property (`mapping-collection/mappings`), 8 document wrappers at
-   `#/oneOf/<n>`, and the document union at `#`. 41 list places need a singular local name.
+3. The schema has 97 object definitions, 55 inline object places, 13 unions (8 definitions, 5 inline) with 28
+   branches, 53 enum places (27 open in `anyOf`, 26 closed in `allOf`), 1 single-or-many property
+   (`mapping-collection/mappings`), 8 document wrappers at `#/oneOf/<n>`, and the document union at `#`. One object
+   definition (`include-all`) and four inline objects (`combine` in each `merge` branch, and `flat`) have no
+   properties. They are object types all the same, because a binding needs a type for them. 41 list places need a
+   singular local name.
 4. Each branch of each of the 13 unions has exactly one property that no other branch has.
-5. Trial runs of the rules with `jq` gave 251 places and about 246 types after the merges of [MDL-013]. The trials
+5. Trial runs of the rules with `jq` gave 251 places and about 246 types after the merges of [MDL-013]. The
+   generator gives 244 types for 1.2.3, after the branch copies and the four explicit merges of D8. The trials
    used the plural property keys, because the singular names do not exist yet. They found these items:
    1. Five names that occur twice. Each pair is a copy in the branches of one union, which [MDL-013] merges.
    2. With the parent *local* name, one collision: `StatusState` for the `state` enums of `ssp:status`,
@@ -98,10 +102,23 @@ type in a union branch uses the name of the union, because a branch is a variant
   (`MergeWithFlat`). The rule stays uniform. The `merge` branches keep `MergeWithFlat`, `MergeWithAsIs`, and
   `MergeWithCustom`. The shorter `MergeCustom` is not available, because the rule gives that name to the inline
   `custom` object (Context, item 5).
-- **Overrides only where the rules fail or stutter:** an override is necessary for a collision and is useful for a
-  stutter. The first set is `RiskLog` for `RiskRiskLog`. `InformationType` for `SystemInformationInformationType` is a
-  candidate. With it, the longest name drops from 52 characters to `InformationTypeCategorizationSystem`. Task 3.4
-  reviews the rest, for example `TaskTimingWithWithinDateRange`.
+- **Overrides only where the rules fail, stutter, or mislead:** an override is necessary for a collision and is useful
+  for a stutter or a misleading name. The review of task 3.4 approved these override names for 1.2.3:
+  1. Stutters, which carry down to the types below: `RiskLog` (for `RiskRiskLog`), `InformationType` (for
+     `SystemInformationInformationType`), and `AssessmentPlatform` (for `AssessmentAssetsAssessmentPlatform`).
+  2. Long names, which carry down to the branches: `ControlSelection` and `ControlObjectiveSelection` (for
+     `ReviewedControlsControl…Selection`).
+  3. An enum name that reads like a branch name: `ControlCommonSelectControlByIdChildControls` (for
+     `…SelectControlByIdWithChildControls`).
+  4. A doubled "With": the branch `TaskTimingWithDateRange` and its object `TaskTimingDateRange`, in the pattern of
+     `TaskTimingWithOnDate` and `TaskTimingOnDate`.
+  5. A merge name that names one owner of a shared flag: `SubjectType` (for `SelectSubjectByIdType`), from the
+     Metaschema flag `subject-type`.
+- **Kept as the rules give them:**
+  1. The `merge` look-alikes: `MergeFlat` and `MergeWithFlat`, `MergeCustom` and `MergeWithCustom`.
+  2. The module prefix with `Common`: `ControlCommon…` and `AssessmentCommon…`. The `Common` part shows that the
+     prefix names a module, not a parent type. `ControlSelectControlById` would read as a type that `Control` holds.
+  3. The merged mapping enums: `MappingMatchingRationale`, `MappingMethod`, and `MappingStatus`.
 
 ### D3 — The published manifest is complete, and the hand-edited data is small
 
@@ -222,6 +239,14 @@ are explicit entries in `overrides.json`.
   to one of them then splits the type, which is a rename. For 1.2.3, the candidates for an explicit merge include the
   `method`, `matching-rationale`, and `status` enums that `mapping` and `mapping-provenance` share, and the
   `matching-rationale` enum of `map`. Task 3.3 checks them against Metaschema.
+- **Result of task 3.3 (OSCAL v1.2.3 Metaschema):** four merges, each of places that reference one `define-flag`:
+  1. `matching-rationale` of `mapping`, `map`, and `mapping-provenance` (`oscal_mapping-common_metaschema.xml`).
+  2. `method` of `mapping` and `mapping-provenance` (same file).
+  3. `status` of `mapping` and `mapping-provenance` (same file).
+  4. `type` of `select-subject-by-id` and `subject-reference`: both reference the flag `subject-type`
+     (`oscal_assessment-common_metaschema.xml`).
+- **Name of an explicit merge:** the merged type takes the name of the first pointer in the merge. An override name
+  on that pointer changes it. So the order of the pointers in `overrides.json` is part of the decision.
 
 ### D9 — Release order: provisional format, TS spike, archive, Python adoption
 
