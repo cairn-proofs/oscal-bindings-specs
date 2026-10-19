@@ -22,7 +22,10 @@ prefixes:
     next: 4
   MDL:
     capability: model-derivation
-    next: 10
+    next: 14
+  NAM:
+    capability: naming-manifest
+    next: 9
   VER:
     capability: schema-versioning
     next: 6
@@ -31,4 +34,9 @@ prefixes:
     next: 6
 
 # One entry for each retired identifier: id, reason and, for a relocation, replaced_by.
-retired: []
+retired:
+  - id: MDL-004
+    reason: >-
+      Deduplication from the per-document schemas and by equal structure alone left the contract. Type identity is a
+      set of JSON pointers into the complete schema, and MDL-013 holds the deduplication rule.
+    replaced_by: MDL-013

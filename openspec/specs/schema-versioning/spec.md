@@ -47,7 +47,7 @@ The shared spec artifact SHALL carry a Semantic Version. The artifact is the pro
 the conformance corpus together. The major, minor, and patch components describe the compatibility of the contract
 itself, independent of OSCAL's numbering:
 
-1. A **major** increment marks a breaking change to the contract a port implements. Examples are a canonical type
+1. A **major** increment marks a breaking change to the contract a binding implements. Examples are a canonical type
    rename, a stricter parse rule, or a changed error category.
 2. A **minor** increment marks a backward-compatible addition, such as a new corpus case, a new optional capability, or
    newly specified behavior.

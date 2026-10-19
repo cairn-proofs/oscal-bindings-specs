@@ -19,6 +19,8 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # A bound on every step, including the names generator and the git-based release checks.
+    timeout-minutes: 15
     steps:
       # Full history: the identifier checker reads the main specs at the base ref, and the tag check reads main.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1

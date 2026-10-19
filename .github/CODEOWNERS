@@ -1,0 +1,6 @@
+# Code owners review each pull request that changes the naming data, the vendored schemas, the store tooling, or CI.
+# Branch protection on main requires a code owner review.
+/manifest/ @dfkunstler
+/schemas/ @dfkunstler
+/scripts/ @dfkunstler
+/.github/ @dfkunstler

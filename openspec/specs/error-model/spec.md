@@ -2,8 +2,8 @@
 
 ## Purpose
 
-Defines the language-neutral error taxonomy for OSCAL bindings and maps each failure situation to a category. Every port
-then reports the same conditions, even though each language surfaces errors in its own idiom.
+Defines the language-neutral error taxonomy for OSCAL bindings and maps each failure situation to a category. Every
+binding then reports the same conditions, even though each language surfaces errors in its own idiom.
 
 ## Requirements
 

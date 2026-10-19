@@ -1,0 +1,77 @@
+{
+  "format": 1,
+  "oscal-release": "1.2.3",
+  "local-names": {
+    "#/definitions/oscal-complete-oscal-ar:result/properties/assessment-log/properties/entries/items": "entry",
+    "#/definitions/oscal-complete-oscal-ar:result/properties/attestations/items": "attestation",
+    "#/definitions/oscal-complete-oscal-assessment-common:activity/properties/steps/items": "step",
+    "#/definitions/oscal-complete-oscal-assessment-common:assessment-assets/properties/assessment-platforms/items": "assessment-platform",
+    "#/definitions/oscal-complete-oscal-assessment-common:assessment-assets/properties/assessment-platforms/items/properties/uses-components/items": "uses-component",
+    "#/definitions/oscal-complete-oscal-assessment-common:assessment-subject-placeholder/properties/sources/items": "source",
+    "#/definitions/oscal-complete-oscal-assessment-common:characterization/properties/facets/items": "facet",
+    "#/definitions/oscal-complete-oscal-assessment-common:observation/properties/methods/items": "method",
+    "#/definitions/oscal-complete-oscal-assessment-common:observation/properties/relevant-evidence/items": "relevant-evidence",
+    "#/definitions/oscal-complete-oscal-assessment-common:observation/properties/types/items": "type",
+    "#/definitions/oscal-complete-oscal-assessment-common:response/properties/required-assets/items": "required-asset",
+    "#/definitions/oscal-complete-oscal-assessment-common:reviewed-controls/properties/control-objective-selections/items": "control-objective-selection",
+    "#/definitions/oscal-complete-oscal-assessment-common:reviewed-controls/properties/control-selections/items": "control-selection",
+    "#/definitions/oscal-complete-oscal-assessment-common:risk/properties/mitigating-factors/items": "mitigating-factor",
+    "#/definitions/oscal-complete-oscal-assessment-common:risk/properties/risk-log/properties/entries/items": "entry",
+    "#/definitions/oscal-complete-oscal-assessment-common:risk/properties/risk-log/properties/entries/items/properties/related-responses/items": "related-response",
+    "#/definitions/oscal-complete-oscal-assessment-common:task/properties/associated-activities/items": "associated-activity",
+    "#/definitions/oscal-complete-oscal-assessment-common:task/properties/dependencies/items": "dependency",
+    "#/definitions/oscal-complete-oscal-control-common:parameter-constraint/properties/tests/items": "test",
+    "#/definitions/oscal-complete-oscal-implementation-common:inventory-item/properties/implemented-components/items": "implemented-component",
+    "#/definitions/oscal-complete-oscal-metadata:back-matter/properties/resources/items": "resource",
+    "#/definitions/oscal-complete-oscal-metadata:back-matter/properties/resources/items/properties/rlinks/items": "rlink",
+    "#/definitions/oscal-complete-oscal-metadata:metadata/properties/locations/items": "location",
+    "#/definitions/oscal-complete-oscal-metadata:metadata/properties/parties/items": "party",
+    "#/definitions/oscal-complete-oscal-metadata:metadata/properties/parties/items/anyOf/0/properties/external-ids/items": "external-id",
+    "#/definitions/oscal-complete-oscal-metadata:metadata/properties/parties/items/anyOf/1/properties/external-ids/items": "external-id",
+    "#/definitions/oscal-complete-oscal-metadata:metadata/properties/revisions/items": "revision",
+    "#/definitions/oscal-complete-oscal-metadata:metadata/properties/roles/items": "role",
+    "#/definitions/oscal-complete-oscal-poam:poam-item/properties/origins/items": "origin",
+    "#/definitions/oscal-complete-oscal-poam:poam-item/properties/related-findings/items": "related-finding",
+    "#/definitions/oscal-complete-oscal-profile:modify/properties/alters/items": "alter",
+    "#/definitions/oscal-complete-oscal-profile:modify/properties/alters/items/properties/adds/items": "add",
+    "#/definitions/oscal-complete-oscal-profile:modify/properties/alters/items/properties/removes/items": "remove",
+    "#/definitions/oscal-complete-oscal-profile:modify/properties/set-parameters/items": "set-parameter",
+    "#/definitions/oscal-complete-oscal-ssp:by-component/properties/export/properties/provided/items": "provided",
+    "#/definitions/oscal-complete-oscal-ssp:by-component/properties/export/properties/responsibilities/items": "responsibility",
+    "#/definitions/oscal-complete-oscal-ssp:by-component/properties/inherited/items": "inherited",
+    "#/definitions/oscal-complete-oscal-ssp:by-component/properties/satisfied/items": "satisfied",
+    "#/definitions/oscal-complete-oscal-ssp:system-implementation/properties/leveraged-authorizations/items": "leveraged-authorization",
+    "#/definitions/oscal-complete-oscal-ssp:system-information/properties/information-types/items": "information-type",
+    "#/definitions/oscal-complete-oscal-ssp:system-information/properties/information-types/items/properties/categorizations/items": "categorization"
+  },
+  "names": {
+    "#/definitions/oscal-complete-oscal-assessment-common:assessment-assets/properties/assessment-platforms/items": "AssessmentPlatform",
+    "#/definitions/oscal-complete-oscal-assessment-common:reviewed-controls/properties/control-objective-selections/items": "ControlObjectiveSelection",
+    "#/definitions/oscal-complete-oscal-assessment-common:reviewed-controls/properties/control-selections/items": "ControlSelection",
+    "#/definitions/oscal-complete-oscal-assessment-common:risk/properties/risk-log": "RiskLog",
+    "#/definitions/oscal-complete-oscal-assessment-common:select-subject-by-id/properties/type/anyOf/1": "SubjectType",
+    "#/definitions/oscal-complete-oscal-assessment-common:task/properties/timing/anyOf/1": "TaskTimingWithDateRange",
+    "#/definitions/oscal-complete-oscal-assessment-common:task/properties/timing/anyOf/1/properties/within-date-range": "TaskTimingDateRange",
+    "#/definitions/oscal-complete-oscal-control-common:select-control-by-id/properties/with-child-controls/allOf/1": "ControlCommonSelectControlByIdChildControls",
+    "#/definitions/oscal-complete-oscal-ssp:system-information/properties/information-types/items": "InformationType"
+  },
+  "merges": [
+    [
+      "#/definitions/oscal-complete-oscal-mapping-common:mapping/properties/matching-rationale/allOf/1",
+      "#/definitions/oscal-complete-oscal-mapping-common:map/properties/matching-rationale/allOf/1",
+      "#/definitions/oscal-complete-oscal-mapping-common:mapping-provenance/properties/matching-rationale/allOf/1"
+    ],
+    [
+      "#/definitions/oscal-complete-oscal-mapping-common:mapping/properties/method/allOf/1",
+      "#/definitions/oscal-complete-oscal-mapping-common:mapping-provenance/properties/method/allOf/1"
+    ],
+    [
+      "#/definitions/oscal-complete-oscal-mapping-common:mapping/properties/status/allOf/1",
+      "#/definitions/oscal-complete-oscal-mapping-common:mapping-provenance/properties/status/allOf/1"
+    ],
+    [
+      "#/definitions/oscal-complete-oscal-assessment-common:select-subject-by-id/properties/type/anyOf/1",
+      "#/definitions/oscal-complete-oscal-assessment-common:subject-reference/properties/type/anyOf/1"
+    ]
+  ]
+}

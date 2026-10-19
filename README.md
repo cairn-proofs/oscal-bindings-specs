@@ -10,7 +10,9 @@ This repo is an [OpenSpec store](https://github.com/Fission-AI/OpenSpec/blob/mai
 1. `openspec/`: the capability specs (`specs/`), the changes (`changes/`), the config, and the identifier ledger
    `spec-ids.yaml`.
 2. `schemas/<release>/`: the NIST OSCAL JSON Schema files of one release, byte-for-byte, with `sha256` sums.
-3. `manifest/<release>/`: the naming manifest.
+3. `manifest/<release>/`: the naming manifest. `names.json` is generated and holds the canonical name, kind, and
+   schema pointers of each type. `overrides.json` is the hand-edited naming input. `manifest/*.schema.json` are the
+   JSON Schemas of both files (see [manifest/1.2.3/README.md](manifest/1.2.3/README.md)).
 4. `corpus/<release>/`: the conformance corpus.
 5. `docs/`: shared rule documents that the specs cite, such as
    [canonical JSON for conformance comparison](docs/canonical-json.md).
@@ -45,7 +47,16 @@ A reference is planning context only. Builds and conformance runs use the tagged
 4. The schema `sha256` check.
 5. The canonical JSON self-test.
 6. The corpus check (see [corpus/1.2.3/README.md](corpus/1.2.3/README.md)).
-7. `openspec validate --all --strict`.
+7. The names generator self-test, and `npm run names:check`: it validates each manifest file and fails when
+   `names.json` differs from the generator output.
+8. The release checks and their self-test, `npm run releases:check`. A released name that changes needs a breaking
+   `VERSION` increment, and a released `schemas/<release>/` file must not change. These checks read git tags and
+   history, so they fail in a shallow clone or a clone without tags. They also list each name change against the
+   base ref (`SPEC_IDS_BASE`, default `HEAD`), and CI writes that list to the job summary.
+9. `openspec validate --all --strict`.
+
+To change a canonical name, edit `manifest/<release>/overrides.json`, run `npm run names:write`, and commit both
+files.
 
 `VERSION` holds the spec artifact version: a Semantic Version with the OSCAL release as build metadata, for example
 `0.1.0+oscal.1.2.3`.

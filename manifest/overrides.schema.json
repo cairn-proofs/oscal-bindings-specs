@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/cairn-proofs/oscal-bindings-specs/manifest/overrides.schema.json",
+  "title": "OSCAL naming overrides, format 1",
+  "description": "The hand-edited naming input of one OSCAL release. See openspec/specs/naming-manifest.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "oscal-release", "local-names", "names", "merges"],
+  "properties": {
+    "format": { "const": 1 },
+    "oscal-release": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$" },
+    "local-names": {
+      "description": "The singular local name of each list item, keyed by the pointer of the item.",
+      "type": "object",
+      "propertyNames": { "$ref": "#/definitions/pointer" },
+      "additionalProperties": { "type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$" }
+    },
+    "names": {
+      "description": "Canonical names that replace a rule-derived name, keyed by pointer.",
+      "type": "object",
+      "propertyNames": { "$ref": "#/definitions/pointer" },
+      "additionalProperties": { "type": "string", "pattern": "^[A-Z][A-Za-z0-9]*$" }
+    },
+    "merges": {
+      "description": "Explicit merges. Each merge is a set of two or more pointers that produce one type.",
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 2,
+        "uniqueItems": true,
+        "items": { "$ref": "#/definitions/pointer" }
+      }
+    }
+  },
+  "definitions": {
+    "pointer": { "type": "string", "pattern": "^#(/([A-Za-z0-9:._-]|~[01])*)*$" }
+  }
+}

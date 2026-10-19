@@ -112,7 +112,7 @@ each entry MUST identify the failing location.
 OSCAL constrains some string fields with regular-expression patterns written for an XSD-flavored engine. These include
 Unicode property classes such as `\p{L}`. Target languages differ: one rejects some of these constructs, and another
 needs an explicit Unicode flag. The implementation SHALL define and document how it maps each OSCAL pattern to its own
-regex engine. The mapping MUST preserve the set of accepted and rejected values. A port MUST NOT drop a pattern
+regex engine. The mapping MUST preserve the set of accepted and rejected values. A binding MUST NOT drop a pattern
 constraint silently when its engine cannot express the pattern as written. It MUST translate the pattern or document the
 deviation.
 

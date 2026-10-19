@@ -1,0 +1,539 @@
+{
+  "schema": 1,
+  "applicationInfo": {
+    "name": "oscal-bindings-specs: define-names-manifest-format",
+    "description": "The OpenSpec change `define-names-manifest-format` adds a TypeScript generator to the spec store. The generator reads the vendored OSCAL 1.2.3 complete JSON Schema, the hand-edited `manifest/1.2.3/overrides.json`, and the manifest of the previous OSCAL release when the store holds one. It writes `manifest/1.2.3/names.json`, the complete table of canonical type names keyed by JSON pointers.\n\nCI regenerates the manifest and fails on a diff ([NAM-006]). CI also compares the names with the manifest at the latest released `v*` tag, read from git history ([NAM-008]). The spec artifact tarball, pinned by sha256, carries `names.json` to the language bindings. Each binding uses the names as identifiers in generated code (Python, TypeScript, Go, Rust). [NAM-003] requires each name to match `^[A-Z][A-Za-z0-9]*$` and requires a consumer to reject an invalid manifest. Residual ratings in this model assume that each listed mitigation lands, as a requirement amendment or as a task."
+  },
+  "architecture": {
+    "description": "### Components touched\n\n1. `manifest/1.2.3/overrides.json`: hand-edited naming input ([NAM-005]). Holds singular local names, replacement names, and explicit merges, keyed by JSON pointer.\n2. `manifest/1.2.3/names.json`: generated, published manifest ([NAM-002]).\n3. `manifest/names.schema.json` and `manifest/overrides.schema.json`: JSON Schemas that the store checks apply with `ajv` ([NAM-004]).\n4. The names generator and check script under `scripts/` (TypeScript on Node 24, run with `tsx`). Added to `npm run check`.\n5. The release name check: reads `names.json` at the latest `v*` tag on `main` from git history ([NAM-008], design D5).\n6. Existing release path: `.github/workflows/build.yml` (`build` job with `contents: read`, `draft-release` job with `contents: write` on tag pushes only), `scripts/build-archive.ts` (`git archive` of a ref plus `SHA256SUMS`). A person publishes the draft release.\n7. Consumers: language bindings that read `names.json` from the pinned tarball and emit types in generated code."
+  },
+  "dataflow": {
+    "description": "### New and changed flows\n\n1. A pull request edits `overrides.json`, `names.json`, the previous release manifest, the vendored schema with its `SHA256SUMS`, the scripts, or `VERSION`. Every store file is under the control of the pull request author until review and the store checks pass.\n2. The CI `build` job verifies the schema hashes, validates both files against their JSON Schemas, runs the generator, and compares its output with the committed `names.json`.\n3. The release name check reads `names.json` from the latest `v*` tag on `main`. Maintainers with write access can create, move, or delete tags.\n4. On a tag push, CI builds the tarball and `SHA256SUMS` and creates a draft release. A person publishes it.\n5. A binding downloads the tarball, checks its sha256, validates the manifest, and generates code from the names.\n\n### Trust-boundary DFD\n\n```mermaid\nflowchart LR\n    subgraph untrusted [\"Untrusted input: pull request\"]\n        PR[\"overrides.json, names.json, scripts, VERSION\"]\n        PREV[\"previous release names.json\"]\n        SCH[\"vendored schema + SHA256SUMS\"]\n    end\n    subgraph upstream [\"Upstream: NIST OSCAL 1.2.3\"]\n        NIST[\"oscal_complete_schema.json\"]\n    end\n    subgraph ci [\"Trusted processing: CI build job, contents read\"]\n        V[\"schemas:verify + JSON Schema checks\"]\n        GEN[\"names generator\"]\n        REGEN[\"regeneration check\"]\n        REL[\"release name check\"]\n    end\n    subgraph history [\"Git history: tags writable by maintainers\"]\n        TAG[\"names.json at latest v* tag on main\"]\n    end\n    subgraph release [\"Build and release: tag push, contents write\"]\n        ARC[\"build-archive + SHA256SUMS\"]\n        DR[\"draft release, person publishes\"]\n    end\n    subgraph bindings [\"Consumers: language bindings\"]\n        PORT[\"binding codegen: hash + manifest validation\"]\n        CODE[\"generated code\"]\n    end\n    NIST -->|\"vendored copy\"| SCH\n    PR --> V\n    SCH --> V\n    V --> GEN\n    PREV --> GEN\n    GEN --> REGEN\n    REGEN --> REL\n    TAG --> REL\n    REL -->|\"review, merge, tag\"| ARC\n    ARC --> DR\n    DR -->|\"tarball pinned by sha256\"| PORT\n    PORT --> CODE\n    style untrusted fill:#fdd,stroke:#c00\n    style history fill:#ffd,stroke:#aa0\n    style bindings fill:#eef,stroke:#00c\n```\n\nCrossings and threats: PR to checks (T1, T2, T5, T6, T8), previous manifest to generator (T3), upstream to vendored schema (T7), tags to release check (T4), CI privilege (T9), release check output to reviewers (T10), tarball to binding codegen (T1, T7)."
+  },
+  "assumptions": [
+    {
+      "id": "285b956b-3b89-4f3f-835e-d2a74c62e197",
+      "numericId": 1,
+      "content": "Maintainers with write access are trusted. The main branch requires a pull request and the CI build check before merge (verified with gh api). It does not yet require an approval or a code owner review: the store has one maintainer, and an author cannot approve their own pull request. Until a second maintainer joins, review of names depends on that maintainer, with the name diff (M17) and the template (M18) as aids. A tag ruleset blocks update and deletion of v* tags (verified).",
+      "tags": ["governance"]
+    },
+    {
+      "id": "1c1c701c-6637-41c0-aedc-34163b60925b",
+      "numericId": 2,
+      "content": "The vendored schemas/1.2.3/ files are exact copies of the NIST OSCAL v1.2.3 release, as SOURCE.md records. NIST content is trusted once its provenance is verified.",
+      "tags": ["upstream"]
+    },
+    {
+      "id": "bcde4494-2178-49bc-94c3-fbe8256630b8",
+      "numericId": 3,
+      "content": "Bindings get the spec artifact only from a published GitHub release of the store, and pin the tarball by its sha256.",
+      "tags": ["consumers"]
+    },
+    {
+      "id": "bf9baf39-45ec-49f7-a2e6-02a2abc6884d",
+      "numericId": 4,
+      "content": "The workflow does not use pull_request_target. Pull request runs get a read-only token and no secrets.",
+      "tags": ["ci"]
+    },
+    {
+      "id": "00f41884-15d2-4d9a-a4ae-650e7ce81662",
+      "numericId": 5,
+      "content": "Generator inputs are small (the complete schema is about 268 KB, overrides.json has tens of entries). Input size is not a DoS vector. Unbounded traversal is.",
+      "tags": ["generator"]
+    }
+  ],
+  "threats": [
+    {
+      "id": "3242c4f1-3c6e-4522-a7d6-8bb93e0982ca",
+      "numericId": 1,
+      "threatSource": "contributor or attacker who controls manifest content that a binding consumes",
+      "prerequisites": "who gets a manifest string past the store checks or past a binding's own validation",
+      "threatAction": "put a name, branch type, item type, property, body field, pointer, or schema file name with code syntax into names.json",
+      "threatImpact": "code injection into the generated code of a binding, for example a newline that Python re.match or Ruby $ accepts",
+      "impactedGoal": ["integrity", "authorization"],
+      "impactedAssets": ["names.json", "binding generated code", "binding release artifacts"],
+      "statement": "A contributor or attacker who controls manifest content that a binding consumes who gets a manifest string past the store checks or past a binding's own validation can put a name, branch type, item type, property, body field, pointer, or schema file name with code syntax into names.json, which leads to code injection into the generated code of a binding, for example a newline that Python re.match or Ruby $ accepts, resulting in reduced integrity and authorization of names.json, binding generated code, and binding release artifacts",
+      "status": "threatIdentified",
+      "tags": ["names.json", "consumers", "codegen"],
+      "metadata": [
+        { "key": "STRIDE", "value": ["T", "E"] },
+        { "key": "Priority", "value": "Medium" },
+        { "key": "custom:residualRisk", "value": "Medium" },
+        { "key": "custom:likelihood", "value": "Unlikely" },
+        { "key": "custom:attackVector", "value": "Network" },
+        { "key": "custom:attackComplexity", "value": "High" },
+        { "key": "Comments", "value": "Inherent impact is Critical (code in shipped bindings). NAM-003 constrains only canonical names. It does not say the pattern is a full-string match, and it does not cover variants[].type, item, document-union members, property, body-field, pointers, or schema.file. The store uses ajv (JS RegExp, $ is end of input) so the official artifact is safe today. The gap is in consumer validation, which bindings implement. Residual stays Medium because binding behavior is outside the store." }
+      ]
+    },
+    {
+      "id": "196e3a5c-4d92-42e6-b874-b4883fcc7947",
+      "numericId": 2,
+      "threatSource": "pull request author",
+      "prerequisites": "with a change to overrides.json or names.json",
+      "threatAction": "rename, swap, or add misleading canonical names",
+      "threatImpact": "bindings that generate types with wrong or broken names",
+      "impactedGoal": ["integrity"],
+      "impactedAssets": ["overrides.json", "names.json"],
+      "statement": "A pull request author with a change to overrides.json or names.json can rename, swap, or add misleading canonical names, which leads to bindings that generate types with wrong or broken names, resulting in reduced integrity of overrides.json and names.json",
+      "status": "threatIdentified",
+      "tags": ["overrides.json", "names.json"],
+      "metadata": [
+        { "key": "STRIDE", "value": ["T"] },
+        { "key": "Priority", "value": "Low" },
+        { "key": "custom:residualRisk", "value": "Low" },
+        { "key": "custom:likelihood", "value": "Possible" },
+        { "key": "custom:attackVector", "value": "Network" },
+        { "key": "custom:attackComplexity", "value": "Low" },
+        { "key": "Comments", "value": "NAM-006 catches a hand edit of names.json. NAM-008 catches a rename or swap of a released name. Before the first release that holds names.json, and for any name that is not released yet, only review protects the names. The name diff against the pull request base (M17) and the pull request template with names.json marked as generated (M18) focus that review on overrides.json and the changed names." }
+      ]
+    },
+    {
+      "id": "e9c340be-3dbb-4726-9e81-946b375bbd87",
+      "numericId": 3,
+      "threatSource": "pull request author",
+      "prerequisites": "when the store holds a manifest of a previous OSCAL release",
+      "threatAction": "edit the previous release names.json in the same pull request that adds the new release",
+      "threatImpact": "the generator pins names from data that no check compares with the released manifest",
+      "impactedGoal": ["integrity"],
+      "impactedAssets": ["previous release names.json", "names.json"],
+      "statement": "A pull request author when the store holds a manifest of a previous OSCAL release can edit the previous release names.json in the same pull request that adds the new release, which leads to the generator pins names from data that no check compares with the released manifest, resulting in reduced integrity of previous release names.json and names.json",
+      "status": "threatIdentified",
+      "tags": ["generator", "NAM-007"],
+      "metadata": [
+        { "key": "STRIDE", "value": ["T"] },
+        { "key": "Priority", "value": "Low" },
+        { "key": "custom:residualRisk", "value": "Low" },
+        { "key": "custom:likelihood", "value": "Unlikely" },
+        { "key": "custom:attackVector", "value": "Network" },
+        { "key": "custom:attackComplexity", "value": "Low" },
+        { "key": "Comments", "value": "NAM-007 reads the previous manifest from the working tree. NAM-006 and NAM-008 as written do not say that the checks cover every release directory, or that the generator validates the previous manifest before it uses it. Inactive until a second OSCAL release lands, but the rule is cheap to state now. Inherent Medium." }
+      ]
+    },
+    {
+      "id": "d16edfa1-f3ca-42db-aa39-3c0729330a08",
+      "numericId": 4,
+      "threatSource": "maintainer with tag write access, or a defect in baseline selection",
+      "prerequisites": "with a moved, deleted, unpublished, or off-main v* tag, a lexical tag sort, or a clone without tags",
+      "threatAction": "make the release name check compare with the wrong baseline or with no baseline",
+      "threatImpact": "a released name changes without a breaking version increment, and the check passes",
+      "impactedGoal": ["integrity", "availability"],
+      "impactedAssets": ["release name check", "v* tags", "released names.json"],
+      "statement": "A maintainer with tag write access, or a defect in baseline selection with a moved, deleted, unpublished, or off-main v* tag, a lexical tag sort, or a clone without tags can make the release name check compare with the wrong baseline or with no baseline, which leads to a released name changes without a breaking version increment, and the check passes, resulting in reduced integrity and availability of release name check, v* tags, and released names.json",
+      "status": "threatIdentified",
+      "tags": ["release-check", "NAM-008", "git"],
+      "metadata": [
+        { "key": "STRIDE", "value": ["S", "T"] },
+        { "key": "Priority", "value": "Medium" },
+        { "key": "custom:residualRisk", "value": "Medium" },
+        { "key": "custom:likelihood", "value": "Possible" },
+        { "key": "custom:attackVector", "value": "Network" },
+        { "key": "custom:attackComplexity", "value": "Low" },
+        { "key": "Comments", "value": "Design D5 passes when no baseline exists, so a shallow clone or missing tags is fail-open. Tags are mutable unless a ruleset protects them. A tag push creates a tag before the draft is published, so 'latest tag' can be an unpublished draft. Lexical order puts v0.10.0 before v0.9.0. SemVer precedence ignores build metadata. Residual Medium because tag protection is a repository setting that this change cannot enforce in code." }
+      ]
+    },
+    {
+      "id": "467cb223-39ed-48d2-955c-df14cdadfc7e",
+      "numericId": 5,
+      "threatSource": "pull request author or a tampered schema",
+      "prerequisites": "with a pointer or key such as __proto__, constructor, or toString in overrides.json or the schema",
+      "threatAction": "make the generator resolve a pointer or a table lookup to an inherited JavaScript property",
+      "threatImpact": "an unresolvable pointer passes the NAM-001 and NAM-005 checks, or a lookup returns a wrong local name",
+      "impactedGoal": ["integrity"],
+      "impactedAssets": ["names generator", "names.json"],
+      "statement": "A pull request author or a tampered schema with a pointer or key such as __proto__, constructor, or toString in overrides.json or the schema can make the generator resolve a pointer or a table lookup to an inherited JavaScript property, which leads to an unresolvable pointer passes the NAM-001 and NAM-005 checks, or a lookup returns a wrong local name, resulting in reduced integrity of names generator and names.json",
+      "status": "threatIdentified",
+      "tags": ["generator", "prototype-pollution"],
+      "metadata": [
+        { "key": "STRIDE", "value": ["S", "T"] },
+        { "key": "Priority", "value": "Low" },
+        { "key": "custom:residualRisk", "value": "Low" },
+        { "key": "custom:likelihood", "value": "Unlikely" },
+        { "key": "custom:attackVector", "value": "Network" },
+        { "key": "custom:attackComplexity", "value": "Low" },
+        { "key": "Comments", "value": "Example: obj['constructor'] on a parsed JSON object returns Object, so #/definitions/constructor 'resolves'. A binding in another language then fails to resolve it. Percent-encoded fragments (RFC 6901 URI fragment form) can also decode differently in the store and in a binding." }
+      ]
+    },
+    {
+      "id": "5709a7d3-0ad1-42d5-9f88-65ce54e42de0",
+      "numericId": 6,
+      "threatSource": "OSCAL schema structure or a pull request author",
+      "prerequisites": "with recursive $ref chains such as group and part",
+      "threatAction": "make the generator walk or the merge comparison follow $ref without end",
+      "threatImpact": "a stack overflow or a CI job that runs until the 6-hour default timeout",
+      "impactedGoal": ["availability"],
+      "impactedAssets": ["names generator", "CI build job"],
+      "statement": "An OSCAL schema structure or a pull request author with recursive $ref chains such as group and part can make the generator walk or the merge comparison follow $ref without end, which leads to a stack overflow or a CI job that runs until the 6-hour default timeout, resulting in reduced availability of names generator and CI build job",
+      "status": "threatIdentified",
+      "tags": ["generator", "dos"],
+      "metadata": [
+        { "key": "STRIDE", "value": ["D"] },
+        { "key": "Priority", "value": "Low" },
+        { "key": "custom:residualRisk", "value": "Low" },
+        { "key": "custom:likelihood", "value": "Possible" },
+        { "key": "custom:attackVector", "value": "Local" },
+        { "key": "custom:attackComplexity", "value": "Low" },
+        { "key": "Comments", "value": "MDL-007 guard 6 compares structures of merged places. A comparison that dereferences $ref recurses on the OSCAL recursive types. build.yml sets no timeout-minutes." }
+      ]
+    },
+    {
+      "id": "65f3c227-5fa0-4681-b22a-b04e749e912e",
+      "numericId": 7,
+      "threatSource": "pull request author or a binding defect",
+      "prerequisites": "with a change to the vendored schema and its SHA256SUMS, or a binding that hashes a different file than it parses",
+      "threatAction": "pair names.json with a schema other than the one its pointers describe",
+      "threatImpact": "names bound to the wrong places, or names derived from schema keys that NIST did not publish",
+      "impactedGoal": ["integrity", "authenticity"],
+      "impactedAssets": ["oscal_complete_schema.json", "names.json schema.sha256", "binding generated code"],
+      "statement": "A pull request author or a binding defect with a change to the vendored schema and its SHA256SUMS, or a binding that hashes a different file than it parses can pair names.json with a schema other than the one its pointers describe, which leads to names bound to the wrong places, or names derived from schema keys that NIST did not publish, resulting in reduced integrity and authenticity of oscal_complete_schema.json, names.json schema.sha256, and binding generated code",
+      "status": "threatIdentified",
+      "tags": ["schema", "NAM-002"],
+      "metadata": [
+        { "key": "STRIDE", "value": ["S", "T"] },
+        { "key": "Priority", "value": "Low" },
+        { "key": "custom:residualRisk", "value": "Low" },
+        { "key": "custom:likelihood", "value": "Unlikely" },
+        { "key": "custom:attackVector", "value": "Network" },
+        { "key": "custom:attackComplexity", "value": "High" },
+        { "key": "Comments", "value": "schemas:verify checks SHA256SUMS, but a pull request can change both files. This change raises the impact of a schema change, because names now derive from schema keys. NAM-002.03 covers the consumer side. The generator must hash the bytes it parses, not copy the hash from SHA256SUMS." }
+      ]
+    },
+    {
+      "id": "39ad82ad-7b4c-4994-85ff-106a70c53b9c",
+      "numericId": 8,
+      "threatSource": "generator defect",
+      "prerequisites": "with output that depends on locale, Node version, or object insertion order",
+      "threatAction": "produce bytes that differ between runs, or run the check in a mode that writes before it compares",
+      "threatImpact": "the regeneration check fails at random or passes always, and people commit generator output without review",
+      "impactedGoal": ["integrity"],
+      "impactedAssets": ["regeneration check", "names.json"],
+      "statement": "A generator defect with output that depends on locale, Node version, or object insertion order can produce bytes that differ between runs, or run the check in a mode that writes before it compares, which leads to the regeneration check fails at random or passes always, and people commit generator output without review, resulting in reduced integrity of regeneration check and names.json",
+      "status": "threatIdentified",
+      "tags": ["generator", "NAM-006"],
+      "metadata": [
+        { "key": "STRIDE", "value": ["T"] },
+        { "key": "Priority", "value": "Low" },
+        { "key": "custom:residualRisk", "value": "Low" },
+        { "key": "custom:likelihood", "value": "Possible" },
+        { "key": "custom:attackVector", "value": "Local" },
+        { "key": "custom:attackComplexity", "value": "Low" },
+        { "key": "Comments", "value": "The regeneration check is the tamper gate for names.json. A gate that is flaky or that cannot fail trains reviewers to accept regenerated diffs." }
+      ]
+    },
+    {
+      "id": "13d3aa03-64d6-4afa-9980-5aa4a8a2fe37",
+      "numericId": 9,
+      "threatSource": "pull request author",
+      "prerequisites": "with a change to scripts/ or to the workflow",
+      "threatAction": "run the new generator or check code with write tokens, secrets, or the release job's contents: write permission",
+      "threatImpact": "a tampered release or a pushed tag from pull request code",
+      "impactedGoal": ["integrity", "authorization"],
+      "impactedAssets": ["CI build job", "draft-release job", "GitHub releases"],
+      "statement": "A pull request author with a change to scripts/ or to the workflow can run the new generator or check code with write tokens, secrets, or the release job's contents: write permission, which leads to a tampered release or a pushed tag from pull request code, resulting in reduced integrity and authorization of CI build job, draft-release job, and GitHub releases",
+      "status": "threatIdentified",
+      "tags": ["ci"],
+      "metadata": [
+        { "key": "STRIDE", "value": ["E"] },
+        { "key": "Priority", "value": "Low" },
+        { "key": "custom:residualRisk", "value": "Low" },
+        { "key": "custom:likelihood", "value": "Unlikely" },
+        { "key": "custom:attackVector", "value": "Network" },
+        { "key": "custom:attackComplexity", "value": "High" },
+        { "key": "Comments", "value": "Baseline is sound: workflow permissions contents: read, persist-credentials: false, actions pinned by commit, npm ci with ignore-scripts. The risk is that the new step lands in draft-release or adds a dependency (for example an XML parser, which D7 rejects)." }
+      ]
+    },
+    {
+      "id": "2e65bd1c-01d8-4e36-b6e6-16ce974d3ae1",
+      "numericId": 10,
+      "threatSource": "pull request author",
+      "prerequisites": "with a breaking VERSION increment in the same pull request",
+      "threatAction": "rename released types without a record that reviewers and bindings see",
+      "threatImpact": "a rename that no reviewer notices and no release note names",
+      "impactedGoal": ["non-repudiation"],
+      "impactedAssets": ["release name check", "VERSION", "release notes"],
+      "statement": "A pull request author with a breaking VERSION increment in the same pull request can rename released types without a record that reviewers and bindings see, which leads to a rename that no reviewer notices and no release note names, resulting in reduced non-repudiation of release name check, VERSION, and release notes",
+      "status": "threatIdentified",
+      "tags": ["release-check", "NAM-008"],
+      "metadata": [
+        { "key": "STRIDE", "value": ["R"] },
+        { "key": "Priority", "value": "Low" },
+        { "key": "custom:residualRisk", "value": "Low" },
+        { "key": "custom:likelihood", "value": "Possible" },
+        { "key": "custom:attackVector", "value": "Network" },
+        { "key": "custom:attackComplexity", "value": "Low" },
+        { "key": "Comments", "value": "NAM-008 permits the rename once the increment is breaking. That is intended. The gap is visibility, not permission." }
+      ]
+    }
+  ],
+  "mitigations": [
+    {
+      "id": "a27ee546-400f-49c1-a0b2-c14dcb91f6a5",
+      "numericId": 1,
+      "content": "NAM-003: each canonical name matches ^[A-Z][A-Za-z0-9]*$ and is unique. A consumer rejects an invalid manifest and generates no code from it. The store enforces the pattern with ajv (NAM-004).",
+      "status": "mitigationIdentified",
+      "tags": ["spec", "existing"],
+      "metadata": [
+        { "key": "custom:mitigationType", "value": "Preventive" },
+        { "key": "custom:mitigationEffectiveness", "value": "Medium" },
+        { "key": "Comments", "value": "Already in the spec delta." }
+      ]
+    },
+    {
+      "id": "0da7bcee-c673-43fb-adb5-2d6bc42dd3f5",
+      "numericId": 2,
+      "content": "Amend NAM-003: the pattern matches the full string (no final newline, as with \\A...\\z or fullmatch). Each name reference (variants[].type, item, document-union members) matches the pattern and names an entry. A consumer rejects an unknown format value and an oscal-release that differs from its schema.",
+      "status": "mitigationIdentified",
+      "tags": ["spec-amendment", "NAM-003"],
+      "metadata": [
+        { "key": "custom:mitigationType", "value": "Preventive" },
+        { "key": "custom:mitigationCost", "value": "Low" },
+        { "key": "custom:mitigationEffectiveness", "value": "High" },
+        { "key": "Comments", "value": "Requirement amendment. Add a scenario for a name with a final newline." }
+      ]
+    },
+    {
+      "id": "6b6c9ecb-3676-4fd1-a105-c67b1a2e88f6",
+      "numericId": 3,
+      "content": "Amend NAM-004: the JSON Schemas constrain every string, not only names. Pointers match a fixed character set without percent escapes. property and body-field match the OSCAL key pattern, and the store checks confirm each one is a key at its pointer. schema.file is a bare file name. additionalProperties is false. A consumer writes these strings in generated code only as escaped literals.",
+      "status": "mitigationIdentified",
+      "tags": ["spec-amendment", "NAM-004"],
+      "metadata": [
+        { "key": "custom:mitigationType", "value": "Preventive" },
+        { "key": "custom:mitigationCost", "value": "Low" },
+        { "key": "custom:mitigationEffectiveness", "value": "High" },
+        { "key": "Comments", "value": "Requirement amendment for the rule and consumer clause. The exact patterns are a task." }
+      ]
+    },
+    {
+      "id": "72bbe791-2d4a-4ddf-bc4f-b239182cc28b",
+      "numericId": 4,
+      "content": "Baseline release path: CI builds the tarball from a tag on main with git archive, records SHA256SUMS, and attaches it to a draft that a person publishes. Bindings pin the tarball by sha256.",
+      "status": "mitigationIdentified",
+      "tags": ["existing", "release"],
+      "metadata": [
+        { "key": "custom:mitigationType", "value": "Preventive" },
+        { "key": "custom:mitigationEffectiveness", "value": "High" },
+        { "key": "Comments", "value": "Already present in build.yml and build-archive.ts." }
+      ]
+    },
+    {
+      "id": "a76cc781-9fde-4595-98cf-b69da0989e27",
+      "numericId": 5,
+      "content": "NAM-006: the store checks regenerate names.json and fail when the result differs from the committed file.",
+      "status": "mitigationIdentified",
+      "tags": ["spec", "existing"],
+      "metadata": [
+        { "key": "custom:mitigationType", "value": "Detective" },
+        { "key": "custom:mitigationEffectiveness", "value": "High" },
+        { "key": "Comments", "value": "Already in the spec delta." }
+      ]
+    },
+    {
+      "id": "5c476735-a26e-4163-ab7e-9e130616748f",
+      "numericId": 6,
+      "content": "NAM-008: the store checks fail when a released name changes or is removed without a breaking version increment.",
+      "status": "mitigationIdentified",
+      "tags": ["spec", "existing"],
+      "metadata": [
+        { "key": "custom:mitigationType", "value": "Detective" },
+        { "key": "custom:mitigationEffectiveness", "value": "High" },
+        { "key": "Comments", "value": "Already in the spec delta." }
+      ]
+    },
+    {
+      "id": "5ef86e2d-06ad-4370-9f86-9d9c061d1da7",
+      "numericId": 7,
+      "content": "Add CODEOWNERS with required review for manifest/, schemas/, scripts/, and .github/. Confirm that branch protection on main requires the build check and a code owner review.",
+      "status": "mitigationIdentified",
+      "tags": ["task", "governance"],
+      "metadata": [
+        { "key": "custom:mitigationType", "value": "Preventive" },
+        { "key": "custom:mitigationCost", "value": "Low" },
+        { "key": "custom:mitigationEffectiveness", "value": "Medium" },
+        { "key": "Comments", "value": "Task plus repository setting." }
+      ]
+    },
+    {
+      "id": "be58f560-0dc7-465b-bdaf-a9cc3911024a",
+      "numericId": 8,
+      "content": "Amend NAM-006: the store checks regenerate and compare the manifest of every release directory, in release order. The generator validates a previous release manifest (NAM-003, NAM-004, schema hash) before it uses it as input, and NAM-008 applies to each release.",
+      "status": "mitigationIdentified",
+      "tags": ["spec-amendment", "NAM-006", "NAM-007"],
+      "metadata": [
+        { "key": "custom:mitigationType", "value": "Detective" },
+        { "key": "custom:mitigationCost", "value": "Low" },
+        { "key": "custom:mitigationEffectiveness", "value": "High" },
+        { "key": "Comments", "value": "Requirement amendment." }
+      ]
+    },
+    {
+      "id": "7bc140f7-461c-45b4-892b-2e2bc54a5e42",
+      "numericId": 9,
+      "content": "Release check baseline: select from v* tags that match the VERSION grammar, name the same OSCAL release, and are ancestors of origin/main, by SemVer precedence. Call git with argument arrays and full refs/tags/ names. Fail when the clone is shallow or the tags cannot be read. Pass with no baseline only when no qualifying tag holds names.json for the release.",
+      "status": "mitigationIdentified",
+      "tags": ["task", "spec-amendment", "NAM-008"],
+      "metadata": [
+        { "key": "custom:mitigationType", "value": "Preventive" },
+        { "key": "custom:mitigationCost", "value": "Low" },
+        { "key": "custom:mitigationEffectiveness", "value": "Medium" },
+        { "key": "Comments", "value": "Requirement amendment for the fail-closed clause in NAM-008. Selection logic and self-tests are a task. Reuse the regex in check-version.ts." }
+      ]
+    },
+    {
+      "id": "2af86ff4-2330-4a39-afa7-1b3b5c048544",
+      "numericId": 10,
+      "content": "Add a repository ruleset that blocks update and deletion of v* tags and limits their creation to maintainers.",
+      "status": "mitigationIdentified",
+      "tags": ["task", "repository-setting"],
+      "metadata": [
+        { "key": "custom:mitigationType", "value": "Preventive" },
+        { "key": "custom:mitigationCost", "value": "Low" },
+        { "key": "custom:mitigationEffectiveness", "value": "High" },
+        { "key": "Comments", "value": "Task (repository setting, needs an admin). Not verifiable from code." }
+      ]
+    },
+    {
+      "id": "fc5a5b32-b659-4f2c-8403-0e09a6a53d83",
+      "numericId": 11,
+      "content": "Generator pointer resolution uses own properties only (Object.hasOwn) and requires an object or boolean target. Keyed tables use Map or null-prototype objects. Self-tests cover __proto__, constructor, ~0, ~1, and percent escapes.",
+      "status": "mitigationIdentified",
+      "tags": ["task", "generator"],
+      "metadata": [
+        { "key": "custom:mitigationType", "value": "Preventive" },
+        { "key": "custom:mitigationCost", "value": "Low" },
+        { "key": "custom:mitigationEffectiveness", "value": "High" },
+        { "key": "Comments", "value": "Task." }
+      ]
+    },
+    {
+      "id": "53135504-304a-46c2-b912-c5684c7820db",
+      "numericId": 12,
+      "content": "The generator walk does not follow $ref. The merge comparison (MDL-007 guard 6) compares $ref strings, not targets. The CI build job sets timeout-minutes.",
+      "status": "mitigationIdentified",
+      "tags": ["task", "generator", "ci"],
+      "metadata": [
+        { "key": "custom:mitigationType", "value": "Preventive" },
+        { "key": "custom:mitigationCost", "value": "Low" },
+        { "key": "custom:mitigationEffectiveness", "value": "High" },
+        { "key": "Comments", "value": "Task." }
+      ]
+    },
+    {
+      "id": "639bc3a0-76d0-487f-869f-60f56a2055f9",
+      "numericId": 13,
+      "content": "The generator computes schema.sha256 from the exact bytes it parses. A store check fails when a schemas/<release>/ file differs from the same file at the latest release tag. Binding guidance: hash the bytes that the binding parses.",
+      "status": "mitigationIdentified",
+      "tags": ["task", "schema"],
+      "metadata": [
+        { "key": "custom:mitigationType", "value": "Detective" },
+        { "key": "custom:mitigationCost", "value": "Low" },
+        { "key": "custom:mitigationEffectiveness", "value": "Medium" },
+        { "key": "Comments", "value": "Task. The release-immutability check can share the baseline selection of mitigation 9." }
+      ]
+    },
+    {
+      "id": "ce4f0867-9267-4d13-9004-8f08efec66e3",
+      "numericId": 14,
+      "content": "Deterministic output: sort by UTF-16 code unit (no localeCompare), use one fixed serializer, and in check mode compare in memory without writing. A self-test runs the generator twice and compares bytes (NAM-006.02).",
+      "status": "mitigationIdentified",
+      "tags": ["task", "generator"],
+      "metadata": [
+        { "key": "custom:mitigationType", "value": "Preventive" },
+        { "key": "custom:mitigationCost", "value": "Low" },
+        { "key": "custom:mitigationEffectiveness", "value": "High" },
+        { "key": "Comments", "value": "Task." }
+      ]
+    },
+    {
+      "id": "e2d8e7e0-72ab-4a13-a989-9453f77ba6e8",
+      "numericId": 15,
+      "content": "The release name check lists each changed or removed name, also when a breaking increment permits the change, and writes the list to the GitHub job summary.",
+      "status": "mitigationIdentified",
+      "tags": ["task", "release-check"],
+      "metadata": [
+        { "key": "custom:mitigationType", "value": "Detective" },
+        { "key": "custom:mitigationCost", "value": "Low" },
+        { "key": "custom:mitigationEffectiveness", "value": "Medium" },
+        { "key": "Comments", "value": "Task." }
+      ]
+    },
+    {
+      "id": "043cb760-ff39-442c-b22a-596369f76668",
+      "numericId": 17,
+      "content": "On each pull request, CI lists each added, changed, and removed name of names.json against the pull request base, with its pointer and its cause (rule, override name, singular local name, or merge), and writes the list to the GitHub job summary. The list reports and does not fail.",
+      "status": "mitigationIdentified",
+      "tags": ["task", "review"],
+      "metadata": [
+        { "key": "custom:mitigationType", "value": "Detective" },
+        { "key": "custom:mitigationCost", "value": "Low" },
+        { "key": "custom:mitigationEffectiveness", "value": "Medium" },
+        { "key": "Comments", "value": "Task 4.5. Covers names that are not released yet, which the release name check (M15) does not see." }
+      ]
+    },
+    {
+      "id": "50b7ca80-b335-43bf-a0b2-ac961e2e2d3e",
+      "numericId": 18,
+      "content": "A pull request template asks for the reason for each overrides.json change, the Metaschema source of each new singular local name, and the VERSION increment when a released name changes. .gitattributes marks names.json as generated, so that reviewers read overrides.json and the name diff.",
+      "status": "mitigationIdentified",
+      "tags": ["task", "review", "governance"],
+      "metadata": [
+        { "key": "custom:mitigationType", "value": "Preventive" },
+        { "key": "custom:mitigationCost", "value": "Low" },
+        { "key": "custom:mitigationEffectiveness", "value": "Low" },
+        { "key": "Comments", "value": "Task 5.3. A template prompts and does not enforce. It depends on M7 (code owner review) and M17 (name diff)." }
+      ]
+    },
+    {
+      "id": "f0beff66-67af-4041-89b8-db2f7a66c258",
+      "numericId": 16,
+      "content": "CI baseline stays: contents: read, persist-credentials: false, actions pinned by commit, npm ci with ignore-scripts. The generator and checks run only in the build job through npm run check, and add no new dependency.",
+      "status": "mitigationIdentified",
+      "tags": ["existing", "task", "ci"],
+      "metadata": [
+        { "key": "custom:mitigationType", "value": "Preventive" },
+        { "key": "custom:mitigationEffectiveness", "value": "High" },
+        { "key": "Comments", "value": "Baseline exists. The constraint on job placement and dependencies is a task-level ordering note." }
+      ]
+    }
+  ],
+  "assumptionLinks": [
+    { "assumptionId": "285b956b-3b89-4f3f-835e-d2a74c62e197", "linkedId": "196e3a5c-4d92-42e6-b874-b4883fcc7947", "type": "Threat" },
+    { "assumptionId": "285b956b-3b89-4f3f-835e-d2a74c62e197", "linkedId": "d16edfa1-f3ca-42db-aa39-3c0729330a08", "type": "Threat" },
+    { "assumptionId": "285b956b-3b89-4f3f-835e-d2a74c62e197", "linkedId": "2e65bd1c-01d8-4e36-b6e6-16ce974d3ae1", "type": "Threat" },
+    { "assumptionId": "1c1c701c-6637-41c0-aedc-34163b60925b", "linkedId": "65f3c227-5fa0-4681-b22a-b04e749e912e", "type": "Threat" },
+    { "assumptionId": "bcde4494-2178-49bc-94c3-fbe8256630b8", "linkedId": "3242c4f1-3c6e-4522-a7d6-8bb93e0982ca", "type": "Threat" },
+    { "assumptionId": "bcde4494-2178-49bc-94c3-fbe8256630b8", "linkedId": "72bbe791-2d4a-4ddf-bc4f-b239182cc28b", "type": "Mitigation" },
+    { "assumptionId": "bf9baf39-45ec-49f7-a2e6-02a2abc6884d", "linkedId": "13d3aa03-64d6-4afa-9980-5aa4a8a2fe37", "type": "Threat" },
+    { "assumptionId": "00f41884-15d2-4d9a-a4ae-650e7ce81662", "linkedId": "5709a7d3-0ad1-42d5-9f88-65ce54e42de0", "type": "Threat" }
+  ],
+  "mitigationLinks": [
+    { "mitigationId": "a27ee546-400f-49c1-a0b2-c14dcb91f6a5", "linkedId": "3242c4f1-3c6e-4522-a7d6-8bb93e0982ca" },
+    { "mitigationId": "a27ee546-400f-49c1-a0b2-c14dcb91f6a5", "linkedId": "196e3a5c-4d92-42e6-b874-b4883fcc7947" },
+    { "mitigationId": "0da7bcee-c673-43fb-adb5-2d6bc42dd3f5", "linkedId": "3242c4f1-3c6e-4522-a7d6-8bb93e0982ca" },
+    { "mitigationId": "0da7bcee-c673-43fb-adb5-2d6bc42dd3f5", "linkedId": "65f3c227-5fa0-4681-b22a-b04e749e912e" },
+    { "mitigationId": "6b6c9ecb-3676-4fd1-a105-c67b1a2e88f6", "linkedId": "3242c4f1-3c6e-4522-a7d6-8bb93e0982ca" },
+    { "mitigationId": "6b6c9ecb-3676-4fd1-a105-c67b1a2e88f6", "linkedId": "467cb223-39ed-48d2-955c-df14cdadfc7e" },
+    { "mitigationId": "043cb760-ff39-442c-b22a-596369f76668", "linkedId": "196e3a5c-4d92-42e6-b874-b4883fcc7947" },
+    { "mitigationId": "50b7ca80-b335-43bf-a0b2-ac961e2e2d3e", "linkedId": "196e3a5c-4d92-42e6-b874-b4883fcc7947" },
+    { "mitigationId": "72bbe791-2d4a-4ddf-bc4f-b239182cc28b", "linkedId": "3242c4f1-3c6e-4522-a7d6-8bb93e0982ca" },
+    { "mitigationId": "72bbe791-2d4a-4ddf-bc4f-b239182cc28b", "linkedId": "65f3c227-5fa0-4681-b22a-b04e749e912e" },
+    { "mitigationId": "72bbe791-2d4a-4ddf-bc4f-b239182cc28b", "linkedId": "13d3aa03-64d6-4afa-9980-5aa4a8a2fe37" },
+    { "mitigationId": "a76cc781-9fde-4595-98cf-b69da0989e27", "linkedId": "196e3a5c-4d92-42e6-b874-b4883fcc7947" },
+    { "mitigationId": "a76cc781-9fde-4595-98cf-b69da0989e27", "linkedId": "39ad82ad-7b4c-4994-85ff-106a70c53b9c" },
+    { "mitigationId": "5c476735-a26e-4163-ab7e-9e130616748f", "linkedId": "196e3a5c-4d92-42e6-b874-b4883fcc7947" },
+    { "mitigationId": "5c476735-a26e-4163-ab7e-9e130616748f", "linkedId": "e9c340be-3dbb-4726-9e81-946b375bbd87" },
+    { "mitigationId": "5ef86e2d-06ad-4370-9f86-9d9c061d1da7", "linkedId": "196e3a5c-4d92-42e6-b874-b4883fcc7947" },
+    { "mitigationId": "5ef86e2d-06ad-4370-9f86-9d9c061d1da7", "linkedId": "65f3c227-5fa0-4681-b22a-b04e749e912e" },
+    { "mitigationId": "5ef86e2d-06ad-4370-9f86-9d9c061d1da7", "linkedId": "13d3aa03-64d6-4afa-9980-5aa4a8a2fe37" },
+    { "mitigationId": "be58f560-0dc7-465b-bdaf-a9cc3911024a", "linkedId": "e9c340be-3dbb-4726-9e81-946b375bbd87" },
+    { "mitigationId": "7bc140f7-461c-45b4-892b-2e2bc54a5e42", "linkedId": "d16edfa1-f3ca-42db-aa39-3c0729330a08" },
+    { "mitigationId": "2af86ff4-2330-4a39-afa7-1b3b5c048544", "linkedId": "d16edfa1-f3ca-42db-aa39-3c0729330a08" },
+    { "mitigationId": "2af86ff4-2330-4a39-afa7-1b3b5c048544", "linkedId": "65f3c227-5fa0-4681-b22a-b04e749e912e" },
+    { "mitigationId": "fc5a5b32-b659-4f2c-8403-0e09a6a53d83", "linkedId": "467cb223-39ed-48d2-955c-df14cdadfc7e" },
+    { "mitigationId": "53135504-304a-46c2-b912-c5684c7820db", "linkedId": "5709a7d3-0ad1-42d5-9f88-65ce54e42de0" },
+    { "mitigationId": "639bc3a0-76d0-487f-869f-60f56a2055f9", "linkedId": "65f3c227-5fa0-4681-b22a-b04e749e912e" },
+    { "mitigationId": "ce4f0867-9267-4d13-9004-8f08efec66e3", "linkedId": "39ad82ad-7b4c-4994-85ff-106a70c53b9c" },
+    { "mitigationId": "e2d8e7e0-72ab-4a13-a989-9453f77ba6e8", "linkedId": "2e65bd1c-01d8-4e36-b6e6-16ce974d3ae1" },
+    { "mitigationId": "e2d8e7e0-72ab-4a13-a989-9453f77ba6e8", "linkedId": "196e3a5c-4d92-42e6-b874-b4883fcc7947" },
+    { "mitigationId": "f0beff66-67af-4041-89b8-db2f7a66c258", "linkedId": "13d3aa03-64d6-4afa-9980-5aa4a8a2fe37" }
+  ]
+}

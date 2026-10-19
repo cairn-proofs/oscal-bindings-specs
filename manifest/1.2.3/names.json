@@ -1,0 +1,1931 @@
+{
+  "format": 1,
+  "oscal-release": "1.2.3",
+  "schema": {
+    "file": "oscal_complete_schema.json",
+    "sha256": "384324105c7a817af0f65b120a963146caa0e0d55d969cf0daf60e063b87a206"
+  },
+  "types": [
+    {
+      "kind": "object",
+      "name": "Action",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:action"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "Activity",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:activity"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ActivityStep",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:activity/properties/steps/items"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "Address",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:address"
+      ]
+    },
+    {
+      "closed": false,
+      "kind": "enum",
+      "name": "AddressType",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:address/properties/type/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "AssessmentAssets",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:assessment-assets"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "AssessmentCommonSelectControlById",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:select-control-by-id"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "AssessmentMethod",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:assessment-method"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "AssessmentPart",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:assessment-part"
+      ]
+    },
+    {
+      "closed": false,
+      "kind": "enum",
+      "name": "AssessmentPartName",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:assessment-part/properties/name/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "AssessmentPlan",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ap:assessment-plan"
+      ]
+    },
+    {
+      "body-field": "assessment-plan",
+      "kind": "document",
+      "name": "AssessmentPlanDocument",
+      "sites": [
+        "#/oneOf/5"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "AssessmentPlanLocalDefinitions",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ap:assessment-plan/properties/local-definitions"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "AssessmentPlanTermsAndConditions",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ap:assessment-plan/properties/terms-and-conditions"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "AssessmentPlatform",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:assessment-assets/properties/assessment-platforms/items"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "AssessmentPlatformUsesComponent",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:assessment-assets/properties/assessment-platforms/items/properties/uses-components/items"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "AssessmentResults",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ar:assessment-results"
+      ]
+    },
+    {
+      "body-field": "assessment-results",
+      "kind": "document",
+      "name": "AssessmentResultsDocument",
+      "sites": [
+        "#/oneOf/6"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "AssessmentResultsLocalDefinitions",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ar:assessment-results/properties/local-definitions"
+      ]
+    },
+    {
+      "kind": "union",
+      "name": "AssessmentSubject",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:assessment-subject"
+      ],
+      "variants": [
+        {
+          "property": "include-all",
+          "type": "AssessmentSubjectWithIncludeAll"
+        },
+        {
+          "property": "include-subjects",
+          "type": "AssessmentSubjectWithIncludeSubjects"
+        }
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "AssessmentSubjectPlaceholder",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:assessment-subject-placeholder"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "AssessmentSubjectPlaceholderSource",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:assessment-subject-placeholder/properties/sources/items"
+      ]
+    },
+    {
+      "closed": false,
+      "kind": "enum",
+      "name": "AssessmentSubjectType",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:assessment-subject/anyOf/0/properties/type/anyOf/1",
+        "#/definitions/oscal-complete-oscal-assessment-common:assessment-subject/anyOf/1/properties/type/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "AssessmentSubjectWithIncludeAll",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:assessment-subject/anyOf/0"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "AssessmentSubjectWithIncludeSubjects",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:assessment-subject/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "AssociatedRisk",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:associated-risk"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "AuthorizationBoundary",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ssp:authorization-boundary"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "AuthorizedPrivilege",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-implementation-common:authorized-privilege"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "BackMatter",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:back-matter"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "BackMatterResource",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:back-matter/properties/resources/items"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "BackMatterResourceBase64",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:back-matter/properties/resources/items/properties/base64"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "BackMatterResourceCitation",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:back-matter/properties/resources/items/properties/citation"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "BackMatterResourceRlink",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:back-matter/properties/resources/items/properties/rlinks/items"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ByComponent",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ssp:by-component"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ByComponentExport",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ssp:by-component/properties/export"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ByComponentExportProvided",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ssp:by-component/properties/export/properties/provided/items"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ByComponentExportResponsibility",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ssp:by-component/properties/export/properties/responsibilities/items"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ByComponentInherited",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ssp:by-component/properties/inherited/items"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ByComponentSatisfied",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ssp:by-component/properties/satisfied/items"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "Capability",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-component-definition:capability"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "Catalog",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-catalog:catalog"
+      ]
+    },
+    {
+      "body-field": "catalog",
+      "kind": "document",
+      "name": "CatalogDocument",
+      "sites": [
+        "#/oneOf/0"
+      ]
+    },
+    {
+      "kind": "union",
+      "name": "CatalogGroup",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-catalog:group"
+      ],
+      "variants": [
+        {
+          "property": "controls",
+          "type": "CatalogGroupWithControls"
+        },
+        {
+          "property": "groups",
+          "type": "CatalogGroupWithGroups"
+        }
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "CatalogGroupWithControls",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-catalog:group/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "CatalogGroupWithGroups",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-catalog:group/anyOf/0"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "Characterization",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:characterization"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "CharacterizationFacet",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:characterization/properties/facets/items"
+      ]
+    },
+    {
+      "closed": false,
+      "kind": "enum",
+      "name": "CharacterizationFacetSystem",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:characterization/properties/facets/items/properties/system/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ComponentDefinition",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-component-definition:component-definition"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ComponentDefinitionControlImplementation",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-component-definition:control-implementation"
+      ]
+    },
+    {
+      "body-field": "component-definition",
+      "kind": "document",
+      "name": "ComponentDefinitionDocument",
+      "sites": [
+        "#/oneOf/3"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ComponentDefinitionImplementedRequirement",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-component-definition:implemented-requirement"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ComponentDefinitionStatement",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-component-definition:statement"
+      ]
+    },
+    {
+      "kind": "union",
+      "name": "ConfidenceScore",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-mapping-common:confidence-score"
+      ],
+      "variants": [
+        {
+          "property": "category",
+          "type": "ConfidenceScoreWithCategory"
+        },
+        {
+          "property": "percentage",
+          "type": "ConfidenceScoreWithPercentage"
+        }
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ConfidenceScoreWithCategory",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-mapping-common:confidence-score/anyOf/0"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ConfidenceScoreWithPercentage",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-mapping-common:confidence-score/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "Control",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-catalog:control"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ControlCommonSelectControlById",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-control-common:select-control-by-id"
+      ]
+    },
+    {
+      "closed": true,
+      "kind": "enum",
+      "name": "ControlCommonSelectControlByIdChildControls",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-control-common:select-control-by-id/properties/with-child-controls/allOf/1"
+      ]
+    },
+    {
+      "kind": "union",
+      "name": "ControlObjectiveSelection",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:reviewed-controls/properties/control-objective-selections/items"
+      ],
+      "variants": [
+        {
+          "property": "include-all",
+          "type": "ControlObjectiveSelectionWithIncludeAll"
+        },
+        {
+          "property": "include-objectives",
+          "type": "ControlObjectiveSelectionWithIncludeObjectives"
+        }
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ControlObjectiveSelectionWithIncludeAll",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:reviewed-controls/properties/control-objective-selections/items/anyOf/0"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ControlObjectiveSelectionWithIncludeObjectives",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:reviewed-controls/properties/control-objective-selections/items/anyOf/1"
+      ]
+    },
+    {
+      "kind": "union",
+      "name": "ControlSelection",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:reviewed-controls/properties/control-selections/items"
+      ],
+      "variants": [
+        {
+          "property": "include-all",
+          "type": "ControlSelectionWithIncludeAll"
+        },
+        {
+          "property": "include-controls",
+          "type": "ControlSelectionWithIncludeControls"
+        }
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ControlSelectionWithIncludeAll",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:reviewed-controls/properties/control-selections/items/anyOf/0"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ControlSelectionWithIncludeControls",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:reviewed-controls/properties/control-selections/items/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "Coverage",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-mapping-common:coverage"
+      ]
+    },
+    {
+      "closed": false,
+      "kind": "enum",
+      "name": "CoverageGenerationMethod",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-mapping-common:coverage/properties/generation-method/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "DataFlow",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ssp:data-flow"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "DefinedComponent",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-component-definition:defined-component"
+      ]
+    },
+    {
+      "closed": false,
+      "kind": "enum",
+      "name": "DefinedComponentType",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-component-definition:defined-component/properties/type/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "Diagram",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ssp:diagram"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "DocumentId",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:document-id"
+      ]
+    },
+    {
+      "closed": false,
+      "kind": "enum",
+      "name": "DocumentIdScheme",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:document-id/properties/scheme/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "Finding",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:finding"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "FindingTarget",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:finding-target"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "FindingTargetStatus",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:finding-target/properties/status"
+      ]
+    },
+    {
+      "closed": false,
+      "kind": "enum",
+      "name": "FindingTargetStatusReason",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:finding-target/properties/status/properties/reason/anyOf/1"
+      ]
+    },
+    {
+      "closed": true,
+      "kind": "enum",
+      "name": "FindingTargetStatusState",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:finding-target/properties/status/properties/state/allOf/1"
+      ]
+    },
+    {
+      "closed": true,
+      "kind": "enum",
+      "name": "FindingTargetType",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:finding-target/properties/type/allOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "GapSummary",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-mapping-common:gap-summary"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "Hash",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:hash"
+      ]
+    },
+    {
+      "closed": false,
+      "kind": "enum",
+      "name": "HashAlgorithm",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:hash/properties/algorithm/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "Impact",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ssp:impact"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ImplementationStatus",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-implementation-common:implementation-status"
+      ]
+    },
+    {
+      "closed": false,
+      "kind": "enum",
+      "name": "ImplementationStatusState",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-implementation-common:implementation-status/properties/state/anyOf/1"
+      ]
+    },
+    {
+      "kind": "union",
+      "name": "Import",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-profile:import"
+      ],
+      "variants": [
+        {
+          "property": "include-all",
+          "type": "ImportWithIncludeAll"
+        },
+        {
+          "property": "include-controls",
+          "type": "ImportWithIncludeControls"
+        }
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ImportAp",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ar:import-ap"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ImportComponentDefinition",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-component-definition:import-component-definition"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ImportProfile",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ssp:import-profile"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ImportSsp",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:import-ssp"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ImportWithIncludeAll",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-profile:import/anyOf/0"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ImportWithIncludeControls",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-profile:import/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "IncludeAll",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-control-common:include-all"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "IncorporatesComponent",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-component-definition:incorporates-component"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "InformationType",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ssp:system-information/properties/information-types/items"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "InformationTypeCategorization",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ssp:system-information/properties/information-types/items/properties/categorizations/items"
+      ]
+    },
+    {
+      "closed": false,
+      "kind": "enum",
+      "name": "InformationTypeCategorizationSystem",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ssp:system-information/properties/information-types/items/properties/categorizations/items/properties/system/anyOf/1"
+      ]
+    },
+    {
+      "kind": "union",
+      "name": "InsertControls",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-profile:insert-controls"
+      ],
+      "variants": [
+        {
+          "property": "include-all",
+          "type": "InsertControlsWithIncludeAll"
+        },
+        {
+          "property": "include-controls",
+          "type": "InsertControlsWithIncludeControls"
+        }
+      ]
+    },
+    {
+      "closed": true,
+      "kind": "enum",
+      "name": "InsertControlsOrder",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-profile:insert-controls/anyOf/0/properties/order/allOf/1",
+        "#/definitions/oscal-complete-oscal-profile:insert-controls/anyOf/1/properties/order/allOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "InsertControlsWithIncludeAll",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-profile:insert-controls/anyOf/0"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "InsertControlsWithIncludeControls",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-profile:insert-controls/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "InventoryItem",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-implementation-common:inventory-item"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "InventoryItemImplementedComponent",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-implementation-common:inventory-item/properties/implemented-components/items"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "Link",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:link"
+      ]
+    },
+    {
+      "closed": false,
+      "kind": "enum",
+      "name": "LinkRel",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:link/properties/rel/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "LocalDefinitions",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-poam:local-definitions"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "LocalObjective",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:local-objective"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "LoggedBy",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:logged-by"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "Map",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-mapping-common:map"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "Mapping",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-mapping-common:mapping"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "MappingCollection",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-mapping:mapping-collection"
+      ]
+    },
+    {
+      "body-field": "mapping-collection",
+      "kind": "document",
+      "name": "MappingCollectionDocument",
+      "sites": [
+        "#/oneOf/1"
+      ]
+    },
+    {
+      "item": "Mapping",
+      "kind": "single-or-many",
+      "name": "MappingCollectionMappings",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-mapping:mapping-collection/properties/mappings"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "MappingItem",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-mapping-common:mapping-item"
+      ]
+    },
+    {
+      "closed": true,
+      "kind": "enum",
+      "name": "MappingItemType",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-mapping-common:mapping-item/properties/type/allOf/1"
+      ]
+    },
+    {
+      "closed": true,
+      "kind": "enum",
+      "name": "MappingMatchingRationale",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-mapping-common:map/properties/matching-rationale/allOf/1",
+        "#/definitions/oscal-complete-oscal-mapping-common:mapping-provenance/properties/matching-rationale/allOf/1",
+        "#/definitions/oscal-complete-oscal-mapping-common:mapping/properties/matching-rationale/allOf/1"
+      ]
+    },
+    {
+      "closed": true,
+      "kind": "enum",
+      "name": "MappingMethod",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-mapping-common:mapping-provenance/properties/method/allOf/1",
+        "#/definitions/oscal-complete-oscal-mapping-common:mapping/properties/method/allOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "MappingProvenance",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-mapping-common:mapping-provenance"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "MappingResourceReference",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-mapping-common:mapping-resource-reference"
+      ]
+    },
+    {
+      "closed": false,
+      "kind": "enum",
+      "name": "MappingResourceReferenceType",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-mapping-common:mapping-resource-reference/properties/type/anyOf/1"
+      ]
+    },
+    {
+      "closed": true,
+      "kind": "enum",
+      "name": "MappingStatus",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-mapping-common:mapping-provenance/properties/status/allOf/1",
+        "#/definitions/oscal-complete-oscal-mapping-common:mapping/properties/status/allOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "Matching",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-control-common:matching"
+      ]
+    },
+    {
+      "kind": "union",
+      "name": "Merge",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-profile:merge"
+      ],
+      "variants": [
+        {
+          "property": "as-is",
+          "type": "MergeWithAsIs"
+        },
+        {
+          "property": "custom",
+          "type": "MergeWithCustom"
+        },
+        {
+          "property": "flat",
+          "type": "MergeWithFlat"
+        }
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "MergeCombine",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-profile:merge/anyOf/0/properties/combine",
+        "#/definitions/oscal-complete-oscal-profile:merge/anyOf/1/properties/combine",
+        "#/definitions/oscal-complete-oscal-profile:merge/anyOf/2/properties/combine"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "MergeCustom",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-profile:merge/anyOf/2/properties/custom"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "MergeFlat",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-profile:merge/anyOf/0/properties/flat"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "MergeWithAsIs",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-profile:merge/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "MergeWithCustom",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-profile:merge/anyOf/2"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "MergeWithFlat",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-profile:merge/anyOf/0"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "Metadata",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:metadata"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "MetadataLocation",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:metadata/properties/locations/items"
+      ]
+    },
+    {
+      "kind": "union",
+      "name": "MetadataParty",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:metadata/properties/parties/items"
+      ],
+      "variants": [
+        {
+          "property": "addresses",
+          "type": "MetadataPartyWithAddresses"
+        },
+        {
+          "property": "location-uuids",
+          "type": "MetadataPartyWithLocationUuids"
+        }
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "MetadataPartyExternalId",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:metadata/properties/parties/items/anyOf/0/properties/external-ids/items",
+        "#/definitions/oscal-complete-oscal-metadata:metadata/properties/parties/items/anyOf/1/properties/external-ids/items"
+      ]
+    },
+    {
+      "closed": false,
+      "kind": "enum",
+      "name": "MetadataPartyExternalIdScheme",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:metadata/properties/parties/items/anyOf/0/properties/external-ids/items/properties/scheme/anyOf/1",
+        "#/definitions/oscal-complete-oscal-metadata:metadata/properties/parties/items/anyOf/1/properties/external-ids/items/properties/scheme/anyOf/1"
+      ]
+    },
+    {
+      "closed": true,
+      "kind": "enum",
+      "name": "MetadataPartyType",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:metadata/properties/parties/items/anyOf/0/properties/type/allOf/1",
+        "#/definitions/oscal-complete-oscal-metadata:metadata/properties/parties/items/anyOf/1/properties/type/allOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "MetadataPartyWithAddresses",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:metadata/properties/parties/items/anyOf/0"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "MetadataPartyWithLocationUuids",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:metadata/properties/parties/items/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "MetadataRevision",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:metadata/properties/revisions/items"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "MetadataRole",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:metadata/properties/roles/items"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "Modify",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-profile:modify"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ModifyAlter",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-profile:modify/properties/alters/items"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ModifyAlterAdd",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-profile:modify/properties/alters/items/properties/adds/items"
+      ]
+    },
+    {
+      "closed": true,
+      "kind": "enum",
+      "name": "ModifyAlterAddPosition",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-profile:modify/properties/alters/items/properties/adds/items/properties/position/allOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ModifyAlterRemove",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-profile:modify/properties/alters/items/properties/removes/items"
+      ]
+    },
+    {
+      "closed": true,
+      "kind": "enum",
+      "name": "ModifyAlterRemoveByItemName",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-profile:modify/properties/alters/items/properties/removes/items/properties/by-item-name/allOf/1"
+      ]
+    },
+    {
+      "kind": "union",
+      "name": "ModifySetParameter",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-profile:modify/properties/set-parameters/items"
+      ],
+      "variants": [
+        {
+          "property": "select",
+          "type": "ModifySetParameterWithSelect"
+        },
+        {
+          "property": "values",
+          "type": "ModifySetParameterWithValues"
+        }
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ModifySetParameterWithSelect",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-profile:modify/properties/set-parameters/items/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ModifySetParameterWithValues",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-profile:modify/properties/set-parameters/items/anyOf/0"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "NetworkArchitecture",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ssp:network-architecture"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "Observation",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:observation"
+      ]
+    },
+    {
+      "closed": false,
+      "kind": "enum",
+      "name": "ObservationMethod",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:observation/properties/methods/items/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ObservationRelevantEvidence",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:observation/properties/relevant-evidence/items"
+      ]
+    },
+    {
+      "closed": false,
+      "kind": "enum",
+      "name": "ObservationType",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:observation/properties/types/items/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "Origin",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:origin"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "OriginActor",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:origin-actor"
+      ]
+    },
+    {
+      "closed": true,
+      "kind": "enum",
+      "name": "OriginActorType",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:origin-actor/properties/type/allOf/1"
+      ]
+    },
+    {
+      "kind": "document-union",
+      "members": [
+        "AssessmentPlanDocument",
+        "AssessmentResultsDocument",
+        "CatalogDocument",
+        "ComponentDefinitionDocument",
+        "MappingCollectionDocument",
+        "PlanOfActionAndMilestonesDocument",
+        "ProfileDocument",
+        "SystemSecurityPlanDocument"
+      ],
+      "name": "OscalDocument",
+      "sites": [
+        "#"
+      ]
+    },
+    {
+      "kind": "union",
+      "name": "Parameter",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-control-common:parameter"
+      ],
+      "variants": [
+        {
+          "property": "select",
+          "type": "ParameterWithSelect"
+        },
+        {
+          "property": "values",
+          "type": "ParameterWithValues"
+        }
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ParameterConstraint",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-control-common:parameter-constraint"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ParameterConstraintTest",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-control-common:parameter-constraint/properties/tests/items"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ParameterGuideline",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-control-common:parameter-guideline"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ParameterSelection",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-control-common:parameter-selection"
+      ]
+    },
+    {
+      "closed": true,
+      "kind": "enum",
+      "name": "ParameterSelectionHowMany",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-control-common:parameter-selection/properties/how-many/allOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ParameterWithSelect",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-control-common:parameter/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ParameterWithValues",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-control-common:parameter/anyOf/0"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "Part",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-control-common:part"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "PlanOfActionAndMilestones",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-poam:plan-of-action-and-milestones"
+      ]
+    },
+    {
+      "body-field": "plan-of-action-and-milestones",
+      "kind": "document",
+      "name": "PlanOfActionAndMilestonesDocument",
+      "sites": [
+        "#/oneOf/7"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "PoamItem",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-poam:poam-item"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "PoamItemOrigin",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-poam:poam-item/properties/origins/items"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "PoamItemRelatedFinding",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-poam:poam-item/properties/related-findings/items"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "PortRange",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-implementation-common:port-range"
+      ]
+    },
+    {
+      "closed": true,
+      "kind": "enum",
+      "name": "PortRangeTransport",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-implementation-common:port-range/properties/transport/allOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "Profile",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-profile:profile"
+      ]
+    },
+    {
+      "body-field": "profile",
+      "kind": "document",
+      "name": "ProfileDocument",
+      "sites": [
+        "#/oneOf/2"
+      ]
+    },
+    {
+      "kind": "union",
+      "name": "ProfileGroup",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-profile:group"
+      ],
+      "variants": [
+        {
+          "property": "groups",
+          "type": "ProfileGroupWithGroups"
+        },
+        {
+          "property": "insert-controls",
+          "type": "ProfileGroupWithInsertControls"
+        }
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ProfileGroupWithGroups",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-profile:group/anyOf/0"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ProfileGroupWithInsertControls",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-profile:group/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "Property",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:property"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "Protocol",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-implementation-common:protocol"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "QualifierItem",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-mapping-common:qualifier-item"
+      ]
+    },
+    {
+      "closed": true,
+      "kind": "enum",
+      "name": "QualifierItemCategory",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-mapping-common:qualifier-item/properties/category/allOf/1"
+      ]
+    },
+    {
+      "closed": true,
+      "kind": "enum",
+      "name": "QualifierItemPredicate",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-mapping-common:qualifier-item/properties/predicate/allOf/1"
+      ]
+    },
+    {
+      "closed": true,
+      "kind": "enum",
+      "name": "QualifierItemSubject",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-mapping-common:qualifier-item/properties/subject/allOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "RelatedObservation",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:related-observation"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "RelatedTask",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:related-task"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "RelatedTaskIdentifiedSubject",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:related-task/properties/identified-subject"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "Response",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:response"
+      ]
+    },
+    {
+      "closed": false,
+      "kind": "enum",
+      "name": "ResponseLifecycle",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:response/properties/lifecycle/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ResponseRequiredAsset",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:response/properties/required-assets/items"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ResponsibleParty",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:responsible-party"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ResponsibleRole",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:responsible-role"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "Result",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ar:result"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ResultAssessmentLog",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ar:result/properties/assessment-log"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ResultAssessmentLogEntry",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ar:result/properties/assessment-log/properties/entries/items"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ResultAttestation",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ar:result/properties/attestations/items"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ResultLocalDefinitions",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ar:result/properties/local-definitions"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ReviewedControls",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:reviewed-controls"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "Risk",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:risk"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "RiskLog",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:risk/properties/risk-log"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "RiskLogEntry",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:risk/properties/risk-log/properties/entries/items"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "RiskLogEntryRelatedResponse",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:risk/properties/risk-log/properties/entries/items/properties/related-responses/items"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "RiskMitigatingFactor",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:risk/properties/mitigating-factors/items"
+      ]
+    },
+    {
+      "closed": false,
+      "kind": "enum",
+      "name": "RiskStatus",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:risk-status/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "SecurityImpactLevel",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ssp:security-impact-level"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "SelectObjectiveById",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:select-objective-by-id"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "SelectSubjectById",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:select-subject-by-id"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "SetParameter",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-implementation-common:set-parameter"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "SspControlImplementation",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ssp:control-implementation"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "SspImplementedRequirement",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ssp:implemented-requirement"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "SspStatement",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ssp:statement"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "Status",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ssp:status"
+      ]
+    },
+    {
+      "closed": true,
+      "kind": "enum",
+      "name": "StatusState",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ssp:status/properties/state/allOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "SubjectReference",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:subject-reference"
+      ]
+    },
+    {
+      "closed": false,
+      "kind": "enum",
+      "name": "SubjectType",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:select-subject-by-id/properties/type/anyOf/1",
+        "#/definitions/oscal-complete-oscal-assessment-common:subject-reference/properties/type/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "SystemCharacteristics",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ssp:system-characteristics"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "SystemComponent",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-implementation-common:system-component"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "SystemComponentStatus",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-implementation-common:system-component/properties/status"
+      ]
+    },
+    {
+      "closed": true,
+      "kind": "enum",
+      "name": "SystemComponentStatusState",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-implementation-common:system-component/properties/status/properties/state/allOf/1"
+      ]
+    },
+    {
+      "closed": false,
+      "kind": "enum",
+      "name": "SystemComponentType",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-implementation-common:system-component/properties/type/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "SystemId",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-implementation-common:system-id"
+      ]
+    },
+    {
+      "closed": false,
+      "kind": "enum",
+      "name": "SystemIdIdentifierType",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-implementation-common:system-id/properties/identifier-type/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "SystemImplementation",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ssp:system-implementation"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "SystemImplementationLeveragedAuthorization",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ssp:system-implementation/properties/leveraged-authorizations/items"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "SystemInformation",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ssp:system-information"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "SystemSecurityPlan",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-ssp:system-security-plan"
+      ]
+    },
+    {
+      "body-field": "system-security-plan",
+      "kind": "document",
+      "name": "SystemSecurityPlanDocument",
+      "sites": [
+        "#/oneOf/4"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "SystemUser",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-implementation-common:system-user"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "Task",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:task"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "TaskAssociatedActivity",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:task/properties/associated-activities/items"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "TaskDependency",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:task/properties/dependencies/items"
+      ]
+    },
+    {
+      "kind": "union",
+      "name": "TaskTiming",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:task/properties/timing"
+      ],
+      "variants": [
+        {
+          "property": "at-frequency",
+          "type": "TaskTimingWithAtFrequency"
+        },
+        {
+          "property": "within-date-range",
+          "type": "TaskTimingWithDateRange"
+        },
+        {
+          "property": "on-date",
+          "type": "TaskTimingWithOnDate"
+        }
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "TaskTimingAtFrequency",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:task/properties/timing/anyOf/2/properties/at-frequency"
+      ]
+    },
+    {
+      "closed": true,
+      "kind": "enum",
+      "name": "TaskTimingAtFrequencyUnit",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:task/properties/timing/anyOf/2/properties/at-frequency/properties/unit/allOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "TaskTimingDateRange",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:task/properties/timing/anyOf/1/properties/within-date-range"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "TaskTimingOnDate",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:task/properties/timing/anyOf/0/properties/on-date"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "TaskTimingWithAtFrequency",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:task/properties/timing/anyOf/2"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "TaskTimingWithDateRange",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:task/properties/timing/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "TaskTimingWithOnDate",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:task/properties/timing/anyOf/0"
+      ]
+    },
+    {
+      "closed": false,
+      "kind": "enum",
+      "name": "TaskType",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:task/properties/type/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "TelephoneNumber",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:telephone-number"
+      ]
+    },
+    {
+      "closed": false,
+      "kind": "enum",
+      "name": "TelephoneNumberType",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-metadata:telephone-number/properties/type/anyOf/1"
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "ThreatId",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:threat-id"
+      ]
+    },
+    {
+      "closed": false,
+      "kind": "enum",
+      "name": "ThreatIdSystem",
+      "sites": [
+        "#/definitions/oscal-complete-oscal-assessment-common:threat-id/properties/system/anyOf/1"
+      ]
+    }
+  ]
+}
