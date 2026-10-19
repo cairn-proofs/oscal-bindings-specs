@@ -103,7 +103,7 @@ regeneration check needs the committed files from group 3.
 
 ## 5. Repository governance
 
-- [ ] 5.1 Add `.github/CODEOWNERS` for `manifest/`, `schemas/`, `scripts/`, and `.github/`. Verify GitHub shows the
+- [x] 5.1 Add `.github/CODEOWNERS` for `manifest/`, `schemas/`, `scripts/`, and `.github/`. Verify GitHub shows the
       owners on a pull request that touches `manifest/`.
 - [ ] 5.2 Ask the user, as repository admin, to confirm that `main` requires a reviewed pull request, a code owner
       review, and the `build` check, and to add a ruleset that blocks update and deletion of `v*` tags. Verify the user
@@ -116,7 +116,7 @@ regeneration check needs the committed files from group 3.
          approve their own pull request, so these settings would block every merge. When a second maintainer joins:
          create a team such as `@cairn-proofs/maintainers`, point CODEOWNERS at it, add both maintainers, and require
          one approval and code owner review on `main`.
-- [ ] 5.3 Add `.github/pull_request_template.md` with a manifest section that asks for: the reason for each change to
+- [x] 5.3 Add `.github/pull_request_template.md` with a manifest section that asks for: the reason for each change to
       `overrides.json`, the Metaschema file and definition for each new singular local name, and, when a released name
       changes, the `VERSION` increment. Add `.gitattributes` with `manifest/*/names.json linguist-generated=true`, so
       that GitHub collapses the generated diff and reviewers read `overrides.json` and the name diff of task 4.5.
@@ -130,7 +130,7 @@ regeneration check needs the committed files from group 3.
       `openspec list --specs --store oscal-bindings-specs` shows nine capabilities.
 - [x] 6.2 Update the store `README.md` for the manifest files and the generator commands. Set `VERSION` to
       `0.2.0+oscal.1.2.3`. Verify `npm run check` passes.
-- [ ] 6.3 With the user's approval, push the branch, open the pull request, and after the merge tag `v0.2.0+oscal.1.2.3`
+- [x] 6.3 With the user's approval, push the branch, open the pull request, and after the merge tag `v0.2.0+oscal.1.2.3`
       on `main`. Verify CI builds the archive with `names.json` and creates the draft release. The user publishes it.
 
 ## 7. TypeScript spike and archive
@@ -140,8 +140,10 @@ regeneration check needs the committed files from group 3.
       `names.json`.
 - [ ] 7.2 If the spike found a format problem, update this change and its artifacts, and repeat group 6 with the next
       version. Verify the spike passes against the new release.
-- [ ] 7.3 Draft the follow-up issues for the user to review, and post them only after approval: the closed-enum parse
+- [x] 7.3 Draft the follow-up issues for the user to review, and post them only after approval: the closed-enum parse
       rule with corpus cases in the store, the closed-enum fix in the Python repo, and the new scope of
       cairn-proofs/oscal-bindings-python#16 (Python consumes `names.json`). Verify each issue exists after approval.
+      Posted: #9 (store), cairn-proofs/oscal-bindings-python#21 (Python), and the new title and body of
+      cairn-proofs/oscal-bindings-python#16.
 - [ ] 7.4 Archive this change. If any requirement or scenario changed after task 6.1, update the ledger in the archive
       commit. Verify `npm run spec-ids` passes and `openspec list --store oscal-bindings-specs` shows no active change.
