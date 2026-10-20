@@ -135,15 +135,22 @@ regeneration check needs the committed files from group 3.
 
 ## 7. TypeScript spike and archive
 
-- [ ] 7.1 Give the spike in cairn-proofs/oscal-bindings-python#17 the release tag and its `sha256`. Record each format
+- [x] 7.1 Give the spike in cairn-proofs/oscal-bindings-python#17 the release tag and its `sha256`. Record each format
       problem that the spike finds. Verify the spike reports whether its types compile from the schema and
       `names.json`.
-- [ ] 7.2 If the spike found a format problem, update this change and its artifacts, and repeat group 6 with the next
+      Result: the issue moved to cairn-proofs/oscal-bindings-typescript#1. The report
+      (https://github.com/cairn-proofs/oscal-bindings-typescript/issues/1#issuecomment-6276224534) states that the
+      types compile from the schema and `names.json` alone, with 0 gaps. It found no format problem. Its two text
+      suggestions for NAM-002 and NAM-004 are #11.
+- [x] 7.2 If the spike found a format problem, update this change and its artifacts, and repeat group 6 with the next
       version. Verify the spike passes against the new release.
+      Result: not necessary. The spike found no format problem, so the format of `0.2.0+oscal.1.2.3` is settled.
 - [x] 7.3 Draft the follow-up issues for the user to review, and post them only after approval: the closed-enum parse
       rule with corpus cases in the store, the closed-enum fix in the Python repo, and the new scope of
       cairn-proofs/oscal-bindings-python#16 (Python consumes `names.json`). Verify each issue exists after approval.
       Posted: #9 (store), cairn-proofs/oscal-bindings-python#21 (Python), and the new title and body of
       cairn-proofs/oscal-bindings-python#16.
-- [ ] 7.4 Archive this change. If any requirement or scenario changed after task 6.1, update the ledger in the archive
+- [x] 7.4 Archive this change. If any requirement or scenario changed after task 6.1, update the ledger in the archive
       commit. Verify `npm run spec-ids` passes and `openspec list --store oscal-bindings-specs` shows no active change.
+      Result: no requirement or scenario changed after task 6.1, so the ledger needs no update. Task 5.2 stays open
+      for its approval and code owner rule, which waits for a second maintainer.
