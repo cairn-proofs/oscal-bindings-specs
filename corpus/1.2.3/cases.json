@@ -144,6 +144,15 @@
       ]
     },
     {
+      "id": "round-trip/open-enum-off-list",
+      "operation": "round-trip",
+      "input": "documents/valid/open-enum-off-list.json",
+      "document-type": "catalog",
+      "expected": "expected/open-enum-off-list.json",
+      "requirements": ["PRS-009.02"],
+      "notes": "Written for this corpus. The hash algorithm BLAKE3 is not in the open enum of hash/algorithm."
+    },
+    {
       "id": "parse/not-json",
       "operation": "parse",
       "input": "documents/invalid/not-json.json",
@@ -225,6 +234,13 @@
       "requirements": ["PRS-008.01"]
     },
     {
+      "id": "parse/closed-enum-out-of-set",
+      "operation": "parse",
+      "input": "documents/invalid/closed-enum-out-of-set.json",
+      "expected-category": "parse-error",
+      "requirements": ["PRS-009.01"]
+    },
+    {
       "id": "parse-typed/wrong-document-type",
       "operation": "parse-typed",
       "input": "documents/valid/profile.json",
@@ -294,6 +310,14 @@
       "element-type": "back-matter",
       "expected-valid": false,
       "requirements": ["ELV-001.02"]
+    },
+    {
+      "id": "element/parameter-selection-out-of-set",
+      "operation": "validate-element",
+      "input": "elements/parameter-selection-out-of-set.json",
+      "element-type": "parameter-selection",
+      "expected-valid": false,
+      "requirements": ["ELV-001.02", "PRS-009.03"]
     },
     {
       "id": "element/unknown-element-type",
