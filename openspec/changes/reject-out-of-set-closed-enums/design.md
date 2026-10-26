@@ -70,8 +70,9 @@ an observed failure, and there is none.
 1. [The open fixture fails a round trip in a binding for a reason other than the enum, for example the back-matter
    shape.] → Keep the fixture to the smallest valid back matter: one resource with one rlink and one hash.
 2. [The closed fixture fails the schema for a second reason, so a binding passes it without an enum check.] → Change
-   only `how-many` from a valid fixture. Check with the schema that the only error is the `enum` keyword at
-   `/catalog/params/0/select/how-many`.
+   only `how-many` from a valid fixture. Check with the schema that the only failing keyword in the `catalog`
+   branch is the `enum` keyword at `/catalog/params/0/select/how-many`. The union errors that this fault causes are
+   expected.
 3. [The Python binding does not run the new cases until it moves its pin from `0.2.0+oscal.1.2.3`.] → Accepted. The
    pin move is a Python change. This change only records the result of the model check in D5.
 

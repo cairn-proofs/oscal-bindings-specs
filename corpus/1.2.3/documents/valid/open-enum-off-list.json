@@ -1,0 +1,29 @@
+{
+  "catalog": {
+    "uuid": "5c3d1b9a-4e6f-4a8b-8d2c-7e9f1a3b5d40",
+    "metadata": {
+      "title": "Open enum off list",
+      "last-modified": "2024-01-02T03:04:05Z",
+      "version": "1.0",
+      "oscal-version": "1.2.3"
+    },
+    "back-matter": {
+      "resources": [
+        {
+          "uuid": "188e2f7e-9d8c-4161-ac39-58f07a527298",
+          "rlinks": [
+            {
+              "href": "https://example.com/a.pdf",
+              "hashes": [
+                {
+                  "algorithm": "BLAKE3",
+                  "value": "670f54227fdc76d6c1def81415f479a2fb1ac721ab2c48266869a2c644df2228"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
