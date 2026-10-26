@@ -47,14 +47,18 @@ Each group edits files that the next group reads, so the groups run in order. Th
       `openspec show document-parsing --type spec` lists [PRS-009] with three scenarios.
 - [x] 3.2 Set `VERSION` to `0.3.0+oscal.1.2.3` (design.md, D2). Verify `npm run check` passes, including
       `releases:check`, which checks that no released name or schema file changed.
-- [ ] 3.3 With the user's approval, push the branch and open the pull request for #9. After the merge, tag
+- [x] 3.3 With the user's approval, push the branch and open the pull request for #9. After the merge, tag
       `v0.3.0+oscal.1.2.3` on `main`, with the user's approval. Verify CI builds the archive and creates the draft
       release. The user publishes it.
+      Result: PR #14 merged as `3abad75`. The signed tag `v0.3.0+oscal.1.2.3` is on that commit. CI passed and
+      attached the archive and `SHA256SUMS` to the draft release, and the user published it. The archive sha256 is
+      `80914b77562a45bb5c0eb2d51b9d2cd0c33f82cf80a215be81e24c958dbcb1fe`, and the public download matches it.
 
 ## 4. Follow-up and archive
 
-- [ ] 4.1 Draft an issue in `cairn-proofs/oscal-bindings-python` to move the spec artifact pin to
+- [x] 4.1 Draft an issue in `cairn-proofs/oscal-bindings-python` to move the spec artifact pin to
       `0.3.0+oscal.1.2.3` and run the new corpus cases. Post it only after the user approves it. Verify the issue
       exists after approval.
-- [ ] 4.2 Archive this change. If a requirement or scenario changed after task 3.1, update the ledger in the archive
+      Posted: cairn-proofs/oscal-bindings-python#26.
+- [x] 4.2 Archive this change. If a requirement or scenario changed after task 3.1, update the ledger in the archive
       commit. Verify `npm run spec-ids` passes and `openspec list` shows no active change.
