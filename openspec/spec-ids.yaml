@@ -13,7 +13,7 @@ prefixes:
     next: 5
   PRS:
     capability: document-parsing
-    next: 9
+    next: 10
   ELV:
     capability: element-validation
     next: 4

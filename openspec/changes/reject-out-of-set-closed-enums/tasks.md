@@ -42,10 +42,10 @@ Each group edits files that the next group reads, so the groups run in order. Th
 
 ## 3. Sync and release `0.3.0+oscal.1.2.3`
 
-- [ ] 3.1 Sync the delta of this change into `openspec/specs/document-parsing/spec.md` without archiving the change.
+- [x] 3.1 Sync the delta of this change into `openspec/specs/document-parsing/spec.md` without archiving the change.
       In the same commit, set `PRS` `next` to 10 in `openspec/spec-ids.yaml`. Verify `npm run spec-ids` passes and
       `openspec show document-parsing --type spec` lists [PRS-009] with three scenarios.
-- [ ] 3.2 Set `VERSION` to `0.3.0+oscal.1.2.3` (design.md, D2). Verify `npm run check` passes, including
+- [x] 3.2 Set `VERSION` to `0.3.0+oscal.1.2.3` (design.md, D2). Verify `npm run check` passes, including
       `releases:check`, which checks that no released name or schema file changed.
 - [ ] 3.3 With the user's approval, push the branch and open the pull request for #9. After the merge, tag
       `v0.3.0+oscal.1.2.3` on `main`, with the user's approval. Verify CI builds the archive and creates the draft
