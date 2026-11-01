@@ -68,14 +68,22 @@ lists files that groups 2 and 3 create. Group 5 regenerates the index from the s
       `openspec show binding-surface --type spec` lists [SRF-001] to [SRF-007], and the index has 59 entries.
 - [x] 5.2 Set `VERSION` to `0.4.0+oscal.1.2.3` (design.md, D5). Verify `npm run check` passes, including
       `releases:check`.
-- [ ] 5.3 With the user's approval, push the branch and open the pull request for #17. State the new binding
+- [x] 5.3 With the user's approval, push the branch and open the pull request for #17. State the new binding
       obligation in the pull request summary (design.md, Risks 1). After the merge, tag `v0.4.0+oscal.1.2.3` on `main`,
       with the user's approval. Verify CI builds the archive and creates the draft release, and that the draft notes
       state the new obligation. The user publishes it.
+      Result: PR #19 merged as `5ca73ee`. The signed tag `v0.4.0+oscal.1.2.3` is on that commit. CI passed and
+      attached the archive and `SHA256SUMS` to the draft release. CI writes only the sha256 into the notes, so the
+      obligation and the new archive files were added with `gh release edit`. The user published the release. The
+      archive sha256 is `403000696dd74fdc791ab506fc38198f527aa9cca00438c8e9f940f30f79b022`, and the public download
+      matches it.
 
 ## Workflow follow-up
 
 - Draft an issue in `cairn-proofs/oscal-bindings-python` to move the pin to `0.4.0+oscal.1.2.3`, add the traceability
   record, and add the surface check. Post it only after the user approves it.
+  Posted: cairn-proofs/oscal-bindings-python#30.
 - Archive this change. If a requirement or scenario changed after task 5.1, update the ledger and the index in the
   archive commit. Verify `npm run check` passes and `openspec list` shows no active change.
+  Result: no requirement or scenario changed after task 5.1, so the ledger and the index need no update.
+- OpenSpec CLI 1.15.0 fails `--strict` on 24 long requirements in the existing main specs. The move is #18.
