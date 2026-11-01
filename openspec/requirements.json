@@ -237,6 +237,41 @@
       "title": "A datetime keeps its instant and offset"
     },
     {
+      "id": "SRF-001",
+      "capability": "binding-surface",
+      "title": "A binding exposes only operations that a requirement defines"
+    },
+    {
+      "id": "SRF-002",
+      "capability": "binding-surface",
+      "title": "A binding-local operation adds no contract behavior"
+    },
+    {
+      "id": "SRF-003",
+      "capability": "binding-surface",
+      "title": "A binding records the requirement that covers each public operation"
+    },
+    {
+      "id": "SRF-004",
+      "capability": "binding-surface",
+      "title": "Contract identifiers in a traceability record resolve in the requirement index"
+    },
+    {
+      "id": "SRF-005",
+      "capability": "binding-surface",
+      "title": "A binding-local operation that the contract defines conforms or is deprecated"
+    },
+    {
+      "id": "SRF-006",
+      "capability": "binding-surface",
+      "title": "The store publishes a requirement index"
+    },
+    {
+      "id": "SRF-007",
+      "capability": "binding-surface",
+      "title": "The store publishes a JSON Schema for the traceability record"
+    },
+    {
       "id": "VER-001",
       "capability": "schema-versioning",
       "title": "Bindings are namespaced by OSCAL major version"

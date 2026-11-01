@@ -62,11 +62,11 @@ lists files that groups 2 and 3 create. Group 5 regenerates the index from the s
 
 ## 5. Sync and release `0.4.0+oscal.1.2.3`
 
-- [ ] 5.1 Sync the delta of this change into `openspec/specs/binding-surface/spec.md` without archiving the change.
+- [x] 5.1 Sync the delta of this change into `openspec/specs/binding-surface/spec.md` without archiving the change.
       In the same commit, add the prefix `SRF` with `capability: binding-surface` and `next: 8` to
       `openspec/spec-ids.yaml`, and run `npm run requirements:write`. Verify `npm run spec-ids` passes,
       `openspec show binding-surface --type spec` lists [SRF-001] to [SRF-007], and the index has 59 entries.
-- [ ] 5.2 Set `VERSION` to `0.4.0+oscal.1.2.3` (design.md, D5). Verify `npm run check` passes, including
+- [x] 5.2 Set `VERSION` to `0.4.0+oscal.1.2.3` (design.md, D5). Verify `npm run check` passes, including
       `releases:check`.
 - [ ] 5.3 With the user's approval, push the branch and open the pull request for #17. State the new binding
       obligation in the pull request summary (design.md, Risks 1). After the merge, tag `v0.4.0+oscal.1.2.3` on `main`,
