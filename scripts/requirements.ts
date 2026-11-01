@@ -5,15 +5,19 @@
  *
  *   npm run requirements:write       regenerate openspec/requirements.json
  *   npm run requirements:check       regenerate in memory and compare with the committed file
- *   npm run requirements:self-test   run the generator scenarios on in-memory specs
+ *   npm run requirements:self-test   run the generator scenarios on in-memory specs, and check the traceability
+ *                                    record JSON Schema openspec/traceability.schema.json (SRF-007) on sample records
  */
 import fs from "node:fs";
 import path from "node:path";
+
+import { Ajv } from "ajv";
 
 import { type Files, readRepository, SPEC_PATH } from "./spec-markdown.js";
 import { ID, parseSpec, render } from "./spec-ids.js";
 
 export const INDEX = "openspec/requirements.json";
+export const RECORD_SCHEMA = "openspec/traceability.schema.json";
 export const FORMAT = 1;
 
 export interface IndexEntry {
@@ -153,7 +157,43 @@ function selfTest(): number {
   }
 
   console.log(failed ? `\n${failed} FAILED` : "\nall requirement index scenarios pass");
-  return failed ? 1 : 0;
+  return failed + recordSchemaSelfTest() ? 1 : 0;
+}
+
+/** Checks openspec/traceability.schema.json (SRF-007) against valid and invalid records. */
+function recordSchemaSelfTest(): number {
+  const validate = new Ajv({ allErrors: true, strict: true }).compile(JSON.parse(fs.readFileSync(RECORD_SCHEMA, "utf8")));
+  const record = (...operations: unknown[]) => ({ format: FORMAT, operations });
+  const example = record(
+    { name: "parse_oscal", requirements: ["PRS-001", "PRS-003"] },
+    { name: "OscalDoc", requirements: ["FAC-001", "FAC-002", "FAC-003", "FAC-004"] },
+    { name: "parse_directory", "binding-local": "PYB-001" },
+  );
+  const cases: Array<[string, unknown, boolean]> = [
+    ["design D3 example conforms", example, true],
+    ["empty record conforms", record(), true],
+    ["SRF-007.01: Entry with both kinds of identifier is invalid", record({ name: "f", requirements: ["PRS-001"], "binding-local": "PYB-001" }), false],
+    ["SRF-007.02: Scenario identifier is invalid", record({ name: "f", requirements: ["PRS-001.01"] }), false],
+    ["SRF-007.02: Scenario identifier as binding-local is invalid", record({ name: "f", "binding-local": "PYB-001.01" }), false],
+    ["unknown member in an entry is invalid", record({ name: "f", requirements: ["PRS-001"], deprecated: true }), false],
+    ["unknown member at the top is invalid", { ...example, version: "0.4.0" }, false],
+    ["empty requirements list is invalid", record({ name: "f", requirements: [] }), false],
+    ["repeated requirement identifier is invalid", record({ name: "f", requirements: ["PRS-001", "PRS-001"] }), false],
+    ["entry with no identifier is invalid", record({ name: "f" }), false],
+    ["name with a space is invalid", record({ name: "parse oscal", requirements: ["PRS-001"] }), false],
+    ["empty name is invalid", record({ name: "", requirements: ["PRS-001"] }), false],
+    ["under-padded identifier is invalid", record({ name: "f", requirements: ["PRS-1"] }), false],
+    ["unknown format is invalid", { ...example, format: 2 }, false],
+  ];
+  let failed = 0;
+  console.log("\n## traceability record schema");
+  for (const [name, data, expected] of cases) {
+    const ok = validate(data) === expected;
+    if (!ok) failed++;
+    console.log(`${ok ? "PASS" : "FAIL"}  ${name}${ok ? "" : `\n      ${JSON.stringify(validate.errors)}`}`);
+  }
+  console.log(failed ? `\n${failed} FAILED` : "\nall traceability record schema scenarios pass");
+  return failed;
 }
 
 if (process.argv.includes("--self-test")) process.exit(selfTest());

@@ -38,7 +38,7 @@ lists files that groups 2 and 3 create. Group 5 regenerates the index from the s
 
 ## 3. Traceability record JSON Schema
 
-- [ ] 3.1 Add `openspec/traceability.schema.json` (design.md, D3 and D6). Add self-test fixtures that check records
+- [x] 3.1 Add `openspec/traceability.schema.json` (design.md, D3 and D6). Add self-test fixtures that check records
       against it with ajv:
       1. The D3 example passes.
       2. An entry with both `requirements` and `binding-local` fails ([SRF-007.01]).
@@ -46,7 +46,7 @@ lists files that groups 2 and 3 create. Group 5 regenerates the index from the s
       4. An unknown member, an empty `requirements` list, and a name with a space each fail.
 
       Verify `npm run requirements:self-test` passes.
-- [ ] 3.2 Add the schema to the layout in `README.md`. Verify `npm run check` passes, and commit group 3 with `#17` in
+- [x] 3.2 Add the schema to the layout in `README.md`. Verify `npm run check` passes, and commit group 3 with `#17` in
       the message.
 
 ## 4. Archive contents and contributor docs

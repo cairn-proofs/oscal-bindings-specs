@@ -9,7 +9,9 @@ This repo is an [OpenSpec store](https://github.com/Fission-AI/OpenSpec/blob/mai
 
 1. `openspec/`: the capability specs (`specs/`), the changes (`changes/`), the config, the identifier ledger
    `spec-ids.yaml`, and the requirement index `requirements.json`. The index is generated from the main specs and
-   lists the identifier, capability, and title of each requirement.
+   lists the identifier, capability, and title of each requirement. `traceability.schema.json` is the JSON Schema of
+   the traceability record that each binding keeps (see
+   [binding-surface](openspec/specs/binding-surface/spec.md)).
 2. `schemas/<release>/`: the NIST OSCAL JSON Schema files of one release, byte-for-byte, with `sha256` sums.
 3. `manifest/<release>/`: the naming manifest. `names.json` is generated and holds the canonical name, kind, and
    schema pointers of each type. `overrides.json` is the hand-edited naming input. `manifest/*.schema.json` are the
@@ -44,8 +46,9 @@ A reference is planning context only. Builds and conformance runs use the tagged
 
 1. The TypeScript typecheck.
 2. The identifier checker and its self-test.
-3. The requirement index generator self-test, and `npm run requirements:check`: it fails when
-   `openspec/requirements.json` differs from the generator output.
+3. The requirement index generator self-test, which also checks the traceability record JSON Schema on sample
+   records, and `npm run requirements:check`: it fails when `openspec/requirements.json` differs from the generator
+   output.
 4. The `VERSION` check and its self-test.
 5. The schema `sha256` check.
 6. The canonical JSON self-test.
