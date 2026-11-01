@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/cairn-proofs/oscal-bindings-specs/openspec/traceability.schema.json",
+  "title": "OSCAL binding traceability record, format 1",
+  "description": "The requirement that covers each public operation of one binding. See openspec/specs/binding-surface.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "operations"],
+  "properties": {
+    "format": { "const": 1 },
+    "operations": { "type": "array", "items": { "$ref": "#/definitions/entry" } }
+  },
+  "definitions": {
+    "requirement-id": { "type": "string", "pattern": "^[A-Z]{2,5}-[0-9]{3}$" },
+    "name": { "type": "string", "pattern": "^\\S+$" },
+    "entry": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "requirements"],
+          "properties": {
+            "name": { "$ref": "#/definitions/name" },
+            "requirements": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": { "$ref": "#/definitions/requirement-id" }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "binding-local"],
+          "properties": {
+            "name": { "$ref": "#/definitions/name" },
+            "binding-local": { "$ref": "#/definitions/requirement-id" }
+          }
+        }
+      ]
+    }
+  }
+}

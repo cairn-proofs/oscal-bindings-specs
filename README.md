@@ -7,8 +7,11 @@ This repo is an [OpenSpec store](https://github.com/Fission-AI/OpenSpec/blob/mai
 
 ## Layout
 
-1. `openspec/`: the capability specs (`specs/`), the changes (`changes/`), the config, and the identifier ledger
-   `spec-ids.yaml`.
+1. `openspec/`: the capability specs (`specs/`), the changes (`changes/`), the config, the identifier ledger
+   `spec-ids.yaml`, and the requirement index `requirements.json`. `npm run requirements:write` generates the index
+   from the main specs. It lists the identifier, capability, and title of each requirement. `traceability.schema.json`
+   is the JSON Schema of the traceability record that each binding keeps (see
+   [binding-surface](openspec/specs/binding-surface/spec.md)).
 2. `schemas/<release>/`: the NIST OSCAL JSON Schema files of one release, byte-for-byte, with `sha256` sums.
 3. `manifest/<release>/`: the naming manifest. `names.json` is generated and holds the canonical name, kind, and
    schema pointers of each type. `overrides.json` is the hand-edited naming input. `manifest/*.schema.json` are the
@@ -33,6 +36,9 @@ A reference is planning context only. Builds and conformance runs use the tagged
 
 ## Develop
 
+[CONTRIBUTING.md](CONTRIBUTING.md) describes how to change a requirement and how a binding adds or promotes an
+operation.
+
 [mise](https://mise.jdx.dev) pins Node and the OpenSpec CLI. `package-lock.json` pins the npm dependencies.
 
 1. `mise install`
@@ -43,20 +49,26 @@ A reference is planning context only. Builds and conformance runs use the tagged
 
 1. The TypeScript typecheck.
 2. The identifier checker and its self-test.
-3. The `VERSION` check and its self-test.
-4. The schema `sha256` check.
-5. The canonical JSON self-test.
-6. The corpus check (see [corpus/1.2.3/README.md](corpus/1.2.3/README.md)).
-7. The names generator self-test, and `npm run names:check`: it validates each manifest file and fails when
+3. The requirement index generator self-test, which also checks the traceability record JSON Schema on sample
+   records, and `npm run requirements:check`: it fails when `openspec/requirements.json` differs from the generator
+   output.
+4. The `VERSION` check and its self-test.
+5. The schema `sha256` check.
+6. The canonical JSON self-test.
+7. The corpus check (see [corpus/1.2.3/README.md](corpus/1.2.3/README.md)).
+8. The names generator self-test, and `npm run names:check`: it validates each manifest file and fails when
    `names.json` differs from the generator output.
-8. The release checks and their self-test, `npm run releases:check`. A released name that changes needs a breaking
+9. The release checks and their self-test, `npm run releases:check`. A released name that changes needs a breaking
    `VERSION` increment, and a released `schemas/<release>/` file must not change. These checks read git tags and
    history, so they fail in a shallow clone or a clone without tags. They also list each name change against the
    base ref (`SPEC_IDS_BASE`, default `HEAD`), and CI writes that list to the job summary.
-9. `openspec validate --all --strict`.
+10. `openspec validate --all --strict`.
 
 To change a canonical name, edit `manifest/<release>/overrides.json`, run `npm run names:write`, and commit both
 files.
+
+To add, rename, or remove a requirement in the main specs, run `npm run requirements:write`, and commit the index with
+the specs.
 
 `VERSION` holds the spec artifact version: a Semantic Version with the OSCAL release as build metadata, for example
 `0.1.0+oscal.1.2.3`.
