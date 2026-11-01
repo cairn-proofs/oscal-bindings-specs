@@ -51,14 +51,14 @@ lists files that groups 2 and 3 create. Group 5 regenerates the index from the s
 
 ## 4. Archive contents and contributor docs
 
-- [ ] 4.1 Add `openspec/requirements.json` and `openspec/traceability.schema.json` to `CONTENTS` in
+- [x] 4.1 Add `openspec/requirements.json` and `openspec/traceability.schema.json` to `CONTENTS` in
       `scripts/build-archive.ts`. Run `npm run archive` and list the archive with `tar -tzf`. Verify it holds both files
       ([SRF-006.04], [SRF-007.03]) and no file under `openspec/changes/`. Delete `dist/` after the check.
-- [ ] 4.2 Add `CONTRIBUTING.md` (design.md, D7). It states the promotion path of [SRF-005] and the step that
+- [x] 4.2 Add `CONTRIBUTING.md` (design.md, D7). It states the promotion path of [SRF-005] and the step that
       regenerates the index after a change to a requirement heading. It links to the record schema. Link it from
       `README.md`. Verify every relative link in both files resolves and `ste-lint.py` reports no hard violation.
       Verify that the file cites the requirements and does not restate them.
-- [ ] 4.3 Commit group 4 with `#17` in the message and state that `npm run check` passed.
+- [x] 4.3 Commit group 4 with `#17` in the message and state that `npm run check` passed.
 
 ## 5. Sync and release `0.4.0+oscal.1.2.3`
 

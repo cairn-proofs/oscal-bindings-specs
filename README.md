@@ -8,9 +8,9 @@ This repo is an [OpenSpec store](https://github.com/Fission-AI/OpenSpec/blob/mai
 ## Layout
 
 1. `openspec/`: the capability specs (`specs/`), the changes (`changes/`), the config, the identifier ledger
-   `spec-ids.yaml`, and the requirement index `requirements.json`. The index is generated from the main specs and
-   lists the identifier, capability, and title of each requirement. `traceability.schema.json` is the JSON Schema of
-   the traceability record that each binding keeps (see
+   `spec-ids.yaml`, and the requirement index `requirements.json`. `npm run requirements:write` generates the index
+   from the main specs. It lists the identifier, capability, and title of each requirement. `traceability.schema.json`
+   is the JSON Schema of the traceability record that each binding keeps (see
    [binding-surface](openspec/specs/binding-surface/spec.md)).
 2. `schemas/<release>/`: the NIST OSCAL JSON Schema files of one release, byte-for-byte, with `sha256` sums.
 3. `manifest/<release>/`: the naming manifest. `names.json` is generated and holds the canonical name, kind, and
@@ -35,6 +35,9 @@ This repo is an [OpenSpec store](https://github.com/Fission-AI/OpenSpec/blob/mai
 A reference is planning context only. Builds and conformance runs use the tagged archive, pinned by its `sha256`.
 
 ## Develop
+
+[CONTRIBUTING.md](CONTRIBUTING.md) describes how to change a requirement and how a binding adds or promotes an
+operation.
 
 [mise](https://mise.jdx.dev) pins Node and the OpenSpec CLI. `package-lock.json` pins the npm dependencies.
 
