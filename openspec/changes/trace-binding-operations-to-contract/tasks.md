@@ -14,27 +14,27 @@ lists files that groups 2 and 3 create. Group 5 regenerates the index from the s
 
 ## 1. Branch and planning commit
 
-- [ ] 1.1 Create the feature branch from #17 with `gh issue develop 17`, with the user's approval, and check it out.
+- [x] 1.1 Create the feature branch from #17 with `gh issue develop 17`, with the user's approval, and check it out.
       Commit the planning artifacts of this change as the first commit, with `#17` in the message. Verify
       `git branch --show-current` is not `main` and `openspec validate trace-binding-operations-to-contract --strict`
       passes.
 
 ## 2. Requirement index
 
-- [ ] 2.1 Add `scripts/requirements.ts` with `--write`, a default check mode, and `--self-test` (design.md, D4). It
+- [x] 2.1 Add `scripts/requirements.ts` with `--write`, a default check mode, and `--self-test` (design.md, D4). It
       reads the main specs with `readRepository` and `parseSpec`, fails with no output when a requirement heading has
       no well-formed identifier, and writes entries in identifier order. The check mode names
       `npm run requirements:write` when the committed file differs or is missing. Self-test fixtures cover
       [SRF-006.01], [SRF-006.02], [SRF-006.03], the identifier order across prefixes (`BMB-002` before `ELV-001`,
       `MDL-005` before `MDL-010`), and a malformed heading. Verify `npx tsx scripts/requirements.ts --self-test`
       passes and `npm run typecheck` passes.
-- [ ] 2.2 Add `requirements:write`, `requirements:check`, and `requirements:self-test` to `package.json`, and add
+- [x] 2.2 Add `requirements:write`, `requirements:check`, and `requirements:self-test` to `package.json`, and add
       the self-test and the check to `npm run check` after `spec-ids`. Mark `openspec/requirements.json` as generated
       in `.gitattributes`. Run `npm run requirements:write`. Verify the file has one entry for each of the 52
       requirements that `openspec list --specs` counts, with no `MDL-004` entry, and `npm run check` passes.
-- [ ] 2.3 Update the check list in `README.md` and add `openspec/requirements.json` to the layout. Verify each command
+- [x] 2.3 Update the check list in `README.md` and add `openspec/requirements.json` to the layout. Verify each command
       that the README names exists in `package.json`.
-- [ ] 2.4 Commit group 2 with `#17` in the message and state that `npm run check` passed.
+- [x] 2.4 Commit group 2 with `#17` in the message and state that `npm run check` passed.
 
 ## 3. Traceability record JSON Schema
 

@@ -1,0 +1,265 @@
+{
+  "format": 1,
+  "requirements": [
+    {
+      "id": "BMB-001",
+      "capability": "backmatter-builders",
+      "title": "Build a back-matter hash value"
+    },
+    {
+      "id": "BMB-002",
+      "capability": "backmatter-builders",
+      "title": "Build a back-matter rlink value"
+    },
+    {
+      "id": "BMB-003",
+      "capability": "backmatter-builders",
+      "title": "Build a back-matter resource value"
+    },
+    {
+      "id": "ELV-001",
+      "capability": "element-validation",
+      "title": "Validate a standalone element against a named type"
+    },
+    {
+      "id": "ELV-002",
+      "capability": "element-validation",
+      "title": "Element-type names are kebab-case and derived from the type names"
+    },
+    {
+      "id": "ELV-003",
+      "capability": "element-validation",
+      "title": "An unknown element type is reported, not silently accepted"
+    },
+    {
+      "id": "ERR-001",
+      "capability": "error-model",
+      "title": "Error situations map to a fixed taxonomy"
+    },
+    {
+      "id": "ERR-002",
+      "capability": "error-model",
+      "title": "A non-raising validity check is available"
+    },
+    {
+      "id": "ERR-003",
+      "capability": "error-model",
+      "title": "Parse errors expose structured validation detail"
+    },
+    {
+      "id": "FAC-001",
+      "capability": "document-facade",
+      "title": "A uniform facade wraps any document type"
+    },
+    {
+      "id": "FAC-002",
+      "capability": "document-facade",
+      "title": "The facade reads common fields without type branching"
+    },
+    {
+      "id": "FAC-003",
+      "capability": "document-facade",
+      "title": "The facade can be built from text, bytes, or a file"
+    },
+    {
+      "id": "FAC-004",
+      "capability": "document-facade",
+      "title": "The assessment-period accessor is restricted to Assessment Plan and Assessment Results"
+    },
+    {
+      "id": "MDL-001",
+      "capability": "model-derivation",
+      "title": "Canonical type names derive from OSCAL name scopes, not from generator ordinals"
+    },
+    {
+      "id": "MDL-002",
+      "capability": "model-derivation",
+      "title": "Document wrapper names derive from each wrapper's single body field"
+    },
+    {
+      "id": "MDL-003",
+      "capability": "model-derivation",
+      "title": "Scalar root wrappers collapse to plain aliased types"
+    },
+    {
+      "id": "MDL-005",
+      "capability": "model-derivation",
+      "title": "Definitions that share a local name across modules get module-prefixed names"
+    },
+    {
+      "id": "MDL-006",
+      "capability": "model-derivation",
+      "title": "Union branches are named from the union and the property that only the branch has"
+    },
+    {
+      "id": "MDL-007",
+      "capability": "model-derivation",
+      "title": "Derivation guards abort on ambiguity, count mismatch, or uncovered collision"
+    },
+    {
+      "id": "MDL-008",
+      "capability": "model-derivation",
+      "title": "Models reject unknown fields (strict coverage)"
+    },
+    {
+      "id": "MDL-009",
+      "capability": "model-derivation",
+      "title": "The naming manifest is the shared source of truth across languages"
+    },
+    {
+      "id": "MDL-010",
+      "capability": "model-derivation",
+      "title": "Inline types are named from the canonical name of their parent and their own local name"
+    },
+    {
+      "id": "MDL-011",
+      "capability": "model-derivation",
+      "title": "Each enum site is a named type, marked open or closed"
+    },
+    {
+      "id": "MDL-012",
+      "capability": "model-derivation",
+      "title": "A property that holds one item or a list of items is a single-or-many type"
+    },
+    {
+      "id": "MDL-013",
+      "capability": "model-derivation",
+      "title": "Types deduplicate only for union-branch copies and explicit merges"
+    },
+    {
+      "id": "NAM-001",
+      "capability": "naming-manifest",
+      "title": "A type is identified by JSON pointers into the complete schema"
+    },
+    {
+      "id": "NAM-002",
+      "capability": "naming-manifest",
+      "title": "The manifest records each canonical type with its name, kind, and kind data"
+    },
+    {
+      "id": "NAM-003",
+      "capability": "naming-manifest",
+      "title": "Canonical names are unique PascalCase identifiers"
+    },
+    {
+      "id": "NAM-004",
+      "capability": "naming-manifest",
+      "title": "The store publishes a JSON Schema for each manifest file"
+    },
+    {
+      "id": "NAM-005",
+      "capability": "naming-manifest",
+      "title": "The override data is the only hand-edited naming input"
+    },
+    {
+      "id": "NAM-006",
+      "capability": "naming-manifest",
+      "title": "The manifest is generated from fixed inputs and is reproducible"
+    },
+    {
+      "id": "NAM-007",
+      "capability": "naming-manifest",
+      "title": "Published names stay the same in later releases"
+    },
+    {
+      "id": "NAM-008",
+      "capability": "naming-manifest",
+      "title": "A changed released name needs a breaking version increment"
+    },
+    {
+      "id": "PRS-001",
+      "capability": "document-parsing",
+      "title": "Parse an OSCAL document from text or bytes"
+    },
+    {
+      "id": "PRS-002",
+      "capability": "document-parsing",
+      "title": "Parse an OSCAL document from a file path"
+    },
+    {
+      "id": "PRS-003",
+      "capability": "document-parsing",
+      "title": "Typed parsers return the matching document type or report a type mismatch"
+    },
+    {
+      "id": "PRS-004",
+      "capability": "document-parsing",
+      "title": "Unknown fields are rejected during parsing"
+    },
+    {
+      "id": "PRS-005",
+      "capability": "document-parsing",
+      "title": "Input uses OSCAL property keys, not internal field names"
+    },
+    {
+      "id": "PRS-006",
+      "capability": "document-parsing",
+      "title": "Schema validation failures carry structured error detail"
+    },
+    {
+      "id": "PRS-007",
+      "capability": "document-parsing",
+      "title": "Regex patterns follow a defined portability rule"
+    },
+    {
+      "id": "PRS-008",
+      "capability": "document-parsing",
+      "title": "Timezone-aware datetimes are enforced where OSCAL requires them"
+    },
+    {
+      "id": "PRS-009",
+      "capability": "document-parsing",
+      "title": "Enum values are checked by the kind of the enum"
+    },
+    {
+      "id": "SER-001",
+      "capability": "serialization",
+      "title": "Serialization emits OSCAL property keys"
+    },
+    {
+      "id": "SER-002",
+      "capability": "serialization",
+      "title": "Serialization never emits null"
+    },
+    {
+      "id": "SER-003",
+      "capability": "serialization",
+      "title": "Pretty output by default, compact output on request"
+    },
+    {
+      "id": "SER-004",
+      "capability": "serialization",
+      "title": "Round-trip equivalence uses the shared canonical form"
+    },
+    {
+      "id": "SER-005",
+      "capability": "serialization",
+      "title": "A datetime keeps its instant and offset"
+    },
+    {
+      "id": "VER-001",
+      "capability": "schema-versioning",
+      "title": "Bindings are namespaced by OSCAL major version"
+    },
+    {
+      "id": "VER-002",
+      "capability": "schema-versioning",
+      "title": "A binding is generated from exactly one active OSCAL release"
+    },
+    {
+      "id": "VER-003",
+      "capability": "schema-versioning",
+      "title": "The shared spec artifact uses Semantic Versioning for its own compatibility"
+    },
+    {
+      "id": "VER-004",
+      "capability": "schema-versioning",
+      "title": "The OSCAL release is recorded as Semantic Versioning build metadata"
+    },
+    {
+      "id": "VER-005",
+      "capability": "schema-versioning",
+      "title": "Spec artifacts are distributed pinned and hash-verified"
+    }
+  ]
+}
