@@ -126,6 +126,7 @@ function main(write: boolean): number {
   const index = JSON.parse(fs.readFileSync(`${ROOT}/cases.json`, "utf8")) as {
     "oscal-release": string;
     categories: string[];
+    "defect-twins"?: string[][];
     cases: Case[];
   };
   if (index["oscal-release"] !== RELEASE) fail("cases.json", `oscal-release is not ${RELEASE}`);
@@ -291,6 +292,29 @@ function main(write: boolean): number {
   }
   for (const file of corpusFiles()) {
     if (!used.has(file)) fail(file, "no case uses this file");
+  }
+
+  // Cases in a defect-twin group exercise the same binding defect, so their known-defects must agree. The set of
+  // (binding, issue) pairs is the same for every case in the group. This stops a new case, such as a yaml-* twin of a
+  // JSON case, from silently omitting a known-defects entry that its twin carries.
+  const byId = new Map(index.cases.map((c) => [c.id, c]));
+  const defectSet = (c: Case) =>
+    new Set((c["known-defects"] ?? []).map((d) => `${d.binding} ${d.issue}`));
+  for (const group of index["defect-twins"] ?? []) {
+    const members = group.map((id) => byId.get(id));
+    const missing = group.filter((id) => !byId.has(id));
+    if (missing.length) {
+      fail("defect-twins", `group names unknown case id(s): ${missing.join(", ")}`);
+      continue;
+    }
+    const sets = members.map((c) => defectSet(c as Case));
+    const union = new Set(sets.flatMap((s) => [...s]));
+    for (let i = 0; i < group.length; i++) {
+      for (const pair of union) {
+        if (!sets[i].has(pair))
+          fail(group[i], `defect-twin of ${group.filter((_, j) => j !== i).join(", ")} is missing known defect: ${pair}`);
+      }
+    }
   }
 
   for (const failure of failures) console.error(failure);
