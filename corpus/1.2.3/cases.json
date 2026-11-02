@@ -326,6 +326,237 @@
       "element-type": "no-such-element",
       "expected-category": "unknown-element-type",
       "requirements": ["ELV-003.01", "ERR-001.05"]
+    },
+    {
+      "id": "yaml-round-trip/catalog",
+      "operation": "yaml-round-trip",
+      "input": "documents/valid/catalog.yaml",
+      "document-type": "catalog",
+      "expected": "expected/catalog.json",
+      "requirements": ["YML-005.02", "YML-008.01"],
+      "source": {
+        "repository": "https://github.com/usnistgov/oscal-content",
+        "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
+        "path": "examples/catalog/yaml/basic_catalog.yaml",
+        "sha256": "a0c8f5449852931e0f68b151a684d2e08cb9c0249702052896a33101b99ae797"
+      }
+    },
+    {
+      "id": "yaml-round-trip/profile",
+      "operation": "yaml-round-trip",
+      "input": "documents/valid/profile.yaml",
+      "document-type": "profile",
+      "expected": "expected/profile.json",
+      "requirements": ["YML-005.02", "YML-008.01"],
+      "source": {
+        "repository": "https://github.com/usnistgov/oscal-content",
+        "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
+        "path": "examples/profile/yaml/basic_profile.yaml",
+        "sha256": "f6611d2cbcd210f7fd8ab5df95682ca4fe7be1d418c5cb70352693eca8e1af84"
+      }
+    },
+    {
+      "id": "yaml-round-trip/component-definition",
+      "operation": "yaml-round-trip",
+      "input": "documents/valid/component-definition.yaml",
+      "document-type": "component-definition",
+      "expected": "expected/component-definition.json",
+      "requirements": ["YML-005.02", "YML-008.01"],
+      "source": {
+        "repository": "https://github.com/usnistgov/oscal-content",
+        "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
+        "path": "examples/component-definition/yaml/example-component.yaml",
+        "sha256": "963aae9557fb9f801bfe59a9474fc972a0fc86b4e445772a0550096d272269bb"
+      }
+    },
+    {
+      "id": "yaml-round-trip/system-security-plan",
+      "operation": "yaml-round-trip",
+      "input": "documents/valid/system-security-plan.yaml",
+      "document-type": "system-security-plan",
+      "expected": "expected/system-security-plan.json",
+      "requirements": ["YML-005.02", "YML-008.01"],
+      "source": {
+        "repository": "https://github.com/usnistgov/oscal-content",
+        "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
+        "path": "examples/ssp/yaml/ssp-example.yaml",
+        "sha256": "ed777abaf7ce097493f40835d7dd6d4ff4cb9539cf8b40f701a3f3c24548bdb2"
+      }
+    },
+    {
+      "id": "yaml-round-trip/assessment-plan",
+      "operation": "yaml-round-trip",
+      "input": "documents/valid/assessment-plan.yaml",
+      "document-type": "assessment-plan",
+      "expected": "expected/assessment-plan.json",
+      "requirements": ["YML-005.02", "YML-008.01"],
+      "source": {
+        "repository": "https://github.com/usnistgov/oscal-content",
+        "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
+        "path": "examples/ap/yaml/ifa_assessment-plan.yaml",
+        "sha256": "2d18639b80d5f69d8018475417754e6941eeff10737b1d04b3b436cfb72608eb"
+      }
+    },
+    {
+      "id": "yaml-round-trip/assessment-results",
+      "operation": "yaml-round-trip",
+      "input": "documents/valid/assessment-results.yaml",
+      "document-type": "assessment-results",
+      "expected": "expected/assessment-results.json",
+      "requirements": ["YML-005.02", "YML-008.01"],
+      "source": {
+        "repository": "https://github.com/usnistgov/oscal-content",
+        "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
+        "path": "examples/ar/yaml/ifa_assessment-results.yaml",
+        "sha256": "b1d4f159fead1392c2ef5f00a0d3b2adbf6fd8ec6afe90d4ce717cb7f72f5c8e"
+      }
+    },
+    {
+      "id": "yaml-round-trip/plan-of-action-and-milestones",
+      "operation": "yaml-round-trip",
+      "input": "documents/valid/plan-of-action-and-milestones.yaml",
+      "document-type": "plan-of-action-and-milestones",
+      "expected": "expected/plan-of-action-and-milestones.json",
+      "requirements": ["YML-005.02", "YML-008.01"],
+      "source": {
+        "repository": "https://github.com/usnistgov/oscal-content",
+        "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
+        "path": "examples/poam/yaml/ifa_plan-of-action-and-milestones.yaml",
+        "sha256": "95046da410fc856910efe930402281098436dd809790054dab828e71e5ba039b"
+      }
+    },
+    {
+      "id": "yaml-round-trip/string-scalars",
+      "operation": "yaml-round-trip",
+      "input": "documents/valid/string-scalars.yaml",
+      "document-type": "catalog",
+      "expected": "expected/string-scalars.json",
+      "requirements": ["YML-004.01", "YML-004.02", "YML-004.03", "YML-004.04", "YML-004.05", "YML-004.09", "YML-009.03", "YML-008.01"],
+      "notes": "Plain scalars at string locations keep their text: 1.0, 1.10, yes, null, ~, an empty scalar, and a datetime with seven fraction digits. The !!int tag and the !!omap tag do not change a value."
+    },
+    {
+      "id": "yaml-round-trip/number-scalars",
+      "operation": "yaml-round-trip",
+      "input": "documents/valid/number-scalars.yaml",
+      "document-type": "component-definition",
+      "expected": "expected/number-scalars.json",
+      "requirements": ["YML-004.06", "YML-005.04", "YML-009.01", "YML-008.01", "YML-008.02"],
+      "notes": "The quoted \"443\" and the plain 443.0 at port-range locations are the number 443. The alias *port at a property value is the string \"443\". The metadata version \"1.0\" stays a string after serialization."
+    },
+    {
+      "id": "yaml-round-trip/boolean-scalar",
+      "operation": "yaml-round-trip",
+      "input": "documents/valid/boolean-scalar.yaml",
+      "document-type": "profile",
+      "expected": "expected/boolean-scalar.json",
+      "requirements": ["YML-004", "YML-008.01"],
+      "notes": "The plain scalar true at the as-is location is the boolean true."
+    },
+    {
+      "id": "yaml-parse/syntax-error",
+      "operation": "yaml-parse",
+      "input": "documents/invalid/yaml-syntax-error.yaml",
+      "expected-category": "parse-error",
+      "requirements": ["YML-002.01", "ERR-001.06"],
+      "notes": "The flow sequence of props has no closing bracket. Reader fault: `syntax`."
+    },
+    {
+      "id": "yaml-parse/two-documents",
+      "operation": "yaml-parse",
+      "input": "documents/invalid/yaml-two-documents.yaml",
+      "expected-category": "parse-error",
+      "requirements": ["YML-002.02", "ERR-001.06"],
+      "notes": "A --- line separates two minimal catalogs. Reader fault: `two-documents`."
+    },
+    {
+      "id": "yaml-parse/no-document",
+      "operation": "yaml-parse",
+      "input": "documents/invalid/yaml-no-document.yaml",
+      "expected-category": "parse-error",
+      "requirements": ["YML-002.03"],
+      "notes": "The stream holds only a comment. Reader fault: `no-document`."
+    },
+    {
+      "id": "yaml-parse/utf-16",
+      "operation": "yaml-parse",
+      "input": "documents/invalid/yaml-utf-16.yaml",
+      "input-form": "bytes",
+      "expected-category": "parse-error",
+      "requirements": ["YML-002.04"],
+      "notes": "The minimal catalog in UTF-16 with a byte order mark. Reader fault: `not-utf-8`."
+    },
+    {
+      "id": "yaml-parse/duplicate-key",
+      "operation": "yaml-parse",
+      "input": "documents/invalid/yaml-duplicate-key.yaml",
+      "expected-category": "parse-error",
+      "requirements": ["YML-003"],
+      "notes": "The metadata holds the key title two times. Reader fault: `duplicate-key`."
+    },
+    {
+      "id": "yaml-parse/same-text-keys",
+      "operation": "yaml-parse",
+      "input": "documents/invalid/yaml-same-text-keys.yaml",
+      "expected-category": "parse-error",
+      "requirements": ["YML-003.03"],
+      "notes": "The metadata holds the plain key title and the quoted key \"title\", which have the same text. Reader fault: `duplicate-key`."
+    },
+    {
+      "id": "yaml-parse/non-scalar-key",
+      "operation": "yaml-parse",
+      "input": "documents/invalid/yaml-non-scalar-key.yaml",
+      "expected-category": "parse-error",
+      "requirements": ["YML-003.02"],
+      "notes": "A key of the metadata is a sequence. Reader fault: `non-scalar-key`."
+    },
+    {
+      "id": "yaml-parse/alias-cycle",
+      "operation": "yaml-parse",
+      "input": "documents/invalid/yaml-alias-cycle.yaml",
+      "expected-category": "parse-error",
+      "requirements": ["YML-009.02"],
+      "notes": "The back-matter anchored as &bm holds the alias *bm. Reader fault: `alias-cycle`."
+    },
+    {
+      "id": "yaml-parse/merge-key",
+      "operation": "yaml-parse",
+      "input": "documents/invalid/yaml-merge-key.yaml",
+      "expected-category": "parse-error",
+      "requirements": ["YML-009.04"],
+      "notes": "The metadata holds the key << with an alias to a property. The key is an ordinary key, so it is a field that the schema does not define. Reader fault: `schema`."
+    },
+    {
+      "id": "yaml-parse/unknown-field",
+      "operation": "yaml-parse",
+      "input": "documents/invalid/yaml-unknown-field.yaml",
+      "expected-category": "parse-error",
+      "requirements": ["YML-005.03"],
+      "notes": "The metadata holds colour, a field that the schema does not define. Reader fault: `schema`."
+    },
+    {
+      "id": "yaml-parse/boolean-form",
+      "operation": "yaml-parse",
+      "input": "documents/invalid/yaml-boolean-form.yaml",
+      "expected-category": "parse-error",
+      "requirements": ["YML-004.08", "YML-010"],
+      "notes": "The as-is location takes a boolean, and yes is not true or false. Reader fault: `grammar`."
+    },
+    {
+      "id": "yaml-parse/number-form",
+      "operation": "yaml-parse",
+      "input": "documents/invalid/yaml-number-form.yaml",
+      "expected-category": "parse-error",
+      "requirements": ["YML-004.07", "YML-010.01", "ERR-001.06"],
+      "expected-min-failures": 1,
+      "notes": "The start location takes a number, and 0x1BB does not match the JSON number grammar. Reader fault: `grammar`."
+    },
+    {
+      "id": "yaml-parse/plus-sign",
+      "operation": "yaml-parse",
+      "input": "documents/invalid/yaml-plus-sign.yaml",
+      "expected-category": "parse-error",
+      "requirements": ["YML-004.10"],
+      "notes": "The start location takes a number, and the JSON number grammar has no plus sign. Reader fault: `grammar`."
     }
   ]
 }

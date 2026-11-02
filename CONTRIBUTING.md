@@ -15,6 +15,13 @@ When a commit adds, renames, or removes a requirement in the main specs, do thes
 
 `npm run check` fails when the index differs from the main specs ([SRF-006]).
 
+One pull request carries a change from proposal to archive:
+
+1. Sync the delta specs into the main specs, and set `VERSION` when the change needs a release.
+2. Archive the change in the same pull request. Steps that can run only after the merge, such as the release tag and
+   follow-up issues in binding repos, go in the `## Workflow follow-up` section of `tasks.md`, not in tracked tasks.
+3. After the merge, tag the release on `main`. Record the archive `sha256` in the release notes.
+
 ## Add an operation to a binding
 
 A binding exposes only the operations that [SRF-001] allows. Each binding keeps a traceability record that conforms to

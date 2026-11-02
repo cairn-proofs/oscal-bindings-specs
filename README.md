@@ -55,14 +55,16 @@ operation.
 4. The `VERSION` check and its self-test.
 5. The schema `sha256` check.
 6. The canonical JSON self-test.
-7. The corpus check (see [corpus/1.2.3/README.md](corpus/1.2.3/README.md)).
-8. The names generator self-test, and `npm run names:check`: it validates each manifest file and fails when
+7. The YAML reader self-test. `scripts/yaml-reader.ts` is the reference reader that the corpus check uses for YAML
+   inputs.
+8. The corpus check (see [corpus/1.2.3/README.md](corpus/1.2.3/README.md)).
+9. The names generator self-test, and `npm run names:check`: it validates each manifest file and fails when
    `names.json` differs from the generator output.
-9. The release checks and their self-test, `npm run releases:check`. A released name that changes needs a breaking
-   `VERSION` increment, and a released `schemas/<release>/` file must not change. These checks read git tags and
-   history, so they fail in a shallow clone or a clone without tags. They also list each name change against the
-   base ref (`SPEC_IDS_BASE`, default `HEAD`), and CI writes that list to the job summary.
-10. `openspec validate --all --strict`.
+10. The release checks and their self-test, `npm run releases:check`. A released name that changes needs a breaking
+    `VERSION` increment, and a released `schemas/<release>/` file must not change. These checks read git tags and
+    history, so they fail in a shallow clone or a clone without tags. They also list each name change against the
+    base ref (`SPEC_IDS_BASE`, default `HEAD`), and CI writes that list to the job summary.
+11. `openspec validate --all --strict`.
 
 To change a canonical name, edit `manifest/<release>/overrides.json`, run `npm run names:write`, and commit both
 files.
