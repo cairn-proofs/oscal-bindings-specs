@@ -2,7 +2,8 @@
 
 This document defines the canonical form of an OSCAL JSON document. A conformance run compares the output of a
 binding with the expected output in the corpus. The two are equivalent when their canonical forms are the same bytes.
-The serialization and document-parsing specs use these rules ([SER-004], [SER-005], [PRS-008]).
+The serialization, document-parsing, and yaml-documents specs use these rules ([SER-004], [SER-005], [PRS-008],
+[YML-008]). A YAML document is compared through its JSON value.
 
 These rules apply to comparison only. They do not set the key order, the whitespace, or the number format that a
 binding writes.

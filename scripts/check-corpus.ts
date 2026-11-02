@@ -9,7 +9,11 @@
  *    form (docs/canonical-json.md).
  * 5. A parse input fails as its category states: not JSON, not UTF-8, or not valid against the schema.
  * 6. A typed-parse, parse-file, assessment-period, or validate-element case has the precondition its category needs.
- * 7. Each cited requirement or scenario identifier names a heading in the specs.
+ * 7. A yaml-round-trip input reads with the reference YAML reader (scripts/yaml-reader.ts), and the canonical form of
+ *    its JSON text is its expected file. A yaml-round-trip case that copies a source names the expected file of a JSON
+ *    round-trip case, and --write does not write that file.
+ * 8. The reference YAML reader rejects a yaml-parse input, and the notes of the case name the fault code.
+ * 9. Each cited requirement or scenario identifier names a heading in the specs.
  *
  *   npm run corpus:check           check the corpus
  *   npm run corpus:write           regenerate each expected file, then check
@@ -22,6 +26,7 @@ import { Ajv, type ValidateFunction } from "ajv";
 import addFormatsModule from "ajv-formats";
 
 import { canonicalize } from "./canonical-json.js";
+import { checkSchemaForReader, readYaml } from "./yaml-reader.js";
 
 const addFormats = addFormatsModule as unknown as (ajv: Ajv) => Ajv;
 
@@ -38,7 +43,16 @@ const DOCUMENT_TYPES = [
   "plan-of-action-and-milestones",
   "mapping-collection",
 ];
-const OPERATIONS = ["round-trip", "parse", "parse-typed", "parse-file", "assessment-period", "validate-element"];
+const OPERATIONS = [
+  "round-trip",
+  "parse",
+  "parse-typed",
+  "parse-file",
+  "assessment-period",
+  "validate-element",
+  "yaml-round-trip",
+  "yaml-parse",
+];
 const ID = /^[A-Z]{2,5}-\d{3}(?:\.\d{2})?$/;
 
 interface Case {
@@ -99,6 +113,7 @@ function main(write: boolean): number {
   const fail = (id: string, message: string) => failures.push(`[corpus] ${id}: ${message}`);
 
   const schema = JSON.parse(fs.readFileSync(SCHEMA, "utf8")) as { $id: string; definitions: Record<string, unknown> };
+  checkSchemaForReader(schema);
   const ajv = new Ajv({ allErrors: true, strict: false });
   addFormats(ajv);
   ajv.addSchema(schema);
@@ -115,6 +130,7 @@ function main(write: boolean): number {
   };
   if (index["oscal-release"] !== RELEASE) fail("cases.json", `oscal-release is not ${RELEASE}`);
   const ids = specIdentifiers();
+  const jsonExpected = new Set(index.cases.filter((c) => c.operation === "round-trip").map((c) => c.expected));
   const seen = new Set<string>();
   const used = new Set<string>();
   const covered = new Set<string>();
@@ -222,6 +238,49 @@ function main(write: boolean): number {
         const valid = validate(JSON.parse(fs.readFileSync(inputPath, "utf8")));
         if (valid !== c["expected-valid"])
           fail(c.id, `the schema reports valid=${valid}, not ${c["expected-valid"]}: ${ajv.errorsText(validate.errors)}`);
+        break;
+      }
+      case "yaml-round-trip": {
+        const bytes = fs.readFileSync(inputPath);
+        const result = readYaml(bytes, validateDocument);
+        if (!result.ok) {
+          fail(c.id, `the YAML reader rejects the input (${result.fault}): ${result.detail}`);
+          break;
+        }
+        if (!c["document-type"] || !Object.hasOwn(result.value as object, c["document-type"]))
+          fail(c.id, `input root is not document-type "${c["document-type"]}"`);
+        if (c.source && sha256(bytes) !== c.source.sha256) fail(c.id, "input sha256 does not match the source sha256");
+        if (!c.expected) {
+          fail(c.id, "a yaml-round-trip case needs an expected file");
+          break;
+        }
+        used.add(c.expected);
+        const canonical = canonicalize(result.json);
+        const expectedPath = path.join(ROOT, c.expected);
+        if (c.source) {
+          // A copied NIST example uses the expected file of its JSON twin, so the reader does not set the expectation.
+          if (!jsonExpected.has(c.expected)) fail(c.id, `${c.expected} is not the expected file of a round-trip case`);
+        } else if (write) {
+          fs.mkdirSync(path.dirname(expectedPath), { recursive: true });
+          fs.writeFileSync(expectedPath, canonical);
+        }
+        if (!fs.existsSync(expectedPath) || fs.readFileSync(expectedPath, "utf8") !== canonical)
+          fail(c.id, `${c.expected} is not the canonical form of the YAML input`);
+        break;
+      }
+      case "yaml-parse": {
+        const result = readYaml(fs.readFileSync(inputPath), validateDocument);
+        if (result.ok) {
+          fail(c.id, "the YAML reader accepts the input, so parsing it is not an error");
+          break;
+        }
+        if (result.fault === "not-utf-8" && c["input-form"] !== "bytes")
+          fail(c.id, 'input is not UTF-8, so input-form must be "bytes"');
+        if (!c.notes?.includes(`\`${result.fault}\``))
+          fail(c.id, `the notes do not name the fault code \`${result.fault}\` of the reader: ${result.detail}`);
+        const min = c["expected-min-failures"];
+        if (min !== undefined && result.locations.length < min)
+          fail(c.id, `the reader reports ${result.locations.length} failing locations, fewer than ${min}`);
         break;
       }
     }

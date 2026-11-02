@@ -42,13 +42,13 @@ that the cases of group 4 cite. The groups run in order.
 
 ## 3. Corpus operations
 
-- [ ] 3.1 Add `yaml-round-trip` and `yaml-parse` to `OPERATIONS` in `scripts/check-corpus.ts`, with the checks of
+- [x] 3.1 Add `yaml-round-trip` and `yaml-parse` to `OPERATIONS` in `scripts/check-corpus.ts`, with the checks of
       design.md, D5. A `yaml-round-trip` case needs a `document-type`, and its input root must be that type. The
       canonical form of the reader output must equal `expected`. A `yaml-round-trip` case with a `source` must name an
       `expected` file that a JSON `round-trip` case also names, and `--write` does not write that file. For
       `yaml-parse`, the reader must reject the input. Update the header comment of the script. Verify
       `npm run corpus:check` passes with no YAML case.
-- [ ] 3.2 Update `corpus/1.2.3/README.md`. Verify each operation in `OPERATIONS` has an entry in the README, and that
+- [x] 3.2 Update `corpus/1.2.3/README.md`. Verify each operation in `OPERATIONS` has an entry in the README, and that
       no README statement is false for a YAML case:
       1. Add the two operations to [Operations](../../../corpus/1.2.3/README.md#operations).
       2. State that a binding that offers no YAML skips each operation whose name starts with `yaml-`.
@@ -56,9 +56,9 @@ that the cases of group 4 cite. The groups run in order.
          input.
       4. Add the `.yaml` inputs to the layout list. Change "Each is the minimal catalog with one fault" so that it
          also covers the YAML fixtures, which are minimal documents of other types.
-- [ ] 3.3 In `docs/canonical-json.md`, add the yaml-documents spec ([YML-008]) to the specs that use the canonical
+- [x] 3.3 In `docs/canonical-json.md`, add the yaml-documents spec ([YML-008]) to the specs that use the canonical
       form. Verify `npm run check` passes.
-- [ ] 3.4 Commit group 3 with `#16` in the message, and state that `npm run check` passed. Verify `npm run check`
+- [x] 3.4 Commit group 3 with `#16` in the message, and state that `npm run check` passed. Verify `npm run check`
       passes before the commit.
 
 ## 4. Corpus fixtures
