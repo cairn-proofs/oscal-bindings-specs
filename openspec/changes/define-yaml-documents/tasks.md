@@ -86,7 +86,7 @@ that the cases of group 4 cite. The groups run in order.
       the prefix `YML` for `yaml-documents` with `next: 12` to `openspec/spec-ids.yaml`, and run
       `npm run requirements:write`. Verify `npm run spec-ids` passes, `openspec show yaml-documents --type spec` lists
       [YML-001] to [YML-011], and `openspec/requirements.json` holds the eleven new entries.
-- [ ] 5.2 Set `VERSION` to `0.5.0+oscal.1.2.3` (design.md, D7). Verify `npm run check` passes, including
+- [x] 5.2 Set `VERSION` to `0.5.0+oscal.1.2.3` (design.md, D7). Verify `npm run check` passes, including
       `releases:check`, which checks that no released name or schema file changed.
 - [ ] 5.3 With the user's approval, push the branch and open the pull request for #16. After the merge, tag
       `v0.5.0+oscal.1.2.3` on `main`, with the user's approval. Verify CI builds the archive and creates the draft
