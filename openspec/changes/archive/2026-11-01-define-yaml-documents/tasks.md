@@ -6,7 +6,7 @@ binding is out of scope (design.md, Non-Goals 5).
 ## Task Dependency Graph
 
 ```
- 1 (branch, plan) ---> 2 (reader) ---> 3 (corpus operations) ---> 4 (fixtures) ---> 5 (sync, release)
+ 1 (branch, plan) ---> 2 (reader) ---> 3 (corpus operations) ---> 4 (fixtures) ---> 5 (sync, version)
 ```
 
 Group 3 calls the reader of group 2. Group 4 adds cases that the checks of group 3 prove. Group 5 syncs the specs
@@ -50,7 +50,7 @@ that the cases of group 4 cite. The groups run in order.
       `npm run corpus:check` passes with no YAML case.
 - [x] 3.2 Update `corpus/1.2.3/README.md`. Verify each operation in `OPERATIONS` has an entry in the README, and that
       no README statement is false for a YAML case:
-      1. Add the two operations to [Operations](../../../corpus/1.2.3/README.md#operations).
+      1. Add the two operations to [Operations](../../../../corpus/1.2.3/README.md#operations).
       2. State that a binding that offers no YAML skips each operation whose name starts with `yaml-`.
       3. State that the non-raising validity check applies only to a `round-trip` input, not to a `yaml-round-trip`
          input.
@@ -80,7 +80,7 @@ that the cases of group 4 cite. The groups run in order.
 - [x] 4.4 Commit group 4 with `#16` in the message, and state that `npm run check` passed. Verify `npm run check`
       passes before the commit.
 
-## 5. Sync and release `0.5.0+oscal.1.2.3`
+## 5. Sync and version `0.5.0+oscal.1.2.3`
 
 - [x] 5.1 Sync the deltas of this change into `openspec/specs/` without archiving the change. In the same commit, add
       the prefix `YML` for `yaml-documents` with `next: 12` to `openspec/spec-ids.yaml`, and run
@@ -88,15 +88,14 @@ that the cases of group 4 cite. The groups run in order.
       [YML-001] to [YML-011], and `openspec/requirements.json` holds the eleven new entries.
 - [x] 5.2 Set `VERSION` to `0.5.0+oscal.1.2.3` (design.md, D7). Verify `npm run check` passes, including
       `releases:check`, which checks that no released name or schema file changed.
-- [ ] 5.3 With the user's approval, push the branch and open the pull request for #16. After the merge, tag
-      `v0.5.0+oscal.1.2.3` on `main`, with the user's approval. Verify CI builds the archive and creates the draft
-      release. The user publishes it.
-- [ ] 5.4 Draft a comment on cairn-proofs/oscal-bindings-python#7 that names the release and the YAML requirements.
-      The comment lists observable cases that the planned design must pass: `as-is: yes` and `start: +443` are parse
-      errors, and a mapping with `title` two times is a parse error. Post it only after the user approves it. Verify
-      the comment exists after approval.
 
 ## Workflow follow-up
 
-- Archive this change. If a requirement or scenario changed after task 5.1, update the ledger in the archive commit.
-  Verify `npm run spec-ids` passes and `openspec list` shows no active change.
+These steps run after the pull request merges, so they are not tracked tasks. The change is archived in the same
+pull request (#21).
+
+- After the merge, tag `v0.5.0+oscal.1.2.3` on `main`, with the user's approval. Verify CI builds the archive and
+  creates the draft release. The user publishes it. Record the archive `sha256` in the release notes.
+- Draft a comment on cairn-proofs/oscal-bindings-python#7 that names the release and the YAML requirements. The
+  comment lists observable cases that the planned design must pass: `as-is: yes` and `start: +443` are parse errors,
+  and a mapping with `title` two times is a parse error. Post it only after the user approves it.
