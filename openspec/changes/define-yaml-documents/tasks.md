@@ -63,21 +63,21 @@ that the cases of group 4 cite. The groups run in order.
 
 ## 4. Corpus fixtures
 
-- [ ] 4.1 Copy the seven NIST YAML examples of design.md, Context 4, from `usnistgov/oscal-content` at commit
+- [x] 4.1 Copy the seven NIST YAML examples of design.md, Context 4, from `usnistgov/oscal-content` at commit
       `78650f02ad9321bb7b817846f8fbd4f2bcd620de` into `corpus/1.2.3/documents/valid/`, with the name of the JSON twin
       and the `.yaml` extension. Add one `yaml-round-trip` case for each, with the `source` and its `sha256`, the
       `document-type` and the `expected` file of the JSON twin, and `requirements: ["YML-005.02", "YML-008.01"]`.
       Verify `npm run corpus:check` passes and `git status` shows no change under `corpus/1.2.3/expected/`.
-- [ ] 4.2 Add the three hand-written `yaml-round-trip` cases of design.md, D6, items 2 to 4. Cite the scenarios that
+- [x] 4.2 Add the three hand-written `yaml-round-trip` cases of design.md, D6, items 2 to 4. Cite the scenarios that
       each fixture tests: [YML-004.01] to [YML-004.06], [YML-004.09], [YML-005.04], [YML-009.01], [YML-009.03],
       [YML-008.01], and [YML-008.02]. Run `npm run corpus:write`. Read each value of the new expected files by hand,
       against the list in D6. Verify `npm run corpus:check` passes.
-- [ ] 4.3 Add the `yaml-parse` cases of design.md, D6, item 5, with `expected-category: parse-error`. Each case cites
+- [x] 4.3 Add the `yaml-parse` cases of design.md, D6, item 5, with `expected-category: parse-error`. Each case cites
       the scenario that it tests, for example [YML-002.01] to [YML-002.04], [YML-003.02], [YML-003.03], [YML-004.07],
       [YML-004.08], [YML-004.10], [YML-005.03], [YML-009.02], [YML-009.04], and [YML-010.01]. At least one case also
       cites [ERR-001.06]. The `notes` of each case name its fault. Verify `npm run corpus:check` passes, and that the
       reason code of the reader for each input matches the fault in its `notes`.
-- [ ] 4.4 Commit group 4 with `#16` in the message, and state that `npm run check` passed. Verify `npm run check`
+- [x] 4.4 Commit group 4 with `#16` in the message, and state that `npm run check` passed. Verify `npm run check`
       passes before the commit.
 
 ## 5. Sync and release `0.5.0+oscal.1.2.3`

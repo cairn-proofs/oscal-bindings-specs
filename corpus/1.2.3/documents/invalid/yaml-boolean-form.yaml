@@ -1,0 +1,12 @@
+profile:
+  uuid: 7d2b6c1e-3f4a-4b5c-8d6e-9f0a1b2c3d45
+  metadata:
+    title: Minimal catalog
+    last-modified: 2024-01-02T03:04:05Z
+    version: "1.0"
+    oscal-version: 1.2.3
+  imports:
+    - href: "#7d2b6c1e-3f4a-4b5c-8d6e-9f0a1b2c3d46"
+      include-all: {}
+  merge:
+    as-is: yes
