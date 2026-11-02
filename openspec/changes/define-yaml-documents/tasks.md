@@ -82,7 +82,7 @@ that the cases of group 4 cite. The groups run in order.
 
 ## 5. Sync and release `0.5.0+oscal.1.2.3`
 
-- [ ] 5.1 Sync the deltas of this change into `openspec/specs/` without archiving the change. In the same commit, add
+- [x] 5.1 Sync the deltas of this change into `openspec/specs/` without archiving the change. In the same commit, add
       the prefix `YML` for `yaml-documents` with `next: 12` to `openspec/spec-ids.yaml`, and run
       `npm run requirements:write`. Verify `npm run spec-ids` passes, `openspec show yaml-documents --type spec` lists
       [YML-001] to [YML-011], and `openspec/requirements.json` holds the eleven new entries.

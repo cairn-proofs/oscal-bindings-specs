@@ -295,6 +295,61 @@
       "id": "VER-005",
       "capability": "schema-versioning",
       "title": "Spec artifacts are distributed pinned and hash-verified"
+    },
+    {
+      "id": "YML-001",
+      "capability": "yaml-documents",
+      "title": "YAML support is optional, and a binding that offers it conforms in full"
+    },
+    {
+      "id": "YML-002",
+      "capability": "yaml-documents",
+      "title": "A YAML input is one YAML 1.2 document in UTF-8"
+    },
+    {
+      "id": "YML-003",
+      "capability": "yaml-documents",
+      "title": "A YAML document reads as a JSON value"
+    },
+    {
+      "id": "YML-004",
+      "capability": "yaml-documents",
+      "title": "The schema decides the type of each scalar"
+    },
+    {
+      "id": "YML-005",
+      "capability": "yaml-documents",
+      "title": "Parse an OSCAL document from YAML text or bytes"
+    },
+    {
+      "id": "YML-006",
+      "capability": "yaml-documents",
+      "title": "Parse an OSCAL document from a YAML file path"
+    },
+    {
+      "id": "YML-007",
+      "capability": "yaml-documents",
+      "title": "A typed YAML parser behaves as a typed JSON parser"
+    },
+    {
+      "id": "YML-008",
+      "capability": "yaml-documents",
+      "title": "Serialize an OSCAL document to YAML"
+    },
+    {
+      "id": "YML-009",
+      "capability": "yaml-documents",
+      "title": "Aliases, tags, and merge keys add no meaning"
+    },
+    {
+      "id": "YML-010",
+      "capability": "yaml-documents",
+      "title": "A grammar error of a scalar carries the location of the scalar"
+    },
+    {
+      "id": "YML-011",
+      "capability": "yaml-documents",
+      "title": "A binding can limit the resources that a YAML input uses"
     }
   ]
 }

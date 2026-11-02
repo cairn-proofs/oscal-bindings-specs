@@ -27,7 +27,7 @@ manifest govern them.
 
 #### Scenario: SRF-001.02 Operation with no requirement
 
-- **WHEN** a binding exports a function that parses a YAML document, and no contract requirement defines YAML input
+- **WHEN** a binding exports a function that parses an XML document, and no contract requirement defines XML input
 - **THEN** the binding does not conform, because the function is not binding-local under [SRF-002]
 
 #### Scenario: SRF-001.03 Generated model type
@@ -53,7 +53,7 @@ A binding-local requirement of the binding SHALL define each binding-local opera
 
 #### Scenario: SRF-002.02 Input decision is not binding-local
 
-- **WHEN** a function converts YAML text to JSON before it calls the contract parse operation
+- **WHEN** a function converts XML text to JSON before it calls the contract parse operation
 - **THEN** the function is not binding-local, because it decides which OSCAL input is accepted
 
 #### Scenario: SRF-002.03 Alternative behavior is not binding-local
