@@ -22,22 +22,22 @@ that the cases of group 4 cite. The groups run in order.
 
 ## 2. Reference reader
 
-- [ ] 2.1 Add `scripts/yaml-reader.ts` (design.md, D4). It exports one function that takes the input bytes and the ajv
+- [x] 2.1 Add `scripts/yaml-reader.ts` (design.md, D4). It exports one function that takes the input bytes and the ajv
       validator of the document. It returns the JSON value, or a parse error with a reason code. Follow steps 1 to 3
       of D4. These include `fatal` UTF-8 decoding, `resolveKnownTags: false`, and warnings that are not errors. They
       also include the content (`Scalar.source`) of each scalar, alias resolution with a cycle check, and the JSON
       grammar of D2. Add the
       start-up check of D4 for locations that allow a string and another scalar type. Verify `npm run typecheck`
       passes.
-- [ ] 2.2 Add `--self-test` to the reader, and the script `yaml-reader:self-test` to `package.json` before
+- [x] 2.2 Add `--self-test` to the reader, and the script `yaml-reader:self-test` to `package.json` before
       `corpus:check` in `npm run check`. Self-test inputs cover each scenario of [YML-002], [YML-003], [YML-004], and
       [YML-009], plus a `!!set` and a `!!binary` tag. It covers [YML-005.04] and [YML-010.01] with the JSON text and
       the error location that the reader returns. The self-test checks the reason code of each rejected input.
       Verify `npm run yaml-reader:self-test` passes, and that it fails when the self-test expects `version: 1.0` to
       give a number.
-- [ ] 2.3 Add the reader self-test to the check list in `README.md`. Verify each command that the README names exists
+- [x] 2.3 Add the reader self-test to the check list in `README.md`. Verify each command that the README names exists
       in `package.json`.
-- [ ] 2.4 Commit group 2 with `#16` in the message, and state that `npm run check` passed. Verify `npm run check`
+- [x] 2.4 Commit group 2 with `#16` in the message, and state that `npm run check` passed. Verify `npm run check`
       passes before the commit.
 
 ## 3. Corpus operations
