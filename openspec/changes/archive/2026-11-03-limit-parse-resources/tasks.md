@@ -64,6 +64,7 @@ request.
 
 - Archive this change in the pull request. If a requirement or scenario changed after task 2.1, update the ledger and
   the index in the archive commit. Verify `npm run check` passes and `openspec list` shows no active change.
+  Result: no requirement or scenario changed after task 2.1, so the ledger and the index need no update.
 - Open the pull request with `Closes #24`, with the user's approval.
 - The release that carries this change is out of scope. Its version is at least a minor increment over the last
   release (design.md, D8).
