@@ -41,22 +41,22 @@ Group 4 syncs the specs that the messages of groups 2 and 3 cite. The groups run
 
 ## 3. Link check and README
 
-- [ ] 3.1 Add `## Known implementations` to `README.md` after `## Use the store`, as design.md, D6, item 1 states. It
+- [x] 3.1 Add `## Known implementations` to `README.md` after `## Use the store`, as design.md, D6, item 1 states. It
       lists `oscal-bindings-python` (Python) with a link to `https://github.com/cairn-proofs/oscal-bindings-python` and
       a link to `https://github.com/cairn-proofs/oscal-bindings-python/issues`. It states that each binding keeps its
       own expected conformance failures. Verify the section has no link that ends in an issue or pull request number.
-- [ ] 3.2 Add `scripts/check-binding-links.ts` with the steps of design.md, D3, items 1 to 5. Verify
+- [x] 3.2 Add `scripts/check-binding-links.ts` with the steps of design.md, D3, items 1 to 5. Verify
       `npm run typecheck` passes, and `npx tsx scripts/check-binding-links.ts` passes on the working tree.
-- [ ] 3.3 Add `--self-test` to the script with the cases of design.md, D3, item 6. Add `binding-links:check` and
+- [x] 3.3 Add `--self-test` to the script with the cases of design.md, D3, item 6. Add `binding-links:check` and
       `binding-links:self-test` to `package.json`, after `corpus:check` in the `check` chain. Verify
       `npm run binding-links:self-test` passes, and that it fails when one case expects
       `github.com/cairn-proofs/oscal-bindings-python/issues/6` to pass. Add
       `cairn-proofs/oscal-bindings-python#6` to a line of `docs/canonical-json.md` and verify
       `npm run binding-links:check` fails and names the file and line. Restore the file and verify `git status` shows
       no change to it.
-- [ ] 3.4 Add the link check as item 9 of the check list in `README.md` `## Develop`, and renumber the items after it
+- [x] 3.4 Add the link check as item 9 of the check list in `README.md` `## Develop`, and renumber the items after it
       (design.md, D6, item 2). Verify each command that the README names exists in `package.json`.
-- [ ] 3.5 Commit group 3 with `#23` in the message, and state that `npm run check` passed. Verify `npm run check`
+- [x] 3.5 Commit group 3 with `#23` in the message, and state that `npm run check` passed. Verify `npm run check`
       passes before the commit.
 
 ## 4. Sync
