@@ -61,7 +61,7 @@ Group 4 syncs the specs that the messages of groups 2 and 3 cite. The groups run
 
 ## 4. Sync
 
-- [ ] 4.1 Sync the deltas of this change into `openspec/specs/` without archiving the change. [PRS-005] loses the
+- [x] 4.1 Sync the deltas of this change into `openspec/specs/` without archiving the change. [PRS-005] loses the
       binding-specific defect sentences, and [VER-006] and [VER-007] follow [VER-005]. In the same commit, set `VER`
       `next` to 8 in `openspec/spec-ids.yaml`, and run `npm run requirements:write`. Do not change `VERSION`
       (design.md, D5). Verify `npm run spec-ids` passes, `openspec show schema-versioning --type spec` lists [VER-006]

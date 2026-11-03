@@ -297,6 +297,16 @@
       "title": "Spec artifacts are distributed pinned and hash-verified"
     },
     {
+      "id": "VER-006",
+      "capability": "schema-versioning",
+      "title": "Dependencies run from bindings to the store, never back"
+    },
+    {
+      "id": "VER-007",
+      "capability": "schema-versioning",
+      "title": "Each binding keeps its own expected conformance failures"
+    },
+    {
       "id": "YML-001",
       "capability": "yaml-documents",
       "title": "YAML support is optional, and a binding that offers it conforms in full"

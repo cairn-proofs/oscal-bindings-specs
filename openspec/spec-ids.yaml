@@ -28,7 +28,7 @@ prefixes:
     next: 9
   VER:
     capability: schema-versioning
-    next: 6
+    next: 8
   SER:
     capability: serialization
     next: 6
