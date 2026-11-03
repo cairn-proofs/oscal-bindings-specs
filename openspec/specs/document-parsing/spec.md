@@ -82,9 +82,7 @@ strict-coverage rule in the model-derivation capability.
 
 OSCAL input SHALL use the OSCAL property keys, for example `media-type` and `document-ids`. A key that matches an
 implementation's internal field name, but not the OSCAL property key, MUST be rejected as an unknown field. This holds
-in every input mode and at every depth. This requirement states the intended behavior. A known defect in one Python
-runtime drops such a key in one input mode instead of rejecting it. That defect is tracked separately and is not the
-contract.
+in every input mode and at every depth.
 
 #### Scenario: PRS-005.01 OSCAL property key is accepted
 

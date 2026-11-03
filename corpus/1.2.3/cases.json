@@ -1,9 +1,6 @@
 {
   "oscal-release": "1.2.3",
   "categories": ["parse-error", "document-type-mismatch", "not-found", "access-error", "unknown-element-type"],
-  "defect-twins": [
-    ["round-trip/seven-fraction-digits", "yaml-round-trip/string-scalars"]
-  ],
   "cases": [
     {
       "id": "round-trip/catalog",
@@ -137,14 +134,7 @@
       "document-type": "catalog",
       "expected": "expected/seven-fraction-digits.json",
       "requirements": ["PRS-008", "SER-005.03"],
-      "notes": "Written for this corpus.",
-      "known-defects": [
-        {
-          "binding": "oscal-bindings-python",
-          "issue": "https://github.com/cairn-proofs/oscal-bindings-python/issues/19",
-          "observed": "The round trip keeps six fraction digits and drops the seventh."
-        }
-      ]
+      "notes": "Written for this corpus."
     },
     {
       "id": "round-trip/open-enum-off-list",
@@ -197,14 +187,7 @@
       "input": "documents/invalid/name-keyed-field.json",
       "expected-category": "parse-error",
       "requirements": ["PRS-005.02"],
-      "notes": "The rlink carries media_type, an internal field name, in place of the OSCAL key media-type.",
-      "known-defects": [
-        {
-          "binding": "oscal-bindings-python",
-          "issue": "https://github.com/cairn-proofs/oscal-bindings-python/issues/6",
-          "observed": "With pydantic 2.13.x, parsing from JSON text or bytes drops the media_type key and succeeds."
-        }
-      ]
+      "notes": "The rlink carries media_type, an internal field name, in place of the OSCAL key media-type."
     },
     {
       "id": "parse/missing-required-field",
@@ -435,14 +418,7 @@
       "document-type": "catalog",
       "expected": "expected/string-scalars.json",
       "requirements": ["YML-004.01", "YML-004.02", "YML-004.03", "YML-004.04", "YML-004.05", "YML-004.09", "YML-009.03", "YML-008.01"],
-      "notes": "Plain scalars at string locations keep their text: 1.0, 1.10, yes, null, ~, an empty scalar, and a datetime with seven fraction digits. The !!int tag and the !!omap tag do not change a value.",
-      "known-defects": [
-        {
-          "binding": "oscal-bindings-python",
-          "issue": "https://github.com/cairn-proofs/oscal-bindings-python/issues/19",
-          "observed": "The round trip keeps six fraction digits and drops the seventh."
-        }
-      ]
+      "notes": "Plain scalars at string locations keep their text: 1.0, 1.10, yes, null, ~, an empty scalar, and a datetime with seven fraction digits. The !!int tag and the !!omap tag do not change a value."
     },
     {
       "id": "yaml-round-trip/number-scalars",
