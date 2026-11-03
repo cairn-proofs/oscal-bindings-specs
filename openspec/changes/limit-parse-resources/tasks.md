@@ -15,14 +15,14 @@ that the new case cites is in the main specs when the case lands. The groups run
 
 ## 1. Branch and planning commit
 
-- [ ] 1.1 Create the feature branch from #24 with `gh issue develop 24 --base main`, with the user's approval, and check
+- [x] 1.1 Create the feature branch from #24 with `gh issue develop 24 --base main`, with the user's approval, and check
       it out. Commit the planning artifacts of this change as the first commit, with `#24` in the message. Verify
       `git branch --show-current` is not `main`, `openspec list` shows only this change, and
       `openspec validate limit-parse-resources --strict` passes.
 
 ## 2. Sync
 
-- [ ] 2.1 Sync the deltas of this change into `openspec/specs/` without archiving the change. In `document-parsing`,
+- [x] 2.1 Sync the deltas of this change into `openspec/specs/` without archiving the change. In `document-parsing`,
       [PRS-006] takes its new text, and [PRS-010], [PRS-011], and [PRS-012] follow [PRS-009]. In `yaml-documents`,
       [YML-005] takes its new text and its scenario [YML-005.05], and [YML-011] goes. In `error-model`, [ERR-001],
       [ERR-002], and [ERR-003] take their new text, with the scenarios [ERR-001.07] and [ERR-002.03]. Verify
@@ -30,7 +30,7 @@ that the new case cites is in the main specs when the case lands. The groups run
       `openspec show yaml-documents --type spec` does not list [YML-011]. Verify
       `openspec show error-model --type spec` lists [ERR-001.07] and [ERR-002.03], and that its [ERR-001] text does
       not cite [YML-011].
-- [ ] 2.2 In the same commit as task 2.1, set `PRS` `next` to 13 in `openspec/spec-ids.yaml`. Add a `retired` entry for
+- [x] 2.2 In the same commit as task 2.1, set `PRS` `next` to 13 in `openspec/spec-ids.yaml`. Add a `retired` entry for
       `YML-011` with `replaced_by: PRS-010` and a reason that states that [PRS-010] holds the same rule for each parse
       operation. Run `npm run requirements:write`. Do not change `VERSION` (design.md, D8). Verify `npm run spec-ids`
       passes, and `openspec/requirements.json` has entries for [PRS-010], [PRS-011], and [PRS-012] and none for

@@ -13,7 +13,7 @@ prefixes:
     next: 5
   PRS:
     capability: document-parsing
-    next: 10
+    next: 13
   ELV:
     capability: element-validation
     next: 4
@@ -46,3 +46,8 @@ retired:
       Deduplication from the per-document schemas and by equal structure alone left the contract. Type identity is a
       set of JSON pointers into the complete schema, and MDL-013 holds the deduplication rule.
     replaced_by: MDL-013
+  - id: YML-011
+    reason: >-
+      PRS-010 holds the same resource-limit rule for each parse operation, including each YAML parse operation. Its
+      scenario PRS-010.03 holds the alias-expansion case.
+    replaced_by: PRS-010

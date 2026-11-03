@@ -150,8 +150,9 @@ If no type is named, the value is the text. Other text is a parse error, as [YML
 
 The implementation SHALL provide a YAML parse operation that accepts a YAML input as text or as raw bytes, as [PRS-001]
 defines for JSON input. The result SHALL be the result that the JSON parse operation gives for the JSON text of the
-input. The JSON text holds the value that [YML-003] reads, with each number written as the text of its scalar. The
-result includes the typed document value and each parse error of the document-parsing capability.
+input. [PRS-010] defines the result for an input over a documented limit. The JSON text holds the value that [YML-003]
+reads, with each number written as the text of its scalar. The result includes the typed document value and each parse
+error of the document-parsing capability.
 
 #### Scenario: YML-005.01 Parse from bytes
 
@@ -172,6 +173,12 @@ result includes the typed document value and each parse error of the document-pa
 
 - **WHEN** the `start` property of a port range carries the plain scalar `443.0`
 - **THEN** the result is the result of the JSON parse operation for a document with `"start": 443.0`
+
+#### Scenario: YML-005.05 YAML input over a documented limit on YAML bytes
+
+- **WHEN** a binding documents a limit on YAML input bytes, a YAML input exceeds the limit, and the JSON text of the
+  input does not
+- **THEN** the YAML parse operation reports a parse error, as [PRS-010] requires
 
 ### Requirement: YML-006 Parse an OSCAL document from a YAML file path
 
@@ -269,14 +276,3 @@ scalar. The parse error SHALL carry one structured entry for that location, as [
 
 - **WHEN** the `start` property of the first port range carries the plain scalar `0x1BB`
 - **THEN** the parse error carries a structured entry that identifies the location of that `start` property
-
-### Requirement: YML-011 A binding can limit the resources that a YAML input uses
-
-A binding SHALL document each resource limit that it applies to a YAML input, for example a limit on alias expansion.
-An input that exceeds a documented limit SHALL be a parse error. A binding MUST NOT reject an input for a resource
-limit that it does not document.
-
-#### Scenario: YML-011.01 Input over a documented limit
-
-- **WHEN** aliases in an input expand to more nodes than the documented limit of the binding
-- **THEN** parsing reports a parse error

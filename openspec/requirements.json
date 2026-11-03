@@ -212,6 +212,21 @@
       "title": "Enum values are checked by the kind of the enum"
     },
     {
+      "id": "PRS-010",
+      "capability": "document-parsing",
+      "title": "A binding can limit the resources that a parse uses"
+    },
+    {
+      "id": "PRS-011",
+      "capability": "document-parsing",
+      "title": "A binding can limit the structured entries of a parse error"
+    },
+    {
+      "id": "PRS-012",
+      "capability": "document-parsing",
+      "title": "A parse error carries each entry or 100 entries or more"
+    },
+    {
       "id": "SER-001",
       "capability": "serialization",
       "title": "Serialization emits OSCAL property keys"
@@ -355,11 +370,6 @@
       "id": "YML-010",
       "capability": "yaml-documents",
       "title": "A grammar error of a scalar carries the location of the scalar"
-    },
-    {
-      "id": "YML-011",
-      "capability": "yaml-documents",
-      "title": "A binding can limit the resources that a YAML input uses"
     }
   ]
 }
