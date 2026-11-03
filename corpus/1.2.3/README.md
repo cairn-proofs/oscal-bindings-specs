@@ -9,8 +9,9 @@ A binding that fails a case records the expected failure in its own repository, 
 1. `cases.json`: the case index. Each case names an operation, an input, and an expected result.
 2. `documents/valid/`: valid OSCAL documents, one or more for each of the eight document types. A `.json` file is a
    JSON input, and a `.yaml` file is a YAML input.
-3. `documents/invalid/`: documents that a binding must reject. Each is a minimal document with one fault. The JSON
-   inputs are minimal catalogs. A YAML input is a minimal document of the type that its fault needs.
+3. `documents/invalid/`: documents that a binding must reject. Each is a minimal document with one fault. An input for
+   a case that counts failures with `expected-min-failures` above 1, for example `two-failures.json` and
+   `many-failures.json`, has the faults that the case counts. The JSON inputs are minimal catalogs. A YAML input is a minimal document of the type that its fault needs.
 4. `elements/`: standalone OSCAL elements for element validation.
 5. `expected/`: the canonical form of each `round-trip` and `yaml-round-trip` input. `npm run corpus:write` generates
    these files. Do not edit them.

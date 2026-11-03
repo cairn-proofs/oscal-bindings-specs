@@ -35,26 +35,27 @@ that the new case cites is in the main specs when the case lands. The groups run
       operation. Run `npm run requirements:write`. Do not change `VERSION` (design.md, D8). Verify `npm run spec-ids`
       passes, and `openspec/requirements.json` has entries for [PRS-010], [PRS-011], and [PRS-012] and none for
       [YML-011]. Verify a search for `YML-011` outside `openspec/changes/` finds only the ledger entry.
-- [ ] 2.3 Commit tasks 2.1 and 2.2 with `#24` in the message, and state that `npm run check` passed. Verify
+- [x] 2.3 Commit tasks 2.1 and 2.2 with `#24` in the message, and state that `npm run check` passed. Verify
       `npm run check` passes before the commit, including `corpus:check` with the unchanged `requirements` fields of
       `parse/missing-required-field` and `parse/two-failures`, and `releases:check`.
 
 ## 3. Corpus case for the entry floor
 
-- [ ] 3.1 Add `corpus/1.2.3/documents/invalid/many-failures.json`, as design.md, D3, states. The input is a catalog
+- [x] 3.1 Add `corpus/1.2.3/documents/invalid/many-failures.json`, as design.md, D3, states. The input is a catalog
       with valid `uuid` and `metadata` fields. `metadata.props` has 101 properties, and each property has only the
       field `"name": "x"`. Verify ajv with the catalog schema gives 101 errors at 101 different instance paths.
-- [ ] 3.2 Add the case `parse/many-failures` to `corpus/1.2.3/cases.json` after `parse/two-failures`. The case has
-  `operation` `parse`, `expected-category` `parse-error`, `expected-min-failures` 100, and `requirements`
-  `["PRS-012.01"]`. Verify `npm run corpus:check` passes. The check counts 116 errors under the complete schema
-  (design.md, D3). Set `expected-min-failures` to 117 and verify `npm run corpus:check` fails for `parse/many-failures`.
-  Restore the value 100.
-- [ ] 3.3 In `corpus/1.2.3/README.md`, Layout item 3, change "a minimal document with one fault" so that it also
-      allows one kind of fault repeated, as `parse/two-failures` and `parse/many-failures` have. Verify the item
-      describes each input in `documents/invalid/`.
-- [ ] 3.4 Commit group 3 with `#24` in the message, and state that `npm run check` passed. Verify `npm run check`
-      passes before the commit, and `git status --short` shows only the new input, `cases.json`, and the corpus
-      README.
+- [x] 3.2 Add the case `parse/many-failures` to `corpus/1.2.3/cases.json` after `parse/two-failures`. The case has
+      `operation` `parse`, `expected-category` `parse-error`, `expected-min-failures` 100, and `requirements`
+      `["PRS-012.01"]`. Verify `npm run corpus:check` passes. The check counts 116 errors under the complete schema
+      (design.md, D3). Set `expected-min-failures` to 117 and verify `npm run corpus:check` fails for
+      `parse/many-failures`. Restore the value 100.
+- [x] 3.3 In `corpus/1.2.3/README.md`, Layout item 3, keep "a minimal document with one fault" and add that an input
+      for a case with `expected-min-failures` above 1 has the faults that the case counts. `parse/two-failures` has
+      two different faults, so "one kind of fault repeated" does not describe it. Verify the item describes each input
+      in `documents/invalid/`.
+- [x] 3.4 Commit group 3 with `#24` in the message, and state that `npm run check` passed. Verify `npm run check`
+      passes before the commit, and `git status --short` shows only the new input, `cases.json`, the corpus
+      README, and the artifacts of this change.
 
 ## Workflow follow-up
 

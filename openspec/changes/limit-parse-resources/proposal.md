@@ -56,9 +56,8 @@ None.
    names `replaced_by: PRS-010`. `npm run requirements:write` adds the [PRS-010], [PRS-011], and [PRS-012] entries to
    `openspec/requirements.json` and removes the [YML-011] entry.
 3. Corpus: a new input `corpus/1.2.3/documents/invalid/many-failures.json` and a new case `parse/many-failures` in
-   `corpus/1.2.3/cases.json`. `corpus/1.2.3/README.md` allows an invalid input with one kind of fault repeated. No
-   other case changes. Each other `expected-min-failures` value is 2 or less, so it
-   holds under the floor of 100.
+   `corpus/1.2.3/cases.json`. `corpus/1.2.3/README.md` allows an invalid input to have the faults that its case counts.
+   No other case changes. Each other `expected-min-failures` value is 2 or less, so it holds under the floor of 100.
 4. Bindings: a binding that applies no limit and does not cite [YML-011] needs no change, other than to run the new
    case. A binding that documents a limit names what the limit measures and the operations that it applies to, and
    makes its parse error identify the limit. A binding that cites [YML-011] in its traceability record replaces the

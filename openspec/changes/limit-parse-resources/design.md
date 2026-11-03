@@ -102,7 +102,7 @@ caller sees many failures, not only the first. It keeps [PRS-006.01] and each `e
 
 The floor applies to each binding, so the corpus can test it. A new case, `parse/many-failures`, has a catalog with 101
 properties that have only a `name`. Each property fails at one location, so the failures give 101 entries or more, and
-the case sets `expected-min-failures` to 100. A binding could reject the input of 3 KB for a limit, with no entries.
+the case sets `expected-min-failures` to 100. A binding could reject the input of 4.6 KB for a limit, with no entries.
 That binding also rejects the valid corpus documents of up to 22 KB, so it fails the corpus, as
 [D2](#d2-the-contract-allows-limits-and-sets-no-minimum-for-the-input) states for a byte limit. A limit on time can
 reject the input on a slow machine. That is a choice of the binding (Risk 4). The case cites [PRS-012.01]. The store's
