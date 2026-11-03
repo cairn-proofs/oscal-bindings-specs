@@ -206,6 +206,14 @@
       "requirements": ["PRS-006.01", "ERR-003.01"]
     },
     {
+      "id": "parse/many-failures",
+      "operation": "parse",
+      "input": "documents/invalid/many-failures.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 100,
+      "requirements": ["PRS-012.01"]
+    },
+    {
       "id": "parse/invalid-uuid",
       "operation": "parse",
       "input": "documents/invalid/invalid-uuid.json",
