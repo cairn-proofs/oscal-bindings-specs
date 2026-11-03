@@ -14,29 +14,29 @@ Group 4 syncs the specs that the messages of groups 2 and 3 cite. The groups run
 
 ## 1. Branch and planning commit
 
-- [ ] 1.1 Create the feature branch from #23 with `gh issue develop 23 --base main`, with the user's approval, and check
+- [x] 1.1 Create the feature branch from #23 with `gh issue develop 23 --base main`, with the user's approval, and check
       it out. Commit the planning artifacts of this change as the first commit, with `#23` in the message. Verify
       `git branch --show-current` is not `main`, `openspec list` shows only this change, and
       `openspec validate remove-binding-defect-tracking --strict` passes.
 
 ## 2. Corpus without binding data
 
-- [ ] 2.1 In `corpus/1.2.3/cases.json`, remove the `known-defects` field from `round-trip/seven-fraction-digits`,
+- [x] 2.1 In `corpus/1.2.3/cases.json`, remove the `known-defects` field from `round-trip/seven-fraction-digits`,
       `parse/name-keyed-field`, and `yaml-round-trip/string-scalars`. Remove the top-level `defect-twins` array. Verify
       `git diff --stat` shows only `cases.json`, and that the diff removes lines only.
-- [ ] 2.2 In `scripts/check-corpus.ts`, apply design.md, D4. Remove the `known-defects` entry check and the
+- [x] 2.2 In `scripts/check-corpus.ts`, apply design.md, D4. Remove the `known-defects` entry check and the
       defect-twin group check. Remove both fields from the types. Fail on a case that has the own property
       `known-defects`, and on an index that has the own property `defect-twins`. Each message cites [VER-006]. Add the
       rejection as item 10 of the header comment. Verify `npm run typecheck` and `npm run corpus:check` pass. Then add
       `"known-defects": []` to one case and verify `npm run corpus:check` fails with the [VER-006] message. Remove it,
       add `"defect-twins": []` to the index, and verify the check fails again. Restore `cases.json` and verify
       `git diff corpus/1.2.3/cases.json` matches task 2.1 only.
-- [ ] 2.3 Update `corpus/1.2.3/README.md` as design.md, D6, item 3 states. Remove the `known-defects` clause from the
+- [x] 2.3 Update `corpus/1.2.3/README.md` as design.md, D6, item 3 states. Remove the `known-defects` clause from the
       first paragraph and the `known-defects` item from the optional fields. Renumber `notes` as item 6. Link [VER-007]
       with the anchor `#requirement-ver-007-each-binding-keeps-its-own-expected-conformance-failures` in
       `../../openspec/specs/schema-versioning/spec.md`. Verify `grep -rn "known-defects\|defect-twins"` outside
       `openspec/` finds only the rejection code in `scripts/check-corpus.ts`.
-- [ ] 2.4 Commit group 2 with `#23` in the message, and state that `npm run check` passed. Verify `npm run check`
+- [x] 2.4 Commit group 2 with `#23` in the message, and state that `npm run check` passed. Verify `npm run check`
       passes before the commit. The [VER-007] link in the corpus README resolves after group 4.
 
 ## 3. Link check and README

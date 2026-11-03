@@ -14,6 +14,8 @@
  *    round-trip case, and --write does not write that file.
  * 8. The reference YAML reader rejects a yaml-parse input, and the notes of the case name the fault code.
  * 9. Each cited requirement or scenario identifier names a heading in the specs.
+ * 10. No case has a `known-defects` field, and the index has no `defect-twins` field. Each binding keeps its own
+ *     expected failures (VER-006).
  *
  *   npm run corpus:check           check the corpus
  *   npm run corpus:write           regenerate each expected file, then check
@@ -68,7 +70,6 @@ interface Case {
   "expected-min-failures"?: number;
   requirements: string[];
   source?: { repository: string; commit: string; path: string; sha256: string };
-  "known-defects"?: Array<{ binding: string; issue: string; observed: string }>;
   notes?: string;
 }
 
@@ -126,10 +127,11 @@ function main(write: boolean): number {
   const index = JSON.parse(fs.readFileSync(`${ROOT}/cases.json`, "utf8")) as {
     "oscal-release": string;
     categories: string[];
-    "defect-twins"?: string[][];
     cases: Case[];
   };
   if (index["oscal-release"] !== RELEASE) fail("cases.json", `oscal-release is not ${RELEASE}`);
+  if (Object.hasOwn(index, "defect-twins"))
+    fail("cases.json", "the index has a defect-twins field. Each binding keeps its own expected failures (VER-006).");
   const ids = specIdentifiers();
   const jsonExpected = new Set(index.cases.filter((c) => c.operation === "round-trip").map((c) => c.expected));
   const seen = new Set<string>();
@@ -145,10 +147,8 @@ function main(write: boolean): number {
       if (!ID.test(req)) fail(c.id, `"${req}" is not a requirement or scenario identifier`);
       else if (!ids.has(req)) fail(c.id, `${req} names no heading in the specs`);
     }
-    for (const defect of c["known-defects"] ?? []) {
-      if (!defect.binding || !/^https:\/\/github\.com\/.+\/issues\/\d+$/.test(defect.issue) || !defect.observed)
-        fail(c.id, "a known defect needs a binding, an issue URL, and the observed behavior");
-    }
+    if (Object.hasOwn(c, "known-defects"))
+      fail(c.id, "the case has a known-defects field. Each binding keeps its own expected failures (VER-006).");
     const category = c["expected-category"];
     if (category !== undefined) {
       if (!index.categories.includes(category)) fail(c.id, `unknown category "${category}"`);
@@ -292,29 +292,6 @@ function main(write: boolean): number {
   }
   for (const file of corpusFiles()) {
     if (!used.has(file)) fail(file, "no case uses this file");
-  }
-
-  // Cases in a defect-twin group exercise the same binding defect, so their known-defects must agree. The set of
-  // (binding, issue) pairs is the same for every case in the group. This stops a new case, such as a yaml-* twin of a
-  // JSON case, from silently omitting a known-defects entry that its twin carries.
-  const byId = new Map(index.cases.map((c) => [c.id, c]));
-  const defectSet = (c: Case) =>
-    new Set((c["known-defects"] ?? []).map((d) => `${d.binding} ${d.issue}`));
-  for (const group of index["defect-twins"] ?? []) {
-    const members = group.map((id) => byId.get(id));
-    const missing = group.filter((id) => !byId.has(id));
-    if (missing.length) {
-      fail("defect-twins", `group names unknown case id(s): ${missing.join(", ")}`);
-      continue;
-    }
-    const sets = members.map((c) => defectSet(c as Case));
-    const union = new Set(sets.flatMap((s) => [...s]));
-    for (let i = 0; i < group.length; i++) {
-      for (const pair of union) {
-        if (!sets[i].has(pair))
-          fail(group[i], `defect-twin of ${group.filter((_, j) => j !== i).join(", ")} is missing known defect: ${pair}`);
-      }
-    }
   }
 
   for (const failure of failures) console.error(failure);
