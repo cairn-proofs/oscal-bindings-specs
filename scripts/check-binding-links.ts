@@ -79,13 +79,18 @@ export function checkFiles(files: File[]): string[] {
 }
 
 function selfTest(): number {
+  // Each fixture builds its binding links from parts, so that this file holds no literal binding-issue link and
+  // passes its own check as a tracked file.
+  const PY = ["cairn-proofs", "oscal-bindings-python"].join("/");
+  const GO = ["x", "oscal-bindings-go"].join("/");
+  const STORE_REPO = ["cairn-proofs", STORE].join("/");
   const readme = [
     "# Store",
     "",
     SECTION,
     "",
-    "1. [repository](https://github.com/cairn-proofs/oscal-bindings-python),",
-    "   [issue tracker](https://github.com/cairn-proofs/oscal-bindings-python/issues).",
+    `1. [repository](https://github.com/${PY}),`,
+    `   [issue tracker](https://github.com/${PY}/issues).`,
     "2. [repository](https://github.com/acme/oscal-go)",
     "",
     "## Develop",
@@ -96,42 +101,22 @@ function selfTest(): number {
   const doc = (text: string, path = "docs/note.md"): File[] => [{ path, text }];
   const cases: Array<[string, string[], string | null]> = [
     ["repository and tracker links pass", run([]), null],
-    ["issue URL fails", run(doc("https://github.com/cairn-proofs/oscal-bindings-python/issues/6")), "docs/note.md:1"],
-    ["pull URL fails", run(doc("x github.com/cairn-proofs/oscal-bindings-python/pull/12 y")), "/pull/12"],
-    ["reference fails", run(doc("See cairn-proofs/oscal-bindings-python#33.")), "oscal-bindings-python#33"],
-    ["match ignores case", run(doc("GitHub.com/Cairn-Proofs/OSCAL-Bindings-Python/issues/6")), "links an individual"],
-    ["line number is reported", run(doc("one\ntwo cairn-proofs/oscal-bindings-python#6")), "docs/note.md:2"],
+    ["issue URL fails", run(doc(`https://github.com/${PY}/issues/6`)), "docs/note.md:1"],
+    ["pull URL fails", run(doc(`x github.com/${PY}/pull/12 y`)), "/pull/12"],
+    ["reference fails", run(doc(`See ${PY}#33.`)), "oscal-bindings-python#33"],
+    ["match ignores case", run(doc(`GitHub.com/${PY.toUpperCase()}/issues/6`)), "links an individual"],
+    ["line number is reported", run(doc(`one\ntwo ${PY}#6`)), "docs/note.md:2"],
     ["listed repository with another name fails", run(doc("acme/oscal-go#1")), "acme/oscal-go#1"],
-    [
-      "unlisted oscal-bindings-* repository fails",
-      run(doc("github.com/x/oscal-bindings-go/issues/1")),
-      "oscal-bindings-go",
-    ],
-    [
-      "store issue passes",
-      run(doc("cairn-proofs/oscal-bindings-specs#23 github.com/cairn-proofs/oscal-bindings-specs/issues/23")),
-      null,
-    ],
+    ["unlisted oscal-bindings-* repository fails", run(doc(`github.com/${GO}/issues/1`)), "oscal-bindings-go"],
+    ["store issue passes", run(doc(`${STORE_REPO}#23 github.com/${STORE_REPO}/issues/23`)), null],
     [
       "unrelated repository passes",
       run(doc("usnistgov/oscal-content#5 github.com/usnistgov/oscal-content/issues/5")),
       null,
     ],
-    [
-      "active change is exempt",
-      run(doc("cairn-proofs/oscal-bindings-python#33", "openspec/changes/x/tasks.md")),
-      null,
-    ],
-    [
-      "archived change is exempt",
-      run(doc("cairn-proofs/oscal-bindings-python#7", "openspec/changes/archive/x/tasks.md")),
-      null,
-    ],
-    [
-      "link in the README fails",
-      run([], `${readme}\nhttps://github.com/cairn-proofs/oscal-bindings-python/issues/19`),
-      "README.md:12",
-    ],
+    ["active change is exempt", run(doc(`${PY}#33`, "openspec/changes/x/tasks.md")), null],
+    ["archived change is exempt", run(doc(`${PY}#7`, "openspec/changes/archive/x/tasks.md")), null],
+    ["link in the README fails", run([], `${readme}\nhttps://github.com/${PY}/issues/19`), "README.md:12"],
     ["README without the section fails", run([], "# Store\n"), "has no"],
     ["section without a repository fails", run([], `${SECTION}\n\nNone yet.\n`), "links no binding repository"],
     ["section ends at the next heading", run(doc("other/listed-after-section#1")), null],
