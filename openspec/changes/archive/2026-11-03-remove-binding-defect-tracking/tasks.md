@@ -77,6 +77,9 @@ request.
 - Archive this change in the pull request. If a requirement or scenario changed after task 4.1, update the ledger and
   the index in the archive commit. Verify `npm run check` passes, `openspec list` shows no active change, and
   `npm run binding-links:check` passes with no exempt path left outside `openspec/changes/archive/`.
+  Result: no requirement or scenario changed after task 4.1, so the ledger and the index need no update.
+- OpenSpec 1.15.0 fails `--strict` on 24 long requirements in the main specs. This pull request keeps the pin at
+  1.13.0. The pin moves with the fix in #18.
 - Open the pull request with `Closes #23`, with the user's approval.
 - The release that carries this change is out of scope. Its version is at least a minor increment over the last
   release (design.md, D5).
