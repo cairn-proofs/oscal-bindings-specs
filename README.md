@@ -91,15 +91,15 @@ the specs.
 ## Threat model
 
 This repo's threat model is a [Threat Composer](https://github.com/awslabs/threat-composer) `.tc.json` file, kept in
-a private store rather than in this repo. `scripts/setup-threat-model.sh` checks out just this repo's directory from
-it (see internal onboarding for `THREAT_MODEL_STORE_URL`):
+a private store rather than in this repo, on a branch named after this repo. `scripts/setup-threat-model.sh` clones
+just that branch (see internal onboarding for `THREAT_MODEL_STORE_URL`):
 
 ```
 THREAT_MODEL_STORE_URL=<url> scripts/setup-threat-model.sh
 ```
 
-This clones a sparse, private working copy into `./threat-models` (gitignored). Open the `.tc.json` file there with
-the Threat Composer VS Code extension or web app.
+This clones a private working copy into `./threat-models` (gitignored) — its root *is* the threat model, not a
+nested path. Open the `.tc.json` file there with the Threat Composer VS Code extension or web app.
 
 ## Release
 
