@@ -88,6 +88,19 @@ the specs.
 `VERSION` holds the spec artifact version: a Semantic Version with the OSCAL release as build metadata, for example
 `0.1.0+oscal.1.2.3`.
 
+## Threat model
+
+This repo's threat model is a [Threat Composer](https://github.com/awslabs/threat-composer) `.tc.json` file, kept in
+a private store rather than in this repo. `scripts/setup-threat-model.sh` checks out just this repo's directory from
+it (see internal onboarding for `THREAT_MODEL_STORE_URL`):
+
+```
+THREAT_MODEL_STORE_URL=<url> scripts/setup-threat-model.sh
+```
+
+This clones a sparse, private working copy into `./threat-models` (gitignored). Open the `.tc.json` file there with
+the Threat Composer VS Code extension or web app.
+
 ## Release
 
 1. Set the new version in `VERSION`, and merge the pull request.
