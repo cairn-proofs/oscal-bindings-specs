@@ -75,7 +75,7 @@ identifier that the threat model cites against them. Group 3 comes after group 1
       new identifier, or cite both. At planning time, the only such citation is [NAM-008] in the Comments of threat 22
       (`e58154eb-0952-41f1-b754-84a99d59676f`). It names [NAM-008] as the source of the release baseline, which
       [NAM-018] now defines.
-- [ ] 2.2 Make the edits with the threat-composer tools, for example `tm_update_threat`, so that the model stays valid.
+- [x] 2.2 Make the edits with the threat-composer tools, for example `tm_update_threat`, so that the model stays valid.
       Verify `tm_validate` passes, and the grep of task 2.1 finds no identifier whose cited rule moved. Commit in the
       threat-model repository with `#18` in the message, and push its branch only with the user's approval. Verify
       `git status --short` in this repository shows no change from group 2, because `/threat-models/` is ignored.
