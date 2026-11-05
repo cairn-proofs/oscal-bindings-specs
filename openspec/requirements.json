@@ -47,6 +47,31 @@
       "title": "Parse errors expose structured validation detail"
     },
     {
+      "id": "ERR-004",
+      "capability": "error-model",
+      "title": "Inputs that are not a valid document are a parse error"
+    },
+    {
+      "id": "ERR-005",
+      "capability": "error-model",
+      "title": "A document of another type is a document-type mismatch"
+    },
+    {
+      "id": "ERR-006",
+      "capability": "error-model",
+      "title": "A missing file is a not-found error"
+    },
+    {
+      "id": "ERR-007",
+      "capability": "error-model",
+      "title": "A type-restricted accessor on an unsupported document type is an access error"
+    },
+    {
+      "id": "ERR-008",
+      "capability": "error-model",
+      "title": "An element type that the binding does not recognize is an unknown-element-type error"
+    },
+    {
       "id": "FAC-001",
       "capability": "document-facade",
       "title": "A uniform facade wraps any document type"
@@ -65,6 +90,16 @@
       "id": "FAC-004",
       "capability": "document-facade",
       "title": "The assessment-period accessor is restricted to Assessment Plan and Assessment Results"
+    },
+    {
+      "id": "FAC-005",
+      "capability": "document-facade",
+      "title": "The assessment period of an Assessment Plan aggregates task timing"
+    },
+    {
+      "id": "FAC-006",
+      "capability": "document-facade",
+      "title": "The assessment period of Assessment Results aggregates result dates"
     },
     {
       "id": "MDL-001",
@@ -127,6 +162,46 @@
       "title": "Types deduplicate only for union-branch copies and explicit merges"
     },
     {
+      "id": "MDL-014",
+      "capability": "model-derivation",
+      "title": "Each place in the schema has a local name"
+    },
+    {
+      "id": "MDL-015",
+      "capability": "model-derivation",
+      "title": "A definition is named from its local name"
+    },
+    {
+      "id": "MDL-016",
+      "capability": "model-derivation",
+      "title": "The root schema is named OscalDocument"
+    },
+    {
+      "id": "MDL-017",
+      "capability": "model-derivation",
+      "title": "An override name has the status of a rule-derived name"
+    },
+    {
+      "id": "MDL-018",
+      "capability": "model-derivation",
+      "title": "An enum is named from its owner type and its property"
+    },
+    {
+      "id": "MDL-019",
+      "capability": "model-derivation",
+      "title": "Merged places are structurally identical"
+    },
+    {
+      "id": "MDL-020",
+      "capability": "model-derivation",
+      "title": "A merge is not a name collision"
+    },
+    {
+      "id": "MDL-021",
+      "capability": "model-derivation",
+      "title": "Derivation guards abort on a missing singular name, an ambiguous branch, or an unequal merge"
+    },
+    {
       "id": "NAM-001",
       "capability": "naming-manifest",
       "title": "A type is identified by JSON pointers into the complete schema"
@@ -165,6 +240,61 @@
       "id": "NAM-008",
       "capability": "naming-manifest",
       "title": "A changed released name needs a breaking version increment"
+    },
+    {
+      "id": "NAM-009",
+      "capability": "naming-manifest",
+      "title": "Each pointer of an entry resolves and belongs to that entry only"
+    },
+    {
+      "id": "NAM-010",
+      "capability": "naming-manifest",
+      "title": "Each kind of manifest entry adds fixed data"
+    },
+    {
+      "id": "NAM-011",
+      "capability": "naming-manifest",
+      "title": "The manifest records no field names, enum values, or enum member names"
+    },
+    {
+      "id": "NAM-012",
+      "capability": "naming-manifest",
+      "title": "The manifest matches the format version and the OSCAL release of the consumer"
+    },
+    {
+      "id": "NAM-013",
+      "capability": "naming-manifest",
+      "title": "The JSON Schemas of the manifest files constrain every string"
+    },
+    {
+      "id": "NAM-014",
+      "capability": "naming-manifest",
+      "title": "A consumer writes a manifest string into code only as a name or an escaped literal"
+    },
+    {
+      "id": "NAM-015",
+      "capability": "naming-manifest",
+      "title": "Each override resolves and has an effect"
+    },
+    {
+      "id": "NAM-016",
+      "capability": "naming-manifest",
+      "title": "The generation checks the manifest of the previous release before use"
+    },
+    {
+      "id": "NAM-017",
+      "capability": "naming-manifest",
+      "title": "The generation reports each dropped name"
+    },
+    {
+      "id": "NAM-018",
+      "capability": "naming-manifest",
+      "title": "The latest released artifact is the release tag with the highest precedence"
+    },
+    {
+      "id": "NAM-019",
+      "capability": "naming-manifest",
+      "title": "The name check fails when it cannot read the release tags"
     },
     {
       "id": "PRS-001",

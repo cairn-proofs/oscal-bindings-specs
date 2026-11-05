@@ -10,7 +10,7 @@ prefixes:
     next: 4
   FAC:
     capability: document-facade
-    next: 5
+    next: 7
   PRS:
     capability: document-parsing
     next: 13
@@ -19,13 +19,13 @@ prefixes:
     next: 4
   ERR:
     capability: error-model
-    next: 4
+    next: 9
   MDL:
     capability: model-derivation
-    next: 14
+    next: 22
   NAM:
     capability: naming-manifest
-    next: 9
+    next: 20
   VER:
     capability: schema-versioning
     next: 8
@@ -51,3 +51,119 @@ retired:
       PRS-010 holds the same resource-limit rule for each parse operation, including each YAML parse operation. Its
       scenario PRS-010.03 holds the alias-expansion case.
     replaced_by: PRS-010
+  - id: FAC-004.01
+    reason: >-
+      The rule that this scenario tests moved to FAC-005.
+    replaced_by: FAC-005.01
+  - id: FAC-004.02
+    reason: >-
+      The rule that this scenario tests moved to FAC-006.
+    replaced_by: FAC-006.01
+  - id: FAC-004.03
+    reason: >-
+      The rule that this scenario tests moved to FAC-005.
+    replaced_by: FAC-005.02
+  - id: ERR-001.01
+    reason: >-
+      The rule that this scenario tests moved to ERR-004.
+    replaced_by: ERR-004.01
+  - id: ERR-001.02
+    reason: >-
+      The rule that this scenario tests moved to ERR-005.
+    replaced_by: ERR-005.01
+  - id: ERR-001.03
+    reason: >-
+      The rule that this scenario tests moved to ERR-006.
+    replaced_by: ERR-006.01
+  - id: ERR-001.04
+    reason: >-
+      The rule that this scenario tests moved to ERR-007.
+    replaced_by: ERR-007.01
+  - id: ERR-001.05
+    reason: >-
+      The rule that this scenario tests moved to ERR-008.
+    replaced_by: ERR-008.01
+  - id: ERR-001.06
+    reason: >-
+      The rule that this scenario tests moved to ERR-004.
+    replaced_by: ERR-004.02
+  - id: ERR-001.07
+    reason: >-
+      The rule that this scenario tests moved to ERR-004.
+    replaced_by: ERR-004.03
+  - id: MDL-001.01
+    reason: >-
+      The rule that this scenario tests moved to MDL-015.
+    replaced_by: MDL-015.01
+  - id: MDL-001.03
+    reason: >-
+      The rule that this scenario tests moved to MDL-010.
+    replaced_by: MDL-010.06
+  - id: MDL-007.04
+    reason: >-
+      The rule that this scenario tests moved to MDL-021.
+    replaced_by: MDL-021.01
+  - id: MDL-007.05
+    reason: >-
+      The rule that this scenario tests moved to MDL-021.
+    replaced_by: MDL-021.02
+  - id: MDL-007.06
+    reason: >-
+      The rule that this scenario tests moved to MDL-021.
+    replaced_by: MDL-021.03
+  - id: MDL-011.01
+    reason: >-
+      The rule that this scenario tests moved to MDL-018.
+    replaced_by: MDL-018.01
+  - id: MDL-011.04
+    reason: >-
+      The rule that this scenario tests moved to MDL-018.
+    replaced_by: MDL-018.02
+  - id: MDL-011.05
+    reason: >-
+      The rule that this scenario tests moved to MDL-018.
+    replaced_by: MDL-018.03
+  - id: MDL-011.06
+    reason: >-
+      The rule that this scenario tests moved to MDL-018.
+    replaced_by: MDL-018.04
+  - id: NAM-001.02
+    reason: >-
+      The rule that this scenario tests moved to NAM-009.
+    replaced_by: NAM-009.01
+  - id: NAM-001.03
+    reason: >-
+      The rule that this scenario tests moved to NAM-009.
+    replaced_by: NAM-009.02
+  - id: NAM-002.01
+    reason: >-
+      The rule that this scenario tests moved to NAM-010.
+    replaced_by: NAM-010.01
+  - id: NAM-002.02
+    reason: >-
+      The rule that this scenario tests moved to NAM-010.
+    replaced_by: NAM-010.02
+  - id: NAM-003.05
+    reason: >-
+      The rule that this scenario tests moved to NAM-012.
+    replaced_by: NAM-012.01
+  - id: NAM-004.02
+    reason: >-
+      The rule that this scenario tests moved to NAM-013.
+    replaced_by: NAM-013.01
+  - id: NAM-005.01
+    reason: >-
+      The rule that this scenario tests moved to NAM-015.
+    replaced_by: NAM-015.01
+  - id: NAM-005.02
+    reason: >-
+      The rule that this scenario tests moved to NAM-015.
+    replaced_by: NAM-015.02
+  - id: NAM-007.03
+    reason: >-
+      The rule that this scenario tests moved to NAM-017.
+    replaced_by: NAM-017.01
+  - id: NAM-008.03
+    reason: >-
+      The rule that this scenario tests moved to NAM-019.
+    replaced_by: NAM-019.01

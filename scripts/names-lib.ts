@@ -220,7 +220,7 @@ export function derive(input: DeriveInput): DeriveResult {
   const pinned = new Map<string, string>();
   for (const entry of input.previous?.types ?? []) for (const site of entry.sites) pinned.set(site, entry.name);
 
-  // Override pointers must resolve (NAM-005).
+  // Override pointers must resolve (NAM-015).
   const overridePointers = [
     ...localNames.keys(),
     ...overrideNames.keys(),
@@ -241,7 +241,7 @@ export function derive(input: DeriveInput): DeriveResult {
   const typeDefinitions: Array<{ key: string; local: string; module: string; node: Obj }> = [];
   for (const [key, node] of Object.entries(definitions)) {
     if (!key.includes(":") || !isObject(node)) continue;
-    if (!isObjectType(node) && !isUnion(node) && !enumBranch(node)) continue; // scalar definition (NAM-001)
+    if (!isObjectType(node) && !isUnion(node) && !enumBranch(node)) continue; // scalar definition (NAM-009)
     const [namespace, local] = key.split(":");
     typeDefinitions.push({ key, local, module: namespace.replace(/^oscal-complete-oscal-/, ""), node });
   }
@@ -375,7 +375,7 @@ export function derive(input: DeriveInput): DeriveResult {
     places.push({ pointer: "#", key: "#", kind: "document-union", name, baseName, node: null, members: [...members].sort(byCodeUnit) });
   }
 
-  // Unused overrides (NAM-005).
+  // Unused overrides (NAM-015).
   const placeByPointer = new Map(places.map((p) => [p.pointer, p]));
   for (const pointer of localNames.keys()) {
     if (!usedLocal.has(pointer)) fail("unused-override", `local-names ${pointer} is not a list item that needs a name`);
@@ -435,7 +435,7 @@ export function derive(input: DeriveInput): DeriveResult {
     if (!NAME.test(list[0].name)) fail("name", `${JSON.stringify(list[0].name)} at ${list[0].pointer} is not a valid name`);
   }
 
-  // Pinned names that the new manifest does not keep (NAM-007).
+  // Pinned names that the new manifest does not keep (NAM-017).
   for (const entry of input.previous?.types ?? []) {
     const kept = entry.sites.some((site) => placeByPointer.get(site)?.name === entry.name);
     if (!kept) dropped.push(`${entry.name} (${entry.sites[0]})`);
@@ -468,7 +468,7 @@ export function derive(input: DeriveInput): DeriveResult {
 }
 
 // ---------------------------------------------------------------------------------------------------------------
-// Validation (NAM-003, NAM-004)
+// Validation (NAM-003, NAM-012, NAM-004, NAM-013)
 
 const cache = new Map<string, ValidateFunction>();
 function validatorFor(file: string): ValidateFunction {

@@ -327,9 +327,9 @@ function selfTest(): number {
     const r = check(fakeGit({ tags: { "v0.2.0+oscal.1.2.3": tagged } }), { [N]: m([["Hash", "#/definitions/h"], ["Status", "#/definitions/s"], ["New", "#/definitions/n"]]), [S]: "{}" }, "0.2.1+oscal.1.2.3");
     return r.failures.length === 0 || JSON.stringify(r);
   });
-  test("NAM-008.03 shallow clone fails", () => check(fakeGit({ shallow: true, tags: {} }), {}, "0.2.0+oscal.1.2.3").failures.some((f) => f.includes("shallow")));
-  test("NAM-008.03 clone without release tags fails", () => check(fakeGit({ tags: {} }), {}, "0.2.0+oscal.1.2.3").failures.some((f) => f.includes("no release tags")));
-  test("NAM-008.03 git error fails", () => {
+  test("NAM-019.01 shallow clone fails", () => check(fakeGit({ shallow: true, tags: {} }), {}, "0.2.0+oscal.1.2.3").failures.some((f) => f.includes("shallow")));
+  test("NAM-019.01 clone without release tags fails", () => check(fakeGit({ tags: {} }), {}, "0.2.0+oscal.1.2.3").failures.some((f) => f.includes("no release tags")));
+  test("NAM-019.01 git error fails", () => {
     const git = { ...fakeGit({ tags: { "v0.2.0+oscal.1.2.3": tagged } }), onMain: () => { throw new Error("no origin/main"); } };
     return check(git, { [N]: released, [S]: "{}" }, "0.2.0+oscal.1.2.3").failures.some((f) => f.includes("git failed"));
   });

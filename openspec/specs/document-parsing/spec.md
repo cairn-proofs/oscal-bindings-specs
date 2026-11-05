@@ -108,12 +108,10 @@ location.
 
 ### Requirement: PRS-007 Regex patterns follow a defined portability rule
 
-OSCAL constrains some string fields with regular-expression patterns written for an XSD-flavored engine. These include
-Unicode property classes such as `\p{L}`. Target languages differ: one rejects some of these constructs, and another
-needs an explicit Unicode flag. The implementation SHALL define and document how it maps each OSCAL pattern to its own
-regex engine. The mapping MUST preserve the set of accepted and rejected values. A binding MUST NOT drop a pattern
-constraint silently when its engine cannot express the pattern as written. It MUST translate the pattern or document the
-deviation.
+OSCAL writes some string patterns for an XSD-flavored regex engine, for example with the Unicode property class
+`\p{L}`. The implementation SHALL define and document how it maps each OSCAL pattern to its own regex engine. The
+mapping MUST preserve the set of accepted and rejected values. When its engine cannot express a pattern as written, a
+binding MUST translate the pattern or document the deviation. It MUST NOT drop the pattern constraint silently.
 
 #### Scenario: PRS-007.01 Pattern constraint is preserved across engines
 
@@ -125,6 +123,11 @@ deviation.
 - **WHEN** a target regex engine cannot express an OSCAL pattern as written
 - **THEN** the binding translates it to an equivalent or documents the deviation, and does not silently remove the
   constraint
+
+#### Scenario: PRS-007.03 Engine that needs a Unicode flag
+
+- **WHEN** the regex engine of a binding matches `\p{L}` only with an explicit Unicode flag
+- **THEN** the mapped pattern accepts the same values and rejects the same values as the OSCAL pattern defines
 
 ### Requirement: PRS-008 Timezone-aware datetimes are enforced where OSCAL requires them
 
@@ -139,14 +142,12 @@ write them as the serialization capability requires.
 
 ### Requirement: PRS-009 Enum values are checked by the kind of the enum
 
-Parsing SHALL check each enum value by the kind of its enum, as [MDL-011] in the model-derivation capability defines:
+Parsing SHALL check each enum value by the kind of its enum, as [MDL-011] defines. The rules apply at every depth of
+the document. Element validation applies the same rules to an element.
 
-1. For a closed enum, parsing MUST reject a value that is not in the enum. The rejection is the parse-error category of
-   [ERR-001] in the error-model capability, because the document does not conform to the schema.
+1. For a closed enum, parsing MUST reject a value that is not in the enum, with a parse error of [ERR-001].
 2. For an open enum, parsing MUST accept a value that is not in the enum when the value is valid for the base datatype.
    Parsing MUST keep that value, so that serialization writes it unchanged.
-
-These rules apply at every depth of the document. Element validation applies the same rules to an element.
 
 #### Scenario: PRS-009.01 Out-of-set value of a closed enum is rejected
 
