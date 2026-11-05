@@ -66,7 +66,7 @@ identifier that the threat model cites against them. Group 3 comes after group 1
 
 ## 2. Threat model identifiers
 
-- [ ] 2.1 Run `scripts/setup-threat-model.sh` if `./threat-models/` is not present, and pull its branch. List each
+- [x] 2.1 Run `scripts/setup-threat-model.sh` if `./threat-models/` is not present, and pull its branch. List each
       requirement and scenario identifier that the threat model cites, with
       `grep -ohE '\b[A-Z]{3}-[0-9]{3}(\.[0-9]{2})?\b' threat-models/*.json threat-models/*.svg | sort -u`. Verify each
       requirement identifier is live in the synced main specs, and each scenario identifier is live or has a
@@ -82,11 +82,11 @@ identifier that the threat model cites against them. Group 3 comes after group 1
 
 ## 3. Pin the OpenSpec CLI to 1.15.0
 
-- [ ] 3.1 Restore the `mise.toml` edit from task 1.1, or set `"npm:@fission-ai/openspec" = "1.15.0"`. Run `mise lock`.
+- [x] 3.1 Restore the `mise.toml` edit from task 1.1, or set `"npm:@fission-ai/openspec" = "1.15.0"`. Run `mise lock`.
       Verify `mise.lock` names 1.15.0 for `npm:@fission-ai/openspec`, with a `digest` and a sidecar `path`, and
       `.mise/locks/npm-fission-ai-openspec/1.15.0/` exists. Remove `.mise/locks/npm-fission-ai-openspec/1.13.0/` if
       `mise lock` keeps it. Verify `git grep -n '1\.13\.0' -- mise.toml mise.lock .mise .github` finds nothing.
-- [ ] 3.2 Run `mise install --locked`. Verify `openspec --version` prints 1.15.0, and `npm run check` passes. Commit
+- [x] 3.2 Run `mise install --locked`. Verify `openspec --version` prints 1.15.0, and `npm run check` passes. Commit
       group 3 with `#18` in the message, and state that `npm run check` passed with 1.15.0. Verify
       `git status --short` shows no other change.
 
