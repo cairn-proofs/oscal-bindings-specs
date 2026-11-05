@@ -287,7 +287,7 @@ are explicit entries in `overrides.json`.
 
 ## Threats
 
-See [threat-model.tc.json](./threat-model.tc.json). Open it in Threat Composer for the full model.
+The threat model of this change is in the private threat-model repository, not in this repository.
 
 This change moves strings from store files into the generated code of each binding. The store checks are the first gate.
 The validation in each binding is the second gate, and the specs must make the two gates equal.
