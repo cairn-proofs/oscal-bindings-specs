@@ -57,9 +57,9 @@ request. Both forms represent the same document and differ only in whitespace.
 
 A document that is parsed and then serialized SHALL be equivalent to the input document. Two documents are equivalent
 when their canonical forms are the same bytes. The canonical form is defined in
-[Canonical JSON for conformance comparison](../../../docs/canonical-json.md#rules). It sorts the object keys, removes
-insignificant whitespace, and uses one number format, so that the output of each language binding is comparable.
-The canonical form applies to comparison only. A binding MAY write any key order, whitespace, or number format.
+[Canonical JSON for conformance comparison](../../../docs/canonical-json.md#rules), so that the output of each
+language binding is comparable. The canonical form applies to comparison only. A binding MAY write any key order,
+whitespace, or number format.
 
 #### Scenario: SER-004.01 Parse then serialize yields an equivalent document
 
@@ -70,6 +70,11 @@ The canonical form applies to comparison only. A binding MAY write any key order
 
 - **WHEN** two bindings serialize the same document with different physical key order
 - **THEN** both outputs are equivalent after canonical key ordering
+
+#### Scenario: SER-004.03 Whitespace differences do not fail equivalence
+
+- **WHEN** two bindings serialize the same document, and the outputs differ only in insignificant whitespace
+- **THEN** both outputs are equivalent, because the canonical form has no whitespace between tokens
 
 ### Requirement: SER-005 A datetime keeps its instant and offset
 

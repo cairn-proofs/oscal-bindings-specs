@@ -148,11 +148,11 @@ If no type is named, the value is the text. Other text is a parse error, as [YML
 
 ### Requirement: YML-005 Parse an OSCAL document from YAML text or bytes
 
-The implementation SHALL provide a YAML parse operation that accepts a YAML input as text or as raw bytes, as [PRS-001]
-defines for JSON input. The result SHALL be the result that the JSON parse operation gives for the JSON text of the
-input. [PRS-010] defines the result for an input over a documented limit. The JSON text holds the value that [YML-003]
-reads, with each number written as the text of its scalar. The result includes the typed document value and each parse
-error of the document-parsing capability.
+The implementation SHALL provide a YAML parse operation that accepts YAML text or raw bytes, as [PRS-001] defines for
+JSON input. The result SHALL be the result of the JSON parse operation for the JSON text of the input.
+[PRS-010] defines the result over a documented limit. The JSON text holds the value that [YML-003] reads, with each
+number written as the text of its scalar. The result includes the typed document value and each parse error of the
+document-parsing capability.
 
 #### Scenario: YML-005.01 Parse from bytes
 

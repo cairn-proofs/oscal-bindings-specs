@@ -185,7 +185,7 @@ function selfTest(): number {
 
   // Task 2.3: naming rules.
   const param = "oscal-complete-oscal-control-common:parameter";
-  test("MDL-001.01 local name maps to PascalCase", () => nameAt(run(schemaOf({ [param]: obj({ id: str }) })), D(param)) === "Parameter");
+  test("MDL-015.01 local name maps to PascalCase", () => nameAt(run(schemaOf({ [param]: obj({ id: str }) })), D(param)) === "Parameter");
   test("MDL-001.02 schema reorder does not change names", () => {
     const a = run(schemaOf({ "oscal-complete-oscal-catalog:profile": obj({}) }, ["catalog", "profile"]));
     const b = run(schemaOf({ "oscal-complete-oscal-catalog:profile": obj({}) }, ["profile", "catalog"]));
@@ -193,7 +193,7 @@ function selfTest(): number {
   });
   const poam = "oscal-complete-oscal-poam:poam-item";
   const originsItems = `${D(poam)}/properties/origins/items`;
-  test("MDL-001.03 list items use the singular local name", () =>
+  test("MDL-010.06 list items use the singular local name", () =>
     nameAt(run(schemaOf({ [poam]: obj({ origins: list(obj({ actor: str })) }) }), { "local-names": { [originsItems]: "origin" } }), originsItems) ===
     "PoamItemOrigin");
   test("MDL-002.01 wrapper named from its body field", () => {
@@ -287,7 +287,7 @@ function selfTest(): number {
     return nameAt(r, riskLog) === "RiskLog" && nameAt(r, `${riskLog}/properties/entries/items`) === "RiskLogEntry";
   });
   const hash = "oscal-complete-oscal-metadata:hash";
-  test("MDL-011.01 enum named from owner and property", () =>
+  test("MDL-018.01 enum named from owner and property", () =>
     nameAt(run(schemaOf({ [hash]: obj({ algorithm: openEnum("SHA-256") }) })), `${D(hash)}/properties/algorithm/anyOf/1`) === "HashAlgorithm");
   const sel = "oscal-complete-oscal-control-common:parameter-selection";
   test("MDL-011.02 closed enum gets a type", () => {
@@ -296,7 +296,7 @@ function selfTest(): number {
   });
   test("MDL-011.03 open enum is marked open", () => entryNamed(run(schemaOf({ [hash]: obj({ algorithm: openEnum("SHA-256") }) })), "HashAlgorithm")?.closed === false);
   const riskStatus = "oscal-complete-oscal-assessment-common:risk-status";
-  test("MDL-011.04 enum held directly by a definition", () => {
+  test("MDL-018.02 enum held directly by a definition", () => {
     const e = entryNamed(run(schemaOf({ [riskStatus]: { anyOf: [ref("TokenDatatype"), { enum: ["open", "closed"] }] } })), "RiskStatus");
     return e?.kind === "enum" && e.closed === false && e.sites[0] === `${D(riskStatus)}/anyOf/1`;
   });
@@ -305,11 +305,11 @@ function selfTest(): number {
     [sysComp]: obj({ status: obj({ state: closedEnum("under-development") }) }),
     [finding]: obj({ status: obj({ state: closedEnum("satisfied"), reason: openEnum("pass") }) }),
   });
-  test("MDL-011.05 enums of an inline owner share its canonical name", () => {
+  test("MDL-018.03 enums of an inline owner share its canonical name", () => {
     const r = run(statusSchema);
     return entryNamed(r, "FindingTargetStatusState") !== undefined && entryNamed(r, "FindingTargetStatusReason") !== undefined;
   });
-  test("MDL-011.06 enums with the same owner local name stay distinct", () => {
+  test("MDL-018.04 enums with the same owner local name stay distinct", () => {
     const r = run(statusSchema);
     return ["StatusState", "SystemComponentStatusState", "FindingTargetStatusState"].every((n) => entryNamed(r, n)?.sites.length === 1);
   });
@@ -394,20 +394,20 @@ function selfTest(): number {
     });
     return r.failures.filter((f) => f.startsWith("[collision]")).length === 2 || JSON.stringify(r.failures);
   });
-  test("MDL-007.04 missing singular name aborts and names the list", () =>
+  test("MDL-021.01 missing singular name aborts and names the list", () =>
     failsWith(run(schemaOf({ [poam]: obj({ origins: list(obj({ actor: str })) }) })), `the list ${D(poam)}/properties/origins needs`));
-  test("MDL-007.05 branch without a distinguishing property aborts", () =>
+  test("MDL-021.02 branch without a distinguishing property aborts", () =>
     failsWith(run(schemaOf({ [group]: { type: "object", anyOf: [{ properties: { title: str } }, { properties: { title: str } }] } })), `${D(group)}/anyOf/0`));
-  test("MDL-007.06 merge of different structures aborts and names both", () => {
+  test("MDL-021.03 merge of different structures aborts and names both", () => {
     const s = schemaOf({ [mapping]: obj({ method: closedEnum("human") }), [mp]: obj({ method: closedEnum("automation") }) });
     const a = `${D(mapping)}/properties/method/allOf/1`;
     const b = `${D(mp)}/properties/method/allOf/1`;
     const r = run(s, { merges: [[a, b]] });
     return (r.failures.some((f) => f.includes(a) && f.includes(b) && f.startsWith("[merge-structure]")) && r.manifest === undefined) || JSON.stringify(r.failures);
   });
-  test("MDL-007.06 branch copies that differ abort", () => failsWith(run(partySchema(obj({ id: str })), { "local-names": partyLocals }), "[merge-structure]"));
-  test("NAM-005.01 override with an unknown pointer fails", () => failsWith(run(schemaOf({}), { names: { "#/definitions/nope": "Nope" } }), "#/definitions/nope does not resolve"));
-  test("NAM-005.02 unused override fails", () =>
+  test("MDL-021.03 branch copies that differ abort", () => failsWith(run(partySchema(obj({ id: str })), { "local-names": partyLocals }), "[merge-structure]"));
+  test("NAM-015.01 override with an unknown pointer fails", () => failsWith(run(schemaOf({}), { names: { "#/definitions/nope": "Nope" } }), "#/definitions/nope does not resolve"));
+  test("NAM-015.02 unused override fails", () =>
     failsWith(run(schemaOf({ [hash]: obj({ algorithm: openEnum("SHA-256") }) }), { names: { [`${D(hash)}/properties/algorithm/anyOf/1`]: "HashAlgorithm" } }), "[unused-override]"));
   test("NAM-005 local name on a place that is not a list item fails", () => failsWith(run(schemaOf({ [hash]: obj({}) }), { "local-names": { [D(hash)]: "hash" } }), "[unused-override]"));
   test("NAM-005 merge of one type fails", () => failsWith(run(schemaOf({ [hash]: obj({}) }), { merges: [[D(hash), D(hash)]] }), "[unused-override]"));
@@ -425,7 +425,7 @@ function selfTest(): number {
     const r = run(schemaOf({ [sspStatus]: obj({}), [other]: obj({ x: str }) }), {}, prev([{ name: "Status", kind: "object", sites: [D(sspStatus)] }]));
     return nameAt(r, D(sspStatus)) === "Status" && nameAt(r, D(other)) === "PoamStatus";
   });
-  test("NAM-007.03 dropped name is reported", () => {
+  test("NAM-017.01 dropped name is reported", () => {
     const r = run(schemaOf({}), {}, prev([{ name: "Gone", kind: "object", sites: [D("oscal-complete-oscal-x:gone")] }]));
     return r.dropped.some((d) => d.startsWith("Gone")) || JSON.stringify(r.dropped);
   });
@@ -474,10 +474,10 @@ function selfTest(): number {
   test("names.schema: a name with - fails", () => mutate((m) => (m.types[1].name = "Bad-Name")).length > 0);
   test("names.schema: a name with a quote fails", () => mutate((m) => (m.types[1].name = 'Bad"Name')).length > 0);
   test("NAM-004.01 an entry without a kind fails", () => mutate((m) => delete (m.types[1] as Partial<Manifest["types"][number]>).kind).length > 0);
-  test("NAM-004.02 schema file name with a path fails", () => mutate((m) => (m.schema.file = "../x.json")).length > 0);
+  test("NAM-013.01 schema file name with a path fails", () => mutate((m) => (m.schema.file = "../x.json")).length > 0);
   test("names.schema: a pointer with % fails", () => mutate((m) => (m.types[1].sites = ["#/definitions/a%20b"])).length > 0);
   test("names.schema: an unknown member fails", () => mutate((m) => ((m.types[1] as unknown as Schema).extra = 1)).length > 0);
-  test("NAM-003.05 an unknown format fails", () => mutate((m) => (m.format = 2)).length > 0);
+  test("NAM-012.01 an unknown format fails", () => mutate((m) => (m.format = 2)).length > 0);
   test("names.schema: a reference with a final newline fails", () => mutate((m) => (m.types[2].item = "Mapping\n")).length > 0);
   const overridesSketch = { ...emptyOverrides("1.2.3"), "local-names": { [originsItems]: "origin" }, names: { [riskLog]: "RiskLog" } };
   test("overrides.schema: the D4 sketch passes", () => validateOverrides(overridesSketch).length === 0 || JSON.stringify(validateOverrides(overridesSketch)));
@@ -497,8 +497,8 @@ function selfTest(): number {
   test("validate: a generated manifest passes", () => validateManifest(real, mergeSchema, "1.2.3").length === 0 || JSON.stringify(validateManifest(real, mergeSchema, "1.2.3")));
   test("NAM-003.02 duplicate name is invalid", () => cross((m) => (m.types[1].name = m.types[0].name), "occurs more than once"));
   test("NAM-003.04 reference to a missing entry is invalid", () => cross((m) => (m.types.find((t) => t.kind === "union")!.variants![0].type = "Missing"), "names no entry"));
-  test("NAM-001.03 unresolvable pointer is invalid", () => cross((m) => (m.types[0].sites = ["#/definitions/missing"]), "does not resolve"));
-  test("NAM-001.02 a pointer in two entries is invalid", () => cross((m) => (m.types[1].sites = [...m.types[0].sites]), "more than one entry"));
+  test("NAM-009.02 unresolvable pointer is invalid", () => cross((m) => (m.types[0].sites = ["#/definitions/missing"]), "does not resolve"));
+  test("NAM-009.01 a pointer in two entries is invalid", () => cross((m) => (m.types[1].sites = [...m.types[0].sites]), "more than one entry"));
   test("NAM-002.03 schema hash mismatch is detected", () => cross((m) => (m.schema.sha256 = "0".repeat(64)), "sha256 does not match"));
   test("NAM-003 other OSCAL release is rejected", () => cross((m) => (m["oscal-release"] = "1.2.4"), "is not 1.2.3"));
   test("NAM-004.03 distinguishing property that is not a key fails", () =>

@@ -150,7 +150,7 @@
       "operation": "parse",
       "input": "documents/invalid/not-json.json",
       "expected-category": "parse-error",
-      "requirements": ["ERR-001.01"]
+      "requirements": ["ERR-004.01"]
     },
     {
       "id": "parse/invalid-utf8",
@@ -165,7 +165,7 @@
       "operation": "parse",
       "input": "documents/invalid/unknown-root.json",
       "expected-category": "parse-error",
-      "requirements": ["ERR-001.01"]
+      "requirements": ["ERR-004.01"]
     },
     {
       "id": "parse/unknown-field-top",
@@ -240,21 +240,21 @@
       "input": "documents/valid/profile.json",
       "document-type": "catalog",
       "expected-category": "document-type-mismatch",
-      "requirements": ["PRS-003.02", "ERR-001.02"]
+      "requirements": ["PRS-003.02", "ERR-005.01"]
     },
     {
       "id": "parse-file/missing-file",
       "operation": "parse-file",
       "input": "documents/does-not-exist.json",
       "expected-category": "not-found",
-      "requirements": ["PRS-002.02", "ERR-001.03"]
+      "requirements": ["PRS-002.02", "ERR-006.01"]
     },
     {
       "id": "assessment-period/catalog",
       "operation": "assessment-period",
       "input": "documents/valid/catalog.json",
       "expected-category": "access-error",
-      "requirements": ["FAC-004.04", "ERR-001.04"]
+      "requirements": ["FAC-004.04", "ERR-007.01"]
     },
     {
       "id": "element/observation-valid",
@@ -319,7 +319,7 @@
       "input": "elements/property-valid.json",
       "element-type": "no-such-element",
       "expected-category": "unknown-element-type",
-      "requirements": ["ELV-003.01", "ERR-001.05"]
+      "requirements": ["ELV-003.01", "ERR-008.01"]
     },
     {
       "id": "yaml-round-trip/catalog",
@@ -451,7 +451,7 @@
       "operation": "yaml-parse",
       "input": "documents/invalid/yaml-syntax-error.yaml",
       "expected-category": "parse-error",
-      "requirements": ["YML-002.01", "ERR-001.06"],
+      "requirements": ["YML-002.01", "ERR-004.02"],
       "notes": "The flow sequence of props has no closing bracket. Reader fault: `syntax`."
     },
     {
@@ -459,7 +459,7 @@
       "operation": "yaml-parse",
       "input": "documents/invalid/yaml-two-documents.yaml",
       "expected-category": "parse-error",
-      "requirements": ["YML-002.02", "ERR-001.06"],
+      "requirements": ["YML-002.02", "ERR-004.02"],
       "notes": "A --- line separates two minimal catalogs. Reader fault: `two-documents`."
     },
     {
@@ -540,7 +540,7 @@
       "operation": "yaml-parse",
       "input": "documents/invalid/yaml-number-form.yaml",
       "expected-category": "parse-error",
-      "requirements": ["YML-004.07", "YML-010.01", "ERR-001.06"],
+      "requirements": ["YML-004.07", "YML-010.01", "ERR-004.02"],
       "expected-min-failures": 1,
       "notes": "The start location takes a number, and 0x1BB does not match the JSON number grammar. Reader fault: `grammar`."
     },
