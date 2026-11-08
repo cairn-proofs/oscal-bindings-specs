@@ -50,13 +50,13 @@ the checker before group 4 uses it in `cases.json`. The groups run in order.
 
 ## 4. Maximums
 
-- [ ] 4.1 Add `expected-max-failures` and the `requirements` identifiers of design.md, D5, to the eight cases of the D5
+- [x] 4.1 Add `expected-max-failures` and the `requirements` identifiers of design.md, D5, to the eight cases of the D5
       table in `corpus/1.2.3/cases.json`. Verify `npm run corpus:check` passes.
-- [ ] 4.2 With the Python binding of [python#44], call `parse_oscal` on the input of each of the eight cases, and count
+- [x] 4.2 With the Python binding of [python#44], call `parse_oscal` on the input of each of the eight cases, and count
       the entries of each `OscalParseError`. Verify each count is within the `expected-min-failures` and
       `expected-max-failures` of its case. Record the counts in the pull request. A count over the maximum is a fault
       in the case or a defect of the binding, so stop and report it.
-- [ ] 4.3 Commit group 4 with `#<n>` in the message. Verify `npm run check` passes before the commit, and
+- [x] 4.3 Commit group 4 with `#<n>` in the message. Verify `npm run check` passes before the commit, and
       `git status --short` shows only `cases.json` and the artifacts of this change.
 
 ## Workflow follow-up

@@ -165,28 +165,32 @@
       "operation": "parse",
       "input": "documents/invalid/unknown-root.json",
       "expected-category": "parse-error",
-      "requirements": ["ERR-004.01"]
+      "expected-max-failures": 1,
+      "requirements": ["ERR-004.01", "PRS-013.02"]
     },
     {
       "id": "parse/unknown-field-top",
       "operation": "parse",
       "input": "documents/invalid/unknown-field-top.json",
       "expected-category": "parse-error",
-      "requirements": ["PRS-004.01", "MDL-008.01"]
+      "expected-max-failures": 1,
+      "requirements": ["PRS-004.01", "MDL-008.01", "PRS-013"]
     },
     {
       "id": "parse/unknown-field-nested",
       "operation": "parse",
       "input": "documents/invalid/unknown-field-nested.json",
       "expected-category": "parse-error",
-      "requirements": ["PRS-004.02"]
+      "expected-max-failures": 1,
+      "requirements": ["PRS-004.02", "PRS-013"]
     },
     {
       "id": "parse/name-keyed-field",
       "operation": "parse",
       "input": "documents/invalid/name-keyed-field.json",
       "expected-category": "parse-error",
-      "requirements": ["PRS-005.02"],
+      "expected-max-failures": 1,
+      "requirements": ["PRS-005.02", "PRS-013.01"],
       "notes": "The rlink carries media_type, an internal field name, in place of the OSCAL key media-type."
     },
     {
@@ -195,7 +199,8 @@
       "input": "documents/invalid/missing-required-field.json",
       "expected-category": "parse-error",
       "expected-min-failures": 1,
-      "requirements": ["PRS-006.01", "ERR-003.01"]
+      "expected-max-failures": 1,
+      "requirements": ["PRS-006.01", "ERR-003.01", "PRS-013"]
     },
     {
       "id": "parse/two-failures",
@@ -203,7 +208,8 @@
       "input": "documents/invalid/two-failures.json",
       "expected-category": "parse-error",
       "expected-min-failures": 2,
-      "requirements": ["PRS-006.01", "ERR-003.01"]
+      "expected-max-failures": 2,
+      "requirements": ["PRS-006.01", "ERR-003.01", "PRS-013"]
     },
     {
       "id": "parse/many-failures",
@@ -218,14 +224,16 @@
       "operation": "parse",
       "input": "documents/invalid/invalid-uuid.json",
       "expected-category": "parse-error",
-      "requirements": ["PRS-007.01"]
+      "expected-max-failures": 1,
+      "requirements": ["PRS-007.01", "PRS-013"]
     },
     {
       "id": "parse/datetime-without-timezone",
       "operation": "parse",
       "input": "documents/invalid/datetime-without-timezone.json",
       "expected-category": "parse-error",
-      "requirements": ["PRS-008.01"]
+      "expected-max-failures": 1,
+      "requirements": ["PRS-008.01", "PRS-013"]
     },
     {
       "id": "parse/closed-enum-out-of-set",
