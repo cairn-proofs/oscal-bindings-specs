@@ -34,19 +34,19 @@ the checker before group 4 uses it in `cases.json`. The groups run in order.
 
 ## 3. Checker
 
-- [ ] 3.1 In `scripts/check-corpus.ts`, add `"expected-max-failures"?: number` to `Case`, and check each case with the
+- [x] 3.1 In `scripts/check-corpus.ts`, add `"expected-max-failures"?: number` to `Case`, and check each case with the
       field by the three rules of design.md, D4. The branch of a root key is the `oneOf` branch of the complete schema
       whose `required` holds that key. Verify `npm run typecheck` and `npm run corpus:check` pass with the unchanged
       `cases.json`.
-- [ ] 3.2 Verify each rule of D4 fails a case that breaks it. On the working copy of `cases.json`, apply three
+- [x] 3.2 Verify each rule of D4 fails a case that breaks it. On the working copy of `cases.json`, apply three
       mutations one at a time: the value 0 on `parse/invalid-uuid`, the value 1 on `round-trip/minimal-catalog`, and
       the value 1 on a case whose input has two root keys. For the third, add a scratch input and case, and delete
       both after the check. Restore `cases.json` after each mutation. Verify `npm run corpus:check` reports the case
       for each mutation and passes after the restore.
-- [ ] 3.3 In `corpus/1.2.3/README.md`, add `expected-max-failures` to the optional fields of Cases, with the three
+- [x] 3.3 In `corpus/1.2.3/README.md`, add `expected-max-failures` to the optional fields of Cases, with the three
       rules of D4. Change the `parse` operation to state that the parse error carries no more entries than
       `expected-max-failures`. Verify the README names each field that `Case` holds.
-- [ ] 3.4 Commit group 3 with `#<n>` in the message. Verify `npm run check` passes before the commit.
+- [x] 3.4 Commit group 3 with `#<n>` in the message. Verify `npm run check` passes before the commit.
 
 ## 4. Maximums
 
