@@ -66,6 +66,7 @@ request.
 
 - Archive this change in the pull request. If a requirement or scenario changed after task 2.1, update the ledger and
   the index in the archive commit. Verify `npm run check` passes and `openspec list` shows no active change.
+  Result: no requirement or scenario changed after task 2.1, so the ledger and the index need no update.
 - Open the pull request with `Closes #<n>`, with the user's approval.
 - The release that carries this change is out of scope. Its version is a minor increment (design.md, D6).
 - After the release, draft an issue in `cairn-proofs/oscal-bindings-python` to move the pin. The issue states that the
