@@ -1,0 +1,40 @@
+name: Verify releases
+# Checks that each published release archive matches `git archive` of its tag, matches the release's SHA256SUMS, and
+# has a valid GitHub release attestation (scripts/verify-release.sh). Runs when a release is published, once a week,
+# and by hand. A mismatch fails the run.
+on:
+  release:
+    types: [published]
+  schedule:
+    - cron: "17 6 * * 1"  # Mondays 06:17 UTC
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to check. Empty checks every published release."
+        required: false
+        default: ""
+permissions:
+  contents: read
+  attestations: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      # The checker comes from the default branch, never from the tag under check. Full history brings every tag.
+      # No toolchain or npm install: the check runs no code from the tag and shares no dependency with the build.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify the release archives against their tags
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name || inputs.tag }}
+        run: |
+          if [ -n "$TAG" ]; then
+            scripts/verify-release.sh "$TAG"
+          else
+            scripts/verify-release.sh
+          fi

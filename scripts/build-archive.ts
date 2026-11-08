@@ -10,7 +10,10 @@ import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import fs from "node:fs";
 
-/** The paths the artifact holds. Tooling, the changes, and CI config stay out. */
+/**
+ * The paths the artifact holds. Tooling, the changes, and CI config stay out. scripts/verify-release.sh reads this
+ * list as text at each release tag: keep it a literal array of double-quoted strings that ends with `];`.
+ */
 export const CONTENTS = [
   "LICENSE",
   "VERSION",
