@@ -16,6 +16,9 @@
  * 9. Each cited requirement or scenario identifier names a heading in the specs.
  * 10. No case has a `known-defects` field, and the index has no `defect-twins` field. Each binding keeps its own
  *     expected failures (VER-006).
+ * 11. An `expected-max-failures` value is consistent with PRS-013: the case is a parse case, the value is an integer of
+ *     1 or more and not less than `expected-min-failures`, an input whose root keys name one document type is not
+ *     valid against the schema branch of that type, and an input with two or more root keys has no maximum.
  *
  *   npm run corpus:check           check the corpus
  *   npm run corpus:write           regenerate each expected file, then check
@@ -68,6 +71,7 @@ interface Case {
   "expected-category"?: string;
   "expected-valid"?: boolean;
   "expected-min-failures"?: number;
+  "expected-max-failures"?: number;
   requirements: string[];
   source?: { repository: string; commit: string; path: string; sha256: string };
   notes?: string;
@@ -113,12 +117,24 @@ function main(write: boolean): number {
   const failures: string[] = [];
   const fail = (id: string, message: string) => failures.push(`[corpus] ${id}: ${message}`);
 
-  const schema = JSON.parse(fs.readFileSync(SCHEMA, "utf8")) as { $id: string; definitions: Record<string, unknown> };
+  const schema = JSON.parse(fs.readFileSync(SCHEMA, "utf8")) as {
+    $id: string;
+    definitions: Record<string, unknown>;
+    oneOf: { required?: string[] }[];
+  };
   checkSchemaForReader(schema);
   const ajv = new Ajv({ allErrors: true, strict: false });
   addFormats(ajv);
   ajv.addSchema(schema);
   const validateDocument = ajv.getSchema(schema.$id) as ValidateFunction;
+  // The root keys of PRS-013: each required key of a root `oneOf` branch, other than `$schema`, selects that branch.
+  const branchOfRootKey = new Map<string, ValidateFunction>();
+  schema.oneOf.forEach((branch, i) => {
+    const validate = ajv.getSchema(`${schema.$id}#/oneOf/${i}`) as ValidateFunction;
+    for (const key of branch.required ?? []) if (key !== "$schema") branchOfRootKey.set(key, validate);
+  });
+  if ([...branchOfRootKey.keys()].sort().join() !== [...DOCUMENT_TYPES].sort().join())
+    fail(SCHEMA, "the root keys of the oneOf branches are not the eight document types");
   const elementValidator = (type: string): ValidateFunction | undefined => {
     const keys = Object.keys(schema.definitions).filter((key) => key.split(":")[1] === type);
     return keys.length === 1 ? ajv.getSchema(`${schema.$id}#/definitions/${keys[0]}`) : undefined;
@@ -149,6 +165,13 @@ function main(write: boolean): number {
     }
     if (Object.hasOwn(c, "known-defects"))
       fail(c.id, "the case has a known-defects field. Each binding keeps its own expected failures (VER-006).");
+    const max = c["expected-max-failures"];
+    if (max !== undefined) {
+      const min = c["expected-min-failures"];
+      if (c.operation !== "parse") fail(c.id, "expected-max-failures applies only to a parse case");
+      if (!Number.isInteger(max) || max < 1) fail(c.id, "expected-max-failures is not an integer of 1 or more");
+      else if (min !== undefined && max < min) fail(c.id, "expected-max-failures is less than expected-min-failures");
+    }
     const category = c["expected-category"];
     if (category !== undefined) {
       if (!index.categories.includes(category)) fail(c.id, `unknown category "${category}"`);
@@ -208,6 +231,13 @@ function main(write: boolean): number {
         const min = c["expected-min-failures"];
         if (min !== undefined && (validateDocument.errors?.length ?? 0) < min)
           fail(c.id, `the schema reports ${validateDocument.errors?.length} failures, fewer than ${min}`);
+        if (max !== undefined && doc !== null && typeof doc === "object" && !Array.isArray(doc)) {
+          const rootKeys = Object.keys(doc).filter((key) => branchOfRootKey.has(key));
+          const branch = branchOfRootKey.get(rootKeys[0]);
+          if (rootKeys.length >= 2) fail(c.id, "the input has two or more root keys, so PRS-013 sets no maximum");
+          else if (branch !== undefined && branch(doc))
+            fail(c.id, `the input is valid against the ${rootKeys[0]} branch, so its fault is not in that type`);
+        }
         break;
       }
       case "parse-typed": {

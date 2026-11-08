@@ -34,8 +34,15 @@ Each case has these fields:
    2. `element-type`: the element-type name, for element validation.
    3. `input-form`: `bytes` when the input must reach the binding as raw bytes, not as text.
    4. `expected-min-failures`: the lowest number of structured failure entries that the parse error carries.
-   5. `source`: the repository, commit, path, and `sha256` of a document copied from another repository.
-   6. `notes`: an explanation for people. For a `yaml-parse` case, the notes name the fault code of the reference
+   5. `expected-max-failures`: the highest number of structured failure entries that the parse error carries. It
+      applies only to a `parse` case. Its value is an integer of 1 or more, and not less than `expected-min-failures`.
+      An input whose root keys name one document type is not valid against the schema of that document type, so the
+      fault is in that type
+      ([PRS-013](../../openspec/specs/document-parsing/spec.md#requirement-prs-013-the-root-key-selects-the-document-type-of-the-parse-failures)).
+      An input with two or more root keys has no `expected-max-failures`, because PRS-013 sets no rule for its
+      failures.
+   6. `source`: the repository, commit, path, and `sha256` of a document copied from another repository.
+   7. `notes`: an explanation for people. For a `yaml-parse` case, the notes name the fault code of the reference
       YAML reader in backticks, for example `` `grammar` ``.
 
 ## Operations
@@ -43,8 +50,9 @@ Each case has these fields:
 1. `round-trip`: parse the input with the generic parser and with the typed parser of `document-type`. Both must
    succeed. Serialize the parsed document. The canonical form of the output must be the same bytes as `expected`. The
    canonical form is defined in [Canonical JSON for conformance comparison](../../docs/canonical-json.md).
-2. `parse`: parse the input with the generic parser. The parser must report `expected-category`. The non-raising
-   validity check must return false for the same input.
+2. `parse`: parse the input with the generic parser. The parser must report `expected-category`. The parse error must
+   carry no more structured entries than `expected-max-failures`. The non-raising validity check must return false for
+   the same input.
 3. `parse-typed`: parse the input with the typed parser of `document-type`. The parser must report
    `expected-category`.
 4. `parse-file`: parse the file at the input path. The path does not exist. The parser must report
