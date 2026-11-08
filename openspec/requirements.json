@@ -357,6 +357,11 @@
       "title": "A parse error carries each entry or 100 entries or more"
     },
     {
+      "id": "PRS-013",
+      "capability": "document-parsing",
+      "title": "The root key selects the document type of the parse failures"
+    },
+    {
       "id": "SER-001",
       "capability": "serialization",
       "title": "Serialization emits OSCAL property keys"

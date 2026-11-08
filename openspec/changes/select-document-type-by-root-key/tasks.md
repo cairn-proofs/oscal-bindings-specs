@@ -24,13 +24,13 @@ the checker before group 4 uses it in `cases.json`. The groups run in order.
 
 ## 2. Sync
 
-- [ ] 2.1 Sync the delta of this change into `openspec/specs/`, without archiving the change. In `document-parsing`,
+- [x] 2.1 Sync the delta of this change into `openspec/specs/`, without archiving the change. In `document-parsing`,
       [PRS-013] follows [PRS-012]. Verify `openspec show document-parsing --type spec` lists [PRS-013], [PRS-013.01],
       and [PRS-013.02].
-- [ ] 2.2 In the same commit as task 2.1, set `PRS` `next` to 14 in `openspec/spec-ids.yaml`, and run
+- [x] 2.2 In the same commit as task 2.1, set `PRS` `next` to 14 in `openspec/spec-ids.yaml`, and run
       `npm run requirements:write`. Do not change `VERSION` (design.md, D6). Verify `npm run spec-ids` passes, and
       `openspec/requirements.json` has an entry for [PRS-013].
-- [ ] 2.3 Commit tasks 2.1 and 2.2 with `#<n>` in the message. Verify `npm run check` passes before the commit.
+- [x] 2.3 Commit tasks 2.1 and 2.2 with `#<n>` in the message. Verify `npm run check` passes before the commit.
 
 ## 3. Checker
 
