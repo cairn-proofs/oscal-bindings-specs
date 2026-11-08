@@ -109,4 +109,39 @@ nested path. Open the `.tc.json` file there with the Threat Composer VS Code ext
    draft GitHub release. CI fails when the tag is not on `main` or does not match `VERSION`.
 4. Review the draft and publish it.
 
-A consumer pins the archive by the `sha256` in `SHA256SUMS`, not by the tag.
+## Verify a release
+
+Pin the archive by the `sha256` in `SHA256SUMS`, not by the tag. Before you pin or update a pin, check the archive you
+downloaded. In the commands below, `<version>` is the release version, for example `0.8.0+oscal.1.2.3`.
+
+1. The archive matches `SHA256SUMS`:
+
+   ```
+   shasum -a 256 -c SHA256SUMS
+   ```
+
+2. This repo's CI built the archive from the tag (SLSA build provenance, logged in the public Sigstore transparency
+   log):
+
+   ```
+   gh attestation verify oscal-bindings-specs-<version>.tar.gz --repo cairn-proofs/oscal-bindings-specs \
+     --cert-identity "https://github.com/cairn-proofs/oscal-bindings-specs/.github/workflows/build.yml@refs/tags/v<version>"
+   ```
+
+3. The archive is the asset published in the release (GitHub release attestation):
+
+   ```
+   gh release verify-asset v<version> oscal-bindings-specs-<version>.tar.gz --repo cairn-proofs/oscal-bindings-specs
+   ```
+
+4. The archive holds exactly the tagged files. In a clone of this repo with its tags, run
+   `scripts/verify-release.sh v<version>`. It rebuilds the archive with `git archive` from the tag, compares it with
+   the published archive, and runs checks 1 to 3, skipping a check the release cannot pass (see below). It runs no
+   code from the tag. It needs `gh` signed in.
+
+Older releases cannot pass every check. Releases up to and including `v0.7.0+oscal.1.2.3` were built before CI
+attested provenance, so check 2 fails for them. `v0.1.0+oscal.1.2.3` and `v0.2.0+oscal.1.2.3` are not immutable
+releases, so check 3 fails for them. Checks 1 and 4 pass for every release.
+
+These checks show that the archive matches the tagged commit. They do not show that the tagged commit is free of
+unwanted changes.
