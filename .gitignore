@@ -2,6 +2,3 @@ node_modules/
 .DS_Store
 dist/
 tmp/
-# Legacy location of the private threat-model repo. It now lives beside this repo
-# (../oscal-bindings-specs-threat-models); this keeps a stale nested clone out of commits.
-/threat-models/
