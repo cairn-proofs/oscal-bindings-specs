@@ -2,6 +2,6 @@ node_modules/
 .DS_Store
 dist/
 tmp/
-# Sparse, private checkout of this repo's threat model. See
-# scripts/setup-threat-model.sh.
+# Legacy location of the private threat-model repo. It now lives beside this repo
+# (../oscal-bindings-specs-threat-models); this keeps a stale nested clone out of commits.
 /threat-models/

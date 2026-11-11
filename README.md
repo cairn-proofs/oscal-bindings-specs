@@ -91,15 +91,19 @@ the specs.
 ## Threat model
 
 This repo's threat model is a [Threat Composer](https://github.com/awslabs/threat-composer) `.tc.json` file, kept in
-a private store rather than in this repo, on a branch named after this repo. `scripts/setup-threat-model.sh` clones
-just that branch (see internal onboarding for `THREAT_MODEL_STORE_URL`):
+a separate private repo, `oscal-bindings-specs-threat-models`, rather than in this repo. Access to it is optional: you
+do not need it to build, test or contribute.
+
+If you have access, clone it **beside** this repo, not inside it:
 
 ```
-THREAT_MODEL_STORE_URL=<url> scripts/setup-threat-model.sh
+gh repo clone cairn-proofs/oscal-bindings-specs-threat-models ../oscal-bindings-specs-threat-models
 ```
 
-This clones a private working copy into `./threat-models` (gitignored) — its root *is* the threat model, not a
-nested path. Open the `.tc.json` file there with the Threat Composer VS Code extension or web app.
+Open the `.tc.json` file there with the Threat Composer VS Code extension or web app, and commit with
+`git -C ../oscal-bindings-specs-threat-models ...`. If you have an older nested `./threat-models` clone, move it instead:
+`mv threat-models ../oscal-bindings-specs-threat-models`. Maintainers create the private repo for a new project with
+`threat-model-toolkit`'s `scripts/setup-threat-model.sh --create`.
 
 ## Release
 
