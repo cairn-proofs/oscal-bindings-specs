@@ -2,6 +2,3 @@ node_modules/
 .DS_Store
 dist/
 tmp/
-# Sparse, private checkout of this repo's threat model. See
-# scripts/setup-threat-model.sh.
-/threat-models/
