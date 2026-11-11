@@ -100,10 +100,7 @@ If you have access, clone it **beside** this repo, not inside it:
 gh repo clone cairn-proofs/oscal-bindings-specs-threat-models ../oscal-bindings-specs-threat-models
 ```
 
-Open the `.tc.json` file there with the Threat Composer VS Code extension or web app, and commit with
-`git -C ../oscal-bindings-specs-threat-models ...`. If you have an older nested `./threat-models` clone, move it instead:
-`mv threat-models ../oscal-bindings-specs-threat-models`. Maintainers create the private repo for a new project with
-`threat-model-toolkit`'s `scripts/setup-threat-model.sh --create`.
+Open the `.tc.json` file there with the Threat Composer VS Code extension or web app.
 
 ## Release
 
