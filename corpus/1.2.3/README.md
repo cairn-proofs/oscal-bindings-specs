@@ -29,6 +29,8 @@ Each case has these fields:
    2. `expected-category`: the error category, from the `categories` list. The categories are the taxonomy of the
       error-model capability.
    3. `expected-valid`: `true` or `false`, for element validation.
+   4. `expected-period`: an object with the keys `start` and `end`, for an assessment period. Each value is a datetime
+      in the canonical form of [Canonical JSON for conformance comparison](../../docs/canonical-json.md#datetimes).
 6. Optional fields:
    1. `document-type`: the root key of the document type, for a round trip or a typed parse.
    2. `element-type`: the element-type name, for element validation.
@@ -58,7 +60,9 @@ Each case has these fields:
 4. `parse-file`: parse the file at the input path. The path does not exist. The parser must report
    `expected-category` and name the path.
 5. `assessment-period`: wrap the parsed input in the document facade and request the assessment period. The facade
-   must report `expected-category`.
+   must report `expected-category`, or return the start and the end of `expected-period`. The runner normalizes each
+   bound that the facade returns as [Canonical JSON for conformance comparison](../../docs/canonical-json.md#datetimes)
+   states, and then compares it with the value in `expected-period`.
 6. `validate-element`: validate the input against `element-type`. The result must be `expected-valid`, or the
    operation must report `expected-category`.
 7. `yaml-round-trip`: parse the YAML input with the YAML parse operation. Serialize the parsed document to JSON. The

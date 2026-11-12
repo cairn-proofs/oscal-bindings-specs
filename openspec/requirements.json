@@ -102,6 +102,11 @@
       "title": "The assessment period of Assessment Results aggregates result dates"
     },
     {
+      "id": "FAC-007",
+      "capability": "document-facade",
+      "title": "The bounds of the assessment period are datetime values ordered by instant"
+    },
+    {
       "id": "MDL-001",
       "capability": "model-derivation",
       "title": "Canonical type names derive from OSCAL name scopes, not from generator ordinals"

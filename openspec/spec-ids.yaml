@@ -10,7 +10,7 @@ prefixes:
     next: 4
   FAC:
     capability: document-facade
-    next: 7
+    next: 8
   PRS:
     capability: document-parsing
     next: 14

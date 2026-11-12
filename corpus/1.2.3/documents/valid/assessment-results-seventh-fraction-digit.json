@@ -1,0 +1,44 @@
+{
+  "assessment-results": {
+    "uuid": "5c1d0003-0000-4000-8000-000000000000",
+    "metadata": {
+      "title": "Seventh fraction digit",
+      "last-modified": "2026-03-01T00:00:00Z",
+      "version": "1.0",
+      "oscal-version": "1.2.3"
+    },
+    "import-ap": {
+      "href": "ap.json"
+    },
+    "results": [
+      {
+        "uuid": "5c1d0003-0000-4000-8000-000000000001",
+        "title": "Result",
+        "description": "Result",
+        "start": "2026-03-01T10:00:00.1234568Z",
+        "end": "2026-03-01T11:00:00Z",
+        "reviewed-controls": {
+          "control-selections": [
+            {
+              "include-all": {}
+            }
+          ]
+        }
+      },
+      {
+        "uuid": "5c1d0003-0000-4000-8000-000000000002",
+        "title": "Result",
+        "description": "Result",
+        "start": "2026-03-01T05:00:00.1234567-05:00",
+        "end": "2026-03-01T06:00:00.0000001-05:00",
+        "reviewed-controls": {
+          "control-selections": [
+            {
+              "include-all": {}
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

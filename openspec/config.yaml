@@ -6,10 +6,21 @@ schema: spec-driven
 # Keep general project documentation and discoverable facts out.
 context: |
   Write all artifacts using the `/asd-ste100` skill. If you can't find it, stop and ask.
-  If you add line breaks to Markdown, break at 120 columns, not 80.
+  Add line breaks to Markdown at 100 columns, not 80.
   List style: prefer NUMBERED lists (`1.`, `2.`) over bullets for any enumerable prose so each item is referenceable.
   Proposals and designs cite GitHub issues, discussions, etc. Specs do not.
-
+  When exploring an issue, do not ask for a decision if your recommendation is a logical conclusion of a 
+   decision already made. Escalate decisions to the user only when a conflict arises between precedents, tenets, etc.
+  When exploring, proposing, or designing, NEVER extend the scope beyond what is explicitly stated in the context. 
+   If you find an edge case or ambiguity that seems to justify extending the scope, stop and seek clarification. 
+  Discussion during exploration may raise questions or considerations that are ruled out. Do not include those in
+   the artifacts. Future readers will not understand answers to questions that were never asked.
+  Always propose, spec, and design the smallest, simplest change that solves the problem at hand.
+  When it seems like a requirement or scenario needs an extension or exception, first ask if the problem is better
+   solved by eliminating the requirement or scenario.
+  User time and tokens are constrained resources. Do not waste them on trivial matters. If you're inclined to qualify
+   a matter as a nit, minor, small, or otherwise inconsenquential, then either justify raising it or drop the matter.    
+  Scenarios in a requirement can't be renamed in place or removed. Such changes must be made manually in a post-archive step.
 # Per-artifact rules (optional)
 rules:
   specs:

@@ -19,6 +19,10 @@
  * 11. An `expected-max-failures` value is consistent with PRS-013: the case is a parse case, the value is an integer of
  *     1 or more and not less than `expected-min-failures`, an input whose root keys name one document type is not
  *     valid against the schema branch of that type, and an input with two or more root keys has no maximum.
+ * 12. An assessment-period case has either `expected-category` or `expected-period`, not both and not neither. With
+ *     `expected-category`, the input is not an Assessment Plan or Assessment Results. With `expected-period`, the input
+ *     is a valid Assessment Plan or Assessment Results, and the canonical form of each bound that FAC-005 to FAC-007
+ *     compute from it equals the value of the field.
  *
  *   npm run corpus:check           check the corpus
  *   npm run corpus:write           regenerate each expected file, then check
@@ -30,7 +34,7 @@ import path from "node:path";
 import { Ajv, type ValidateFunction } from "ajv";
 import addFormatsModule from "ajv-formats";
 
-import { canonicalize } from "./canonical-json.js";
+import { canonicalize, normalizeDatetime } from "./canonical-json.js";
 import { checkSchemaForReader, readYaml } from "./yaml-reader.js";
 
 const addFormats = addFormatsModule as unknown as (ajv: Ajv) => Ajv;
@@ -72,6 +76,7 @@ interface Case {
   "expected-valid"?: boolean;
   "expected-min-failures"?: number;
   "expected-max-failures"?: number;
+  "expected-period"?: { start: string; end: string };
   requirements: string[];
   source?: { repository: string; commit: string; path: string; sha256: string };
   notes?: string;
@@ -79,6 +84,60 @@ interface Case {
 
 const sha256 = (bytes: Buffer) => createHash("sha256").update(bytes).digest("hex");
 
+interface Instant {
+  seconds: number;
+  fraction: string;
+}
+/** The instant of a datetime with an offset, with every fraction digit. The JavaScript Date type keeps milliseconds only. */
+function instantOf(value: string): Instant | undefined {
+  const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d+))?(Z|([+-])(\d{2}):(\d{2}))$/.exec(value);
+  if (!m) return undefined;
+  const [y, mo, d, h, mi, sec] = m.slice(1, 7).map(Number);
+  const offset = m[8] === "Z" ? 0 : (m[9] === "-" ? -1 : 1) * (Number(m[10]) * 60 + Number(m[11]));
+  return { seconds: Date.UTC(y, mo - 1, d, h, mi, sec) / 1000 - offset * 60, fraction: m[7] ?? "" };
+}
+function compareInstants(a: Instant, b: Instant): number {
+  if (a.seconds !== b.seconds) return a.seconds < b.seconds ? -1 : 1;
+  const width = Math.max(a.fraction.length, b.fraction.length);
+  const x = a.fraction.padEnd(width, "0");
+  const y = b.fraction.padEnd(width, "0");
+  return x < y ? -1 : x > y ? 1 : 0;
+}
+/** The period of FAC-005 to FAC-007: the values in document order, replaced only by a strictly earlier or later instant. */
+function assessmentPeriod(doc: Record<string, unknown>): { start?: string; end?: string } {
+  const starts: string[] = [];
+  const ends: string[] = [];
+  const walkTasks = (tasks: unknown) => {
+    if (!Array.isArray(tasks)) return;
+    for (const task of tasks as Record<string, Record<string, Record<string, string>> | unknown>[]) {
+      const timing = task.timing as Record<string, Record<string, string>> | undefined;
+      const onDate = timing?.["on-date"]?.date;
+      if (onDate !== undefined) {
+        starts.push(onDate);
+        ends.push(onDate);
+      }
+      const range = timing?.["within-date-range"];
+      if (range) {
+        starts.push(range.start);
+        ends.push(range.end);
+      }
+      walkTasks(task.tasks);
+    }
+  };
+  if (Object.hasOwn(doc, "assessment-plan")) walkTasks((doc["assessment-plan"] as { tasks?: unknown }).tasks);
+  else
+    for (const result of (doc["assessment-results"] as { results: { start?: string; end?: string }[] }).results) {
+      if (result.start !== undefined) starts.push(result.start);
+      if (result.end !== undefined) ends.push(result.end);
+    }
+  const pick = (values: string[], sign: number): string | undefined => {
+    let best: string | undefined;
+    for (const value of values)
+      if (best === undefined || compareInstants(instantOf(value)!, instantOf(best)!) === sign) best = value;
+    return best;
+  };
+  return { start: pick(starts, -1), end: pick(ends, 1) };
+}
 /** The requirement and scenario identifiers on the headings of every spec under openspec/. */
 function specIdentifiers(): Set<string> {
   const ids = new Set<string>();
@@ -251,9 +310,28 @@ function main(write: boolean): number {
         if (fs.existsSync(inputPath)) fail(c.id, `${c.input} exists, so it cannot test not-found`);
         break;
       case "assessment-period": {
-        const doc = JSON.parse(fs.readFileSync(inputPath, "utf8")) as object;
-        if (Object.hasOwn(doc, "assessment-plan") || Object.hasOwn(doc, "assessment-results"))
-          fail(c.id, "input supports the assessment period, so it cannot test access-error");
+        const doc = JSON.parse(fs.readFileSync(inputPath, "utf8")) as Record<string, unknown>;
+        const supported = Object.hasOwn(doc, "assessment-plan") || Object.hasOwn(doc, "assessment-results");
+        const expectedPeriod = c["expected-period"];
+        if ((category === undefined) === (expectedPeriod === undefined)) {
+          fail(c.id, "an assessment-period case needs exactly one of expected-category and expected-period");
+          break;
+        }
+        if (expectedPeriod === undefined) {
+          if (supported) fail(c.id, "input supports the assessment period, so it cannot test access-error");
+          break;
+        }
+        if (!validateDocument(doc)) fail(c.id, `input is not valid: ${ajv.errorsText(validateDocument.errors)}`);
+        if (!supported) {
+          fail(c.id, "input is not an Assessment Plan or Assessment Results, so it has no assessment period");
+          break;
+        }
+        const period = assessmentPeriod(doc);
+        for (const bound of ["start", "end"] as const) {
+          const computed = period[bound];
+          if (computed === undefined || normalizeDatetime(computed) !== expectedPeriod[bound])
+            fail(c.id, `expected-period ${bound} is ${expectedPeriod[bound]}, but FAC-005 to FAC-007 give ${computed}`);
+        }
         break;
       }
       case "validate-element": {
