@@ -60,8 +60,9 @@ Each case has these fields:
    the same input.
 3. `parse-typed`: parse the input with the typed parser of `document-type`. The parser must report
    `expected-category`.
-4. `parse-file`: parse the file at the input path. The path does not exist. The parser must report
-   `expected-category` and name the path.
+4. `parse-file`: parse the file at the input path. For the not-found category, the path does not exist.
+   For the read-error category, the path is a directory. The parser must report `expected-category` and name the
+   path.
 5. `assessment-period`: wrap the parsed input in the document facade and request the assessment period. The facade
    must report `expected-category`, or return the start and the end of `expected-period`. The runner normalizes each
    bound that the facade returns as [Canonical JSON for conformance comparison](../../docs/canonical-json.md#datetimes)

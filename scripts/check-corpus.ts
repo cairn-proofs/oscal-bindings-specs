@@ -347,7 +347,12 @@ function main(write: boolean): number {
         break;
       }
       case "parse-file":
-        if (fs.existsSync(inputPath)) fail(c.id, `${c.input} exists, so it cannot test not-found`);
+        if (category === "not-found") {
+          if (fs.existsSync(inputPath)) fail(c.id, `${c.input} exists, so it cannot test not-found`);
+        } else if (category === "read-error") {
+          if (!fs.existsSync(inputPath) || !fs.statSync(inputPath).isDirectory())
+            fail(c.id, `${c.input} is not a directory, so it cannot test read-error`);
+        } else fail(c.id, "a parse-file case has the category not-found or read-error");
         break;
       case "assessment-period": {
         const doc = JSON.parse(fs.readFileSync(inputPath, "utf8")) as Record<string, unknown>;

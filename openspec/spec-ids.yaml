@@ -19,7 +19,7 @@ prefixes:
     next: 5
   ERR:
     capability: error-model
-    next: 12
+    next: 13
   MDL:
     capability: model-derivation
     next: 22

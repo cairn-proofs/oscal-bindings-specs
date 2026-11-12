@@ -92,6 +92,11 @@
       "title": "An element over a documented limit is a limit-exceeded error"
     },
     {
+      "id": "ERR-012",
+      "capability": "error-model",
+      "title": "A path that cannot be read is a read error"
+    },
+    {
       "id": "FAC-001",
       "capability": "document-facade",
       "title": "A uniform facade wraps any document type"

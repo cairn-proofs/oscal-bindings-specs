@@ -1,6 +1,6 @@
 {
   "oscal-release": "1.2.3",
-  "categories": ["parse-error", "document-type-mismatch", "not-found", "access-error", "unknown-element-type"],
+  "categories": ["parse-error", "document-type-mismatch", "not-found", "access-error", "unknown-element-type", "read-error"],
   "cases": [
     {
       "id": "round-trip/catalog",
@@ -256,6 +256,13 @@
       "input": "documents/does-not-exist.json",
       "expected-category": "not-found",
       "requirements": ["PRS-002.02", "ERR-006.01"]
+    },
+    {
+      "id": "parse-file/directory",
+      "operation": "parse-file",
+      "input": "documents/valid",
+      "expected-category": "read-error",
+      "requirements": ["ERR-012.01"]
     },
     {
       "id": "assessment-period/catalog",
