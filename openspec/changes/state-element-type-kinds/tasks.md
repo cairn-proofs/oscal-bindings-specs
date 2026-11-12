@@ -23,7 +23,7 @@ run in order.
       with no change to `openspec/spec-ids.yaml` or `openspec/requirements.json`, and `npm run check` passes before
       the commit.
 ## 3. Corpus operation and case
-- [ ] 3.1 In `scripts/check-corpus.ts`, add the operation `element-types` as design.md, D3 states. Make `input`
+- [x] 3.1 In `scripts/check-corpus.ts`, add the operation `element-types` as design.md, D3 states. Make `input`
       optional in the `Case` type, and skip the input checks for an `element-types` case. Derive the list from
       `manifest/1.2.3/names.json`. With `--write`, write the canonical form of the list to the `expected` file of the
       case. Fail in each of these cases:
@@ -32,13 +32,13 @@ run in order.
       3. The expected file differs from the canonical form of the list.
       4. A `validate-element` case breaks design.md, D3, item 5.
       Add the check to the numbered list of the header comment. Verify `npm run typecheck` passes.
-- [ ] 3.2 Add the case `element-types/all` to `corpus/1.2.3/cases.json`, after the `validate-element` cases. It has
+- [x] 3.2 Add the case `element-types/all` to `corpus/1.2.3/cases.json`, after the `validate-element` cases. It has
       `operation` `element-types`, `expected` `expected/element-types.json`, and `requirements` `["ELV-002.01"]`.
       Run `npm run corpus:write`. Verify `expected/element-types.json` holds 244 names, holds `parameter`,
       `hash-algorithm`, `oscal-document`, and `back-matter-resource-base64`, does not hold `root-model`, and is in
       code-point order. Verify the list equals the `elementType` values of
       `../oscal-bindings-typescript/src/generated/element-types.ts`, in the same order.
-- [ ] 3.3 Verify that the check fails in each of these cases, and restore the working copy after each one:
+- [x] 3.3 Verify that the check fails in each of these cases, and restore the working copy after each one:
       1. One name is removed from `expected/element-types.json`.
       2. Two names of `expected/element-types.json` change places.
       3. The case has an `input`.
@@ -46,14 +46,14 @@ run in order.
       5. A `validate-element` case with `expected-valid` names `with-id`.
       6. The `unknown-element-type` case names `hash-algorithm`.
       Verify `npm run corpus:check` passes after the last restore.
-- [ ] 3.4 In `corpus/1.2.3/README.md`, change these sections. Verify each new text names `element-types`:
+- [x] 3.4 In `corpus/1.2.3/README.md`, change these sections. Verify each new text names `element-types`:
       1. Layout, item 1: an `element-types` case has no input.
       2. Layout, item 5: `expected/` also holds the list of element-type names of the `element-types` case.
       3. Cases, item 3: an `element-types` case has no `input`.
       4. Cases, item 5.1: `expected` is also the path of the expected list, for `element-types`.
       5. Operations: add item 9, `element-types`. Request the supported element types. The result must equal the list
          in `expected`, item by item and in the same order.
-- [ ] 3.5 Commit group 3 with `#40` in the message. Verify `npm run check` passes before the commit, and
+- [x] 3.5 Commit group 3 with `#40` in the message. Verify `npm run check` passes before the commit, and
       `git status --short` shows only the files of this group and the artifacts of this change.
 ## Workflow follow-up
 These steps need the merge or the archive, so they are not tracked tasks. The pull request of this change also

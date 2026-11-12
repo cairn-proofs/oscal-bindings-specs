@@ -23,6 +23,10 @@
  *     `expected-category`, the input is not an Assessment Plan or Assessment Results. With `expected-period`, the input
  *     is a valid Assessment Plan or Assessment Results, and the canonical form of each bound that FAC-005 to FAC-007
  *     compute from it equals the value of the field.
+ * 13. The list of element-type names (ELV-002) is the kebab-case form of the `name` of each type in the naming
+ *     manifest, in code-point order. No two types give the same name. An element-types case has no input, and its
+ *     expected file is the canonical form of the list. A validate-element case with `expected-valid` names an element
+ *     type in the list, and an unknown-element-type case names one that is not in the list.
  *
  *   npm run corpus:check           check the corpus
  *   npm run corpus:write           regenerate each expected file, then check
@@ -61,13 +65,14 @@ const OPERATIONS = [
   "validate-element",
   "yaml-round-trip",
   "yaml-parse",
+  "element-types",
 ];
 const ID = /^[A-Z]{2,5}-\d{3}(?:\.\d{2})?$/;
 
 interface Case {
   id: string;
   operation: string;
-  input: string;
+  input?: string;
   "input-form"?: string;
   "document-type"?: string;
   "element-type"?: string;
@@ -155,6 +160,9 @@ function specIdentifiers(): Set<string> {
   return ids;
 }
 
+/** The kebab-case form of a canonical type name: a hyphen before each capital that follows a lowercase letter or a digit. */
+const kebab = (name: string) => name.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
+
 /** Every file under documents/ and elements/, relative to the corpus root. */
 function corpusFiles(): string[] {
   const out: string[] = [];
@@ -199,6 +207,17 @@ function main(write: boolean): number {
     return keys.length === 1 ? ajv.getSchema(`${schema.$id}#/definitions/${keys[0]}`) : undefined;
   };
 
+  // The element-type names of ELV-002: one for each type of the naming manifest, in code-point order.
+  const manifest = JSON.parse(fs.readFileSync(`manifest/${RELEASE}/names.json`, "utf8")) as { types: { name: string }[] };
+  const typeNames = new Map<string, string>();
+  for (const { name } of manifest.types) {
+    const elementType = kebab(name);
+    const other = typeNames.get(elementType);
+    if (other !== undefined) fail(`manifest/${RELEASE}/names.json`, `${other} and ${name} give the element type ${elementType}`);
+    typeNames.set(elementType, name);
+  }
+  const elementTypes = [...typeNames.keys()].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+
   const index = JSON.parse(fs.readFileSync(`${ROOT}/cases.json`, "utf8")) as {
     "oscal-release": string;
     categories: string[];
@@ -235,6 +254,27 @@ function main(write: boolean): number {
     if (category !== undefined) {
       if (!index.categories.includes(category)) fail(c.id, `unknown category "${category}"`);
       covered.add(category);
+    }
+    if (c.operation === "element-types") {
+      if (c.input !== undefined) fail(c.id, "an element-types case has no input");
+      if (!c.expected) {
+        fail(c.id, "an element-types case needs an expected file");
+        continue;
+      }
+      used.add(c.expected);
+      const canonical = canonicalize(JSON.stringify(elementTypes));
+      const expectedPath = path.join(ROOT, c.expected);
+      if (write) {
+        fs.mkdirSync(path.dirname(expectedPath), { recursive: true });
+        fs.writeFileSync(expectedPath, canonical);
+      }
+      if (!fs.existsSync(expectedPath) || fs.readFileSync(expectedPath, "utf8") !== canonical)
+        fail(c.id, `${c.expected} is not the canonical form of the element-type list. Run \`npm run corpus:write\`.`);
+      continue;
+    }
+    if (c.input === undefined) {
+      fail(c.id, "the case has no input");
+      continue;
     }
     const inputPath = path.join(ROOT, c.input);
     if (c.operation !== "parse-file") {
@@ -335,6 +375,9 @@ function main(write: boolean): number {
         break;
       }
       case "validate-element": {
+        const listed = elementTypes.includes(c["element-type"] ?? "");
+        if (category === "unknown-element-type" ? listed : c["expected-valid"] !== undefined && !listed)
+          fail(c.id, `element type "${c["element-type"]}" ${listed ? "is" : "is not"} in the element-type list`);
         const validate = elementValidator(c["element-type"] ?? "");
         if (category === "unknown-element-type") {
           if (validate) fail(c.id, `element type "${c["element-type"]}" exists`);
