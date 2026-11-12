@@ -354,6 +354,12 @@
       "requirements": ["ELV-003.01", "ERR-008.01"]
     },
     {
+      "id": "element-types/all",
+      "operation": "element-types",
+      "expected": "expected/element-types.json",
+      "requirements": ["ELV-002.01"]
+    },
+    {
       "id": "yaml-round-trip/catalog",
       "operation": "yaml-round-trip",
       "input": "documents/valid/catalog.yaml",

@@ -6,15 +6,16 @@ A binding that fails a case records the expected failure in its own repository, 
 
 ## Layout
 
-1. `cases.json`: the case index. Each case names an operation, an input, and an expected result.
+1. `cases.json`: the case index. Each case names an operation, an input, and an expected result. An `element-types`
+   case has no input.
 2. `documents/valid/`: valid OSCAL documents, one or more for each of the eight document types. A `.json` file is a
    JSON input, and a `.yaml` file is a YAML input.
 3. `documents/invalid/`: documents that a binding must reject. Each is a minimal document with one fault. An input for
    a case that counts failures with `expected-min-failures` above 1, for example `two-failures.json` and
    `many-failures.json`, has the faults that the case counts. The JSON inputs are minimal catalogs. A YAML input is a minimal document of the type that its fault needs.
 4. `elements/`: standalone OSCAL elements for element validation.
-5. `expected/`: the canonical form of each `round-trip` and `yaml-round-trip` input. `npm run corpus:write` generates
-   these files. Do not edit them.
+5. `expected/`: the canonical form of each `round-trip` and `yaml-round-trip` input. It also holds the list of
+   element-type names of the `element-types` case. `npm run corpus:write` generates these files. Do not edit them.
 
 ## Cases
 
@@ -22,10 +23,11 @@ Each case has these fields:
 
 1. `id`: a unique name.
 2. `operation`: the operation to run, from the list in [Operations](#operations).
-3. `input`: the input path, relative to this directory.
+3. `input`: the input path, relative to this directory. An `element-types` case has no `input`.
 4. `requirements`: the requirement and scenario identifiers that the case tests.
 5. One expected result:
-   1. `expected`: the path of the expected canonical form, for a round trip.
+   1. `expected`: the path of the expected canonical form, for a round trip. For `element-types`, it is the path of the
+      expected list.
    2. `expected-category`: the error category, from the `categories` list. The categories are the taxonomy of the
       error-model capability.
    3. `expected-valid`: `true` or `false`, for element validation.
@@ -70,6 +72,8 @@ Each case has these fields:
    parse that output with the YAML parse operation, and serialize the result to JSON. Its canonical form must also be
    the same bytes as `expected`.
 8. `yaml-parse`: parse the YAML input with the YAML parse operation. The parser must report `expected-category`.
+9. `element-types`: request the supported element types. The result must equal the list in `expected`, item by item
+   and in the same order.
 
 For each `round-trip` input, the non-raising validity check must return true. The check does not apply to a
 `yaml-round-trip` input.
