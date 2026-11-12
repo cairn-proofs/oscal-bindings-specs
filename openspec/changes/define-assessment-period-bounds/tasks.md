@@ -47,10 +47,10 @@ the checker before group 4 uses it in `cases.json`. The groups run in order.
 
 ## 4. Cases
 
-- [ ] 4.1 Add the three inputs of design.md, D5, to `corpus/1.2.3/documents/valid/`. Each is a minimal valid document
+- [x] 4.1 Add the three inputs of design.md, D5, to `corpus/1.2.3/documents/valid/`. Each is a minimal valid document
       with the values of the D5 table, in that order. Add the three cases of D5 to `corpus/1.2.3/cases.json`, with
       `expected-period` and the `requirements` identifiers of D5. Verify `npm run corpus:check` passes.
-- [ ] 4.2 Verify each check of design.md, D4, and the computation, fail a case that breaks them. On the working copy,
+- [x] 4.2 Verify each check of design.md, D4, and the computation, fail a case that breaks them. On the working copy,
       apply these mutations one at a time, and restore after each:
       1. Set `expected-period.start` of `assessment-period/mixed-offsets` to `2026-03-01T23:00:00-05:00`.
       2. Set `expected-period.end` of `assessment-period/equal-instant` to `2026-03-01T07:00:00-05:00`.
@@ -62,7 +62,7 @@ the checker before group 4 uses it in `cases.json`. The groups run in order.
       6. In `assessment-period/catalog`, replace `expected-category` with an `expected-period`.
       Verify `npm run corpus:check` reports the case for mutations 1, 2, 3, 5, and 6, passes for mutation 4, and
       passes after each restore.
-- [ ] 4.3 Commit group 4 with `#43` in the message. Verify `npm run check` passes before the commit, and
+- [x] 4.3 Commit group 4 with `#43` in the message. Verify `npm run check` passes before the commit, and
       `git status --short` shows no file under `corpus/`, `scripts/`, `openspec/specs/`, or `openspec/changes/`.
 
 ## Workflow follow-up

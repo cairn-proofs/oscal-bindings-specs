@@ -1,0 +1,43 @@
+{
+  "assessment-plan": {
+    "uuid": "5c1d0001-0000-4000-8000-000000000001",
+    "metadata": {
+      "title": "Mixed offsets",
+      "last-modified": "2026-03-01T00:00:00Z",
+      "version": "1.0",
+      "oscal-version": "1.2.3"
+    },
+    "import-ssp": {
+      "href": "ssp.json"
+    },
+    "reviewed-controls": {
+      "control-selections": [
+        {
+          "include-all": {}
+        }
+      ]
+    },
+    "tasks": [
+      {
+        "uuid": "5c1d0001-0000-4000-8000-000000000001",
+        "type": "action",
+        "title": "Task",
+        "timing": {
+          "on-date": {
+            "date": "2026-03-01T23:00:00-05:00"
+          }
+        }
+      },
+      {
+        "uuid": "5c1d0001-0000-4000-8000-000000000002",
+        "type": "action",
+        "title": "Task",
+        "timing": {
+          "on-date": {
+            "date": "2026-03-02T01:00:00Z"
+          }
+        }
+      }
+    ]
+  }
+}
