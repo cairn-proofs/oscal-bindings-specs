@@ -34,16 +34,16 @@ the checker before group 4 uses it in `cases.json`. The groups run in order.
 
 ## 3. Checker
 
-- [ ] 3.1 In `scripts/check-corpus.ts`, add `"expected-period"?: { start: string; end: string }` to `Case`. For an
+- [x] 3.1 In `scripts/check-corpus.ts`, add `"expected-period"?: { start: string; end: string }` to `Case`. For an
       `assessment-period` case with the field, apply the three checks of design.md, D4. Keep the existing check for a
       case with `expected-category`, and fail a case that has both fields or neither. Use `normalizeDatetime` from
       `scripts/canonical-json.ts` for the canonical form. Update the header comment of the script. Verify
       `npm run typecheck` and `npm run corpus:check` pass with the unchanged `cases.json`.
-- [ ] 3.2 In `corpus/1.2.3/README.md`, add `expected-period` to the expected results of Cases, and change the
+- [x] 3.2 In `corpus/1.2.3/README.md`, add `expected-period` to the expected results of Cases, and change the
       `assessment-period` operation: the facade must report `expected-category`, or return the start and the end of
       `expected-period`. State that the runner normalizes each bound as `docs/canonical-json.md` states before it
       compares. Verify the README names each field that `Case` holds.
-- [ ] 3.3 Commit group 3 with `#43` in the message. Verify `npm run check` passes before the commit.
+- [x] 3.3 Commit group 3 with `#43` in the message. Verify `npm run check` passes before the commit.
 
 ## 4. Cases
 
