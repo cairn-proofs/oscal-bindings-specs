@@ -297,6 +297,21 @@
       "title": "The name check fails when it cannot read the release tags"
     },
     {
+      "id": "NAM-020",
+      "capability": "naming-manifest",
+      "title": "A distinguishing property identifies a branch only when an object holds it"
+    },
+    {
+      "id": "NAM-021",
+      "capability": "naming-manifest",
+      "title": "Each manifest format holds its format version in the member `format`"
+    },
+    {
+      "id": "NAM-022",
+      "capability": "naming-manifest",
+      "title": "A consumer checks the format version before the other checks of the manifest"
+    },
+    {
       "id": "PRS-001",
       "capability": "document-parsing",
       "title": "Parse an OSCAL document from text or bytes"
