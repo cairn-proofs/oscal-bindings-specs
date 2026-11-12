@@ -32,6 +32,11 @@
       "title": "An unknown element type is reported, not silently accepted"
     },
     {
+      "id": "ELV-004",
+      "capability": "element-validation",
+      "title": "A binding can limit the resources that element validation uses"
+    },
+    {
       "id": "ERR-001",
       "capability": "error-model",
       "title": "Error situations map to a fixed taxonomy"
@@ -70,6 +75,21 @@
       "id": "ERR-008",
       "capability": "error-model",
       "title": "An element type that the binding does not recognize is an unknown-element-type error"
+    },
+    {
+      "id": "ERR-009",
+      "capability": "error-model",
+      "title": "Error categories form a tree"
+    },
+    {
+      "id": "ERR-010",
+      "capability": "error-model",
+      "title": "An error can carry portable properties"
+    },
+    {
+      "id": "ERR-011",
+      "capability": "error-model",
+      "title": "An element over a documented limit is a limit-exceeded error"
     },
     {
       "id": "FAC-001",

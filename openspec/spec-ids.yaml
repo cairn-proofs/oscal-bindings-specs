@@ -16,10 +16,10 @@ prefixes:
     next: 14
   ELV:
     capability: element-validation
-    next: 4
+    next: 5
   ERR:
     capability: error-model
-    next: 9
+    next: 12
   MDL:
     capability: model-derivation
     next: 22

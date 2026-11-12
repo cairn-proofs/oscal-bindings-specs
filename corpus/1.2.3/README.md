@@ -28,8 +28,9 @@ Each case has these fields:
 5. One expected result:
    1. `expected`: the path of the expected canonical form, for a round trip. For `element-types`, it is the path of the
       expected list.
-   2. `expected-category`: the error category, from the `categories` list. The categories are the taxonomy of the
-      error-model capability.
+   2. `expected-category`: the error category, from the `categories` list. The list holds each category of the
+      error-model capability that a portable case can reach. It does not hold the limit-exceeded category, because
+      only a documented limit of a binding reaches it.
    3. `expected-valid`: `true` or `false`, for element validation.
    4. `expected-period`: an object with the keys `start` and `end`, for an assessment period. Each value is a datetime
       in the canonical form of [Canonical JSON for conformance comparison](../../docs/canonical-json.md#datetimes).
