@@ -477,7 +477,18 @@ function selfTest(): number {
   test("NAM-013.01 schema file name with a path fails", () => mutate((m) => (m.schema.file = "../x.json")).length > 0);
   test("names.schema: a pointer with % fails", () => mutate((m) => (m.types[1].sites = ["#/definitions/a%20b"])).length > 0);
   test("names.schema: an unknown member fails", () => mutate((m) => ((m.types[1] as unknown as Schema).extra = 1)).length > 0);
-  test("NAM-012.01 an unknown format fails", () => mutate((m) => (m.format = 2)).length > 0);
+  test("NAM-021.01 a manifest that is not an object, or has no format member, gives one manifest failure", () => {
+    const outs = [validateManifest([], "{}", "1.2.3"), validateManifest("x", "{}", "1.2.3"), validateManifest(null, "{}", "1.2.3"), validateManifest((({ format: _f, ...rest }) => rest)(sketch), "{}", "1.2.3")];
+    return outs.every((o) => o.length === 1 && o[0].startsWith("[manifest]")) || JSON.stringify(outs);
+  });
+  test("NAM-022.01 format 2 gives one manifest failure that names 2", () => {
+    const out = validateManifest({ ...sketch, format: 2 }, "{}", "1.2.3");
+    return (out.length === 1 && out[0].startsWith("[manifest]") && out[0].includes("2")) || JSON.stringify(out);
+  });
+  test("NAM-022.02 format 2 and an unknown member give one failure and no json-schema failure", () => {
+    const out = validateManifest({ ...sketch, format: 2, extra: 1 }, "{}", "1.2.3");
+    return (out.length === 1 && !out.some((f) => f.startsWith("[json-schema]"))) || JSON.stringify(out);
+  });
   test("names.schema: a reference with a final newline fails", () => mutate((m) => (m.types[2].item = "Mapping\n")).length > 0);
   const overridesSketch = { ...emptyOverrides("1.2.3"), "local-names": { [originsItems]: "origin" }, names: { [riskLog]: "RiskLog" } };
   test("overrides.schema: the D4 sketch passes", () => validateOverrides(overridesSketch).length === 0 || JSON.stringify(validateOverrides(overridesSketch)));
@@ -500,7 +511,7 @@ function selfTest(): number {
   test("NAM-009.02 unresolvable pointer is invalid", () => cross((m) => (m.types[0].sites = ["#/definitions/missing"]), "does not resolve"));
   test("NAM-009.01 a pointer in two entries is invalid", () => cross((m) => (m.types[1].sites = [...m.types[0].sites]), "more than one entry"));
   test("NAM-002.03 schema hash mismatch is detected", () => cross((m) => (m.schema.sha256 = "0".repeat(64)), "sha256 does not match"));
-  test("NAM-003 other OSCAL release is rejected", () => cross((m) => (m["oscal-release"] = "1.2.4"), "is not 1.2.3"));
+  test("NAM-012.02 manifest of another OSCAL release is rejected", () => cross((m) => (m["oscal-release"] = "1.2.4"), "is not 1.2.3"));
   test("NAM-004.03 distinguishing property that is not a key fails", () =>
     cross((m) => (m.types.find((t) => t.kind === "union")!.variants![0].property = "groups"), "is not a property of the branch"));
 

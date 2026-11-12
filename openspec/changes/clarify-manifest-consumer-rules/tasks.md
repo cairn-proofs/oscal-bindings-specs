@@ -17,29 +17,29 @@ run in order.
 
 ## 1. Branch and planning commit
 
-- [ ] 1.1 Create the feature branch from [#11] with `gh issue develop 11 --base main`, with the user's approval, and
+- [x] 1.1 Create the feature branch from [#11] with `gh issue develop 11 --base main`, with the user's approval, and
       check it out. Commit the planning artifacts of this change as the first commit, with `#11` in the message.
       Verify `git branch --show-current` is not `main`, `openspec list` shows only this change, and
       `openspec validate clarify-manifest-consumer-rules --strict` passes.
 
 ## 2. Sync
 
-- [ ] 2.1 Sync the delta of this change into `openspec/specs/naming-manifest/spec.md`, without archiving the change.
+- [x] 2.1 Sync the delta of this change into `openspec/specs/naming-manifest/spec.md`, without archiving the change.
       Place [NAM-020] after [NAM-010], and [NAM-021] and [NAM-022] after [NAM-012]. Verify
       `openspec show naming-manifest --type spec` lists [NAM-020.01], [NAM-021.01], [NAM-022.01], and [NAM-022.02], and
       `npm run validate` passes. `npm run validate` checks the main specs, including the 500-character limit of each
       requirement text.
-- [ ] 2.2 In the same commit as task 2.1, set `NAM` `next` to 23 in `openspec/spec-ids.yaml`, and run
+- [x] 2.2 In the same commit as task 2.1, set `NAM` `next` to 23 in `openspec/spec-ids.yaml`, and run
       `npm run requirements:write`. Do not change `VERSION` in this group. Verify `npm run spec-ids` passes, and
       `openspec/requirements.json` has entries for [NAM-020], [NAM-021], and [NAM-022].
-- [ ] 2.3 Commit group 2 with `#11` in the message. Verify `npm run check` passes before the commit.
+- [x] 2.3 Commit group 2 with `#11` in the message. Verify `npm run check` passes before the commit.
 
 ## 3. Store validator
 
-- [ ] 3.1 In `validateManifest` of `scripts/names-lib.ts`, add the three steps of design.md, D4 before the JSON Schema
+- [x] 3.1 In `validateManifest` of `scripts/names-lib.ts`, add the three steps of design.md, D4 before the JSON Schema
       check. Keep the supported formats in one constant. The self-test `NAM-012.01 an unknown format fails` fails after
       this task, and task 3.2 replaces it. Verify `npm run typecheck` passes.
-- [ ] 3.2 In the self-test of `scripts/names.ts`, replace `NAM-012.01 an unknown format fails` with three tests. Each
+- [x] 3.2 In the self-test of `scripts/names.ts`, replace `NAM-012.01 an unknown format fails` with three tests. Each
       test calls `validateManifest` and checks the full list of failures, not only the `[json-schema]` failures:
       1. [NAM-021.01]: an input that is not a JSON object, and an object with no `format` member, each give exactly one
          `[manifest]` failure.
@@ -50,7 +50,7 @@ run in order.
       Change the label `NAM-003 other OSCAL release is rejected` to
       `NAM-012.02 manifest of another OSCAL release is rejected`. Verify `npm run names:self-test` passes. Revert task
       3.1 in the working copy and verify the three new tests fail. Then restore the working copy.
-- [ ] 3.3 Commit tasks 3.1 and 3.2 together, with `#11` in the message. Verify `npm run check` passes before the
+- [x] 3.3 Commit tasks 3.1 and 3.2 together, with `#11` in the message. Verify `npm run check` passes before the
       commit, and `npm run names:check` reports no change to `names.json`.
 
 ## 4. Version and CONTRIBUTING
