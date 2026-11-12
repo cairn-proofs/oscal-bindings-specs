@@ -38,6 +38,8 @@ A reference is planning context only. Builds and conformance runs use the tagged
 
 1. `oscal-bindings-python`, in Python: [repository](https://github.com/cairn-proofs/oscal-bindings-python),
    [issue tracker](https://github.com/cairn-proofs/oscal-bindings-python/issues).
+2. `oscal-bindings-typescript`, in TypeScript: [repository](https://github.com/cairn-proofs/oscal-bindings-typescript),
+   [issue tracker](https://github.com/cairn-proofs/oscal-bindings-typescript/issues).
 
 Each binding keeps its own expected conformance failures, in its own repository. This store holds no data about the
 state of a binding (see [schema-versioning](openspec/specs/schema-versioning/spec.md)). `npm run binding-links:check`
