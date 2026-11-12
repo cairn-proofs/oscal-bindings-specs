@@ -16,7 +16,7 @@ README refers to it. The groups run in order.
 
 ## 1. Branch and planning commit
 
-- [ ] 1.1 Run `git fetch origin`. Create the feature branch from [#42] with
+- [x] 1.1 Run `git fetch origin`. Create the feature branch from [#42] with
       `gh issue develop 42 --base main`, with the user's approval, and check it out. The branch must
       start at `origin/main`. Commit the planning artifacts of this change as the first commit, with
       `#42` and `#28` in the message. Verify `git merge-base --is-ancestor origin/main HEAD`
@@ -25,18 +25,18 @@ README refers to it. The groups run in order.
 
 ## 2. Sync
 
-- [ ] 2.1 Sync the deltas of this change into `openspec/specs/` without archiving the change. In
+- [x] 2.1 Sync the deltas of this change into `openspec/specs/` without archiving the change. In
       `error-model`, [ERR-001] takes its new text, and [ERR-009], [ERR-010], and [ERR-011] follow
       [ERR-008]. In `element-validation`, [ELV-001] takes its new text, and [ELV-004] follows
       [ELV-003]. Verify `openspec show error-model --type spec` lists six categories in [ERR-001]
       and lists [ERR-009], [ERR-010], and [ERR-011]. Verify
       `openspec show element-validation --type spec` lists [ELV-004], and [ELV-001.02] has its new
       text.
-- [ ] 2.2 In the same commit as task 2.1, set `ERR` `next` to 12 and `ELV` `next` to 5 in
+- [x] 2.2 In the same commit as task 2.1, set `ERR` `next` to 12 and `ELV` `next` to 5 in
       `openspec/spec-ids.yaml`. Run `npm run requirements:write`. Do not change `VERSION`
       (design.md, D7). Verify `npm run spec-ids` passes, and `openspec/requirements.json` has
       entries for [ERR-009], [ERR-010], [ERR-011], and [ELV-004].
-- [ ] 2.3 Commit tasks 2.1 and 2.2 with `#42` and `#28` in the message. Verify `npm run check`
+- [x] 2.3 Commit tasks 2.1 and 2.2 with `#42` and `#28` in the message. Verify `npm run check`
       passes before the commit. `npm run validate` in that check fails a requirement text over 500
       characters.
 
