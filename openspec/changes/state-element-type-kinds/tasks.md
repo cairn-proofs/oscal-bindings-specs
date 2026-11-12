@@ -9,17 +9,17 @@ It does not change `VERSION` (design.md, D4), the ledger, the requirement index,
 Group 2 syncs the delta, so that the scenario that the new case cites has its new text in the main specs. The groups
 run in order.
 ## 1. Branch and planning commit
-- [ ] 1.1 Run `git fetch origin`. Create the feature branch from [#40] with `gh issue develop 40 --base main`, with the
+- [x] 1.1 Run `git fetch origin`. Create the feature branch from [#40] with `gh issue develop 40 --base main`, with the
       user's approval, and check it out. The branch must start at `origin/main`. Commit the planning artifacts of this
       change as the first commit, with `#40` in the message. Verify `git merge-base --is-ancestor origin/main HEAD`
       succeeds, `git branch --show-current` is not `main`, `openspec list` shows only this change, and
       `openspec validate state-element-type-kinds --strict` passes.
 ## 2. Sync
-- [ ] 2.1 Sync the delta of this change into `openspec/specs/element-validation/spec.md`, without archiving the
+- [x] 2.1 Sync the delta of this change into `openspec/specs/element-validation/spec.md`, without archiving the
       change. Verify `openspec show element-validation --type spec` gives the new text of [ELV-002] and [ELV-002.01],
       [ELV-002.02] is unchanged, and `npm run validate` passes. `npm run validate` checks the 500-character limit of
       each requirement text.
-- [ ] 2.2 Commit group 2 with `#40` in the message. Verify `npm run spec-ids` and `npm run requirements:check` pass
+- [x] 2.2 Commit group 2 with `#40` in the message. Verify `npm run spec-ids` and `npm run requirements:check` pass
       with no change to `openspec/spec-ids.yaml` or `openspec/requirements.json`, and `npm run check` passes before
       the commit.
 ## 3. Corpus operation and case
