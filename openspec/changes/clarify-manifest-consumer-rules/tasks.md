@@ -55,13 +55,13 @@ run in order.
 
 ## 4. Version and CONTRIBUTING
 
-- [ ] 4.1 Set `VERSION` to `0.8.0+oscal.1.2.3` (design.md, D5). Do not tag a release. Verify `npm run version:check`
+- [x] 4.1 Set `VERSION` to `0.8.0+oscal.1.2.3` (design.md, D5). Do not tag a release. Verify `npm run version:check`
       and `npm run releases:check` pass.
-- [ ] 4.2 In `CONTRIBUTING.md`, section "Change a requirement", change step 1 of the pull request list. A change syncs
+- [x] 4.2 In `CONTRIBUTING.md`, section "Change a requirement", change step 1 of the pull request list. A change syncs
       the delta specs. A change that needs a version increment sets `VERSION` to the version of the next release, also
       when no release follows at once. Keep step 3 about the release tag. Verify the new step no longer ties `VERSION`
       to a release.
-- [ ] 4.3 Commit group 4 with `#11` in the message. Verify `npm run check` passes before the commit, and
+- [x] 4.3 Commit group 4 with `#11` in the message. Verify `npm run check` passes before the commit, and
       `git status --short` shows only the files of this group and the artifacts of this change.
 
 ## Workflow follow-up
