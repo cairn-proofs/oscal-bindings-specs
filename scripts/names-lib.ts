@@ -491,9 +491,13 @@ export function validateOverrides(data: unknown, schemaPath = "manifest/override
   return schemaErrors(validatorFor(schemaPath), data, "overrides.json");
 }
 
+/** The manifest format versions that the store supports (NAM-022). */
+const SUPPORTED_FORMATS: readonly unknown[] = [1];
+
 /**
  * Checks a manifest against its JSON Schema and against the rules that a JSON Schema cannot express. `schemaBytes`
- * are the bytes of the complete schema that the consumer uses, and `release` is its OSCAL release.
+ * are the bytes of the complete schema that the consumer uses, and `release` is its OSCAL release. The format version
+ * is the first check (NAM-021, NAM-022).
  */
 export function validateManifest(
   data: unknown,
@@ -501,6 +505,13 @@ export function validateManifest(
   release: string,
   schemaPath = "manifest/names.schema.json",
 ): string[] {
+  if (typeof data !== "object" || data === null || Array.isArray(data) || !Object.hasOwn(data, "format")) {
+    return ["[manifest] the manifest is not a JSON object with a format member"];
+  }
+  const format = (data as { format: unknown }).format;
+  if (!SUPPORTED_FORMATS.includes(format)) {
+    return [`[manifest] the format version ${JSON.stringify(format)} is not supported`];
+  }
   const failures = schemaErrors(validatorFor(schemaPath), data, "names.json");
   if (failures.length) return failures;
   const manifest = data as Manifest;

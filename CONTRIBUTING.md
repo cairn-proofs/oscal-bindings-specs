@@ -17,7 +17,8 @@ When a commit adds, renames, or removes a requirement in the main specs, do thes
 
 One pull request carries a change from proposal to archive:
 
-1. Sync the delta specs into the main specs, and set `VERSION` when the change needs a release.
+1. Sync the delta specs into the main specs. When the change needs a version increment, set `VERSION` to the version of
+   the next release. Do this also when no release follows at once.
 2. Archive the change in the same pull request. Steps that can run only after the merge, such as the release tag and
    follow-up issues in binding repos, go in the `## Workflow follow-up` section of `tasks.md`, not in tracked tasks.
 3. After the merge, tag the release on `main`. Record the archive `sha256` in the release notes.
