@@ -42,13 +42,13 @@ README refers to it. The groups run in order.
 
 ## 3. Corpus README
 
-- [ ] 3.1 In `corpus/1.2.3/README.md`, Cases, item 5.2, replace "The categories are the taxonomy of
+- [x] 3.1 In `corpus/1.2.3/README.md`, Cases, item 5.2, replace "The categories are the taxonomy of
       the error-model capability." State that the list holds each category of the error-model
       capability that a portable case can reach. Name the limit-exceeded category as a category
       that the list does not hold, because only a documented limit of a binding reaches it
       (design.md, D6). Verify the `categories`
       list of `corpus/1.2.3/cases.json` is unchanged and `npm run corpus:check` passes.
-- [ ] 3.2 Commit group 3 with `#42` in the message. Verify `npm run check` passes before the commit,
+- [x] 3.2 Commit group 3 with `#42` in the message. Verify `npm run check` passes before the commit,
       and `git status --short` shows only the corpus README and the artifacts of this change.
 
 ## Workflow follow-up
