@@ -15,7 +15,7 @@ the checker before group 4 uses it in `cases.json`. The groups run in order.
 
 ## 1. Branch and planning commit
 
-- [ ] 1.1 Create the feature branch from [#43] with `gh issue develop 43 --base main`, with the user's approval, and
+- [x] 1.1 Create the feature branch from [#43] with `gh issue develop 43 --base main`, with the user's approval, and
       check it out. Commit the planning artifacts of this change as the first commit, with `#43` in the message.
       Commit the `README.md` entry for `oscal-bindings-typescript` in Known implementations as a separate commit.
       Verify `git branch --show-current` is not `main`, `openspec list` shows only this change, and
@@ -23,14 +23,14 @@ the checker before group 4 uses it in `cases.json`. The groups run in order.
 
 ## 2. Sync
 
-- [ ] 2.1 Sync the delta of this change into `openspec/specs/`, without archiving the change. In `document-facade`,
+- [x] 2.1 Sync the delta of this change into `openspec/specs/`, without archiving the change. In `document-facade`,
       [FAC-007] follows [FAC-006]. Verify `openspec show document-facade --type spec` lists [FAC-007], [FAC-007.01] to
       [FAC-007.03]. Verify the requirement texts of [FAC-004] to [FAC-006] contain no "calendar date", "start date",
       or "end date". The headings of [FAC-005.02], [FAC-006], and [FAC-006.01] keep their words.
-- [ ] 2.2 In the same commit as task 2.1, set `FAC` `next` to 8 in `openspec/spec-ids.yaml`, and run
+- [x] 2.2 In the same commit as task 2.1, set `FAC` `next` to 8 in `openspec/spec-ids.yaml`, and run
       `npm run requirements:write`. Do not change `VERSION` (design.md, D6). Verify `npm run spec-ids` passes, and
       `openspec/requirements.json` has an entry for [FAC-007].
-- [ ] 2.3 Commit tasks 2.1 and 2.2 with `#43` in the message. Verify `npm run check` passes before the commit.
+- [x] 2.3 Commit tasks 2.1 and 2.2 with `#43` in the message. Verify `npm run check` passes before the commit.
 
 ## 3. Checker
 
