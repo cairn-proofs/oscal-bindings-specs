@@ -37,22 +37,22 @@ groups run in order.
 
 ## 3. Corpus
 
-- [ ] 3.1 In `scripts/check-corpus.ts`, make check 6 for a `parse-file` case depend on its category,
+- [x] 3.1 In `scripts/check-corpus.ts`, make check 6 for a `parse-file` case depend on its category,
       as design.md D4 states. A `not-found` case fails when its input path exists. A `read-error`
       case fails when its input path is not a directory. Any other category fails. Update the
       header comment of check 6 if its text no longer fits. Verify `npm run corpus:check` fails
       when the `parse-file/missing-file` case has the input `documents/valid`, and revert the
       mutation.
-- [ ] 3.2 In `corpus/1.2.3/cases.json`, add `read-error` to the end of `categories`. Add the case
+- [x] 3.2 In `corpus/1.2.3/cases.json`, add `read-error` to the end of `categories`. Add the case
       `parse-file/directory` after `parse-file/missing-file`, with the operation `parse-file`, the
       input `documents/valid`, the category `read-error`, and the requirements `ERR-012.01`
       (design.md, D4). Verify `npm run corpus:check` passes. Verify it fails when the new case has
       the input `documents/does-not-exist`, and revert the mutation.
-- [ ] 3.3 In `corpus/1.2.3/README.md`, Operations, item 4, replace "The path does not exist." State
+- [x] 3.3 In `corpus/1.2.3/README.md`, Operations, item 4, replace "The path does not exist." State
       that the path does not exist for the not-found category, and that the path is a directory for
       the read-error category. Keep the rule that the parser reports `expected-category` and names
       the path. Verify the text matches check 6 of task 3.1.
-- [ ] 3.4 Commit group 3 with `#41` in the message. Verify `npm run check` passes before the commit,
+- [x] 3.4 Commit group 3 with `#41` in the message. Verify `npm run check` passes before the commit,
       and `git status --short` shows no other change of this group.
 
 ## Workflow follow-up
