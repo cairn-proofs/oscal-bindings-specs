@@ -21,6 +21,7 @@ context: |
   User time and tokens are constrained resources. Do not waste them on trivial matters. If you're inclined to qualify
    a matter as a nit, minor, small, or otherwise inconsenquential, then either justify raising it or drop the matter.    
   Scenarios in a requirement can't be renamed in place or removed. Such changes must be made manually in a post-archive step.
+  Place new requirements to minimize inter-spec dependencies when practical and appropriate.
 # Per-artifact rules (optional)
 rules:
   specs:
