@@ -16,7 +16,7 @@ groups run in order.
 
 ## 1. Branch and planning commit
 
-- [ ] 1.1 Run `git fetch origin`. Create the feature branch from [#41] with
+- [x] 1.1 Run `git fetch origin`. Create the feature branch from [#41] with
       `gh issue develop 41 --base main`, with the user's approval, and check it out. The branch must
       start at `origin/main`. Commit the planning artifacts of this change as the first commit, with
       `#41` in the message. Verify `git merge-base --is-ancestor origin/main HEAD` succeeds,
@@ -25,14 +25,14 @@ groups run in order.
 
 ## 2. Sync
 
-- [ ] 2.1 Sync the delta of this change into `openspec/specs/error-model/spec.md` without archiving
+- [x] 2.1 Sync the delta of this change into `openspec/specs/error-model/spec.md` without archiving
       the change. [ERR-001] takes its new text, and [ERR-012] follows [ERR-011]. Verify
       `openspec show error-model --type spec` lists seven categories in [ERR-001] and lists
       [ERR-012] with three scenarios.
-- [ ] 2.2 In the same commit as task 2.1, set `ERR` `next` to 13 in `openspec/spec-ids.yaml`. Run
+- [x] 2.2 In the same commit as task 2.1, set `ERR` `next` to 13 in `openspec/spec-ids.yaml`. Run
       `npm run requirements:write`. Do not change `VERSION` (design.md, D5). Verify
       `npm run spec-ids` passes, and `openspec/requirements.json` has an entry for [ERR-012].
-- [ ] 2.3 Commit tasks 2.1 and 2.2 with `#41` in the message. Verify `npm run check` passes before
+- [x] 2.3 Commit tasks 2.1 and 2.2 with `#41` in the message. Verify `npm run check` passes before
       the commit.
 
 ## 3. Corpus

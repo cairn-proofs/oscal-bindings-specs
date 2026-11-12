@@ -2,7 +2,7 @@
 
 ### Requirement: ERR-001 Error situations map to a fixed taxonomy
 
-The implementation SHALL distinguish these seven error categories. Each category is the same in
+The implementation SHALL distinguish seven error categories. Each category is the same in
 each language, whether the language surfaces an error as an exception, a returned result, or an
 error value:
 
