@@ -76,8 +76,10 @@ change can name a binding issue.
 3. A binding operation that the contract does not define follows
    [CONTRIBUTING.md](CONTRIBUTING.md#add-an-operation-to-a-binding). To promote an operation that two bindings share,
    open an issue in this store ([CONTRIBUTING.md](CONTRIBUTING.md#promote-a-binding-local-operation)).
-4. After a store release, open a pin-move issue in the tracker of each binding. The binding moves its pin and applies
-   the new release. Put this step in `## Workflow follow-up` of the change's `tasks.md`, not in a tracked task.
+4. After a store release, each binding gets a pin-move issue in its tracker. The binding moves its pin and applies the
+   new release. A binding that calls `.github/workflows/pin-move-check.yml` gets the issue from that workflow. For any
+   other binding, open it by hand. Put this step in `## Workflow follow-up` of the change's `tasks.md`, not in a
+   tracked task. The pin-move issue does not replace the binding issues that a change opens for its requirements.
 
 The release steps are in [README.md, Release](README.md#release).
 

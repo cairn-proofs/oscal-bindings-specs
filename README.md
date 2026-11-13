@@ -36,6 +36,11 @@ This repo is an [OpenSpec store](https://github.com/Fission-AI/OpenSpec/blob/mai
 
 A reference is planning context only. Builds and conformance runs use the tagged archive, pinned by its `sha256`.
 
+To get an issue when a newer release is published, a binding calls the reusable workflow
+[`pin-move-check.yml`](.github/workflows/pin-move-check.yml) on a schedule and passes the version that it pins. The
+workflow opens one issue, "Move the spec pin to v<version>", in the binding's tracker. It runs with the binding's own
+`GITHUB_TOKEN` and needs no secret. The header of the workflow file shows the caller.
+
 ## Known implementations
 
 1. `oscal-bindings-python`, in Python: [repository](https://github.com/cairn-proofs/oscal-bindings-python),
@@ -113,6 +118,8 @@ Open the `.tc.json` file there with the Threat Composer VS Code extension or web
 3. CI runs `npm run check`, builds the archive with `npm run archive`, and attaches the archive and `SHA256SUMS` to a
    draft GitHub release. CI fails when the tag is not on `main` or does not match `VERSION`.
 4. Review the draft and publish it.
+5. Each binding that calls `pin-move-check.yml` gets its pin-move issue on its next scheduled run. Open the issue by
+   hand for a binding that does not call it.
 
 ## Verify a release
 
