@@ -43,18 +43,18 @@ scenarios. Group 3 comes after group 2, because both edit the `input` and the `i
 
 ## 2. The facade operation
 
-- [ ] 2.1 In `scripts/check-corpus.ts`, add `facade` to `OPERATIONS`. Apply the facade checks of
+- [x] 2.1 In `scripts/check-corpus.ts`, add `facade` to `OPERATIONS`. Apply the facade checks of
       design.md, D7. Do not add a `facade` case with `expected-category` to the `used` set, and do not
       require its input to exist, as for `parse-file`. Fail `input-form` `path` on a case of another
       operation. Add the checks to the header comment of the script. Verify `npm run typecheck` and
       `npm run corpus:check` pass with the unchanged `cases.json`.
-- [ ] 2.2 In `corpus/1.2.3/README.md`, add `facade` to Operations, with the three constructions and
+- [x] 2.2 In `corpus/1.2.3/README.md`, add `facade` to Operations, with the three constructions and
       the five checks of design.md, D3, and the not-found result. Add the value `path` to
       `input-form`. Verify the README states each check of design.md, D3.
-- [ ] 2.3 Add the nine facade cases of design.md, D8, to `corpus/1.2.3/cases.json`, after the
+- [x] 2.3 Add the nine facade cases of design.md, D8, to `corpus/1.2.3/cases.json`, after the
       `assessment-period` cases, with the `requirements` identifiers of D8. Verify `npm run
       corpus:check` passes.
-- [ ] 2.4 Verify that each facade check fails a case that breaks it. On the working copy, apply these
+- [x] 2.4 Verify that each facade check fails a case that breaks it. On the working copy, apply these
       mutations one at a time, and restore after each:
       1. Set `expected` of `facade/catalog` to `expected/profile.json`.
       2. Set `document-type` of `facade/catalog` to `profile`.

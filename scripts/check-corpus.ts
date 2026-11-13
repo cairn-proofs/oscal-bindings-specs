@@ -33,6 +33,12 @@
  *     no identifier, or a key with a valid identifier. Another operation has no `arguments` or `expected-uuid` field.
  * 15. The BMB-004 namespace is the UUID version 5 of its URL in the URL namespace, the text of BMB-004 in the main spec
  *     contains the namespace, and docs/back-matter-keys.md contains the URL and the namespace.
+ * 16. A facade case has an `input-form` that is absent, `bytes`, or `path`, and only a facade case has `path`. It has
+ *     exactly one of `expected` and `expected-category`. With `expected`, the input is valid against the schema, its only
+ *     root key is `document-type`, `expected` is the expected file of a round-trip case, and `expected` is the canonical
+ *     form of the input, so the body, the metadata, the OSCAL version, and the identifier that the facade reads come
+ *     from a known document. With `expected-category`, the category is not-found, the form is `path`, and the input
+ *     does not exist.
  *
  *   npm run corpus:check           check the corpus
  *   npm run corpus:write           regenerate each expected file, then check
@@ -73,6 +79,7 @@ const OPERATIONS = [
   "yaml-parse",
   "element-types",
   "build-resource",
+  "facade",
 ];
 const ID = /^[A-Z]{2,5}-\d{3}(?:\.\d{2})?$/;
 
@@ -347,13 +354,17 @@ function main(write: boolean): number {
       continue;
     }
     const inputPath = path.join(ROOT, c.input);
-    if (c.operation !== "parse-file") {
+    if (c.operation !== "parse-file" && !(c.operation === "facade" && category !== undefined)) {
       used.add(c.input);
       if (!fs.existsSync(inputPath)) {
         fail(c.id, `input ${c.input} does not exist`);
         continue;
       }
     }
+
+    const form = c["input-form"];
+    if (form !== undefined && !(form === "bytes" || (form === "path" && c.operation === "facade")))
+      fail(c.id, `input-form "${form}" is not valid for a ${c.operation} case`);
 
     switch (c.operation) {
       case "round-trip": {
@@ -424,6 +435,31 @@ function main(write: boolean): number {
             fail(c.id, `${c.input} is not a directory, so it cannot test read-error`);
         } else fail(c.id, "a parse-file case has the category not-found or read-error");
         break;
+      case "facade": {
+        if ((category === undefined) === (c.expected === undefined)) {
+          fail(c.id, "a facade case needs exactly one of expected and expected-category");
+          break;
+        }
+        if (category !== undefined) {
+          if (category !== "not-found") fail(c.id, "a facade case with expected-category has the category not-found");
+          if (form !== "path") fail(c.id, 'a facade case with expected-category has input-form "path"');
+          if (fs.existsSync(inputPath)) fail(c.id, `${c.input} exists, so it cannot test not-found`);
+          break;
+        }
+        const expectedFile = c.expected as string;
+        used.add(expectedFile);
+        const text = fs.readFileSync(inputPath, "utf8");
+        const doc: unknown = JSON.parse(text);
+        if (!validateDocument(doc)) fail(c.id, `input is not valid: ${ajv.errorsText(validateDocument.errors)}`);
+        const rootKeys = doc !== null && typeof doc === "object" ? Object.keys(doc) : [];
+        if (rootKeys.length !== 1 || rootKeys[0] !== c["document-type"])
+          fail(c.id, `the root keys of the input are not only document-type "${c["document-type"]}"`);
+        if (!jsonExpected.has(expectedFile)) fail(c.id, `${expectedFile} is not the expected file of a round-trip case`);
+        const expectedPath = path.join(ROOT, expectedFile);
+        if (!fs.existsSync(expectedPath) || fs.readFileSync(expectedPath, "utf8") !== canonicalize(text))
+          fail(c.id, `${expectedFile} is not the canonical form of the input`);
+        break;
+      }
       case "assessment-period": {
         const doc = JSON.parse(fs.readFileSync(inputPath, "utf8")) as Record<string, unknown>;
         const supported = Object.hasOwn(doc, "assessment-plan") || Object.hasOwn(doc, "assessment-results");

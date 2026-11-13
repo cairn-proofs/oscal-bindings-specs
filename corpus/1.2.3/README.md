@@ -42,7 +42,8 @@ Each case has these fields:
 7. Optional fields:
    1. `document-type`: the root key of the document type, for a round trip or a typed parse.
    2. `element-type`: the element-type name, for element validation.
-   3. `input-form`: `bytes` when the input must reach the binding as raw bytes, not as text.
+   3. `input-form`: `bytes` when the input must reach the binding as raw bytes, not as text. For a `facade` case,
+      `path` when the facade must be built from the input path.
    4. `expected-min-failures`: the lowest number of structured failure entries that the parse error carries.
    5. `expected-max-failures`: the highest number of structured failure entries that the parse error carries. It
       applies only to a `parse` case. Its value is an integer of 1 or more, and not less than `expected-min-failures`.
@@ -83,6 +84,21 @@ Each case has these fields:
    and in the same order.
 10. `build-resource`: build a resource with `arguments`. Then compare the `uuid` of the resource with `expected-uuid`,
     or check that the builder reports `expected-category`.
+11. `facade`: build the document facade from the input, as `input-form` states:
+    1. `input-form` is absent: parse the input with the generic parser, and wrap the result in the facade.
+    2. `input-form` is `bytes`: build the facade from the raw bytes of the input.
+    3. `input-form` is `path`: build the facade from the input path.
+
+    With `expected`, read the wrapper, the body, the metadata, the OSCAL version, and the body identifier through the
+    facade. Let `B` be the value of the `document-type` key of `expected`. These five checks must pass:
+    1. The canonical form of the wrapper is the same bytes as `expected`.
+    2. The canonical form of the body is the canonical form of `B`.
+    3. The canonical form of the metadata is the canonical form of the `metadata` of `B`.
+    4. The OSCAL version equals the `oscal-version` of that metadata, as a string.
+    5. The body identifier equals the `uuid` of `B`, as a string.
+
+    With `expected-category`, the category is `not-found`, the form is `path`, and the input path does not exist. The
+    facade must report the category and name the path, as `parse-file` does.
 
 For each `round-trip` input, the non-raising validity check must return true. The check does not apply to a
 `yaml-round-trip` input.

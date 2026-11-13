@@ -296,6 +296,80 @@
       "notes": "Both bounds come from the second result. A binding that keeps six fraction digits sees equal instants."
     },
     {
+      "id": "facade/catalog",
+      "operation": "facade",
+      "input": "documents/valid/catalog.json",
+      "document-type": "catalog",
+      "expected": "expected/catalog.json",
+      "requirements": ["FAC-002.01", "FAC-002.02", "FAC-001.01"]
+    },
+    {
+      "id": "facade/profile",
+      "operation": "facade",
+      "input": "documents/valid/profile.json",
+      "input-form": "bytes",
+      "document-type": "profile",
+      "expected": "expected/profile.json",
+      "requirements": ["FAC-002.01", "FAC-002.02", "FAC-003.01"]
+    },
+    {
+      "id": "facade/component-definition",
+      "operation": "facade",
+      "input": "documents/valid/component-definition.json",
+      "input-form": "path",
+      "document-type": "component-definition",
+      "expected": "expected/component-definition.json",
+      "requirements": ["FAC-002.01", "FAC-002.02", "FAC-003.02"]
+    },
+    {
+      "id": "facade/system-security-plan",
+      "operation": "facade",
+      "input": "documents/valid/system-security-plan.json",
+      "document-type": "system-security-plan",
+      "expected": "expected/system-security-plan.json",
+      "requirements": ["FAC-002.01", "FAC-002.02", "FAC-001"]
+    },
+    {
+      "id": "facade/assessment-plan",
+      "operation": "facade",
+      "input": "documents/valid/assessment-plan.json",
+      "document-type": "assessment-plan",
+      "expected": "expected/assessment-plan.json",
+      "requirements": ["FAC-002.01", "FAC-002.02", "FAC-001"]
+    },
+    {
+      "id": "facade/assessment-results",
+      "operation": "facade",
+      "input": "documents/valid/assessment-results.json",
+      "document-type": "assessment-results",
+      "expected": "expected/assessment-results.json",
+      "requirements": ["FAC-002.01", "FAC-002.02", "FAC-001"]
+    },
+    {
+      "id": "facade/plan-of-action-and-milestones",
+      "operation": "facade",
+      "input": "documents/valid/plan-of-action-and-milestones.json",
+      "document-type": "plan-of-action-and-milestones",
+      "expected": "expected/plan-of-action-and-milestones.json",
+      "requirements": ["FAC-002.01", "FAC-002.02", "FAC-001"]
+    },
+    {
+      "id": "facade/mapping-collection",
+      "operation": "facade",
+      "input": "documents/valid/mapping-collection.json",
+      "document-type": "mapping-collection",
+      "expected": "expected/mapping-collection.json",
+      "requirements": ["FAC-002.01", "FAC-002.02", "FAC-001"]
+    },
+    {
+      "id": "facade/missing-file",
+      "operation": "facade",
+      "input": "documents/does-not-exist.json",
+      "input-form": "path",
+      "expected-category": "not-found",
+      "requirements": ["FAC-003.02"]
+    },
+    {
       "id": "element/observation-valid",
       "operation": "validate-element",
       "input": "elements/observation-valid.json",
