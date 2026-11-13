@@ -17,6 +17,11 @@
       "title": "Build a back-matter resource value"
     },
     {
+      "id": "BMB-004",
+      "capability": "backmatter-builders",
+      "title": "A key gives the resource identifier"
+    },
+    {
       "id": "ELV-001",
       "capability": "element-validation",
       "title": "Validate a standalone element against a named type"
@@ -95,6 +100,11 @@
       "id": "ERR-012",
       "capability": "error-model",
       "title": "A path that cannot be read is a read error"
+    },
+    {
+      "id": "ERR-013",
+      "capability": "error-model",
+      "title": "Invalid input to a back-matter builder is a builder error"
     },
     {
       "id": "FAC-001",

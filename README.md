@@ -17,7 +17,7 @@ This repo is an [OpenSpec store](https://github.com/Fission-AI/OpenSpec/blob/mai
    schema pointers of each type. `overrides.json` is the hand-edited naming input. `manifest/*.schema.json` are the
    JSON Schemas of both files (see [manifest/1.2.3/README.md](manifest/1.2.3/README.md)).
 4. `corpus/<release>/`: the conformance corpus.
-5. `docs/`: shared rule documents that the specs cite, such as
+5. `docs/`: shared documents that the specs cite, such as
    [canonical JSON for conformance comparison](docs/canonical-json.md).
 6. `scripts/`: the store tooling.
 

@@ -27,6 +27,12 @@
  *     manifest, in code-point order. No two types give the same name. An element-types case has no input, and its
  *     expected file is the canonical form of the list. A validate-element case with `expected-valid` names an element
  *     type in the list, and an unknown-element-type case names one that is not in the list.
+ * 14. A build-resource case has `arguments` and no input. It has exactly one of `expected-uuid` and `expected-category`.
+ *     With `expected-uuid`, the key is not empty, there is no identifier, and the UUID version 5 of the key (BMB-004)
+ *     equals the value. With `expected-category`, the category is builder-error, and the one fault is an empty key with
+ *     no identifier, or a key with a valid identifier. Another operation has no `arguments` or `expected-uuid` field.
+ * 15. The BMB-004 namespace is the UUID version 5 of its URL in the URL namespace, the text of BMB-004 in the main spec
+ *     contains the namespace, and docs/back-matter-keys.md contains the URL and the namespace.
  *
  *   npm run corpus:check           check the corpus
  *   npm run corpus:write           regenerate each expected file, then check
@@ -66,6 +72,7 @@ const OPERATIONS = [
   "yaml-round-trip",
   "yaml-parse",
   "element-types",
+  "build-resource",
 ];
 const ID = /^[A-Z]{2,5}-\d{3}(?:\.\d{2})?$/;
 
@@ -82,11 +89,30 @@ interface Case {
   "expected-min-failures"?: number;
   "expected-max-failures"?: number;
   "expected-period"?: { start: string; end: string };
+  arguments?: { key: string; title?: string; identifier?: string };
+  "expected-uuid"?: string;
   requirements: string[];
   source?: { repository: string; commit: string; path: string; sha256: string };
   notes?: string;
 }
 
+// BMB-004 and docs/back-matter-keys.md: the namespace of a derived resource identifier, and the URL that it comes from.
+const KEY_NAMESPACE = "3942257f-e1cf-5e06-9c6f-eeb97ecabe77";
+const KEY_NAMESPACE_URL = "https://oscalregistry.org/ns/oscal/back-matter-resource";
+const URL_NAMESPACE = "6ba7b811-9dad-11d1-80b4-00c04fd430c8";
+const UUID_V4_OR_V5 = /^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[45][0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$/;
+/** The UUID version 5 of RFC 9562, Section 5.5: SHA-1 of the namespace bytes and the UTF-8 bytes of the name. */
+function uuidV5(namespace: string, name: string): string {
+  const digest = createHash("sha1")
+    .update(Buffer.from(namespace.replaceAll("-", ""), "hex"))
+    .update(Buffer.from(name, "utf8"))
+    .digest();
+  const bytes = digest.subarray(0, 16);
+  bytes[6] = (bytes[6] & 0x0f) | 0x50;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+  const hex = bytes.toString("hex");
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
 const sha256 = (bytes: Buffer) => createHash("sha256").update(bytes).digest("hex");
 
 interface Instant {
@@ -226,6 +252,15 @@ function main(write: boolean): number {
   if (index["oscal-release"] !== RELEASE) fail("cases.json", `oscal-release is not ${RELEASE}`);
   if (Object.hasOwn(index, "defect-twins"))
     fail("cases.json", "the index has a defect-twins field. Each binding keeps its own expected failures (VER-006).");
+  // The namespace of BMB-004 (check 15).
+  if (uuidV5(URL_NAMESPACE, KEY_NAMESPACE_URL) !== KEY_NAMESPACE)
+    fail("BMB-004", `the namespace ${KEY_NAMESPACE} is not the UUID version 5 of ${KEY_NAMESPACE_URL}`);
+  const backMatterSpec = fs.readFileSync("openspec/specs/backmatter-builders/spec.md", "utf8");
+  const bmb004 = /^### Requirement: BMB-004 [\s\S]*?(?=^### |(?![\s\S]))/m.exec(backMatterSpec)?.[0] ?? "";
+  if (!bmb004.includes(KEY_NAMESPACE)) fail("BMB-004", `the text of BMB-004 does not contain the namespace ${KEY_NAMESPACE}`);
+  const keysDocument = fs.readFileSync("docs/back-matter-keys.md", "utf8");
+  for (const value of [KEY_NAMESPACE_URL, KEY_NAMESPACE])
+    if (!keysDocument.includes(value)) fail("docs/back-matter-keys.md", `the document does not contain ${value}`);
   const ids = specIdentifiers();
   const jsonExpected = new Set(index.cases.filter((c) => c.operation === "round-trip").map((c) => c.expected));
   const seen = new Set<string>();
@@ -254,6 +289,41 @@ function main(write: boolean): number {
     if (category !== undefined) {
       if (!index.categories.includes(category)) fail(c.id, `unknown category "${category}"`);
       covered.add(category);
+    }
+    if (c.operation !== "build-resource") {
+      if (c.arguments !== undefined) fail(c.id, "only a build-resource case has arguments");
+      if (c["expected-uuid"] !== undefined) fail(c.id, "only a build-resource case has expected-uuid");
+    }
+    if (c.operation === "build-resource") {
+      if (c.input !== undefined) fail(c.id, "a build-resource case has no input");
+      const args = c.arguments;
+      if (args === null || typeof args !== "object" || Array.isArray(args) || typeof args.key !== "string") {
+        fail(c.id, "a build-resource case needs arguments with a string key");
+        continue;
+      }
+      for (const name of Object.keys(args))
+        if (!["key", "title", "identifier"].includes(name)) fail(c.id, `arguments has the unknown field "${name}"`);
+      for (const name of ["title", "identifier"] as const)
+        if (args[name] !== undefined && typeof args[name] !== "string") fail(c.id, `arguments.${name} is not a string`);
+      const expectedUuid = c["expected-uuid"];
+      if ((expectedUuid === undefined) === (category === undefined)) {
+        fail(c.id, "a build-resource case needs exactly one of expected-uuid and expected-category");
+        continue;
+      }
+      if (expectedUuid !== undefined) {
+        if (args.key === "") fail(c.id, "the key is empty, so the builder reports an error");
+        if (args.identifier !== undefined) fail(c.id, "the case has a key and an identifier, so the builder reports an error");
+        else if (args.key !== "" && uuidV5(KEY_NAMESPACE, args.key) !== expectedUuid)
+          fail(c.id, `expected-uuid is ${expectedUuid}, but BMB-004 gives ${uuidV5(KEY_NAMESPACE, args.key)}`);
+      } else {
+        if (category !== "builder-error") fail(c.id, "a build-resource case has the category builder-error");
+        const emptyKey = args.key === "" && args.identifier === undefined;
+        const keyAndIdentifier =
+          args.key !== "" && args.identifier !== undefined && UUID_V4_OR_V5.test(args.identifier);
+        if (emptyKey === keyAndIdentifier)
+          fail(c.id, "the case needs one fault: an empty key with no identifier, or a key with a valid identifier");
+      }
+      continue;
     }
     if (c.operation === "element-types") {
       if (c.input !== undefined) fail(c.id, "an element-types case has no input");
