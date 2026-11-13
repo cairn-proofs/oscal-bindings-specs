@@ -232,7 +232,7 @@ builder-error category of [ERR-001]. It is not a parse error.
 
 #### Scenario: ERR-013.01 Invalid hash algorithm maps to builder error
 
-- **WHEN** the caller builds a hash with an algorithm that OSCAL does not define
+- **WHEN** the caller builds a hash with an algorithm that the schema rejects
 - **THEN** the binding reports the builder-error category
 
 #### Scenario: ERR-013.02 Builder error is not a parse error

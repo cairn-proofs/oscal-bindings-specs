@@ -12,7 +12,9 @@ identifier ([Back-matter resource keys](../../../docs/back-matter-keys.md)).
 
 The implementation SHALL provide a hash builder that takes a digest value and an algorithm and returns a validated hash
 element. The algorithm MAY be given as the named algorithm or as its string form, and SHALL default to SHA-256 when the
-caller omits it. Invalid input MUST report a validation error.
+caller omits it. The builder SHALL accept each algorithm that the schema accepts, also one that is not a named
+algorithm. Input is invalid when the schema rejects the hash element that it gives. Invalid input MUST report a
+validation error.
 
 #### Scenario: BMB-001.01 Build a hash with the default algorithm
 
@@ -26,8 +28,13 @@ caller omits it. Invalid input MUST report a validation error.
 
 #### Scenario: BMB-001.03 Invalid algorithm reports a validation error
 
-- **WHEN** the caller passes an algorithm value that OSCAL does not define
+- **WHEN** the caller passes an algorithm string that the schema rejects, for example ` SHA-256` with a leading space
 - **THEN** the builder reports a validation error
+
+#### Scenario: BMB-001.04 An algorithm that is not a named algorithm is accepted
+
+- **WHEN** the caller builds a hash and passes the algorithm string `SHA-999`
+- **THEN** the builder returns a hash element whose algorithm is `SHA-999`
 
 ### Requirement: BMB-002 Build a back-matter rlink value
 
