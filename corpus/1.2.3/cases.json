@@ -240,7 +240,9 @@
       "operation": "parse",
       "input": "documents/invalid/closed-enum-out-of-set.json",
       "expected-category": "parse-error",
-      "requirements": ["PRS-009.01"]
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-009.01", "PRS-014.01"]
     },
     {
       "id": "parse-typed/wrong-document-type",

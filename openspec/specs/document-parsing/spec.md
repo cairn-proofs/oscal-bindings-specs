@@ -267,3 +267,15 @@ The root key of a document type is the body field of its wrapper ([MDL-002]). A 
 - **WHEN** the caller parses an object whose only key is `not-an-oscal-document`
 - **THEN** the parse error states that the input names no OSCAL document type, and it carries no failure of any
   document type
+### Requirement: PRS-014 A distinguishing property selects the nested-union branch of parse failures
+A parse error of [PRS-001] SHALL meet this condition when its document root names exactly one
+ document type. The condition also applies to an operation that the contract defines through a
+parse operation.
+1. If an object holds the distinguishing property of exactly one nested-union branch, that object
+   selects the branch. Each structured entry for a failure of the object is a failure of that
+   branch ([NAM-020]).
+#### Scenario: PRS-014.01 Invalid closed enum in a selected parameter branch
+- **WHEN** the caller parses a catalog in which a parameter selection sets `how-many` to
+  `seven`
+- **THEN** the parse error carries exactly one structured entry, and the entry identifies that
+  parameter selection

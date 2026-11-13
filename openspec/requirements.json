@@ -417,6 +417,11 @@
       "title": "The root key selects the document type of the parse failures"
     },
     {
+      "id": "PRS-014",
+      "capability": "document-parsing",
+      "title": "A distinguishing property selects the nested-union branch of parse failures"
+    },
+    {
       "id": "SER-001",
       "capability": "serialization",
       "title": "Serialization emits OSCAL property keys"
