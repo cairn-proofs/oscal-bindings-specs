@@ -1,0 +1,80 @@
+name: Pin-move check
+# Reusable workflow for a binding. The caller passes the store version that it pins. When the latest published release
+# of the store is a different version, the workflow opens one issue in the calling repository, "Move the spec pin to
+# v<version>". When an issue with that title exists, open or closed, it does nothing. The issue is an umbrella for the
+# pin move. It does not replace the issues that each contract change opens in the binding.
+#
+# It runs with the caller's GITHUB_TOKEN. The store is public, so the caller needs no secret. The store reads nothing
+# from the binding: the caller supplies its pin (VER-006). Call it from a scheduled workflow, and pin the ref to a full
+# commit SHA:
+#
+#   on:
+#     schedule:
+#       - cron: "23 7 * * *"
+#     workflow_dispatch:
+#   permissions:
+#     contents: read
+#     issues: write
+#   jobs:
+#     pin-move-check:
+#       uses: cairn-proofs/oscal-bindings-specs/.github/workflows/pin-move-check.yml@<commit-sha>
+#       with:
+#         pinned-version: "0.7.0+oscal.1.2.3"
+on:
+  workflow_call:
+    inputs:
+      pinned-version:
+        description: "The store version that the binding pins, without the v prefix, for example 0.7.0+oscal.1.2.3."
+        required: true
+        type: string
+permissions:
+  contents: read
+  issues: write
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # One run at a time in each calling repository, so that two runs cannot both open the issue.
+    concurrency:
+      group: pin-move-check-${{ github.repository }}
+      cancel-in-progress: false
+    steps:
+      - name: Open a pin-move issue when a newer release exists
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PINNED: ${{ inputs.pinned-version }}
+          STORE: cairn-proofs/oscal-bindings-specs
+        run: |
+          set -euo pipefail
+          if ! printf '%s' "$PINNED" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+\+oscal\.[0-9]+(\.[0-9]+)*$'; then
+            echo "::error::pinned-version '$PINNED' is not a store version, for example 0.7.0+oscal.1.2.3."
+            exit 1
+          fi
+          # The latest release excludes drafts and prereleases.
+          tag="$(gh release view --repo "$STORE" --json tagName --jq .tagName)"
+          url="$(gh release view "$tag" --repo "$STORE" --json url --jq .url)"
+          if [ "$tag" = "v$PINNED" ]; then
+            echo "The pin $PINNED is the latest release."
+            exit 0
+          fi
+          title="Move the spec pin to $tag"
+          # A list, not a search: the search index can lag behind an issue that was just opened.
+          existing="$(gh issue list --repo "$GITHUB_REPOSITORY" --state all --limit 5000 --json number,title \
+            | jq -r --arg t "$title" '[.[] | select(.title == $t) | .number] | first // empty')"
+          if [ -n "$existing" ]; then
+            echo "Issue #$existing already tracks $tag."
+            exit 0
+          fi
+          sums="$(gh release download "$tag" --repo "$STORE" --pattern SHA256SUMS --output -)"
+          # The backticks in the issue text are Markdown, not command substitutions.
+          # shellcheck disable=SC2016
+          {
+            printf 'The store published [%s](%s). This repository pins `%s`.\n\n' "$tag" "$url" "$PINNED"
+            printf 'Pin the archive by its sha256:\n\n```\n%s\n```\n\n' "$sums"
+            printf 'Verify the archive before you move the pin: '
+            printf 'https://github.com/%s#verify-a-release\n\n' "$STORE"
+            printf 'Read the release notes of each release after `%s`, up to %s. ' "$PINNED" "$tag"
+            printf 'Their upgrade notes state what a binding must change. A contract change can also have its own '
+            printf 'issue in this tracker. This issue tracks the pin move.\n'
+          } > body.md
+          gh issue create --repo "$GITHUB_REPOSITORY" --title "$title" --body-file body.md
