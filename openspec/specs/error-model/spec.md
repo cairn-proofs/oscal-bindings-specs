@@ -21,8 +21,7 @@ language, whether the error is an exception, a returned result, or an error valu
 7. Read error.
 8. Builder error.
 
-Each error situation MUST map to exactly one category. The error is then also in each ancestor of
-that category, as [ERR-009] states.
+Each error situation MUST map to exactly one category.
 
 #### Scenario: ERR-001.08 Same category in each surfacing style
 

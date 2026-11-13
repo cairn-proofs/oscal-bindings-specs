@@ -50,6 +50,13 @@ rules:
     - >-
       Never reuse an identifier. Cite a requirement as `[PREFIX-NNN]` and a scenario as `[PREFIX-NNN.MM]`.
       `npm run spec-ids` checks the identifier rules on the main specs.
+    - >-
+      The requirements of a spec are in reading order. Identifier order does not matter. A requirement, with its
+      scenarios, cites only requirements above it in its spec file. A requirement uses a term only below the
+      requirement that defines it. A rule that a later requirement makes an exception to states that the exception
+      exists, and cites a requirement above it for the condition. `npm run spec-ids` checks the citations on the main
+      specs. A delta does not get this check, because its order is fixed at the sync. The sync can move a requirement to meet
+      the rule.
 
 # Per-operation guidance (optional)
 operations:

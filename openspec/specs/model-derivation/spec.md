@@ -92,23 +92,6 @@ field excluded.
   `SystemSecurityPlanDocument`, `AssessmentPlanDocument`, `AssessmentResultsDocument`,
   `PlanOfActionAndMilestonesDocument`, and `MappingCollectionDocument`
 
-### Requirement: MDL-003 Scalar root wrappers collapse to plain aliased types
-
-A schema definition that wraps a single scalar value SHALL become a plain typed value with its constraints attached, not
-a wrapper object. An example is a constrained string such as a UUID. Two kinds of root wrapper types are the documented
-exception and MUST stay as root-model wrappers. They are the top-level document union and each type of the
-single-or-many kind that [MDL-012] defines.
-
-#### Scenario: MDL-003.01 Scalar wrapper becomes a constrained value
-
-- **WHEN** a definition wraps a single constrained string value
-- **THEN** the binding exposes a constrained string type, not an object with one field
-
-#### Scenario: MDL-003.02 Preserved wrappers stay wrappers
-
-- **WHEN** the definition is the top-level document union or a type of the single-or-many kind
-- **THEN** it remains a root-model wrapper and is not collapsed
-
 ### Requirement: MDL-005 Definitions that share a local name across modules get module-prefixed names
 
 OSCAL definitions in different modules can share a local name and have different structures. The derivation MUST
@@ -330,6 +313,23 @@ the PascalCase property key. The naming manifest SHALL record the canonical name
 - **WHEN** the `mappings` property of the `mapping-collection` definition accepts one `mapping` or a list of
   `mapping` items
 - **THEN** the derivation produces a single-or-many type named `MappingCollectionMappings` with item type `Mapping`
+
+### Requirement: MDL-003 Scalar root wrappers collapse to plain aliased types
+
+A schema definition that wraps a single scalar value SHALL become a plain typed value with its constraints attached, not
+a wrapper object. An example is a constrained string such as a UUID. Two kinds of root wrapper types are the documented
+exception and MUST stay as root-model wrappers. They are the top-level document union and each type of the
+single-or-many kind that [MDL-012] defines.
+
+#### Scenario: MDL-003.01 Scalar wrapper becomes a constrained value
+
+- **WHEN** a definition wraps a single constrained string value
+- **THEN** the binding exposes a constrained string type, not an object with one field
+
+#### Scenario: MDL-003.02 Preserved wrappers stay wrappers
+
+- **WHEN** the definition is the top-level document union or a type of the single-or-many kind
+- **THEN** it remains a root-model wrapper and is not collapsed
 
 ### Requirement: MDL-013 Types deduplicate only for union-branch copies and explicit merges
 

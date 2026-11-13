@@ -18,6 +18,7 @@ import {
   LINK,
   proseLines,
   readRepository,
+  REQUIREMENT,
   SPEC_PATH,
   withoutCode,
 } from "./spec-markdown.js";
@@ -30,6 +31,7 @@ import {
   parseLedger,
   parseSpec,
   render,
+  REQUIREMENT_ID,
 } from "./spec-ids.js";
 
 /** Runs every spec-ids check. `files` holds openspec/ and docs/; `base` the main specs at the base ref. */
@@ -159,6 +161,33 @@ export function checkSpecIds(files: Files, base: Files | Error): string[] {
         }
         if (!anchorCache.get(resolved)!.has(anchor)) {
           failures.push(`[link] ${file}:${lineNo}: link ${target} names no heading in ${resolved}.`);
+        }
+      }
+    }
+  }
+
+  // forward-citation: a requirement block, with its scenarios, cites only requirements above it in its file.
+  for (const file of specs) {
+    const position = new Map<string, number>();
+    for (const heading of identified.filter((h) => h.file === file && h.kind === "requirement")) {
+      if (!position.has(heading.id!)) position.set(heading.id!, position.size);
+    }
+    let citing: string | undefined;
+    for (const [lineNo, raw] of proseLines(files[file])) {
+      const req = REQUIREMENT.exec(raw);
+      if (req) {
+        const m = REQUIREMENT_ID.exec(req[1]);
+        citing = m ? `${m[1]}-${Number(m[2])}` : undefined;
+        continue;
+      }
+      if (citing === undefined || !position.has(citing)) continue;
+      for (const [, cited] of withoutCode(raw).matchAll(CITATION)) {
+        const requirement = canonical(cited)!.split(".")[0];
+        if (requirement === citing || !position.has(requirement)) continue;
+        if (position.get(requirement)! > position.get(citing)!) {
+          failures.push(
+            `[forward-citation] ${file}:${lineNo}: ${render(citing)} cites ${cited}, which is below it.`,
+          );
         }
       }
     }
@@ -394,6 +423,45 @@ function selfTest(): number {
   scenario(
     "code spans and fences are not citations",
     (f) => (f.files["docs/other.md"] = "Write `[WID-099]` like this.\n\n```\n[WID-098]\n```\n"),
+    null,
+  );
+
+  // forward-citation: a requirement cites only requirements above it in its spec file.
+  const cite = (id: string, text: string) => (f: { files: Files }) => {
+    const heading = new RegExp(`(### Requirement: ${id} [^\\n]*\\n\\n)Text\\.`);
+    if (!heading.test(f.files[WID])) throw new Error(`fixture has no requirement ${id}`);
+    f.files[WID] = f.files[WID].replace(heading, `$1${text}`);
+  };
+  scenario("forward-citation: Backward citation", cite("WID-003", "See [WID-001]."), null);
+  scenario("forward-citation: Forward citation in the text", cite("WID-001", "See [WID-004]."), {
+    rule: "forward-citation",
+    needle: "WID-001 cites WID-004, which is below it",
+  });
+  scenario(
+    "forward-citation: Forward citation in a scenario",
+    (f) => replace(f.files, WID, "#### Scenario: WID-001.01 Missing key\n\n- **WHEN** x", "#### Scenario: WID-001.01 Missing key\n\n- **WHEN** x per [WID-004]"),
+    { rule: "forward-citation", needle: "WID-001 cites WID-004, which is below it" },
+  );
+  scenario("forward-citation: Forward citation of a scenario", cite("WID-001", "See [WID-004.01]."), {
+    rule: "forward-citation",
+    needle: "WID-001 cites WID-004.01, which is below it",
+  });
+  scenario("forward-citation: Own scenario", cite("WID-002", "See [WID-002.01]."), null);
+  scenario(
+    "forward-citation: Another spec",
+    (f) => replace(f.files, "openspec/specs/widget-output/spec.md", "[WID-002]", "[WID-002] and [WID-006]"),
+    null,
+  );
+  scenario("forward-citation: Code span", cite("WID-001", "See `[WID-004]`."), null);
+  scenario(
+    "forward-citation: Backward citation of a higher identifier",
+    (f) => {
+      const blocks = f.files[WID].split("### Requirement: ");
+      // blocks[0] is the preamble. Put WID-001 below WID-002, and let WID-001 cite WID-002.
+      [blocks[1], blocks[2]] = [blocks[2], blocks[1]];
+      f.files[WID] = blocks.join("### Requirement: ");
+      cite("WID-001", "See [WID-002].")(f);
+    },
     null,
   );
 

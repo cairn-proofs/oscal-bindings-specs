@@ -12,6 +12,8 @@ This repo is an [OpenSpec store](https://github.com/Fission-AI/OpenSpec/blob/mai
    from the main specs. It lists the identifier, capability, and title of each requirement. `traceability.schema.json`
    is the JSON Schema of the traceability record that each binding keeps (see
    [binding-surface](openspec/specs/binding-surface/spec.md)).
+   The requirements of each spec are in reading order, not in identifier order. A reader finds a requirement by its
+   identifier with search or `openspec/requirements.json`.
 2. `schemas/<release>/`: the NIST OSCAL JSON Schema files of one release, byte-for-byte, with `sha256` sums.
 3. `manifest/<release>/`: the naming manifest. `names.json` is generated and holds the canonical name, kind, and
    schema pointers of each type. `overrides.json` is the hand-edited naming input. `manifest/*.schema.json` are the

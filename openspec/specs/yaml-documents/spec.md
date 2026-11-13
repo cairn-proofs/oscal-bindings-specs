@@ -10,14 +10,9 @@ support is optional for a binding.
 
 ### Requirement: YML-001 YAML support is optional, and a binding that offers it conforms in full
 
-This capability is optional. A binding that exposes an operation of this capability SHALL offer these operations:
-
-1. The YAML parse operation of [YML-005].
-2. The YAML parse-from-file operation of [YML-006].
-3. The YAML serialize operation of [YML-008].
-
-That binding SHALL conform to each requirement of this capability. A binding that exposes no operation of this
-capability conforms to the contract without these requirements.
+This capability is optional. A binding that exposes an operation of this capability SHALL conform to each requirement
+of this capability. A binding that exposes no operation of this capability conforms to the contract without these
+requirements.
 
 #### Scenario: YML-001.01 Binding without YAML
 
@@ -65,8 +60,7 @@ Reading a YAML input SHALL give one JSON value:
 1. A mapping gives an object. Each key MUST be a scalar, and its text is the object key. Two keys with the same text
    in one mapping are a parse error.
 2. A sequence gives an array with the same items in the same order.
-3. A scalar gives a string, a number, or a boolean, as [YML-004] defines.
-4. An alias gives a value as [YML-009] defines.
+3. A scalar gives a string, a number, or a boolean.
 
 The text of a scalar is its content after YAML 1.2 processes quotes, escapes, line folding, and chomping.
 
@@ -94,7 +88,7 @@ names the type at the location of the scalar, and the text of the scalar matches
 2. A number or an integer: the number grammar of [RFC 8259](https://www.rfc-editor.org/rfc/rfc8259#section-6).
 3. A boolean: `true` or `false`.
 
-If no type is named, the value is the text. Other text is a parse error, as [YML-010] defines.
+If no type is named, the value is the text. Other text is a parse error.
 
 #### Scenario: YML-004.01 Number form at a string location
 
@@ -129,7 +123,7 @@ If no type is named, the value is the text. Other text is a parse error, as [YML
 #### Scenario: YML-004.07 Hexadecimal form at a number location
 
 - **WHEN** the `start` property of a port range carries the plain scalar `0x1BB`
-- **THEN** parsing reports a parse error, as [YML-010] defines
+- **THEN** parsing reports a parse error
 
 #### Scenario: YML-004.08 Boolean location with text that is not a JSON boolean
 

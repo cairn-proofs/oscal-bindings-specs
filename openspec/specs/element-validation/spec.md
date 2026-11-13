@@ -11,9 +11,9 @@ a fragment, such as an observation or a back-matter block, without parsing a who
 
 The implementation SHALL provide an element-validation operation. It takes an element value and an
 element-type name, and returns a result that states whether the element is valid. The result lists
-the failures when the element is not valid. The list covers each failure, except as [ELV-004]
-permits. Each failure identifies a location and a message. The operation validates the element
-against the named OSCAL type's constraints.
+the failures when the element is not valid. The list covers each failure, unless the result
+identifies a documented limit, as [PRS-010] defines. Each failure identifies a location and a
+message. The operation validates the element against the named OSCAL type's constraints.
 
 #### Scenario: ELV-001.01 Valid element returns a valid result
 
@@ -25,6 +25,7 @@ against the named OSCAL type's constraints.
 - **WHEN** the caller validates an element that violates the named type's constraints, and the
   result identifies no limit
 - **THEN** the result reports invalid and lists each failing location with a message
+
 ### Requirement: ELV-002 Element-type names are kebab-case and derived from the type names
 
 The element-type names SHALL be the kebab-case forms of the canonical type names from the model-derivation capability.
