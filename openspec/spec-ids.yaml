@@ -7,7 +7,7 @@
 prefixes:
   BMB:
     capability: backmatter-builders
-    next: 4
+    next: 5
   FAC:
     capability: document-facade
     next: 8
@@ -19,7 +19,7 @@ prefixes:
     next: 5
   ERR:
     capability: error-model
-    next: 13
+    next: 14
   MDL:
     capability: model-derivation
     next: 22

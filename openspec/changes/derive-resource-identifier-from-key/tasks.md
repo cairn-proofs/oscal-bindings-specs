@@ -19,7 +19,7 @@ group 5 uses it in `cases.json`. The groups run in order.
 
 ## 1. Branch and planning commit
 
-- [ ] 1.1 Create the feature branch from [#46] with `gh issue develop 46 --base main`, with the
+- [x] 1.1 Create the feature branch from [#46] with `gh issue develop 46 --base main`, with the
       user's approval, and check it out. Commit the planning artifacts of this change as the first
       commit, with `#46` in the message. Verify `git branch --show-current` is not `main`, `openspec
       list` shows only this change, and `openspec validate derive-resource-identifier-from-key
@@ -27,18 +27,18 @@ group 5 uses it in `cases.json`. The groups run in order.
 
 ## 2. Sync
 
-- [ ] 2.1 Sync the deltas of this change into `openspec/specs/`, without archiving the change. In
+- [x] 2.1 Sync the deltas of this change into `openspec/specs/`, without archiving the change. In
       `backmatter-builders`, [BMB-004] follows [BMB-003]. In `error-model`, [ERR-013] follows
       [ERR-012]. Verify these:
       1. `openspec show backmatter-builders --type spec` lists [BMB-004] and [BMB-004.01] to
          [BMB-004.05], and the heading of [BMB-003.01] keeps its words.
       2. `openspec show error-model --type spec` lists [ERR-013], [ERR-013.01], and [ERR-013.02],
          and [ERR-001] lists eight categories.
-- [ ] 2.2 In the same commit as task 2.1, set `BMB` `next` to 5 and `ERR` `next` to 14 in
+- [x] 2.2 In the same commit as task 2.1, set `BMB` `next` to 5 and `ERR` `next` to 14 in
       `openspec/spec-ids.yaml`, and run `npm run requirements:write`. Do not change `VERSION`
       (design.md, D9). Verify `npm run spec-ids` passes, and `openspec/requirements.json` has an
       entry for [BMB-004] and for [ERR-013].
-- [ ] 2.3 Verify the descriptions of [BMB-003], [BMB-004], [ERR-001], and [ERR-013] in the main
+- [x] 2.3 Verify the descriptions of [BMB-003], [BMB-004], [ERR-001], and [ERR-013] in the main
       specs each have 500 characters or fewer, with whitespace normalized. Commit tasks 2.1 and 2.2
       with `#46` in the message. Verify `npm run check` passes before the commit.
 
