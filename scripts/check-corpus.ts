@@ -27,10 +27,19 @@
  *     manifest, in code-point order. No two types give the same name. An element-types case has no input, and its
  *     expected file is the canonical form of the list. A validate-element case with `expected-valid` names an element
  *     type in the list, and an unknown-element-type case names one that is not in the list.
- * 14. A build-resource case has `arguments` and no input. It has exactly one of `expected-uuid` and `expected-category`.
- *     With `expected-uuid`, the key is not empty, there is no identifier, and the UUID version 5 of the key (BMB-004)
- *     equals the value. With `expected-category`, the category is builder-error, and the one fault is an empty key with
- *     no identifier, or a key with a valid identifier. Another operation has no `arguments` or `expected-uuid` field.
+ * 14. A builder case (build-hash, build-rlink, build-resource) has `arguments` and no input. A build-hash or build-rlink
+ *     case has exactly one of `expected-element` and `expected-category`. A build-resource case has exactly one of
+ *     `expected-uuid`, `expected-element`, and `expected-category`. The checker makes the element that the arguments
+ *     give, and validates it against the schema: the hash definition, the rlink item schema, or the resource item
+ *     schema. A hash gets the algorithm SHA-256 when it has none (BMB-001). A resource with no identifier and no key
+ *     gets a fixed UUID, and its `uuid` is left out of the comparison (BMB-003). With `expected-element`, the element
+ *     is valid, the canonical form of `expected-element` equals the canonical form of the element, and a build-resource
+ *     case has no key and, with no identifier, no `uuid` in `expected-element`. With `expected-uuid`, the key is not
+ *     empty, there is no identifier, and the UUID version 5 of the key (BMB-004) equals the value. With
+ *     `expected-category`, the category is builder-error, and the case has one fault. For a hash or an rlink, the
+ *     element is not valid. For a resource, the fault is one of these: an empty key with no identifier, a key with a
+ *     valid identifier, or an element that is not valid. Only a builder case has `arguments` or `expected-element`.
+ *     Only a build-resource case has `expected-uuid`.
  * 15. The BMB-004 namespace is the UUID version 5 of its URL in the URL namespace, the text of BMB-004 in the main spec
  *     contains the namespace, and docs/back-matter-keys.md contains the URL and the namespace.
  * 16. A facade case has an `input-form` that is absent, `bytes`, or `path`, and only a facade case has `path`. It has
@@ -79,8 +88,16 @@ const OPERATIONS = [
   "yaml-parse",
   "element-types",
   "build-resource",
+  "build-hash",
+  "build-rlink",
   "facade",
 ];
+const BUILDERS = ["build-hash", "build-rlink", "build-resource"];
+const ARGUMENT_FIELDS: Record<string, string[]> = {
+  "build-hash": ["value", "algorithm"],
+  "build-rlink": ["href", "media-type", "hashes"],
+  "build-resource": ["key", "title", "identifier", "document-ids"],
+};
 const ID = /^[A-Z]{2,5}-\d{3}(?:\.\d{2})?$/;
 
 interface Case {
@@ -96,7 +113,18 @@ interface Case {
   "expected-min-failures"?: number;
   "expected-max-failures"?: number;
   "expected-period"?: { start: string; end: string };
-  arguments?: { key: string; title?: string; identifier?: string };
+  arguments?: {
+    key?: string;
+    title?: string;
+    identifier?: string;
+    "document-ids"?: unknown[];
+    value?: string;
+    algorithm?: string;
+    href?: string;
+    "media-type"?: string;
+    hashes?: unknown[];
+  };
+  "expected-element"?: unknown;
   "expected-uuid"?: string;
   requirements: string[];
   source?: { repository: string; commit: string; path: string; sha256: string };
@@ -120,6 +148,7 @@ function uuidV5(namespace: string, name: string): string {
   const hex = bytes.toString("hex");
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
+const GENERATED_UUID = "0c6b8f1e-4a2d-4b7e-9c3f-5d6e7f8a9b0c";
 const sha256 = (bytes: Buffer) => createHash("sha256").update(bytes).digest("hex");
 
 interface Instant {
@@ -213,9 +242,91 @@ function corpusFiles(): string[] {
   return out.sort();
 }
 
+/** The checks of a builder case (check 14). The validators come from the schema. */
+function checkBuilderFactory(fail: (id: string, message: string) => void) {
+  return (c: Case, v: { validateResource: ValidateFunction; validateRlink: ValidateFunction; validateHash: ValidateFunction }) => {
+    const category = c["expected-category"];
+    if (c.input !== undefined) fail(c.id, `a ${c.operation} case has no input`);
+    const args = c.arguments;
+    if (args === null || typeof args !== "object" || Array.isArray(args)) {
+      fail(c.id, `a ${c.operation} case needs arguments`);
+      return;
+    }
+    const record = args as Record<string, unknown>;
+    for (const name of Object.keys(record))
+      if (!ARGUMENT_FIELDS[c.operation].includes(name)) fail(c.id, `arguments has the unknown field "${name}"`);
+    for (const name of ["key", "title", "identifier", "value", "algorithm", "href", "media-type"])
+      if (record[name] !== undefined && typeof record[name] !== "string") fail(c.id, `arguments.${name} is not a string`);
+    for (const name of ["document-ids", "hashes"])
+      if (record[name] !== undefined && !Array.isArray(record[name])) fail(c.id, `arguments.${name} is not an array`);
+    const required = c.operation === "build-hash" ? "value" : c.operation === "build-rlink" ? "href" : undefined;
+    if (required !== undefined && typeof record[required] !== "string") {
+      fail(c.id, `a ${c.operation} case needs arguments with a string ${required}`);
+      return;
+    }
+    const results = [c["expected-uuid"], c["expected-element"], category].filter((value) => value !== undefined).length;
+    if (results !== 1 || (c.operation !== "build-resource" && c["expected-uuid"] !== undefined)) {
+      fail(c.id, `a ${c.operation} case needs exactly one of ${c.operation === "build-resource" ? "expected-uuid, " : ""}expected-element and expected-category`);
+      return;
+    }
+    const withoutUndefined = (o: Record<string, unknown>) => Object.fromEntries(Object.entries(o).filter(([, x]) => x !== undefined));
+    let element: Record<string, unknown>;
+    let validate: ValidateFunction;
+    if (c.operation === "build-hash") {
+      element = withoutUndefined({ algorithm: args.algorithm ?? "SHA-256", value: args.value });
+      validate = v.validateHash;
+    } else if (c.operation === "build-rlink") {
+      element = withoutUndefined({ href: args.href, "media-type": args["media-type"], hashes: args.hashes });
+      validate = v.validateRlink;
+    } else {
+      const generated = args.identifier === undefined && (args.key === undefined || args.key === "");
+      const uuid = args.identifier ?? (args.key ? uuidV5(KEY_NAMESPACE, args.key) : GENERATED_UUID);
+      element = withoutUndefined({ uuid, title: args.title, "document-ids": args["document-ids"] });
+      validate = v.validateResource;
+      if (c["expected-element"] !== undefined && args.key !== undefined) fail(c.id, "a build-resource case with expected-element has no key");
+      if (generated && c["expected-element"] !== undefined && typeof c["expected-element"] === "object" && c["expected-element"] !== null && Object.hasOwn(c["expected-element"], "uuid") && args.identifier === undefined)
+        fail(c.id, "the identifier is generated, so expected-element has no uuid");
+      if (generated && args.key === undefined && c["expected-element"] !== undefined) {
+        const valid = validate(element);
+        if (!valid) fail(c.id, `the element is not valid: ${JSON.stringify(validate.errors)}`);
+        delete element.uuid;
+        compareElement(c, element, c["expected-element"], fail);
+        return;
+      }
+      if (c["expected-uuid"] !== undefined) {
+        if (args.key === undefined || args.key === "") fail(c.id, "the key is empty, so the builder reports an error");
+        if (args.identifier !== undefined) fail(c.id, "the case has a key and an identifier, so the builder reports an error");
+        else if (args.key && uuidV5(KEY_NAMESPACE, args.key) !== c["expected-uuid"])
+          fail(c.id, `expected-uuid is ${c["expected-uuid"]}, but BMB-004 gives ${uuidV5(KEY_NAMESPACE, args.key)}`);
+        return;
+      }
+    }
+    const valid = validate(element) as boolean;
+    if (c["expected-element"] !== undefined) {
+      if (!valid) fail(c.id, `the element is not valid: ${JSON.stringify(validate.errors)}`);
+      compareElement(c, element, c["expected-element"], fail);
+      return;
+    }
+    if (category !== "builder-error") fail(c.id, `a ${c.operation} case has the category builder-error`);
+    if (c.operation !== "build-resource") {
+      if (valid) fail(c.id, "the element is valid, so the builder reports no error");
+      return;
+    }
+    const emptyKey = args.key === "" && args.identifier === undefined;
+    const keyAndIdentifier = args.key !== undefined && args.key !== "" && args.identifier !== undefined && UUID_V4_OR_V5.test(args.identifier);
+    if ([emptyKey, keyAndIdentifier, !valid].filter(Boolean).length !== 1)
+      fail(c.id, "the case needs one fault: an empty key with no identifier, a key with a valid identifier, or an element that is not valid");
+  };
+}
+function compareElement(c: Case, element: unknown, expected: unknown, fail: (id: string, message: string) => void) {
+  if (canonicalize(JSON.stringify(element)) !== canonicalize(JSON.stringify(expected)))
+    fail(c.id, `expected-element is not the element that the arguments give: ${JSON.stringify(element)}`);
+}
+
 function main(write: boolean): number {
   const failures: string[] = [];
   const fail = (id: string, message: string) => failures.push(`[corpus] ${id}: ${message}`);
+  const checkBuilder = checkBuilderFactory(fail);
 
   const schema = JSON.parse(fs.readFileSync(SCHEMA, "utf8")) as {
     $id: string;
@@ -239,6 +350,13 @@ function main(write: boolean): number {
     const keys = Object.keys(schema.definitions).filter((key) => key.split(":")[1] === type);
     return keys.length === 1 ? ajv.getSchema(`${schema.$id}#/definitions/${keys[0]}`) : undefined;
   };
+
+  // The rlink and resource have no top-level definition. They are item schemas of the back-matter definition.
+  const resourceItems = `${schema.$id}#/definitions/oscal-complete-oscal-metadata:back-matter/properties/resources/items`;
+  const validateResource = ajv.getSchema(resourceItems);
+  const validateRlink = ajv.getSchema(`${resourceItems}/properties/rlinks/items`);
+  const validateHash = elementValidator("hash");
+  if (!validateResource || !validateRlink || !validateHash) fail(SCHEMA, "the hash, rlink, or resource schema is missing");
 
   // The element-type names of ELV-002: one for each type of the naming manifest, in code-point order.
   const manifest = JSON.parse(fs.readFileSync(`manifest/${RELEASE}/names.json`, "utf8")) as { types: { name: string }[] };
@@ -297,39 +415,15 @@ function main(write: boolean): number {
       if (!index.categories.includes(category)) fail(c.id, `unknown category "${category}"`);
       covered.add(category);
     }
-    if (c.operation !== "build-resource") {
-      if (c.arguments !== undefined) fail(c.id, "only a build-resource case has arguments");
-      if (c["expected-uuid"] !== undefined) fail(c.id, "only a build-resource case has expected-uuid");
+    const isBuilder = BUILDERS.includes(c.operation);
+    if (!isBuilder) {
+      if (c.arguments !== undefined) fail(c.id, "only a builder case has arguments");
+      if (c["expected-element"] !== undefined) fail(c.id, "only a builder case has expected-element");
     }
-    if (c.operation === "build-resource") {
-      if (c.input !== undefined) fail(c.id, "a build-resource case has no input");
-      const args = c.arguments;
-      if (args === null || typeof args !== "object" || Array.isArray(args) || typeof args.key !== "string") {
-        fail(c.id, "a build-resource case needs arguments with a string key");
-        continue;
-      }
-      for (const name of Object.keys(args))
-        if (!["key", "title", "identifier"].includes(name)) fail(c.id, `arguments has the unknown field "${name}"`);
-      for (const name of ["title", "identifier"] as const)
-        if (args[name] !== undefined && typeof args[name] !== "string") fail(c.id, `arguments.${name} is not a string`);
-      const expectedUuid = c["expected-uuid"];
-      if ((expectedUuid === undefined) === (category === undefined)) {
-        fail(c.id, "a build-resource case needs exactly one of expected-uuid and expected-category");
-        continue;
-      }
-      if (expectedUuid !== undefined) {
-        if (args.key === "") fail(c.id, "the key is empty, so the builder reports an error");
-        if (args.identifier !== undefined) fail(c.id, "the case has a key and an identifier, so the builder reports an error");
-        else if (args.key !== "" && uuidV5(KEY_NAMESPACE, args.key) !== expectedUuid)
-          fail(c.id, `expected-uuid is ${expectedUuid}, but BMB-004 gives ${uuidV5(KEY_NAMESPACE, args.key)}`);
-      } else {
-        if (category !== "builder-error") fail(c.id, "a build-resource case has the category builder-error");
-        const emptyKey = args.key === "" && args.identifier === undefined;
-        const keyAndIdentifier =
-          args.key !== "" && args.identifier !== undefined && UUID_V4_OR_V5.test(args.identifier);
-        if (emptyKey === keyAndIdentifier)
-          fail(c.id, "the case needs one fault: an empty key with no identifier, or a key with a valid identifier");
-      }
+    if (c.operation !== "build-resource" && c["expected-uuid"] !== undefined)
+      fail(c.id, "only a build-resource case has expected-uuid");
+    if (isBuilder) {
+      if (validateResource && validateRlink && validateHash) checkBuilder(c, { validateResource, validateRlink, validateHash });
       continue;
     }
     if (c.operation === "element-types") {

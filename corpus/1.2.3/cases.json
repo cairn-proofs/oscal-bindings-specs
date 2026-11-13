@@ -476,6 +476,69 @@
       "requirements": ["BMB-004.05"]
     },
     {
+      "id": "build-hash/default-algorithm",
+      "operation": "build-hash",
+      "arguments": {"value": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"},
+      "expected-element": {"algorithm": "SHA-256", "value": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"},
+      "requirements": ["BMB-001.01"]
+    },
+    {
+      "id": "build-hash/algorithm-string",
+      "operation": "build-hash",
+      "arguments": {"value": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", "algorithm": "SHA-512"},
+      "expected-element": {"algorithm": "SHA-512", "value": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"},
+      "requirements": ["BMB-001.02"]
+    },
+    {
+      "id": "build-hash/off-list-algorithm",
+      "operation": "build-hash",
+      "arguments": {"value": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", "algorithm": "SHA-999"},
+      "expected-element": {"algorithm": "SHA-999", "value": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"},
+      "requirements": ["BMB-001.04"]
+    },
+    {
+      "id": "build-hash/invalid-algorithm",
+      "operation": "build-hash",
+      "arguments": {"value": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", "algorithm": " SHA-256"},
+      "expected-category": "builder-error",
+      "requirements": ["BMB-001.03", "ERR-013.01"]
+    },
+    {
+      "id": "build-rlink/reference-only",
+      "operation": "build-rlink",
+      "arguments": {"href": "https://example.org/policies/access-control.pdf"},
+      "expected-element": {"href": "https://example.org/policies/access-control.pdf"},
+      "requirements": ["BMB-002.01"]
+    },
+    {
+      "id": "build-rlink/media-type-and-hashes",
+      "operation": "build-rlink",
+      "arguments": {"href": "https://example.org/policies/access-control.pdf", "media-type": "application/pdf", "hashes": [{"algorithm": "SHA-256", "value": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"}]},
+      "expected-element": {"href": "https://example.org/policies/access-control.pdf", "media-type": "application/pdf", "hashes": [{"algorithm": "SHA-256", "value": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"}]},
+      "requirements": ["BMB-002.02"]
+    },
+    {
+      "id": "build-resource/generated-identifier",
+      "operation": "build-resource",
+      "arguments": {"title": "Access Control Policy"},
+      "expected-element": {"title": "Access Control Policy"},
+      "requirements": ["BMB-003.01"]
+    },
+    {
+      "id": "build-resource/omitted-inputs",
+      "operation": "build-resource",
+      "arguments": {"identifier": "0c6b8f1e-4a2d-4b7e-9c3f-5d6e7f8a9b0c", "title": "Access Control Policy"},
+      "expected-element": {"uuid": "0c6b8f1e-4a2d-4b7e-9c3f-5d6e7f8a9b0c", "title": "Access Control Policy"},
+      "requirements": ["BMB-003.02"]
+    },
+    {
+      "id": "build-resource/invalid-document-id",
+      "operation": "build-resource",
+      "arguments": {"identifier": "0c6b8f1e-4a2d-4b7e-9c3f-5d6e7f8a9b0c", "document-ids": [{"identifier": ""}]},
+      "expected-category": "builder-error",
+      "requirements": ["BMB-003.03"]
+    },
+    {
       "id": "yaml-round-trip/catalog",
       "operation": "yaml-round-trip",
       "input": "documents/valid/catalog.yaml",

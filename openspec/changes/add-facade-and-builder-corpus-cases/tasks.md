@@ -70,7 +70,7 @@ scenarios. Group 3 comes after group 2, because both edit the `input` and the `i
 
 ## 3. The builder operations
 
-- [ ] 3.1 In `scripts/check-corpus.ts`, add `build-hash` and `build-rlink` to `OPERATIONS`. Widen
+- [x] 3.1 In `scripts/check-corpus.ts`, add `build-hash` and `build-rlink` to `OPERATIONS`. Widen
       `arguments` in `Case` to the arguments of design.md, D4, with `key` optional, and add
       `"expected-element"?: unknown`. Get the rlink and resource validators from the item schemas of
       design.md, Context item 4. Apply the builder checks of design.md, D7. Keep each existing check of
@@ -78,15 +78,15 @@ scenarios. Group 3 comes after group 2, because both edit the `input` and the `i
       a case that is not a builder case, and an `expected-uuid` field on a case that is not a
       `build-resource` case. Update the header comment of the script. Verify `npm run typecheck` and
       `npm run corpus:check` pass with the unchanged `cases.json`.
-- [ ] 3.2 In `corpus/1.2.3/README.md`, add `build-hash` and `build-rlink` to Operations, and change
+- [x] 3.2 In `corpus/1.2.3/README.md`, add `build-hash` and `build-rlink` to Operations, and change
       `build-resource`, as design.md, D4 to D6 state. Add the arguments of each builder to the case
       fields, and `expected-element` to the expected results. State that a builder case has no
       `input`, in the Layout list and in the case fields. State the rule of design.md, D6 for a nested
       argument. Verify the README names each field that `Case` holds.
-- [ ] 3.3 Add the nine builder cases of design.md, D8, to `corpus/1.2.3/cases.json`, next to the
+- [x] 3.3 Add the nine builder cases of design.md, D8, to `corpus/1.2.3/cases.json`, next to the
       `build-resource` cases, with the `requirements` identifiers of D8. Verify `npm run
       corpus:check` passes, and still reports seven error categories.
-- [ ] 3.4 Verify that each builder check fails a case that breaks it. On the working copy, apply these
+- [x] 3.4 Verify that each builder check fails a case that breaks it. On the working copy, apply these
       mutations one at a time, and restore after each:
       1. Set `algorithm` of `expected-element` of `build-hash/default-algorithm` to `SHA-512`.
       2. Set `arguments.algorithm` of `build-hash/invalid-algorithm` to `SHA-999`.
@@ -103,7 +103,7 @@ scenarios. Group 3 comes after group 2, because both edit the `input` and the `i
       10. Add `expected-uuid` to `build-hash/default-algorithm`.
       Verify `npm run corpus:check` reports a failure for each mutation, and passes after each
       restore.
-- [ ] 3.5 Verify `npm run check` passes, and commit group 3 with `#45` in the message. Verify
+- [x] 3.5 Verify `npm run check` passes, and commit group 3 with `#45` in the message. Verify
       `git status --short` shows no file under `corpus/`, `scripts/`, `openspec/specs/`, or
       `openspec/changes/`.
 
