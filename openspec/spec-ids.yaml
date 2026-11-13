@@ -51,6 +51,9 @@ retired:
       PRS-010 holds the same resource-limit rule for each parse operation, including each YAML parse operation. Its
       scenario PRS-010.03 holds the alias-expansion case.
     replaced_by: PRS-010
+  - id: FAC-001.02
+    reason: >-
+      The type of the facade argument is a matter of the language of each binding, so the contract has no rule for it.
   - id: FAC-004.01
     reason: >-
       The rule that this scenario tests moved to FAC-005.

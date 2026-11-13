@@ -7,7 +7,7 @@ A binding that fails a case records the expected failure in its own repository, 
 ## Layout
 
 1. `cases.json`: the case index. Each case names an operation, an input, and an expected result. An `element-types`
-   case and a `build-resource` case have no input.
+   case and a builder case (`build-hash`, `build-rlink`, or `build-resource`) have no input.
 2. `documents/valid/`: valid OSCAL documents, one or more for each of the eight document types. A `.json` file is a
    JSON input, and a `.yaml` file is a YAML input.
 3. `documents/invalid/`: documents that a binding must reject. Each is a minimal document with one fault. An input for
@@ -23,8 +23,7 @@ Each case has these fields:
 
 1. `id`: a unique name.
 2. `operation`: the operation to run, from the list in [Operations](#operations).
-3. `input`: the input path, relative to this directory. An `element-types` case and a `build-resource` case have no
-   `input`.
+3. `input`: the input path, relative to this directory. An `element-types` case and a builder case have no `input`.
 4. `requirements`: the requirement and scenario identifiers that the case tests.
 5. One expected result:
    1. `expected`: the path of the expected canonical form, for a round trip. For `element-types`, it is the path of the
@@ -37,12 +36,21 @@ Each case has these fields:
       in the canonical form of [Canonical JSON for conformance comparison](../../docs/canonical-json.md#datetimes).
    5. `expected-uuid`: the identifier that the resource builder derives from the key, in lowercase, for a
       `build-resource` case.
-6. `arguments`: for a `build-resource` case, an object with the keys `key` (a string, required), `title` (a string), and
-   `identifier` (a string).
+   6. `expected-element`: the JSON of the element that a builder returns. The canonical form of the JSON of the result
+      must be the same bytes as the canonical form of `expected-element`.
+6. `arguments`: for a builder case, an object with these keys:
+   1. `build-hash`: `value` (a string, required) and `algorithm` (a string).
+   2. `build-rlink`: `href` (a string, required), `media-type` (a string), and `hashes` (an array of hash objects).
+   3. `build-resource`: `key`, `title`, and `identifier` (each a string), and `document-ids` (an array of document-id
+      objects).
+
+   For an item of `hashes` or `document-ids`, the runner gives the builder the element of the binding with the same
+   JSON. The runner does not validate the item. The builder must report the error of an invalid item.
 7. Optional fields:
    1. `document-type`: the root key of the document type, for a round trip or a typed parse.
    2. `element-type`: the element-type name, for element validation.
-   3. `input-form`: `bytes` when the input must reach the binding as raw bytes, not as text.
+   3. `input-form`: `bytes` when the input must reach the binding as raw bytes, not as text. For a `facade` case,
+      `path` when the facade must be built from the input path.
    4. `expected-min-failures`: the lowest number of structured failure entries that the parse error carries.
    5. `expected-max-failures`: the highest number of structured failure entries that the parse error carries. It
       applies only to a `parse` case. Its value is an integer of 1 or more, and not less than `expected-min-failures`.
@@ -82,7 +90,29 @@ Each case has these fields:
 9. `element-types`: request the supported element types. The result must equal the list in `expected`, item by item
    and in the same order.
 10. `build-resource`: build a resource with `arguments`. Then compare the `uuid` of the resource with `expected-uuid`,
-    or check that the builder reports `expected-category`.
+    compare the resource with `expected-element`, or check that the builder reports `expected-category`. When the
+    arguments have no `key` and no `identifier`, the builder generates the identifier. `expected-element` then has no
+    `uuid`. The runner checks that the `uuid` of the result matches the UUID datatype of the schema, removes `uuid`
+    from the result, and compares the rest with `expected-element`.
+11. `build-hash`: build a hash with `arguments`. Compare the hash with `expected-element`, or check that the builder
+    reports `expected-category`. A hash with no `algorithm` has the algorithm SHA-256.
+12. `build-rlink`: build an rlink with `arguments`. Compare the rlink with `expected-element`, or check that the builder
+    reports `expected-category`. An omitted `media-type` or `hashes` is absent from the result.
+13. `facade`: build the document facade from the input, as `input-form` states:
+    1. `input-form` is absent: parse the input with the generic parser, and wrap the result in the facade.
+    2. `input-form` is `bytes`: build the facade from the raw bytes of the input.
+    3. `input-form` is `path`: build the facade from the input path.
+
+    With `expected`, read the wrapper, the body, the metadata, the OSCAL version, and the body identifier through the
+    facade. Let `B` be the value of the `document-type` key of `expected`. These five checks must pass:
+    1. The canonical form of the wrapper is the same bytes as `expected`.
+    2. The canonical form of the body is the canonical form of `B`.
+    3. The canonical form of the metadata is the canonical form of the `metadata` of `B`.
+    4. The OSCAL version equals the `oscal-version` of that metadata, as a string.
+    5. The body identifier equals the `uuid` of `B`, as a string.
+
+    With `expected-category`, the category is `not-found`, the form is `path`, and the input path does not exist. The
+    facade must report the category and name the path, as `parse-file` does.
 
 For each `round-trip` input, the non-raising validity check must return true. The check does not apply to a
 `yaml-round-trip` input.
