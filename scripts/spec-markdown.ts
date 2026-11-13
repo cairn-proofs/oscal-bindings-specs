@@ -1,6 +1,6 @@
 /**
- * Helpers that read spec Markdown, shared by scripts/check-spec-ids.ts and
- * scripts/check-spec-terms.ts.
+ * Helpers that read spec Markdown, shared by scripts/check-spec-ids.ts, scripts/spec-ids.ts, and
+ * scripts/requirements.ts.
  */
 import fs from "node:fs";
 import path from "node:path";
