@@ -32,7 +32,7 @@ These tasks go in one commit, because the check fails on the main specs until th
 
 ## 2. Move the OpenSpec CLI pin to 2.0
 
-- [ ] 2.1 Commit the pin in its own commit: `mise.toml` (`2.0`), `mise.lock` (2.0.0 with its `aube` entry), the new
+- [x] 2.1 Commit the pin in its own commit: `mise.toml` (`2.0`), `mise.lock` (2.0.0 with its `aube` entry), the new
       sidecar `.mise/locks/npm-fission-ai-openspec/2.0.0/`, and the removal of the 1.15.0 sidecar. Verify
       `mise install --locked` succeeds, `openspec --version` prints 2.0.0, and `npm run check` passes.
 
