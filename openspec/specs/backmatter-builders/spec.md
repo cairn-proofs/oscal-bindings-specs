@@ -3,7 +3,8 @@
 ## Purpose
 
 Defines constructor helpers for OSCAL back-matter `hash`, `rlink`, and `resource` values. A caller then builds valid
-back-matter elements without filling in idiomatic defaults or restating property keys by hand.
+back-matter elements without filling in idiomatic defaults or restating property keys by hand. A resource can occur in more than one document. A key gives each copy of the resource the same
+identifier ([Back-matter resource keys](../../../docs/back-matter-keys.md)).
 
 ## Requirements
 

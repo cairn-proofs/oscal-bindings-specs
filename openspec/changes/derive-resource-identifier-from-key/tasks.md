@@ -44,21 +44,21 @@ group 5 uses it in `cases.json`. The groups run in order.
 
 ## 3. Guidance document and Purpose
 
-- [ ] 3.1 Write `docs/back-matter-keys.md` with the title "Back-matter resource keys" and the
+- [x] 3.1 Write `docs/back-matter-keys.md` with the title "Back-matter resource keys" and the
       sections of design.md, D6. The namespace section quotes the URL
       `https://oscalregistry.org/ns/oscal/back-matter-resource`, the URL namespace
       `6ba7b811-9dad-11d1-80b4-00c04fd430c8`, and the result `3942257f-e1cf-5e06-9c6f-eeb97ecabe77`.
       The document cites [BMB-004] for the rule, and states that it has no normative rules. Verify
       each value in the document equals the value in design.md, D2.
-- [ ] 3.2 Add these sentences to the end of the Purpose of
+- [x] 3.2 Add these sentences to the end of the Purpose of
       `openspec/specs/backmatter-builders/spec.md`: "A resource can occur in more than one document.
       A key gives each copy of the resource the same identifier ([Back-matter resource
       keys](../../../docs/back-matter-keys.md))." Verify the link resolves to the file of task 3.1,
       and the Purpose has no historical or temporal words.
-- [ ] 3.3 In `README.md`, change item 5 of the layout list from "shared rule documents that the
+- [x] 3.3 In `README.md`, change item 5 of the layout list from "shared rule documents that the
       specs cite" to "shared documents that the specs cite". Verify the item still links
       `docs/canonical-json.md`.
-- [ ] 3.4 Commit group 3 with `#46` in the message. Verify `npm run check` passes before the commit.
+- [x] 3.4 Commit group 3 with `#46` in the message. Verify `npm run check` passes before the commit.
 
 ## 4. Checker
 
