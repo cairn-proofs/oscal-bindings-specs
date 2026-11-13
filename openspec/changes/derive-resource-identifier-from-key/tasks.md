@@ -62,19 +62,19 @@ group 5 uses it in `cases.json`. The groups run in order.
 
 ## 4. Checker
 
-- [ ] 4.1 In `scripts/check-corpus.ts`, add `build-resource` to `OPERATIONS`. Add `arguments?: {
+- [x] 4.1 In `scripts/check-corpus.ts`, add `build-resource` to `OPERATIONS`. Add `arguments?: {
       key: string; title?: string; identifier?: string }` and `"expected-uuid"?: string` to `Case`.
       Add a UUID version 5 function that uses SHA-1 from `node:crypto`, and no UUID library. Apply
       the case checks and the namespace checks of design.md, D7. Fail an `arguments` or
       `expected-uuid` field on a case of another operation. Add the checks to the header comment of
       the script. Verify `npm run typecheck` and `npm run corpus:check` pass with the unchanged
       `cases.json`.
-- [ ] 4.2 In `corpus/1.2.3/README.md`, add `build-resource` to Operations: build a resource with
+- [x] 4.2 In `corpus/1.2.3/README.md`, add `build-resource` to Operations: build a resource with
       `arguments`, then compare its `uuid` with `expected-uuid`, or check that the builder reports
       `expected-category`. Add `arguments` to the case fields, and `expected-uuid` to the expected
       results. State that a `build-resource` case has no `input`. Verify the README names each field
       that `Case` holds.
-- [ ] 4.3 Commit group 4 with `#46` in the message. Verify `npm run check` passes before the commit.
+- [x] 4.3 Commit group 4 with `#46` in the message. Verify `npm run check` passes before the commit.
 
 ## 5. Cases
 
