@@ -186,23 +186,6 @@ that is not a JSON object, or that has no `format` member, is invalid under [NAM
 - **WHEN** a consumer reads a manifest that is not a JSON object, or a manifest that has no `format` member
 - **THEN** the consumer rejects the manifest
 
-### Requirement: NAM-022 A consumer checks the format version before the other checks of the manifest
-
-A consumer MUST read `format` before it checks the manifest against a JSON Schema of [NAM-004]. When the consumer does
-not support the value, it MUST reject the manifest and state that the format version is not supported. A consumer MUST
-apply the other checks of [NAM-003], [NAM-004], [NAM-012], and [NAM-013] only to a manifest whose format version it
-supports.
-
-#### Scenario: NAM-022.01 Consumer states the unsupported format version
-
-- **WHEN** a consumer supports only format 1, and it reads a manifest that holds `format` 2
-- **THEN** the consumer rejects the manifest and states that format 2 is not supported
-
-#### Scenario: NAM-022.02 Format version is the first check
-
-- **WHEN** a consumer supports only format 1, and it reads a manifest that holds `format` 2 and an unknown member
-- **THEN** the consumer states that format 2 is not supported, and it reports no JSON Schema failure
-
 ### Requirement: NAM-004 The store publishes a JSON Schema for each manifest file
 
 The store SHALL publish a JSON Schema for `names.json` and a JSON Schema for `overrides.json`. Each file in the store
@@ -239,6 +222,23 @@ The JSON Schemas of [NAM-004] SHALL constrain every string in the files, not onl
 
 - **WHEN** an entry of `names.json` holds a member that the JSON Schema does not define
 - **THEN** the store checks fail
+
+### Requirement: NAM-022 A consumer checks the format version before the other checks of the manifest
+
+A consumer MUST read `format` before it checks the manifest against a JSON Schema of [NAM-004]. When the consumer does
+not support the value, it MUST reject the manifest and state that the format version is not supported. A consumer MUST
+apply the other checks of [NAM-003], [NAM-004], [NAM-012], and [NAM-013] only to a manifest whose format version it
+supports.
+
+#### Scenario: NAM-022.01 Consumer states the unsupported format version
+
+- **WHEN** a consumer supports only format 1, and it reads a manifest that holds `format` 2
+- **THEN** the consumer rejects the manifest and states that format 2 is not supported
+
+#### Scenario: NAM-022.02 Format version is the first check
+
+- **WHEN** a consumer supports only format 1, and it reads a manifest that holds `format` 2 and an unknown member
+- **THEN** the consumer states that format 2 is not supported, and it reports no JSON Schema failure
 
 ### Requirement: NAM-014 A consumer writes a manifest string into code only as a name or an escaped literal
 

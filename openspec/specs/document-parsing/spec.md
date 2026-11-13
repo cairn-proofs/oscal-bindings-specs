@@ -94,18 +94,6 @@ in every input mode and at every depth.
 - **WHEN** the document uses an internal field name in place of the OSCAL property key
 - **THEN** parsing reports a parse error and does not populate the field
 
-### Requirement: PRS-006 Schema validation failures carry structured error detail
-
-When parsing fails because the document does not conform to the schema, the parse error SHALL carry structured detail
-about the failures. The detail SHALL cover each failure, except as [PRS-012] permits. A caller can then report
-which locations failed and why. The detail format is language-specific, but each entry MUST identify the failing
-location.
-
-#### Scenario: PRS-006.01 Validation failure lists failing locations
-
-- **WHEN** a document fails schema validation at two locations
-- **THEN** the parse error carries one structured entry per failing location
-
 ### Requirement: PRS-007 Regex patterns follow a defined portability rule
 
 OSCAL writes some string patterns for an XSD-flavored regex engine, for example with the Unicode property class
@@ -198,6 +186,18 @@ schema. A binding MUST NOT reject an input for a limit that it does not document
 - **WHEN** a binding documents no limit that a valid document of 50 MiB exceeds, and the caller passes that document
 - **THEN** the operation returns the typed document value
 
+### Requirement: PRS-006 Schema validation failures carry structured error detail
+
+When parsing fails because the document does not conform to the schema, the parse error SHALL carry structured detail
+about the failures. The detail SHALL cover each failure, unless the parse error identifies a limit of [PRS-010].
+A caller can then report which locations failed and why. The detail format is language-specific, but each entry MUST
+identify the failing location.
+
+#### Scenario: PRS-006.01 Validation failure lists failing locations
+
+- **WHEN** a document fails schema validation at two locations
+- **THEN** the parse error carries one structured entry per failing location
+
 ### Requirement: PRS-011 A binding can limit the structured entries of a parse error
 
 A binding can document a limit of [PRS-010] that counts the failures of a document. That limit SHALL count the
@@ -222,10 +222,12 @@ the limit, the parse error SHALL carry as many entries as the limit.
 
 ### Requirement: PRS-012 A parse error carries each entry or 100 entries or more
 
-A parse error that carries structured entries of [PRS-006] SHALL meet one of these conditions:
+A parse error that carries structured entries of [PRS-006] can carry entries for only some of the failures. It SHALL
+then meet each of these conditions:
 
-1. It carries one entry for each failure.
-2. It carries 100 entries or more, identifies a limit of [PRS-010], and states that the list of entries is incomplete.
+1. It carries 100 entries or more.
+2. It identifies a limit of [PRS-010].
+3. It states that the list of entries is incomplete.
 
 A parse error that identifies no limit SHALL NOT state that the list is incomplete. A parse error over a limit of
 [PRS-010] can also carry no structured entries.
@@ -267,6 +269,7 @@ The root key of a document type is the body field of its wrapper ([MDL-002]). A 
 - **WHEN** the caller parses an object whose only key is `not-an-oscal-document`
 - **THEN** the parse error states that the input names no OSCAL document type, and it carries no failure of any
   document type
+
 ### Requirement: PRS-014 A distinguishing property selects the nested-union branch of parse failures
 A parse error of [PRS-001] SHALL meet this condition when its document root names exactly one
  document type. The condition also applies to an operation that the contract defines through a
