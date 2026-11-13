@@ -1,6 +1,6 @@
 {
   "oscal-release": "1.2.3",
-  "categories": ["parse-error", "document-type-mismatch", "not-found", "access-error", "unknown-element-type", "read-error"],
+  "categories": ["parse-error", "document-type-mismatch", "not-found", "access-error", "unknown-element-type", "read-error", "builder-error"],
   "cases": [
     {
       "id": "round-trip/catalog",
@@ -365,6 +365,41 @@
       "operation": "element-types",
       "expected": "expected/element-types.json",
       "requirements": ["ELV-002.01"]
+    },
+    {
+      "id": "build-resource/key",
+      "operation": "build-resource",
+      "arguments": { "key": "https://example.org/policies/access-control" },
+      "expected-uuid": "51beb3e9-30bb-535f-ba49-e68d4661aaa9",
+      "requirements": ["BMB-004.01"]
+    },
+    {
+      "id": "build-resource/key-with-title",
+      "operation": "build-resource",
+      "arguments": { "key": "https://example.org/policies/access-control", "title": "Access Control Policy" },
+      "expected-uuid": "51beb3e9-30bb-535f-ba49-e68d4661aaa9",
+      "requirements": ["BMB-004.02"]
+    },
+    {
+      "id": "build-resource/non-ascii-key",
+      "operation": "build-resource",
+      "arguments": { "key": "https://example.org/policies/données" },
+      "expected-uuid": "daa01937-2576-5dc8-9fb0-4da240946a5e",
+      "requirements": ["BMB-004.03"]
+    },
+    {
+      "id": "build-resource/key-and-identifier",
+      "operation": "build-resource",
+      "arguments": { "key": "https://example.org/policies/access-control", "identifier": "0c6b8f1e-4a2d-4b7e-9c3f-5d6e7f8a9b0c" },
+      "expected-category": "builder-error",
+      "requirements": ["BMB-004.04", "ERR-013.02"]
+    },
+    {
+      "id": "build-resource/empty-key",
+      "operation": "build-resource",
+      "arguments": { "key": "" },
+      "expected-category": "builder-error",
+      "requirements": ["BMB-004.05"]
     },
     {
       "id": "yaml-round-trip/catalog",

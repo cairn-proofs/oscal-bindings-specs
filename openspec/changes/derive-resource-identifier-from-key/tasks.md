@@ -78,11 +78,11 @@ group 5 uses it in `cases.json`. The groups run in order.
 
 ## 5. Cases
 
-- [ ] 5.1 Add `builder-error` to the `categories` list of `corpus/1.2.3/cases.json`. Add the five
+- [x] 5.1 Add `builder-error` to the `categories` list of `corpus/1.2.3/cases.json`. Add the five
       cases of design.md, D8, with the `requirements` identifiers of D8. Write the `é` of the third
       key as the one code point U+00E9. Verify `npm run corpus:check` passes, and reports seven
       error categories.
-- [ ] 5.2 Verify that each check of design.md, D7, fails a case that breaks it. On the working copy,
+- [x] 5.2 Verify that each check of design.md, D7, fails a case that breaks it. On the working copy,
       apply these mutations one at a time, and restore after each:
       1. Change the last digit of `expected-uuid` of `build-resource/key`.
       2. In `build-resource/non-ascii-key`, write the `é` of the key as `e` and U+0301.
@@ -100,7 +100,7 @@ group 5 uses it in `cases.json`. The groups run in order.
       12. In `docs/back-matter-keys.md`, change `/ns/oscal/` in the URL to `/ns/osca1/`.
       Verify `npm run corpus:check` reports a failure for each mutation, and passes after each
       restore.
-- [ ] 5.3 Commit group 5 with `#46` in the message. Verify `npm run check` passes before the commit,
+- [x] 5.3 Commit group 5 with `#46` in the message. Verify `npm run check` passes before the commit,
       and `git status --short` shows no file under `corpus/`, `docs/`, `scripts/`,
       `openspec/specs/`, or `openspec/changes/`.
 
