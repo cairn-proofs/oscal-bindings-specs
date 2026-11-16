@@ -4,8 +4,7 @@
 
 ### Requirement: PRS-006 Schema validation failures carry structured error detail
 
-When parsing fails because the document does not conform to the schema, or does not meet the constraint manifest of
-[CNS-017], the parse error SHALL carry structured detail about the failures. The detail SHALL cover each failure, unless
+When a document fails the schema or the constraint manifest of [CNS-017], the parse error SHALL carry structured detail about the failures. The detail SHALL cover each failure, unless
 the parse error identifies a limit of [PRS-010]. A caller can then report which locations failed and why. The detail
 format is language-specific, but each entry MUST identify the failing location. A later requirement states when
 several entries identify the same location.

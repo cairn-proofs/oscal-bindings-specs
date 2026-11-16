@@ -1,0 +1,45 @@
+{
+  "plan-of-action-and-milestones": {
+    "uuid": "00000000-0000-4000-8000-000000000001",
+    "metadata": {
+      "title": "x",
+      "last-modified": "2024-01-02T03:04:05Z",
+      "version": "x",
+      "oscal-version": "1.2.3"
+    },
+    "poam-items": [
+      {
+        "title": "x",
+        "description": "x"
+      }
+    ],
+    "risks": [
+      {
+        "uuid": "00000000-0000-4000-8000-000000000007",
+        "title": "x",
+        "description": "x",
+        "statement": "x",
+        "status": "x11",
+        "characterizations": [
+          {
+            "origin": {
+              "actors": [
+                {
+                  "type": "tool",
+                  "actor-uuid": "00000000-0000-4000-8000-000000000012"
+                }
+              ]
+            },
+            "facets": [
+              {
+                "name": "v",
+                "system": "https://www.first.org/cvss/v4-0",
+                "value": "zz-invalid"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

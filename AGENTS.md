@@ -95,10 +95,16 @@ The release steps are in [README.md, Release](README.md#release).
 | `openspec/requirements.json` | Requirement index | No. Run `npm run requirements:write`. |
 | `manifest/<release>/overrides.json` | Naming input | Yes |
 | `manifest/<release>/names.json` | Naming manifest that bindings read | No. Run `npm run names:write`. |
+| `manifest/<release>/constraints.json` | Constraint manifest that bindings read | No. Run `npm run constraints:write`. |
+| `manifest/<release>/constraint-exclusions.json` | Excluded and cannot-fail constraints | Yes |
 | `corpus/<release>/cases.json`, `documents/`, `elements/` | Corpus cases and inputs | Yes |
 | `corpus/<release>/expected/` | Canonical expected outputs | No. Run `npm run corpus:write`. |
 | `schemas/<release>/` | NIST schema files, byte-for-byte | Never |
+| `metaschema/<release>/` | NIST Metaschema modules and the datatypes XSD, byte-for-byte | Never |
 | `docs/` | Rule documents that specs cite, shipped in the archive | Yes |
+
+The directories group files by the kind of content, not by the source repository. Each `SOURCE.md` records the
+source of each file ([README.md, Layout](README.md)).
 
 These rules are not obvious from the code:
 

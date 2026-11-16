@@ -16,4 +16,4 @@ component-definition:
             - {start: &port "443", end: 443}
             - {start: 443.0, end: 443}
       props:
-        - {name: port, value: *port}
+        - {name: port, ns: "https://example.com/ns/corpus", value: *port}

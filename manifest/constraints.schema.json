@@ -1,0 +1,546 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/cairn-proofs/oscal-bindings-specs/manifest/constraints.schema.json",
+  "title": "OSCAL constraint manifest, format 1",
+  "description": "The constraints of one OSCAL release that decide whether a document or an element is valid, as RFC 9535 queries and the parameters of each constraint kind. See openspec/specs/constraint-validation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "oscal-release",
+    "entries"
+  ],
+  "properties": {
+    "format": {
+      "const": 1
+    },
+    "oscal-release": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/entry"
+      }
+    }
+  },
+  "definitions": {
+    "constraint-id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"
+    },
+    "module": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "definition": {
+      "type": "string",
+      "pattern": "^(assembly|field|flag):[a-z][a-z0-9-]*$"
+    },
+    "kind": {
+      "enum": [
+        "allowed-values",
+        "matches",
+        "has-cardinality",
+        "is-unique",
+        "index",
+        "index-has-key",
+        "expect"
+      ]
+    },
+    "index-name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "element-type": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+    },
+    "query": {
+      "type": "string",
+      "minLength": 1
+    },
+    "queries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/query"
+      }
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "document",
+        "elements"
+      ],
+      "properties": {
+        "document": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/query"
+          }
+        },
+        "elements": {
+          "type": "object",
+          "propertyNames": {
+            "$ref": "#/definitions/element-type"
+          },
+          "additionalProperties": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/definitions/query"
+            }
+          }
+        }
+      }
+    },
+    "key-fields": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "target"
+        ],
+        "properties": {
+          "target": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/definitions/query"
+            }
+          },
+          "prefix": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "entry": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "kind",
+            "level",
+            "reportable",
+            "module",
+            "definition",
+            "context",
+            "target",
+            "values",
+            "allow-other"
+          ],
+          "properties": {
+            "id": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "#/definitions/constraint-id"
+                }
+              ]
+            },
+            "kind": {
+              "const": "allowed-values"
+            },
+            "level": {
+              "enum": [
+                "ERROR",
+                "CRITICAL"
+              ]
+            },
+            "reportable": {
+              "type": "boolean"
+            },
+            "module": {
+              "$ref": "#/definitions/module"
+            },
+            "definition": {
+              "$ref": "#/definitions/definition"
+            },
+            "context": {
+              "$ref": "#/definitions/context"
+            },
+            "target": {
+              "$ref": "#/definitions/queries"
+            },
+            "values": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "allow-other": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "kind",
+            "level",
+            "reportable",
+            "module",
+            "definition",
+            "context",
+            "target",
+            "pattern"
+          ],
+          "properties": {
+            "id": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "#/definitions/constraint-id"
+                }
+              ]
+            },
+            "kind": {
+              "const": "matches"
+            },
+            "level": {
+              "enum": [
+                "ERROR",
+                "CRITICAL"
+              ]
+            },
+            "reportable": {
+              "type": "boolean"
+            },
+            "module": {
+              "$ref": "#/definitions/module"
+            },
+            "definition": {
+              "$ref": "#/definitions/definition"
+            },
+            "context": {
+              "$ref": "#/definitions/context"
+            },
+            "target": {
+              "$ref": "#/definitions/queries"
+            },
+            "pattern": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "kind",
+            "level",
+            "reportable",
+            "module",
+            "definition",
+            "context",
+            "target"
+          ],
+          "properties": {
+            "id": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "#/definitions/constraint-id"
+                }
+              ]
+            },
+            "kind": {
+              "const": "has-cardinality"
+            },
+            "level": {
+              "enum": [
+                "ERROR",
+                "CRITICAL"
+              ]
+            },
+            "reportable": {
+              "type": "boolean"
+            },
+            "module": {
+              "$ref": "#/definitions/module"
+            },
+            "definition": {
+              "$ref": "#/definitions/definition"
+            },
+            "context": {
+              "$ref": "#/definitions/context"
+            },
+            "target": {
+              "$ref": "#/definitions/queries"
+            },
+            "min-occurs": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "max-occurs": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "anyOf": [
+            {
+              "required": [
+                "min-occurs"
+              ]
+            },
+            {
+              "required": [
+                "max-occurs"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "kind",
+            "level",
+            "reportable",
+            "module",
+            "definition",
+            "context",
+            "target",
+            "key-fields"
+          ],
+          "properties": {
+            "id": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "#/definitions/constraint-id"
+                }
+              ]
+            },
+            "kind": {
+              "const": "is-unique"
+            },
+            "level": {
+              "enum": [
+                "ERROR",
+                "CRITICAL"
+              ]
+            },
+            "reportable": {
+              "type": "boolean"
+            },
+            "module": {
+              "$ref": "#/definitions/module"
+            },
+            "definition": {
+              "$ref": "#/definitions/definition"
+            },
+            "context": {
+              "$ref": "#/definitions/context"
+            },
+            "target": {
+              "$ref": "#/definitions/queries"
+            },
+            "key-fields": {
+              "$ref": "#/definitions/key-fields"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "kind",
+            "level",
+            "reportable",
+            "module",
+            "definition",
+            "context",
+            "target",
+            "key-fields",
+            "index-name",
+            "partial"
+          ],
+          "properties": {
+            "id": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "#/definitions/constraint-id"
+                }
+              ]
+            },
+            "kind": {
+              "const": "index"
+            },
+            "level": {
+              "enum": [
+                "ERROR",
+                "CRITICAL"
+              ]
+            },
+            "reportable": {
+              "type": "boolean"
+            },
+            "module": {
+              "$ref": "#/definitions/module"
+            },
+            "definition": {
+              "$ref": "#/definitions/definition"
+            },
+            "context": {
+              "$ref": "#/definitions/context"
+            },
+            "target": {
+              "$ref": "#/definitions/queries"
+            },
+            "key-fields": {
+              "$ref": "#/definitions/key-fields"
+            },
+            "index-name": {
+              "$ref": "#/definitions/index-name"
+            },
+            "partial": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "kind",
+            "level",
+            "reportable",
+            "module",
+            "definition",
+            "context",
+            "target",
+            "key-fields",
+            "index-name",
+            "partial"
+          ],
+          "properties": {
+            "id": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "#/definitions/constraint-id"
+                }
+              ]
+            },
+            "kind": {
+              "const": "index-has-key"
+            },
+            "level": {
+              "enum": [
+                "ERROR",
+                "CRITICAL"
+              ]
+            },
+            "reportable": {
+              "type": "boolean"
+            },
+            "module": {
+              "$ref": "#/definitions/module"
+            },
+            "definition": {
+              "$ref": "#/definitions/definition"
+            },
+            "context": {
+              "$ref": "#/definitions/context"
+            },
+            "target": {
+              "$ref": "#/definitions/queries"
+            },
+            "key-fields": {
+              "$ref": "#/definitions/key-fields"
+            },
+            "index-name": {
+              "$ref": "#/definitions/index-name"
+            },
+            "partial": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "kind",
+            "level",
+            "reportable",
+            "module",
+            "definition",
+            "context",
+            "target",
+            "test"
+          ],
+          "properties": {
+            "id": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "#/definitions/constraint-id"
+                }
+              ]
+            },
+            "kind": {
+              "const": "expect"
+            },
+            "level": {
+              "enum": [
+                "ERROR",
+                "CRITICAL"
+              ]
+            },
+            "reportable": {
+              "type": "boolean"
+            },
+            "module": {
+              "$ref": "#/definitions/module"
+            },
+            "definition": {
+              "$ref": "#/definitions/definition"
+            },
+            "context": {
+              "$ref": "#/definitions/context"
+            },
+            "target": {
+              "$ref": "#/definitions/queries"
+            },
+            "test": {
+              "$ref": "#/definitions/query"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

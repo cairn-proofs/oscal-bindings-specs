@@ -7,16 +7,16 @@
 prefixes:
   BMB:
     capability: backmatter-builders
-    next: 5
+    next: 6
   FAC:
     capability: document-facade
     next: 8
   PRS:
     capability: document-parsing
-    next: 15
+    next: 16
   ELV:
     capability: element-validation
-    next: 5
+    next: 6
   ERR:
     capability: error-model
     next: 14
@@ -38,6 +38,9 @@ prefixes:
   YML:
     capability: yaml-documents
     next: 12
+  CNS:
+    capability: constraint-validation
+    next: 24
 
 # One entry for each retired identifier: id, reason and, for a relocation, replaced_by.
 retired:

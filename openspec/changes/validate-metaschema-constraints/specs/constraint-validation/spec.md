@@ -12,8 +12,8 @@ the rule for each constraint kind, and how the store checks the manifest.
 
 For each vendored OSCAL release, `metaschema/<release>/` SHALL hold these files:
 
-1. The modules of `src/metaschema/` at the release tag of `usnistgov/OSCAL`, and the entity files
-   that they include.
+1. The `oscal_*_metaschema_RESOLVED.xml` modules that the release of `usnistgov/OSCAL` publishes
+   as assets.
 2. `metaschema-datatypes.xsd` of `usnistgov/metaschema`, at the commit that `SOURCE.md` records.
 
 Each file SHALL have the bytes of its source, and `SHA256SUMS` SHALL list its digest. The store
@@ -27,8 +27,8 @@ checks SHALL fail on a digest that does not match. The spec artifact SHALL hold 
 #### Scenario: CNS-001.02 The spec artifact holds the metaschema
 
 - **WHEN** a consumer reads the spec artifact
-- **THEN** it holds `metaschema/1.2.3/` with each module, each entity file that a module includes,
-  and its `SHA256SUMS`
+- **THEN** it holds `metaschema/1.2.3/` with each module, `metaschema-datatypes.xsd` and its
+  `SHA256SUMS`
 
 ### Requirement: CNS-002 A constraint that cannot work as written is defective
 
@@ -149,6 +149,18 @@ Each entry SHALL hold these queries of [CNS-006]:
 - **WHEN** an element of the type `hash` is the only input
 - **THEN** the element context queries of the type `hash` select the context nodes of the
   `matches` entries for hash lengths from it
+
+### Requirement: CNS-023 The element queries of a single-or-many type are those of its item type
+
+The element of an element type of kind `single-or-many` is one item or a list of items. The
+element context queries of that type SHALL be those of its item type. An implementation SHALL apply
+them to each item of a list.
+
+#### Scenario: CNS-023.01 A list of items
+
+- **WHEN** an element of the type `mapping-collection-mappings` is a list of two mappings
+- **THEN** the implementation applies the element context queries of the type `mapping` to each of
+  the two mappings
 
 ### Requirement: CNS-008 An allowed-values entry checks the value against its applicable set
 

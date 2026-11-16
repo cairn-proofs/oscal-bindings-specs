@@ -5,6 +5,35 @@ the naming manifest, and the conformance corpus. Each language binding implement
 
 This repo is an [OpenSpec store](https://github.com/Fission-AI/OpenSpec/blob/main/docs/stores-beta/user-guide.md).
 
+## Why this exists
+
+[OSCAL](https://pages.nist.gov/OSCAL/) is a standard format from NIST for writing down security and compliance
+information in a form computers can read: what a system is, which security controls it uses, and how well it meets
+them. Organizations exchange these documents with auditors, agencies, and each other.
+
+The standard is published as a schema, which is a technical description of what a valid document looks like. A schema
+is not a ready-made tool. Each team that wants to read or write OSCAL in its own programming language has to build a
+library from it, and that causes three problems:
+
+1. **The same document gets different answers.** One library accepts a document and another rejects it, or both accept
+   it and read it differently. Two organizations then disagree about whether the same compliance record is correct.
+2. **The same thing gets different names.** Each library invents its own names for the parts of a document. Code and
+   knowledge do not carry from one language to another, and every team learns the standard again from the start.
+3. **Nobody can prove a library is right.** Without a shared yardstick, "this library follows OSCAL" is a claim that
+   the author makes and the user must trust.
+
+This repo fixes this by holding the rules once, in a form that does not depend on any programming language:
+
+1. **A written contract** that says what every library must do and how it must report problems.
+2. **One naming list** that gives each part of OSCAL a single name that every library uses.
+3. **A shared set of test documents** with the expected result for each. A library passes when it gives these results.
+4. **A copy of the official NIST schema**, unchanged, so everyone works from the same source.
+
+The repo holds no software that reads or writes OSCAL. The libraries that do (see
+[Known implementations](#known-implementations)) follow this contract and prove it by passing the test documents.
+Releases are numbered and signed, so a library can name the exact version of the rules it follows and anyone can check
+it (see [Verify a release](#verify-a-release)).
+
 ## Layout
 
 1. `openspec/`: the capability specs (`specs/`), the changes (`changes/`), the config, the identifier ledger
@@ -15,13 +44,22 @@ This repo is an [OpenSpec store](https://github.com/Fission-AI/OpenSpec/blob/mai
    The requirements of each spec are in reading order, not in identifier order. A reader finds a requirement by its
    identifier with search or `openspec/requirements.json`.
 2. `schemas/<release>/`: the NIST OSCAL JSON Schema files of one release, byte-for-byte, with `sha256` sums.
-3. `manifest/<release>/`: the naming manifest. `names.json` is generated and holds the canonical name, kind, and
-   schema pointers of each type. `overrides.json` is the hand-edited naming input. `manifest/*.schema.json` are the
-   JSON Schemas of both files (see [manifest/1.2.3/README.md](manifest/1.2.3/README.md)).
-4. `corpus/<release>/`: the conformance corpus.
-5. `docs/`: shared documents that the specs cite, such as
+3. `metaschema/<release>/`: the NIST OSCAL Metaschema modules of one release and the Metaschema datatypes XSD,
+   byte-for-byte, with `sha256` sums. The constraint manifest comes from these files.
+   The directories of the store group files by the kind of content that they hold, not by the repository that the
+   content comes from. The modules in `metaschema/<release>/` and the JSON Schema files in `schemas/<release>/` come
+   from the same OSCAL release. The datatypes XSD comes from `usnistgov/metaschema`. `SOURCE.md` in each directory
+   records the source of each file.
+4. `manifest/<release>/`: the manifests. `names.json` is the generated naming manifest. It holds the canonical name,
+   kind, and schema pointers of each type. `overrides.json` is the hand-edited naming input. `constraints.json` is the
+   generated constraint manifest. It holds the Metaschema constraints that the JSON Schema cannot state, as queries
+   that a binding runs. `constraint-exclusions.json` is the hand-edited list of the constraints that the manifest
+   leaves out. `manifest/*.schema.json` are the JSON Schemas of these files (see
+   [manifest/1.2.3/README.md](manifest/1.2.3/README.md)).
+5. `corpus/<release>/`: the conformance corpus.
+6. `docs/`: shared documents that the specs cite, such as
    [canonical JSON for conformance comparison](docs/canonical-json.md).
-6. `scripts/`: the store tooling.
+7. `scripts/`: the store tooling.
 
 ## Use the store
 

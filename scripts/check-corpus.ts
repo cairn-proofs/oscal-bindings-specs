@@ -31,7 +31,8 @@
  *     case has exactly one of `expected-element` and `expected-category`. A build-resource case has exactly one of
  *     `expected-uuid`, `expected-element`, and `expected-category`. The checker makes the element that the arguments
  *     give, and validates it against the schema: the hash definition, the rlink item schema, or the resource item
- *     schema. A hash gets the algorithm SHA-256 when it has none (BMB-001). A resource with no identifier and no key
+ *     schema. A hash gets the algorithm SHA-256 when it has none (BMB-001). A resource takes its `rlinks` as they are
+ *     (BMB-003). A resource with no identifier and no key
  *     gets a fixed UUID, and its `uuid` is left out of the comparison (BMB-003). With `expected-element`, the element
  *     is valid, the canonical form of `expected-element` equals the canonical form of the element, and a build-resource
  *     case has no key and, with no identifier, no `uuid` in `expected-element`. With `expected-uuid`, the key is not
@@ -48,9 +49,16 @@
  *     form of the input, so the body, the metadata, the OSCAL version, and the identifier that the facade reads come
  *     from a known document. With `expected-category`, the category is not-found, the form is `path`, and the input
  *     does not exist.
+ * 17. A case field `expected-constraints` (CNS-020) applies to a parse, validate-element, or builder case. Its input
+ *     conforms to the schema, and the reference evaluator (scripts/constraint-reference.ts) gives the failures that the
+ *     field lists by `id`, once for each failure. A parse input that conforms to the schema, a validate-element input
+ *     with `expected-valid` false that conforms to it, and a builder element that conforms to it and fails the manifest
+ *     need the field. Each reportable entry of the constraint manifest has a case whose input fails it. No input that a
+ *     case expects to be valid, and no element that a builder case expects, fails an entry.
  *
  *   npm run corpus:check           check the corpus
  *   npm run corpus:write           regenerate each expected file, then check
+ *   npm run corpus:self-test       run the rule scenarios of check 17
  */
 import { createHash } from "node:crypto";
 import fs from "node:fs";
@@ -60,6 +68,8 @@ import { Ajv, type ValidateFunction } from "ajv";
 import addFormatsModule from "ajv-formats";
 
 import { canonicalize, normalizeDatetime } from "./canonical-json.js";
+import { CorpusConstraints, type EntryFailure } from "./corpus-constraints.js";
+import type { Entry } from "./constraints-lib.js";
 import { checkSchemaForReader, readYaml } from "./yaml-reader.js";
 
 const addFormats = addFormatsModule as unknown as (ajv: Ajv) => Ajv;
@@ -96,8 +106,28 @@ const BUILDERS = ["build-hash", "build-rlink", "build-resource"];
 const ARGUMENT_FIELDS: Record<string, string[]> = {
   "build-hash": ["value", "algorithm"],
   "build-rlink": ["href", "media-type", "hashes"],
-  "build-resource": ["key", "title", "identifier", "document-ids"],
+  "build-resource": ["key", "title", "identifier", "document-ids", "rlinks"],
 };
+interface Expectations {
+  /** CNS-020: the failures equal the `expected-constraints` of the case, and each failed entry counts as covered. */
+  expectFailures: (c: Case, failures: EntryFailure[]) => void;
+  /** CNS-020: an input that the case expects to be valid fails no entry. */
+  expectNone: (c: Case, failures: EntryFailure[]) => void;
+}
+function expectations(fail: (id: string, message: string) => void, covered: Set<number>): Expectations {
+  return {
+    expectFailures: (c, failures) => {
+      const message = constraintMismatch(c["expected-constraints"], failures);
+      if (message) fail(c.id, message);
+      for (const f of failures) covered.add(f.entry);
+    },
+    expectNone: (c, failures) => {
+      if (failures.length) fail(c.id, `the input is expected to be valid, but it fails ${JSON.stringify(failures.map((f) => idOf(f.id)))}`);
+    },
+  };
+}
+/** The element type that each builder makes (ELV-002). */
+const TYPE_OF: Record<string, string> = { "build-hash": "hash", "build-rlink": "back-matter-resource-rlink", "build-resource": "back-matter-resource" };
 const ID = /^[A-Z]{2,5}-\d{3}(?:\.\d{2})?$/;
 
 interface Case {
@@ -118,6 +148,7 @@ interface Case {
     title?: string;
     identifier?: string;
     "document-ids"?: unknown[];
+    rlinks?: unknown[];
     value?: string;
     algorithm?: string;
     href?: string;
@@ -126,6 +157,7 @@ interface Case {
   };
   "expected-element"?: unknown;
   "expected-uuid"?: string;
+  "expected-constraints"?: string[];
   requirements: string[];
   source?: { repository: string; commit: string; path: string; sha256: string };
   notes?: string;
@@ -150,6 +182,21 @@ function uuidV5(namespace: string, name: string): string {
 }
 const GENERATED_UUID = "0c6b8f1e-4a2d-4b7e-9c3f-5d6e7f8a9b0c";
 const sha256 = (bytes: Buffer) => createHash("sha256").update(bytes).digest("hex");
+
+const idOf = (id: string | null) => id ?? "(no id)";
+/** CNS-020: the `id` values of the failures equal the list of the case, with each repeat. Undefined when they are equal. */
+export function constraintMismatch(listed: string[] | undefined, failures: EntryFailure[]): string | undefined {
+  const got = failures.map((f) => idOf(f.id)).sort();
+  const want = [...(listed ?? [])].sort();
+  if (JSON.stringify(got) === JSON.stringify(want)) return undefined;
+  return `expected-constraints is ${JSON.stringify(want)}, but the reference evaluator gives ${JSON.stringify(got)}`;
+}
+/** CNS-020: a message for each reportable entry that no case fails. */
+export function uncoveredEntries(entries: Entry[], covered: Set<number>): string[] {
+  return entries.flatMap((e, i) =>
+    e.reportable && !covered.has(i) ? [`no case has an input that fails the reportable entry ${i} (${idOf(e.id)}, ${e.kind} on ${e.definition})`] : [],
+  );
+}
 
 interface Instant {
   seconds: number;
@@ -243,7 +290,9 @@ function corpusFiles(): string[] {
 }
 
 /** The checks of a builder case (check 14). The validators come from the schema. */
-function checkBuilderFactory(fail: (id: string, message: string) => void) {
+function checkBuilderFactory(constraints: CorpusConstraints, { expectFailures, expectNone }: Expectations, fail: (id: string, message: string) => void) {
+  // CNS-020: the failures of the element of a builder case against the constraint manifest, or none when it is not valid.
+  const manifestFailures = (type: string, element: unknown, valid: boolean): EntryFailure[] => (valid ? constraints.ofElement(type, element) : []);
   return (c: Case, v: { validateResource: ValidateFunction; validateRlink: ValidateFunction; validateHash: ValidateFunction }) => {
     const category = c["expected-category"];
     if (c.input !== undefined) fail(c.id, `a ${c.operation} case has no input`);
@@ -257,7 +306,7 @@ function checkBuilderFactory(fail: (id: string, message: string) => void) {
       if (!ARGUMENT_FIELDS[c.operation].includes(name)) fail(c.id, `arguments has the unknown field "${name}"`);
     for (const name of ["key", "title", "identifier", "value", "algorithm", "href", "media-type"])
       if (record[name] !== undefined && typeof record[name] !== "string") fail(c.id, `arguments.${name} is not a string`);
-    for (const name of ["document-ids", "hashes"])
+    for (const name of ["document-ids", "hashes", "rlinks"])
       if (record[name] !== undefined && !Array.isArray(record[name])) fail(c.id, `arguments.${name} is not an array`);
     const required = c.operation === "build-hash" ? "value" : c.operation === "build-rlink" ? "href" : undefined;
     if (required !== undefined && typeof record[required] !== "string") {
@@ -281,7 +330,7 @@ function checkBuilderFactory(fail: (id: string, message: string) => void) {
     } else {
       const generated = args.identifier === undefined && (args.key === undefined || args.key === "");
       const uuid = args.identifier ?? (args.key ? uuidV5(KEY_NAMESPACE, args.key) : GENERATED_UUID);
-      element = withoutUndefined({ uuid, title: args.title, "document-ids": args["document-ids"] });
+      element = withoutUndefined({ uuid, title: args.title, rlinks: args.rlinks, "document-ids": args["document-ids"] });
       validate = v.validateResource;
       if (c["expected-element"] !== undefined && args.key !== undefined) fail(c.id, "a build-resource case with expected-element has no key");
       if (generated && c["expected-element"] !== undefined && typeof c["expected-element"] === "object" && c["expected-element"] !== null && Object.hasOwn(c["expected-element"], "uuid") && args.identifier === undefined)
@@ -289,6 +338,7 @@ function checkBuilderFactory(fail: (id: string, message: string) => void) {
       if (generated && args.key === undefined && c["expected-element"] !== undefined) {
         const valid = validate(element);
         if (!valid) fail(c.id, `the element is not valid: ${JSON.stringify(validate.errors)}`);
+        expectNone(c, manifestFailures("back-matter-resource", element, valid));
         delete element.uuid;
         compareElement(c, element, c["expected-element"], fail);
         return;
@@ -302,20 +352,24 @@ function checkBuilderFactory(fail: (id: string, message: string) => void) {
       }
     }
     const valid = validate(element) as boolean;
+    const failures = manifestFailures(TYPE_OF[c.operation], element, valid);
     if (c["expected-element"] !== undefined) {
       if (!valid) fail(c.id, `the element is not valid: ${JSON.stringify(validate.errors)}`);
+      expectNone(c, failures);
       compareElement(c, element, c["expected-element"], fail);
       return;
     }
     if (category !== "builder-error") fail(c.id, `a ${c.operation} case has the category builder-error`);
+    // CNS-020: an element that conforms to the schema and fails the manifest is invalid input (BMB-005), and the case lists the failures.
+    if (failures.length > 0 || c["expected-constraints"] !== undefined) expectFailures(c, failures);
     if (c.operation !== "build-resource") {
-      if (valid) fail(c.id, "the element is valid, so the builder reports no error");
+      if (valid && failures.length === 0) fail(c.id, "the element is valid and meets the constraint manifest, so the builder reports no error");
       return;
     }
     const emptyKey = args.key === "" && args.identifier === undefined;
     const keyAndIdentifier = args.key !== undefined && args.key !== "" && args.identifier !== undefined && UUID_V4_OR_V5.test(args.identifier);
-    if ([emptyKey, keyAndIdentifier, !valid].filter(Boolean).length !== 1)
-      fail(c.id, "the case needs one fault: an empty key with no identifier, a key with a valid identifier, or an element that is not valid");
+    if ([emptyKey, keyAndIdentifier, !valid, failures.length > 0].filter(Boolean).length !== 1)
+      fail(c.id, "the case needs one fault: an empty key with no identifier, a key with a valid identifier, an element that is not valid, or an element that fails the constraint manifest");
   };
 }
 function compareElement(c: Case, element: unknown, expected: unknown, fail: (id: string, message: string) => void) {
@@ -326,7 +380,10 @@ function compareElement(c: Case, element: unknown, expected: unknown, fail: (id:
 function main(write: boolean): number {
   const failures: string[] = [];
   const fail = (id: string, message: string) => failures.push(`[corpus] ${id}: ${message}`);
-  const checkBuilder = checkBuilderFactory(fail);
+  const constraints = CorpusConstraints.load(RELEASE);
+  const coveredEntries = new Set<number>();
+  const { expectFailures, expectNone } = expectations(fail, coveredEntries);
+  const checkBuilder = checkBuilderFactory(constraints, { expectFailures, expectNone }, fail);
 
   const schema = JSON.parse(fs.readFileSync(SCHEMA, "utf8")) as {
     $id: string;
@@ -422,6 +479,13 @@ function main(write: boolean): number {
     }
     if (c.operation !== "build-resource" && c["expected-uuid"] !== undefined)
       fail(c.id, "only a build-resource case has expected-uuid");
+    const listed = c["expected-constraints"];
+    if (listed !== undefined) {
+      if (c.operation !== "parse" && c.operation !== "validate-element" && !isBuilder)
+        fail(c.id, "expected-constraints applies only to a parse, validate-element, or builder case");
+      if (!Array.isArray(listed) || listed.length === 0 || listed.some((x) => typeof x !== "string"))
+        fail(c.id, "expected-constraints is not a list of one or more identifiers");
+    }
     if (isBuilder) {
       if (validateResource && validateRlink && validateHash) checkBuilder(c, { validateResource, validateRlink, validateHash });
       continue;
@@ -465,6 +529,7 @@ function main(write: boolean): number {
         const bytes = fs.readFileSync(inputPath);
         const doc: unknown = JSON.parse(bytes.toString("utf8"));
         if (!validateDocument(doc)) fail(c.id, `input is not valid: ${ajv.errorsText(validateDocument.errors)}`);
+        else expectNone(c, constraints.ofDocument(doc));
         if (!c["document-type"] || !Object.hasOwn(doc as object, c["document-type"]))
           fail(c.id, `input root is not document-type "${c["document-type"]}"`);
         if (c.source && sha256(bytes) !== c.source.sha256) fail(c.id, "input sha256 does not match the source sha256");
@@ -499,9 +564,11 @@ function main(write: boolean): number {
           break;
         }
         if (validateDocument(doc)) {
-          fail(c.id, "input is valid against the schema, so parsing it is not an error");
+          if (c["expected-constraints"] === undefined) fail(c.id, "input is valid against the schema and the case has no expected-constraints, so parsing it is not an error");
+          else expectFailures(c, constraints.ofDocument(doc));
           break;
         }
+        if (c["expected-constraints"] !== undefined) fail(c.id, "the input does not conform to the schema, so the case has no expected-constraints");
         const min = c["expected-min-failures"];
         if (min !== undefined && (validateDocument.errors?.length ?? 0) < min)
           fail(c.id, `the schema reports ${validateDocument.errors?.length} failures, fewer than ${min}`);
@@ -517,6 +584,7 @@ function main(write: boolean): number {
       case "parse-typed": {
         const doc = JSON.parse(fs.readFileSync(inputPath, "utf8")) as object;
         if (!validateDocument(doc)) fail(c.id, "input is not valid, so the case would not isolate the type check");
+        else expectNone(c, constraints.ofDocument(doc));
         if (!DOCUMENT_TYPES.includes(c["document-type"] ?? "")) fail(c.id, "document-type is not an OSCAL type");
         else if (Object.hasOwn(doc, c["document-type"] ?? "")) fail(c.id, "input is the requested document type");
         break;
@@ -545,6 +613,7 @@ function main(write: boolean): number {
         const text = fs.readFileSync(inputPath, "utf8");
         const doc: unknown = JSON.parse(text);
         if (!validateDocument(doc)) fail(c.id, `input is not valid: ${ajv.errorsText(validateDocument.errors)}`);
+        else expectNone(c, constraints.ofDocument(doc));
         const rootKeys = doc !== null && typeof doc === "object" ? Object.keys(doc) : [];
         if (rootKeys.length !== 1 || rootKeys[0] !== c["document-type"])
           fail(c.id, `the root keys of the input are not only document-type "${c["document-type"]}"`);
@@ -567,6 +636,7 @@ function main(write: boolean): number {
           break;
         }
         if (!validateDocument(doc)) fail(c.id, `input is not valid: ${ajv.errorsText(validateDocument.errors)}`);
+        else expectNone(c, constraints.ofDocument(doc));
         if (!supported) {
           fail(c.id, "input is not an Assessment Plan or Assessment Results, so it has no assessment period");
           break;
@@ -592,9 +662,16 @@ function main(write: boolean): number {
           fail(c.id, `element type "${c["element-type"]}" has no unique schema definition`);
           break;
         }
-        const valid = validate(JSON.parse(fs.readFileSync(inputPath, "utf8")));
-        if (valid !== c["expected-valid"])
-          fail(c.id, `the schema reports valid=${valid}, not ${c["expected-valid"]}: ${ajv.errorsText(validate.errors)}`);
+        const element: unknown = JSON.parse(fs.readFileSync(inputPath, "utf8"));
+        const valid = validate(element);
+        if (!valid) {
+          if (c["expected-valid"] !== false) fail(c.id, `the schema reports valid=false, not ${c["expected-valid"]}: ${ajv.errorsText(validate.errors)}`);
+          if (c["expected-constraints"] !== undefined) fail(c.id, "the input does not conform to the schema, so the case has no expected-constraints");
+        } else if (c["expected-valid"] === true) {
+          if (c["expected-constraints"] !== undefined) fail(c.id, "expected-valid is true, so the case has no expected-constraints");
+          expectNone(c, constraints.ofElement(c["element-type"] ?? "", element));
+        } else if (c["expected-constraints"] === undefined) fail(c.id, "the schema reports valid=true, not false, and the case has no expected-constraints");
+        else expectFailures(c, constraints.ofElement(c["element-type"] ?? "", element));
         break;
       }
       case "yaml-round-trip": {
@@ -604,6 +681,7 @@ function main(write: boolean): number {
           fail(c.id, `the YAML reader rejects the input (${result.fault}): ${result.detail}`);
           break;
         }
+        expectNone(c, constraints.ofDocument(result.value));
         if (!c["document-type"] || !Object.hasOwn(result.value as object, c["document-type"]))
           fail(c.id, `input root is not document-type "${c["document-type"]}"`);
         if (c.source && sha256(bytes) !== c.source.sha256) fail(c.id, "input sha256 does not match the source sha256");
@@ -649,6 +727,7 @@ function main(write: boolean): number {
   for (const file of corpusFiles()) {
     if (!used.has(file)) fail(file, "no case uses this file");
   }
+  for (const message of uncoveredEntries(constraints.entries, coveredEntries)) fail("cases.json", message);
 
   for (const failure of failures) console.error(failure);
   console.log(
@@ -659,4 +738,51 @@ function main(write: boolean): number {
   return failures.length ? 1 : 0;
 }
 
-process.exit(main(process.argv.includes("--write")));
+/** The rule scenarios of check 17 (CNS-020). They run the reference evaluator on documents made for the test. */
+function selfTest(): number {
+  const constraints = CorpusConstraints.load(RELEASE);
+  const metadata = { title: "t", "last-modified": "2024-01-02T03:04:05Z", version: "1", "oscal-version": RELEASE };
+  const catalog = (props: object[]) => ({ catalog: { uuid: "00000000-0000-4000-8000-000000000001", metadata, controls: [{ id: "c", title: "t", props, parts: [{ name: "statement" }] }] } });
+  const bad = constraints.ofDocument(catalog([{ name: "bogus", value: "1" }]));
+  const reportable = constraints.entries.map((e, i) => (e.reportable ? i : -1)).filter((i) => i >= 0);
+  const hashFailures = constraints.ofElement("hash", { algorithm: "SHA-256", value: "abc" });
+  const messages: string[] = [];
+  const { expectFailures, expectNone } = expectations((id, message) => messages.push(`${id}: ${message}`), new Set());
+  const run = (check: (c: Case, f: EntryFailure[]) => void, c: Partial<Case>, failures: EntryFailure[]) => {
+    messages.length = 0;
+    check({ id: "t", operation: "parse", requirements: [], ...c }, failures);
+    return messages.length;
+  };
+  const cases: Array<[string, () => boolean | string]> = [
+    ["a document with an unknown property name fails two closed entries, each with its id", () => JSON.stringify(bad.map((f) => f.id).sort()) === '["oscal-control-prop-name","oscal-metadata-prop-name-values"]' || JSON.stringify(bad)],
+    ["a valid document fails no entry", () => constraints.ofDocument(catalog([{ name: "label", value: "1" }])).length === 0],
+    ["CNS-020: the listed identifiers equal the failures", () => constraintMismatch(["oscal-metadata-prop-name-values", "oscal-control-prop-name"], bad) === undefined],
+    ["CNS-020.01: a reportable entry without a case fails the check, one message for each entry", () => uncoveredEntries(constraints.entries, new Set()).length === reportable.length && uncoveredEntries(constraints.entries, new Set(reportable)).length === 0 && uncoveredEntries(constraints.entries, new Set(reportable.slice(1))).length === 1],
+    ["CNS-020: an entry that is not reportable needs no case", () => reportable.length < constraints.entries.length && uncoveredEntries(constraints.entries, new Set(reportable)).length === 0],
+    ["CNS-020: a wrong identifier fails the check", () => constraintMismatch(["oscal-metadata-prop-name-values", "oscal-control-prop-names"], bad) !== undefined],
+    ["CNS-020: a missing repeat of an identifier fails the check", () => constraintMismatch(["oscal-control-prop-name"], bad) !== undefined && constraintMismatch(["oscal-control-prop-name", "oscal-control-prop-name", "oscal-metadata-prop-name-values"], bad) !== undefined],
+    ["CNS-020: an identifier repeated for two failures passes", () => constraintMismatch(["a", "a"], [{ entry: 0, id: "a", location: "$" }, { entry: 1, id: "a", location: "$" }]) === undefined && constraintMismatch(["a"], [{ entry: 0, id: "a", location: "$" }, { entry: 1, id: "a", location: "$" }]) !== undefined],
+    ["CNS-020: a case with failures that lists none fails the check", () => constraintMismatch(undefined, bad) !== undefined],
+    ["CNS-020.02: a valid input that fails an entry fails the check", () => run(expectNone, {}, bad) === 1 && run(expectNone, {}, []) === 0],
+    ["CNS-020: a listed failure that does not occur fails the check", () => run(expectFailures, { "expected-constraints": ["oscal-control-prop-name"] }, []) === 1],
+    ["CNS-018: a hash element with a short value fails the entry of its algorithm", () => hashFailures.map((f) => f.id).join() === "oscal-check-hash-length-SHA2-3-256" || JSON.stringify(hashFailures)],
+    ["CNS-018: an element type without a definition gives no failure", () => constraints.ofElement("no-such-type", {}).length === 0],
+  ];
+  let failed = 0;
+  for (const [name, fn] of cases) {
+    let out: boolean | string;
+    try {
+      out = fn();
+    } catch (error) {
+      out = `threw ${(error as Error).stack}`;
+    }
+    if (out !== true) failed++;
+    console.log(`${out === true ? "PASS" : "FAIL"}  ${name}${out === true || out === false ? "" : `\n      ${out}`}`);
+  }
+  console.log(`\n${cases.length - failed}/${cases.length} passed`);
+  return failed ? 1 : 0;
+}
+
+if (process.argv[1] !== undefined && path.basename(process.argv[1]) === "check-corpus.ts") {
+  process.exit(process.argv.includes("--self-test") ? selfTest() : main(process.argv.includes("--write")));
+}

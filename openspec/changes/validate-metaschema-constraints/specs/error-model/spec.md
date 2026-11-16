@@ -47,8 +47,7 @@ The parse-error category of [ERR-001] SHALL apply to these inputs:
 2. A YAML input that [YML-002], [YML-003], [YML-004], or [YML-009] in the yaml-documents capability rejects.
 3. An input that exceeds a documented limit of [PRS-010] in the document-parsing capability.
 
-A parse error for an input that does not conform to the schema or to the constraint manifest carries the structured
-detail of [ERR-003].
+A parse error for an input that fails the schema or the manifest carries the structured detail of [ERR-003].
 
 #### Scenario: ERR-004.01 Malformed input maps to parse error
 

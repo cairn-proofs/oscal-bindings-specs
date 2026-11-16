@@ -1,0 +1,63 @@
+{
+  "assessment-results": {
+    "uuid": "00000000-0000-4000-8000-000000000001",
+    "metadata": {
+      "title": "x",
+      "last-modified": "2024-01-02T03:04:05Z",
+      "version": "x",
+      "oscal-version": "1.2.3",
+      "parties": [
+        {
+          "uuid": "00000000-0000-4000-8000-000000000012"
+        }
+      ],
+      "roles": [
+        {
+          "id": "x11",
+          "title": "x"
+        }
+      ]
+    },
+    "import-ap": {
+      "href": "https://example.com/x"
+    },
+    "results": [
+      {
+        "uuid": "00000000-0000-4000-8000-000000000006",
+        "title": "x",
+        "description": "x",
+        "start": "2024-01-02T03:04:05Z",
+        "reviewed-controls": {
+          "control-selections": [
+            {
+              "include-all": {}
+            }
+          ]
+        },
+        "attestations": [
+          {
+            "parts": [
+              {
+                "name": "x10"
+              }
+            ],
+            "responsible-parties": [
+              {
+                "role-id": "x11",
+                "party-uuids": [
+                  "00000000-0000-4000-8000-000000000012"
+                ]
+              },
+              {
+                "role-id": "x11",
+                "party-uuids": [
+                  "00000000-0000-4000-8000-000000000012"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

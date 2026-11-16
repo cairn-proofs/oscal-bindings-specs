@@ -1,0 +1,41 @@
+{
+  "assessment-plan": {
+    "uuid": "00000000-0000-4000-8000-000000000001",
+    "metadata": {
+      "title": "x",
+      "last-modified": "2024-01-02T03:04:05Z",
+      "version": "x",
+      "oscal-version": "1.2.3"
+    },
+    "import-ssp": {
+      "href": "https://example.com/x"
+    },
+    "reviewed-controls": {
+      "control-selections": [
+        {
+          "include-all": {}
+        }
+      ]
+    },
+    "local-definitions": {
+      "components": [
+        {
+          "uuid": "00000000-0000-4000-8000-000000000006",
+          "type": "x",
+          "title": "x",
+          "description": "x",
+          "status": {
+            "state": "under-development"
+          },
+          "props": [
+            {
+              "name": "ipv6-address",
+              "value": "zz-invalid",
+              "ns": "http://csrc.nist.gov/ns/oscal"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,6 +1,6 @@
 /**
  * Builds the spec artifact: a .tar.gz of the contract at a git ref, plus SHA256SUMS. The archive holds the main specs,
- * the requirement index, the traceability record JSON Schema, the vendored schemas, the manifest, the corpus, the
+ * the requirement index, the traceability record JSON Schema, the vendored schemas and metaschema, the manifest, the corpus, the
  * shared rule documents, VERSION, and LICENSE, under one directory named for the artifact version.
  *
  *   npm run archive              build from HEAD into dist/
@@ -20,6 +20,7 @@ export const CONTENTS = [
   "corpus",
   "docs",
   "manifest",
+  "metaschema",
   "openspec/requirements.json",
   "openspec/spec-ids.yaml",
   "openspec/specs",

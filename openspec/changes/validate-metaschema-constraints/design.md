@@ -125,6 +125,10 @@ The list `cannot-fail` also names 4 `matches` entries with the datatype `uri-ref
 rejects only a value with white space at an end or a line break. The JSON Schema gives `href` the
 `format` `uri-reference`, and the schema check of the store rejects each such value.
 
+The list `cannot-fail` also names `oscal-unique-resource-base64-filename`. Its target is the
+member `base64` of a resource. The JSON Schema allows at most one `base64` member for each
+resource, so no key can repeat.
+
 No mechanical rule finds these entries: the generator would have to prove that the test of an
 entry holds for each node that the schema allows.
 
@@ -157,13 +161,13 @@ rules from that source:
 ### D5. The manifest holds every constraint of the level ERROR, also the ones that cannot fail
 
 The manifest holds each constraint of the level ERROR or CRITICAL that the list `excluded` does
-not list ([CNS-005]). That is 319 entries. 234 are reportable. The other 85 cannot fail for a
+not list ([CNS-005]). That is 319 entries. 233 are reportable. The other 86 cannot fail for a
 document that conforms to the schema, and each entry states that it is not reportable
 ([CNS-021]):
 
 1. 21 `allowed-values` entries that the JSON Schema enforces.
 2. 58 `allowed-values` entries with `allow-other="yes"`.
-3. 5 entries that the list `cannot-fail` names (D3).
+3. 6 entries that the list `cannot-fail` names (D3).
 4. `oscal-by-component-uuid-index`, whose index is partial (D9).
 
 The open entries are necessary for the applicable set of [CNS-008]. The Metaschema specification
@@ -265,7 +269,10 @@ Each reportable entry gets one `parse` case. The input conforms to the JSON Sche
 entry. A new case field `expected-constraints` lists the `id` of each failure of the input, once
 for each failure ([CNS-020]). For example, an OSCAL-namespace property name that a control does
 not allow fails `oscal-control-prop-name` and `oscal-metadata-prop-name-values`, so its case lists
-both. The input is a valid corpus document with one change, as in the spike.
+both. The input is the smallest schema-valid document of its model, with one change. A generator
+(`scripts/corpus-constraint-cases.ts`) builds it from the required members only, so a case file
+has about 1 KB and a reviewer sees the change. A copy of a corpus document would add several
+megabytes of near-identical files.
 
 The check of [CNS-020] also runs the reference evaluator on each input that a case expects to be
 valid, and on the element that each builder case expects. Two existing inputs then fail, and the
@@ -342,8 +349,8 @@ an optional sign and one or more digits.
 ## Open Questions
 
 1. Which commit of `usnistgov/metaschema` gives `metaschema-datatypes.xsd`. The change uses the
-   commit that the build of OSCAL v1.2.3 pins, if one can be found. Otherwise it uses the last
-   commit before the OSCAL v1.2.3 tag. `SOURCE.md` records the choice.
+   commit that the build of OSCAL v1.2.3 pins. That commit is `37fd650b`, which has the tag
+   `v0.9.1`. `SOURCE.md` records it.
 
 [MDL-009]: ../../specs/model-derivation/spec.md#requirement-mdl-009-the-naming-manifest-is-the-shared-source-of-truth-across-languages
 [PRS-006]: ../../specs/document-parsing/spec.md#requirement-prs-006-schema-validation-failures-carry-structured-error-detail

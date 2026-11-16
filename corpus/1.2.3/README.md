@@ -12,7 +12,11 @@ A binding that fails a case records the expected failure in its own repository, 
    JSON input, and a `.yaml` file is a YAML input.
 3. `documents/invalid/`: documents that a binding must reject. Each is a minimal document with one fault. An input for
    a case that counts failures with `expected-min-failures` above 1, for example `two-failures.json` and
-   `many-failures.json`, has the faults that the case counts. The JSON inputs are minimal catalogs. A YAML input is a minimal document of the type that its fault needs.
+   `many-failures.json`, has the faults that the case counts. The other JSON inputs are minimal catalogs. A YAML input is a minimal document of the type that its fault needs.
+   The directory `documents/invalid/constraints/` holds one document for each reportable entry of
+   the constraint manifest. Each document conforms to the schema and fails that entry. The command
+   `npm run corpus:cases` writes these documents and the `parse/constraint/` cases that use them.
+   Do not edit them by hand.
 4. `elements/`: standalone OSCAL elements for element validation.
 5. `expected/`: the canonical form of each `round-trip` and `yaml-round-trip` input. It also holds the list of
    element-type names of the `element-types` case. `npm run corpus:write` generates these files. Do not edit them.
@@ -41,11 +45,12 @@ Each case has these fields:
 6. `arguments`: for a builder case, an object with these keys:
    1. `build-hash`: `value` (a string, required) and `algorithm` (a string).
    2. `build-rlink`: `href` (a string, required), `media-type` (a string), and `hashes` (an array of hash objects).
-   3. `build-resource`: `key`, `title`, and `identifier` (each a string), and `document-ids` (an array of document-id
-      objects).
+   3. `build-resource`: `key`, `title`, and `identifier` (each a string), `rlinks` (an array of rlink objects), and
+      `document-ids` (an array of document-id objects).
 
-   For an item of `hashes` or `document-ids`, the runner gives the builder the element of the binding with the same
-   JSON. The runner does not validate the item. The builder must report the error of an invalid item.
+   For an item of `hashes`, `rlinks`, or `document-ids`, the runner gives the builder the element
+   of the binding with the same JSON. The runner does not validate the item. The builder must
+   report the error of an invalid item.
 7. Optional fields:
    1. `document-type`: the root key of the document type, for a round trip or a typed parse.
    2. `element-type`: the element-type name, for element validation.
@@ -59,8 +64,18 @@ Each case has these fields:
       ([PRS-013](../../openspec/specs/document-parsing/spec.md#requirement-prs-013-the-root-key-selects-the-document-type-of-the-parse-failures)).
       An input with two or more root keys has no `expected-max-failures`, because PRS-013 sets no rule for its
       failures.
-   6. `source`: the repository, commit, path, and `sha256` of a document copied from another repository.
-   7. `notes`: an explanation for people. For a `yaml-parse` case, the notes name the fault code of the reference
+   6. `expected-constraints`: the `id` of each constraint failure that the input gives, in any order,
+      once for each failure. An `id` occurs more than once when the input gives more than one
+      failure of the entries with that `id`. The field applies to a `parse`, `validate-element`, or
+      builder case ([CNS-020](../../openspec/specs/constraint-validation/spec.md#requirement-cns-020-the-corpus-has-a-failing-case-for-each-reportable-entry)).
+      The input conforms to the JSON Schema. These cases have the field:
+      1. A `parse` case whose input conforms to the schema.
+      2. A `validate-element` case with `expected-valid` `false` whose input conforms to the schema.
+      3. A builder case whose element conforms to the schema and fails the constraint manifest.
+
+      A case whose input does not conform to the schema has no `expected-constraints`.
+   7. `source`: the repository, commit, path, and `sha256` of a document copied from another repository.
+   8. `notes`: an explanation for people. For a `yaml-parse` case, the notes name the fault code of the reference
       YAML reader in backticks, for example `` `grammar` ``.
 
 ## Operations
@@ -70,7 +85,9 @@ Each case has these fields:
    canonical form is defined in [Canonical JSON for conformance comparison](../../docs/canonical-json.md).
 2. `parse`: parse the input with the generic parser. The parser must report `expected-category`. The parse error must
    carry no more structured entries than `expected-max-failures`. The non-raising validity check must return false for
-   the same input.
+   the same input. With `expected-constraints`, the `id` values of the constraint failures in the parse error must
+   equal the list, with each repeat. The exception is a parse error that identifies a limit of
+   [PRS-010](../../openspec/specs/document-parsing/spec.md#requirement-prs-010-a-binding-can-limit-the-resources-that-a-parse-uses).
 3. `parse-typed`: parse the input with the typed parser of `document-type`. The parser must report
    `expected-category`.
 4. `parse-file`: parse the file at the input path. For the not-found category, the path does not exist.
@@ -81,7 +98,10 @@ Each case has these fields:
    bound that the facade returns as [Canonical JSON for conformance comparison](../../docs/canonical-json.md#datetimes)
    states, and then compares it with the value in `expected-period`.
 6. `validate-element`: validate the input against `element-type`. The result must be `expected-valid`, or the
-   operation must report `expected-category`.
+   operation must report `expected-category`. With `expected-constraints`, the `id` values of the
+   constraint failures in the result must equal the list, with each repeat, unless the result
+   identifies a limit of
+   [ELV-004](../../openspec/specs/element-validation/spec.md#requirement-elv-004-a-binding-can-limit-the-resources-that-element-validation-uses).
 7. `yaml-round-trip`: parse the YAML input with the YAML parse operation. Serialize the parsed document to JSON. The
    canonical form of the output must be the same bytes as `expected`. Then serialize the parsed document to YAML,
    parse that output with the YAML parse operation, and serialize the result to JSON. Its canonical form must also be
@@ -114,6 +134,9 @@ Each case has these fields:
     With `expected-category`, the category is `not-found`, the form is `path`, and the input path does not exist. The
     facade must report the category and name the path, as `parse-file` does.
 
+For a builder case with `expected-constraints`, the runner checks only that the builder reports
+the validation error. It does not compare the `id` values of the failures.
+
 For each `round-trip` input, the non-raising validity check must return true. The check does not apply to a
 `yaml-round-trip` input.
 
@@ -125,6 +148,14 @@ makes YAML optional.
 `npm run corpus:check` checks the corpus without any binding. It uses the vendored schema and an independent JSON
 Schema validator. For a YAML input, it uses the reference YAML reader, `scripts/yaml-reader.ts`. For example, it
 confirms that each valid document is valid, that each invalid document fails in the stated way, and that each expected
-file is the canonical form of its input. A YAML input that copies a NIST example uses the expected file of its JSON
-twin. Each document in `documents/valid/` that has a `source` is a public-domain example from NIST
-`usnistgov/oscal-content`. The other documents were written for this corpus.
+file is the canonical form of its input. It also runs the reference evaluator of the constraint manifest, as
+[CNS-020](../../openspec/specs/constraint-validation/spec.md#requirement-cns-020-the-corpus-has-a-failing-case-for-each-reportable-entry) states:
+
+1. For each input with `expected-constraints`, the evaluator gives the failures that the field lists.
+2. Each reportable entry of `manifest/1.2.3/constraints.json` has a case whose input fails it.
+3. No input that a case expects to be valid, and no element that a builder case expects, fails an
+   entry.
+
+A YAML input that copies a NIST example uses the expected file of its JSON twin. Each document in
+`documents/valid/` that has a `source` is a public-domain example from NIST `usnistgov/oscal-content`.
+The other documents were written for this corpus.
