@@ -33,12 +33,13 @@ checks SHALL fail on a digest that does not match. The spec artifact SHALL hold 
 ### Requirement: CNS-002 A constraint that cannot work as written is defective
 
 A constraint is an `allowed-values`, `matches`, `has-cardinality`, `is-unique`, `index`,
-`index-has-key` or `expect` element of a module. The store SHALL treat a constraint of the level
-ERROR or CRITICAL as defective when:
+`index-has-key` or `expect` element of a module. The store SHALL treat an ERROR or CRITICAL
+constraint as defective when:
 
-1. Its target selects no node in any document that conforms to the schema.
+1. Its target selects nothing in any document that conforms to the schema.
 2. It fails for a node that a filter of its target excludes.
-3. No document that conforms to the schema and the other constraints meets it.
+3. It fails for each node that it selects in each document that the schema and other
+   constraints allow.
 4. It gives a Metapath error for a target node.
 
 #### Scenario: CNS-002.01 A target that selects nothing
@@ -51,6 +52,12 @@ ERROR or CRITICAL as defective when:
 - **WHEN** a `has-cardinality` constraint on assessment parts has a minimum of 1 and a target
   that starts with a filter on `@name='objective'`, and an assessment part has another name
 - **THEN** the constraint fails for that part, and the constraint is defective
+
+#### Scenario: CNS-002.03 A has-cardinality constraint that no document meets
+
+- **WHEN** a `has-cardinality` constraint on local objectives has a minimum of 1, and no other
+  constraint allows its target
+- **THEN** the constraint fails for each local objective, and the constraint is defective
 
 ### Requirement: CNS-003 The exclusion list names each defective constraint with its issue
 
@@ -205,7 +212,8 @@ For an `is-unique`, `index` or `index-has-key` entry, the key of a target node S
 of the values of the key fields of the entry. A key field is a query that runs on an array that
 holds only the target node. It gives null when it selects no value. When a key field has a
 prefix, its value is the rest of the string after the prefix, or null when the string does not
-start with the prefix. A key whose values are all null is no key.
+start with the prefix. A key whose values are all null is no key. Keys compare value by value,
+character for character.
 
 #### Scenario: CNS-012.01 A key field that selects nothing
 
@@ -283,7 +291,8 @@ A document meets the constraint manifest when no entry gives a failure for it, w
 context queries of [CNS-007]. The requirement for the kind of an entry states when the entry
 gives a failure. Each failure SHALL have a location and
 the `id` of its entry. The location is the target node, or the context node for a
-`has-cardinality` entry.
+`has-cardinality` entry. An entry SHALL give at most one failure for one location, or for one
+location and one key of [CNS-012].
 
 #### Scenario: CNS-017.01 A document with one failure
 
@@ -294,6 +303,13 @@ the `id` of its entry. The location is the target node, or the context node for 
 
 - **WHEN** a document conforms to the schema, and no entry gives a failure for it
 - **THEN** the document meets the constraint manifest
+
+#### Scenario: CNS-017.03 A target node of two context nodes
+
+- **WHEN** a control holds a control enhancement, the enhancement holds a part with a name that
+  `oscal-control-statement-part-name` does not allow, and the target queries of the entry select
+  the part from both controls
+- **THEN** the entry gives one failure for the part
 
 ### Requirement: CNS-018 An element meets the manifest when no entry that it can decide fails
 
@@ -337,9 +353,10 @@ The generation SHALL fail for a reportable entry without an `id`.
 ### Requirement: CNS-019 The store checks the queries against a reference evaluator
 
 The store checks SHALL evaluate the vendored constraints with a reference evaluator that reads
-the metaschema. The store checks SHALL fail when the queries of an entry select other nodes than
-the reference evaluator selects for its constraint. The check SHALL use the documents of the
-corpus, and a generated document of each model that holds each definition and flag of the model.
+the metaschema and applies [CNS-011] to [CNS-017]. They SHALL fail when the queries of an entry
+select other nodes than the reference evaluator selects for its constraint. The check SHALL use
+the corpus documents that conform to the schema, and generated documents of each model that
+conform to it and together hold each definition, flag and choice branch of the model.
 
 #### Scenario: CNS-019.01 A query that selects too many nodes
 

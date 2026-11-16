@@ -30,7 +30,7 @@ document that does not conform to the schema SHALL carry no entry for a constrai
 - **WHEN** the caller parses a catalog that conforms to the schema, and a control in it holds a
   property of the OSCAL namespace with the name `priority`
 - **THEN** the parse operation reports a parse error, and each structured entry identifies the
-  property and carries the `id` of a manifest entry that fails
+  `name` of the property and carries the `id` of a manifest entry that fails
 
 #### Scenario: PRS-015.02 A document that fails the schema
 

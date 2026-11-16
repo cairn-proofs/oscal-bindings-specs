@@ -99,24 +99,34 @@ The list `excluded` of the exclusion list names each one with an issue of `usnis
 that works as written stays in the manifest, also when people disagree with it. For example,
 [OSCAL#2118] reports a rule on the part names below `guidance` that the manifest enforces.
 
-The list `excluded` holds these 7 constraints:
+The list `excluded` holds these 9 constraints:
 
 | Constraint | Condition of [CNS-002] | Issue |
 |---|---|---|
 | `oscal-metadata-action-type-values` | 1. The target `./type[...]` selects nothing, because `type` is a flag of `action`. | [OSCAL#2301] |
+| `oscal-metadata-action-system-values` | 1. The target `./system/@value` selects nothing, because `system` is a flag of `action`. | [OSCAL#2301] |
 | `oscal-inventory-item-hardware-service-software-prop-name-values` | 1. The filter tests `@type`, which `inventory-item` does not have. | [OSCAL#2255] |
 | `oscal-profile-merge-combine-method-values` | 1. The JSON Schema has no `method` on `combine`, so the target `@method` selects nothing. | [OSCAL#2259] |
 | `oscal-assesment-part-objective-cardinality` | 2. It fails for each assessment part that is not named `objective`. | [OSCAL#2291] |
 | `oscal-assessment-method-id-cardinality` | 3. It requires a property `method-id`, and no `allowed-values` constraint lists that name. | [OSCAL#2059] |
+| `oscal-system-implementation-validation-index` | 3. Its target holds an `href` that starts with `#`, and its key field has no pattern. The index holds bare UUIDs, so each target node fails. | A second new issue, filed before the exclusion list is complete |
 | The `allowed-values` constraint without an `id` on the mapping field `relationship` | 4. `has-oscal-namespace()` gives an error for a field (D4). | A new issue, filed before the exclusion list is complete |
 | The `allowed-values` constraint without an `id` on the mapping field `category` | 4. As above. | The same new issue |
 
 `oscal-profile-req-merge-combine` is not defective. Its target selects `combine`, and its test
 `not(@method='merge')` is always true for a document that conforms to the schema, because the
 JSON Schema gives `combine` no members. The manifest holds it, and the list `cannot-fail` of the
-exclusion list names it with this reason, so that the entry is not reportable ([CNS-021]). No
-mechanical rule finds such an entry: the generator would have to prove that the test of an
-`expect` entry holds for each node that the schema allows.
+exclusion list names it with this reason, so that the entry is not reportable ([CNS-021]).
+
+The list `cannot-fail` also names 4 `matches` entries with the datatype `uri-reference` on an
+`href` that starts with `#`: `oscal-metadata-link-reference-href-datatype-uri-reference`,
+`oscal-system-information-pia-datatype-uri-reference`, `oscal-diagram-datatype-uri-reference` and
+`oscal-leveraged-authorization-link-rel-ssp-datatype-uri-reference`. The pattern `\S(.*\S)?`
+rejects only a value with white space at an end or a line break. The JSON Schema gives `href` the
+`format` `uri-reference`, and the schema check of the store rejects each such value.
+
+No mechanical rule finds these entries: the generator would have to prove that the test of an
+entry holds for each node that the schema allows.
 
 An item of either list identifies a constraint by its `id`. For a constraint without an `id`,
 the item identifies it by its module, its declaring definition and its kind.
@@ -147,13 +157,13 @@ rules from that source:
 ### D5. The manifest holds every constraint of the level ERROR, also the ones that cannot fail
 
 The manifest holds each constraint of the level ERROR or CRITICAL that the list `excluded` does
-not list ([CNS-005]). That is 321 entries. 239 are reportable. The other 82 cannot fail for a
+not list ([CNS-005]). That is 319 entries. 234 are reportable. The other 85 cannot fail for a
 document that conforms to the schema, and each entry states that it is not reportable
 ([CNS-021]):
 
 1. 21 `allowed-values` entries that the JSON Schema enforces.
-2. 59 `allowed-values` entries with `allow-other="yes"`.
-3. `oscal-profile-req-merge-combine`, which the list `cannot-fail` names (D3).
+2. 58 `allowed-values` entries with `allow-other="yes"`.
+3. 5 entries that the list `cannot-fail` names (D3).
 4. `oscal-by-component-uuid-index`, whose index is partial (D9).
 
 The open entries are necessary for the applicable set of [CNS-008]. The Metaschema specification
@@ -163,7 +173,9 @@ of its members is closed. The spike showed the effect. In `terms-and-conditions`
 manifest without the open entries rejects it.
 
 A node that fails two closed entries gives two failures ([CNS-008]), because each failure carries
-the `id` of one entry, and each entry is a separate constraint of the metaschema.
+the `id` of one entry, and each entry is a separate constraint of the metaschema. A node that one
+entry selects from several context nodes gives one failure of that entry ([CNS-017]), because a
+failure is a location and the `id` of an entry.
 
 The 21 entries that the JSON Schema enforces give no duplicate failure, because a parse error for
 a document that fails the schema carries schema failures only ([PRS-015]).
@@ -202,8 +214,11 @@ constraint work as its text intends:
       a statement (`oscal-implemented-requirement-by-component-cardinality`).
    4. An export of a by-component holds a provided item or a responsibility
       (`oscal-by-component-export-provided-responsibility-cardinality`).
-   5. An assessment-method part of a local objective holds one property `method` and one objects
-      part (`oscal-assessment-method-cardinality`, `oscal-assessment-objects-cardinality`).
+   5. A local objective holds an assessment-method part. Over all its assessment-method parts, it
+      holds exactly one property `method` and exactly one objects part
+      (`oscal-assessment-method-cardinality`, `oscal-assessment-objects-cardinality`). The parts
+      of a local objective are `part` elements, and `oscal-part-prop-name` does not list `method`.
+      Thus the property `method` must have the namespace `http://csrc.nist.gov/ns/rmf`.
 2. **A key whose values are all null is no key.** The specification sets a missing key value to
    null, and makes two equal keys an error. Read literally, two catalog parts without an `id` are
    a duplicate. The spike counted 26,162 such failures in the SP 800-53 rev5 catalog, which is
@@ -280,6 +295,9 @@ The generator rewrites the regular expressions into I-Regexp:
 3. It writes the escape `\S` as `[^ \t\n\r]`. RFC 9485 has no multi-character escapes.
 4. It moves a comma out of a character class. The RFC 9535 library json-p3 3.0.3 passes the
    compliance test suite, but never matches a pattern with a comma in a character class.
+5. It moves a literal hyphen to the end of its character class. RFC 9485 allows a literal hyphen
+   only at the start or the end of a class. `oscal-metadata-link-resource-fragment-datatype` has
+   one after the range `A-Z`.
 
 The generation fails for a pattern that it cannot rewrite, and for a datatype without a pattern
 ([CNS-010]). Thus the choice of the XSD commit cannot leave a `matches` entry without a pattern.
@@ -352,6 +370,7 @@ an optional sign and one or more digits.
 [CNS-013]: specs/constraint-validation/spec.md#requirement-cns-013-an-is-unique-entry-fails-for-target-nodes-with-the-same-key
 [CNS-014]: specs/constraint-validation/spec.md#requirement-cns-014-an-index-holds-the-keys-of-each-index-entry-with-the-same-name
 [CNS-015]: specs/constraint-validation/spec.md#requirement-cns-015-an-index-has-key-entry-fails-for-a-key-that-is-not-in-the-index
+[CNS-017]: specs/constraint-validation/spec.md#requirement-cns-017-a-document-meets-the-manifest-when-no-entry-fails-for-it
 [CNS-018]: specs/constraint-validation/spec.md#requirement-cns-018-an-element-meets-the-manifest-when-no-entry-that-it-can-decide-fails
 [CNS-019]: specs/constraint-validation/spec.md#requirement-cns-019-the-store-checks-the-queries-against-a-reference-evaluator
 [CNS-021]: specs/constraint-validation/spec.md#requirement-cns-021-an-entry-is-reportable-unless-it-cannot-fail

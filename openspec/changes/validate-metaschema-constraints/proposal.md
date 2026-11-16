@@ -52,9 +52,10 @@ release of oscal-cli supports OSCAL 1.2.2 or 1.2.3.
 4. Store tooling gains a manifest generator and a reference evaluator in `scripts/`. They need
    dependencies for XML and for RFC 9535.
 5. The defective constraints that the manifest leaves out are reported in [OSCAL#2059],
-   [OSCAL#2255], [OSCAL#2259], [OSCAL#2291] and [OSCAL#2301]. Two more defects need a new issue:
-   the `allowed-values` constraints on the mapping fields `relationship` and `category` call
-   `has-oscal-namespace()` on a node that the function does not accept.
+   [OSCAL#2255], [OSCAL#2259], [OSCAL#2291] and [OSCAL#2301]. Three more defects need new
+   issues. The `allowed-values` constraints on the mapping fields `relationship` and `category`
+   call `has-oscal-namespace()` on a node that the function does not accept.
+   `oscal-system-implementation-validation-index` fails for each node that it selects.
 6. This change addresses [issue #65].
 
 [issue #65]: https://github.com/cairn-proofs/oscal-bindings-specs/issues/65
