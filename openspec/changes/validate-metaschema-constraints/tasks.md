@@ -71,6 +71,12 @@
       query that selects a node of another definition, and one with a `matches` pattern that
       rejects a valid value. Verify both checks pass on the generated manifest and each self-test
       case fails them.
+- [ ] 3.5 Evaluate the generated manifest with the reference evaluator on the 43 JSON documents of
+      `usnistgov/oscal-content` at commit `f0de6d8`, without adding them to the store. Record the
+      result for each document in the PR description. Verify the result matches the Context of
+      [design.md](design.md#context): 35 documents meet the manifest, and the 7 SP 800-53 rev4
+      documents and `basic-profile-resolved.json` fail. Report each other difference to the user
+      before the next task starts.
 
 ## 4. Add the corpus cases
 

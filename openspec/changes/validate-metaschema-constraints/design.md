@@ -21,6 +21,24 @@ selects nodes in another document. The runs used 25 valid corpus documents, the 
 of `usnistgov/oscal-content` at commit `f0de6d8`, generated documents of each model, and 26
 hand-made failing inputs.
 
+The spike also evaluated its rules on the 43 documents of `usnistgov/oscal-content`. Its rules
+match the rules of this change for a document, except that this change excludes the defective
+constraints and does not check references against a partial index. These two rules only remove
+failures, and none of the removed failures occurred in these documents. The result:
+
+1. 35 documents meet the manifest. They include the SP 800-53 rev5 catalog with its baseline
+   profiles and resolved catalogs, SP 800-171 rev3, SP 800-172 rev3, SP 800-218, CSF 2.0, AI RMF,
+   and each example except one.
+2. The 7 SP 800-53 rev4 documents fail. They declare `oscal-version` 1.0.0, and NIST no longer
+   updates them. They hold properties named `priority`, parameters with `depends-on`, and a
+   reference to a party that the document does not define.
+3. `examples/profile/json/basic-profile-resolved.json` fails `oscal-control-statement-part-name`.
+   It holds a part named `item` below a `guidance` part, which is the rule of [OSCAL#2118].
+
+The `has-cardinality` entries had few context nodes in these documents: 4 activities, 5
+implemented requirements and 2 exports, and all of them passed. 6 of the 9 `has-cardinality`
+constraints selected no context node.
+
 ## Goals / Non-Goals
 
 **Goals:**
@@ -174,7 +192,18 @@ constraint work as its text intends:
 1. **A `has-cardinality` entry counts 0 for a context node with no target node.** The section on
    `@target` says that a constraint with no target node "MUST be ignored". The section on
    `has-cardinality` counts the target nodes against `@min-occurs`. With the first reading, a
-   minimum of 1 or more could never fail. metaschema-java also counts 0.
+   minimum of 1 or more could never fail. metaschema-java also counts 0. With this reading, the
+   reportable `has-cardinality` entries make these children mandatory:
+   1. An activity holds a property `method` of the OSCAL namespace
+      (`oscal-activity-type-cardinality`).
+   2. A location holds a title, an address, an email address or a telephone number
+      (`oscal-metadata-location-title-address-email-address-telephone-cardinality`).
+   3. An implemented requirement of a system security plan holds a by-component, directly or in
+      a statement (`oscal-implemented-requirement-by-component-cardinality`).
+   4. An export of a by-component holds a provided item or a responsibility
+      (`oscal-by-component-export-provided-responsibility-cardinality`).
+   5. An assessment-method part of a local objective holds one property `method` and one objects
+      part (`oscal-assessment-method-cardinality`, `oscal-assessment-objects-cardinality`).
 2. **A key whose values are all null is no key.** The specification sets a missing key value to
    null, and makes two equal keys an error. Read literally, two catalog parts without an `id` are
    a duplicate. The spike counted 26,162 such failures in the SP 800-53 rev5 catalog, which is
@@ -276,8 +305,13 @@ an optional sign and one or more digits.
 5. Two libraries can report different nodes of one duplicate pair, because RFC 9535 does not fix
    the order of object members → [CNS-013] and [CNS-014] fix the number of failures, not the
    node. The corpus compares counts and identifiers, not locations.
-6. Documents that parse today give a parse error → The release is a breaking version increment,
-   and the release notes list the constraints that the manifest enforces.
+6. Documents that parse today give a parse error, including 8 documents of
+   `usnistgov/oscal-content` (Context) → The release is a breaking version increment, and the
+   release notes list the constraints that the manifest enforces, the children that D7 makes
+   mandatory, and the oscal-content documents that fail.
+7. The `has-cardinality` reading of D7 has little evidence from published content: 11 context
+   nodes over 3 constraints → The corpus has a failing input for each reportable entry, and the
+   implementation runs the generated manifest on oscal-content again, as the tasks state.
 
 ## Migration Plan
 
