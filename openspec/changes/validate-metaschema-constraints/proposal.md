@@ -44,7 +44,8 @@ release of oscal-cli supports OSCAL 1.2.2 or 1.2.3.
 
 1. Bindings in each language need an RFC 9535 implementation and the rule for each constraint
    kind. Each binding gets a pin-move issue for the release.
-2. The release is a breaking version increment, as [VER-003] states.
+2. The release is a breaking version increment. Under the `0.y.z` rule of Semantic Versioning,
+   it is a minor increment.
 3. Three corpus cases break constraints. The valid inputs `number-scalars.yaml` and
    `string-scalars.yaml` need new property names, and the builder case
    `build-hash/algorithm-string` needs a SHA-512 value of the right length.
@@ -57,7 +58,6 @@ release of oscal-cli supports OSCAL 1.2.2 or 1.2.3.
 6. This change addresses [issue #65].
 
 [issue #65]: https://github.com/cairn-proofs/oscal-bindings-specs/issues/65
-[VER-003]: ../../specs/schema-versioning/spec.md#requirement-ver-003-the-shared-spec-artifact-uses-semantic-versioning-for-its-own-compatibility
 [OSCAL#2059]: https://github.com/usnistgov/OSCAL/issues/2059
 [OSCAL#2255]: https://github.com/usnistgov/OSCAL/issues/2255
 [OSCAL#2259]: https://github.com/usnistgov/OSCAL/issues/2259

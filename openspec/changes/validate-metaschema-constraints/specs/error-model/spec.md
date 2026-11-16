@@ -2,6 +2,19 @@
 
 ## MODIFIED Requirements
 
+### Requirement: ERR-003 Parse errors expose structured validation detail
+
+A parse error for a document that does not conform to the schema, or does not meet the constraint manifest of
+[CNS-017], SHALL carry a structured list of the individual validation failures, each identifying the failing location.
+This lets a caller present each failure, except as [PRS-012] permits, rather than only the first. The container shape
+is language-specific, but the per-failure location MUST be present. [PRS-015] states when several failures identify
+the same location.
+
+#### Scenario: ERR-003.01 Multiple failures are all exposed
+
+- **WHEN** a document fails schema validation at several locations, and the parse error identifies no limit
+- **THEN** the parse error exposes one structured entry per failing location
+
 ### Requirement: ERR-002 A non-raising validity check is available
 
 The implementation SHALL offer a validity check that returns a boolean and never reports an error for invalid input. A
@@ -34,7 +47,8 @@ The parse-error category of [ERR-001] SHALL apply to these inputs:
 2. A YAML input that [YML-002], [YML-003], [YML-004], or [YML-009] in the yaml-documents capability rejects.
 3. An input that exceeds a documented limit of [PRS-010] in the document-parsing capability.
 
-A schema-conformance parse error carries the structured detail of [ERR-003].
+A parse error for an input that does not conform to the schema or to the constraint manifest carries the structured
+detail of [ERR-003].
 
 #### Scenario: ERR-004.01 Malformed input maps to parse error
 

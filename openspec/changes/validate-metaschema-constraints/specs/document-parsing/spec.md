@@ -1,12 +1,27 @@
 # Spec Delta
 
+## MODIFIED Requirements
+
+### Requirement: PRS-006 Schema validation failures carry structured error detail
+
+When parsing fails because the document does not conform to the schema, or does not meet the constraint manifest of
+[CNS-017], the parse error SHALL carry structured detail about the failures. The detail SHALL cover each failure, unless
+the parse error identifies a limit of [PRS-010]. A caller can then report which locations failed and why. The detail
+format is language-specific, but each entry MUST identify the failing location. A later requirement states when
+several entries identify the same location.
+
+#### Scenario: PRS-006.01 Validation failure lists failing locations
+
+- **WHEN** a document fails schema validation at two locations
+- **THEN** the parse error carries one structured entry per failing location
+
 ## ADDED Requirements
 
 ### Requirement: PRS-015 A constraint failure is a parse failure that names its constraint
 
 A parse operation SHALL report a parse error for a document that conforms to the schema and does
-not meet the constraint manifest of [CNS-017]. The parse error carries one structured entry for
-each constraint failure, as [PRS-006], [PRS-011] and [PRS-012] state for schema failures. Each
+not meet the constraint manifest of [CNS-017]. The parse error SHALL carry one structured entry
+of [PRS-006] for each constraint failure, so several entries can identify the same location. Each
 of these entries SHALL also carry the `id` of the manifest entry that fails. A parse error for a
 document that does not conform to the schema SHALL carry no entry for a constraint failure.
 

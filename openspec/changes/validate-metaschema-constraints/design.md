@@ -64,8 +64,10 @@ Alternatives considered:
 
 The store translates the metaschema into `manifest/<release>/constraints.json` with TypeScript
 tooling in `scripts/`, as it generates `names.json` ([CNS-004]). The generator resolves group
-names, JSON keys, `has-oscal-namespace()`, unions and the regular expressions. A binding reads the
-manifest and does not read the metaschema.
+names, JSON keys, `has-oscal-namespace()`, unions and the regular expressions. A key-field pattern
+of OSCAL 1.2.3 is always a literal prefix followed by `(.*)`, so the manifest holds the prefix
+([CNS-012]). I-Regexp defines no capture group. A binding reads the manifest and does not read the
+metaschema.
 
 The generator reads `names.json` to find the element type of each definition ([ELV-002]), so that
 the element context queries of [CNS-007] use the element-type names of the contract.
@@ -74,11 +76,12 @@ the element context queries of [CNS-007] use the element-type names of the contr
 
 The manifest follows the text of the metaschema and of the Metaschema specification, not the
 behavior of metaschema-java. A constraint that cannot work as written is defective ([CNS-002]).
-The exclusion list names each one with an issue of `usnistgov/OSCAL` ([CNS-003]). A constraint
+The list `excluded` of the exclusion list names each one with an issue of `usnistgov/OSCAL`
+([CNS-003]). A constraint
 that works as written stays in the manifest, also when people disagree with it. For example,
 [OSCAL#2118] reports a rule on the part names below `guidance` that the manifest enforces.
 
-The exclusion list holds these 7 constraints:
+The list `excluded` holds these 7 constraints:
 
 | Constraint | Condition of [CNS-002] | Issue |
 |---|---|---|
@@ -91,15 +94,18 @@ The exclusion list holds these 7 constraints:
 | The `allowed-values` constraint without an `id` on the mapping field `category` | 4. As above. | The same new issue |
 
 `oscal-profile-req-merge-combine` is not defective. Its target selects `combine`, and its test
-`not(@method='merge')` is always true for a document that conforms to the schema. The manifest
-holds it as an entry that cannot fail.
+`not(@method='merge')` is always true for a document that conforms to the schema, because the
+JSON Schema gives `combine` no members. The manifest holds it, and the list `cannot-fail` of the
+exclusion list names it with this reason, so that the entry is not reportable ([CNS-021]). No
+mechanical rule finds such an entry: the generator would have to prove that the test of an
+`expect` entry holds for each node that the schema allows.
 
-An item of the exclusion list identifies a constraint by its `id`. For a constraint without an
-`id`, the item identifies it by its module, its declaring definition and its kind.
+An item of either list identifies a constraint by its `id`. For a constraint without an `id`,
+the item identifies it by its module, its declaring definition and its kind.
 
 The completeness of the list depends on review, with one check: each reportable entry needs a
 failing corpus input ([CNS-020]). A reportable entry that can never fail cannot get one, so the
-store checks fail until the list names it.
+store checks fail until one of the lists names it.
 
 Alternative considered: follow metaschema-java. oscal-cli, which uses it, has no release for
 OSCAL 1.2.2 or 1.2.3, and its open issues report wrong constraint results.
@@ -108,7 +114,8 @@ OSCAL 1.2.2 or 1.2.3, and its open issues report wrong constraint results.
 
 84 of the 247 constraints use `has-oscal-namespace()`. The Metaschema specification does not
 define the function. It is an OSCAL function, and its only definition is its implementation in
-liboscal-java (`HasOscalNamespace.java`). The generator and the reference evaluator use these
+liboscal-java (`HasOscalNamespace.java`, at the commit that `metaschema/1.2.3/SOURCE.md` records).
+The generator and the reference evaluator use these
 rules from that source:
 
 1. The arguments are one or more namespace strings.
@@ -121,13 +128,14 @@ rules from that source:
 
 ### D5. The manifest holds every constraint of the level ERROR, also the ones that cannot fail
 
-The manifest holds each constraint of the level ERROR or CRITICAL that the exclusion list does
+The manifest holds each constraint of the level ERROR or CRITICAL that the list `excluded` does
 not list ([CNS-005]). That is 321 entries. 239 are reportable. The other 82 cannot fail for a
-document that conforms to the schema:
+document that conforms to the schema, and each entry states that it is not reportable
+([CNS-021]):
 
 1. 21 `allowed-values` entries that the JSON Schema enforces.
 2. 59 `allowed-values` entries with `allow-other="yes"`.
-3. `oscal-profile-req-merge-combine` (D3).
+3. `oscal-profile-req-merge-combine`, which the list `cannot-fail` names (D3).
 4. `oscal-by-component-uuid-index`, whose index is partial (D9).
 
 The open entries are necessary for the applicable set of [CNS-008]. The Metaschema specification
@@ -135,6 +143,9 @@ makes all `allowed-values` constraints that target a node one set, and the set i
 of its members is closed. The spike showed the effect. In `terms-and-conditions`, the part name
 `objective` passes, because the open constraint `oscal-assessment-part-values` lists it. A
 manifest without the open entries rejects it.
+
+A node that fails two closed entries gives two failures ([CNS-008]), because each failure carries
+the `id` of one entry, and each entry is a separate constraint of the metaschema.
 
 The 21 entries that the JSON Schema enforces give no duplicate failure, because a parse error for
 a document that fails the schema carries schema failures only ([PRS-015]).
@@ -241,6 +252,9 @@ The generator rewrites the regular expressions into I-Regexp:
 4. It moves a comma out of a character class. The RFC 9535 library json-p3 3.0.3 passes the
    compliance test suite, but never matches a pattern with a comma in a character class.
 
+The generation fails for a pattern that it cannot rewrite, and for a datatype without a pattern
+([CNS-010]). Thus the choice of the XSD commit cannot leave a `matches` entry without a pattern.
+
 The XSD defines `integer` as a restriction of `xs:integer` with the pattern `\S(.*\S)?`, so the
 pattern alone accepts `high`. The generator writes the lexical form of `xs:integer` as the pattern:
 an optional sign and one or more digits.
@@ -250,8 +264,9 @@ an optional sign and one or more digits.
 1. A binding's RFC 9535 library can have a defect that the compliance suite does not find, as
    json-p3 has → The corpus has a failing input for each reportable entry, so each binding runs
    the query of each reportable entry on a document that it selects.
-2. A translation error reaches every binding at once → The reference evaluator and the corpus
-   check each entry in the store. One fix in the store then corrects every binding.
+2. A translation error reaches every binding at once → The store evaluates the manifest with an
+   RFC 9535 implementation and compares its failures with the reference evaluator ([CNS-022]).
+   One fix in the store then corrects every binding.
 3. The filters of an entry that cannot fail get no failing input → The query check of [CNS-019]
    compares the nodes on each corpus document, and the generated documents unroll each recursive
    definition to a depth of 6.
@@ -266,7 +281,8 @@ an optional sign and one or more digits.
 
 ## Migration Plan
 
-1. Release the store with a breaking version increment, as [VER-003] states for the 0.y.z range.
+1. Release the store with a breaking version increment. Under the `0.y.z` rule of Semantic
+   Versioning, that is a minor increment, as for the earlier breaks of the store.
 2. Each binding moves its pin through its pin-move issue, implements [CNS-006] to [CNS-018] with
    an RFC 9535 library, and records the corpus cases that it does not pass yet as expected
    failures ([VER-007]).
@@ -286,7 +302,6 @@ an optional sign and one or more digits.
 [ELV-001]: ../../specs/element-validation/spec.md#requirement-elv-001-validate-a-standalone-element-against-a-named-type
 [ELV-002]: ../../specs/element-validation/spec.md#requirement-elv-002-element-type-names-are-kebab-case-and-derived-from-the-type-names
 [BMB-001]: ../../specs/backmatter-builders/spec.md#requirement-bmb-001-build-a-back-matter-hash-value
-[VER-003]: ../../specs/schema-versioning/spec.md#requirement-ver-003-the-shared-spec-artifact-uses-semantic-versioning-for-its-own-compatibility
 [VER-007]: ../../specs/schema-versioning/spec.md#requirement-ver-007-each-binding-keeps-its-own-expected-conformance-failures
 [CNS-001]: specs/constraint-validation/spec.md#requirement-cns-001-the-store-vendors-the-metaschema-of-each-vendored-oscal-release
 [CNS-002]: specs/constraint-validation/spec.md#requirement-cns-002-a-constraint-that-cannot-work-as-written-is-defective
@@ -297,12 +312,16 @@ an optional sign and one or more digits.
 [CNS-007]: specs/constraint-validation/spec.md#requirement-cns-007-each-entry-selects-context-nodes-and-target-nodes
 [CNS-008]: specs/constraint-validation/spec.md#requirement-cns-008-an-allowed-values-entry-checks-the-value-against-its-applicable-set
 [CNS-009]: specs/constraint-validation/spec.md#requirement-cns-009-an-element-decides-an-allowed-values-entry-only-with-its-applicable-set
+[CNS-010]: specs/constraint-validation/spec.md#requirement-cns-010-a-matches-entry-checks-the-full-value-against-its-pattern
 [CNS-011]: specs/constraint-validation/spec.md#requirement-cns-011-a-has-cardinality-entry-counts-the-target-nodes-of-each-context-node
+[CNS-012]: specs/constraint-validation/spec.md#requirement-cns-012-a-key-is-the-list-of-the-values-of-the-key-fields
 [CNS-013]: specs/constraint-validation/spec.md#requirement-cns-013-an-is-unique-entry-fails-for-target-nodes-with-the-same-key
 [CNS-014]: specs/constraint-validation/spec.md#requirement-cns-014-an-index-holds-the-keys-of-each-index-entry-with-the-same-name
 [CNS-015]: specs/constraint-validation/spec.md#requirement-cns-015-an-index-has-key-entry-fails-for-a-key-that-is-not-in-the-index
 [CNS-018]: specs/constraint-validation/spec.md#requirement-cns-018-an-element-meets-the-manifest-when-no-entry-that-it-can-decide-fails
 [CNS-019]: specs/constraint-validation/spec.md#requirement-cns-019-the-store-checks-the-queries-against-a-reference-evaluator
+[CNS-021]: specs/constraint-validation/spec.md#requirement-cns-021-an-entry-is-reportable-unless-it-cannot-fail
+[CNS-022]: specs/constraint-validation/spec.md#requirement-cns-022-the-store-checks-the-failures-of-the-manifest-against-the-reference-evaluator
 [CNS-020]: specs/constraint-validation/spec.md#requirement-cns-020-the-corpus-has-a-failing-case-for-each-reportable-entry
 [OSCAL#2059]: https://github.com/usnistgov/OSCAL/issues/2059
 [OSCAL#2118]: https://github.com/usnistgov/OSCAL/issues/2118

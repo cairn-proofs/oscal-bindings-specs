@@ -10,15 +10,14 @@ the rule for each constraint kind, and how the store checks the manifest.
 
 ### Requirement: CNS-001 The store vendors the metaschema of each vendored OSCAL release
 
-For each vendored OSCAL release, the store SHALL hold these files in `metaschema/<release>/`:
+For each vendored OSCAL release, `metaschema/<release>/` SHALL hold these files:
 
-1. The modules of `src/metaschema/` at the release tag of `usnistgov/OSCAL`.
-2. `schema/xml/metaschema-datatypes.xsd` of `usnistgov/metaschema`, at the commit that
-   `SOURCE.md` records.
+1. The modules of `src/metaschema/` at the release tag of `usnistgov/OSCAL`, and the entity files
+   that they include.
+2. `metaschema-datatypes.xsd` of `usnistgov/metaschema`, at the commit that `SOURCE.md` records.
 
-Each file SHALL have the same bytes as its source. `SHA256SUMS` SHALL list the digest of each
-file, and the store checks SHALL fail on a digest that does not match. The spec artifact SHALL
-hold the directory.
+Each file SHALL have the bytes of its source, and `SHA256SUMS` SHALL list its digest. The store
+checks SHALL fail on a digest that does not match. The spec artifact SHALL hold the directory.
 
 #### Scenario: CNS-001.01 A changed module fails the store checks
 
@@ -28,18 +27,19 @@ hold the directory.
 #### Scenario: CNS-001.02 The spec artifact holds the metaschema
 
 - **WHEN** a consumer reads the spec artifact
-- **THEN** it holds `metaschema/1.2.3/` with each module and its `SHA256SUMS`
+- **THEN** it holds `metaschema/1.2.3/` with each module, each entity file that a module includes,
+  and its `SHA256SUMS`
 
 ### Requirement: CNS-002 A constraint that cannot work as written is defective
 
 A constraint is an `allowed-values`, `matches`, `has-cardinality`, `is-unique`, `index`,
-`index-has-key` or `expect` element of a vendored module. The store SHALL treat it as defective
-when one of these is true:
+`index-has-key` or `expect` element of a module. The store SHALL treat a constraint of the level
+ERROR or CRITICAL as defective when:
 
-1. Its target selects no node in a document that conforms to the schema.
-2. It fails for a node that a filter in its own target excludes.
+1. Its target selects no node in any document that conforms to the schema.
+2. It fails for a node that a filter of its target excludes.
 3. No document that conforms to the schema and the other constraints meets it.
-4. It gives a Metapath error for a node that its target selects.
+4. It gives a Metapath error for a target node.
 
 #### Scenario: CNS-002.01 A target that selects nothing
 
@@ -54,19 +54,21 @@ when one of these is true:
 
 ### Requirement: CNS-003 The exclusion list names each defective constraint with its issue
 
-The store SHALL list each defective constraint of [CNS-002] in the exclusion list
-`manifest/<release>/constraint-exclusions.json`, and no other constraint. Each item SHALL
-identify one constraint, and SHALL hold the URL of an issue of `usnistgov/OSCAL` that reports the
-defect. The store checks SHALL fail when an item identifies no constraint, or more than one.
+The store SHALL list each defective constraint of [CNS-002] in the list `excluded` of the
+exclusion list `manifest/<release>/constraint-exclusions.json`, and no other constraint. Each item
+SHALL identify one constraint by its `id`, or, for a constraint without an `id`, by its module,
+its declaring definition and its kind. Each item SHALL hold the URL of an issue of
+`usnistgov/OSCAL` that reports the defect. The store checks SHALL fail when an item identifies no
+constraint, or more than one.
 
 #### Scenario: CNS-003.01 An item that identifies no constraint
 
-- **WHEN** an item of the exclusion list holds a constraint `id` that no vendored module holds
+- **WHEN** an item of the list `excluded` holds a constraint `id` that no vendored module holds
 - **THEN** the store checks fail
 
 #### Scenario: CNS-003.02 Each item holds its issue
 
-- **WHEN** a consumer reads an item of the exclusion list
+- **WHEN** a consumer reads an item of the list `excluded`
 - **THEN** the item holds the URL of an issue of `usnistgov/OSCAL`
 
 ### Requirement: CNS-004 The store publishes a constraint manifest for each release
@@ -90,11 +92,9 @@ Schema `manifest/constraints.schema.json`. The spec artifact SHALL hold both fil
 ### Requirement: CNS-005 The manifest holds each constraint that can decide validity
 
 The manifest SHALL hold one entry for each constraint whose level is ERROR or CRITICAL, unless
-the exclusion list of [CNS-003] lists it. A constraint without a level has the level ERROR. It
+the list `excluded` of [CNS-003] lists it. A constraint without a level has the level ERROR. It
 SHALL hold no other entry. Each entry SHALL hold the kind and the level of its constraint, and the
-`id` of the constraint, or null when it has none. Two entries can have the same `id`. An entry is
-reportable when it can fail for a document that conforms to the schema. Each reportable entry
-SHALL have an `id`.
+`id` of the constraint, or null when it has none. Two entries can have the same `id`.
 
 #### Scenario: CNS-005.01 A warning is not in the manifest
 
@@ -103,7 +103,7 @@ SHALL have an `id`.
 
 #### Scenario: CNS-005.02 An excluded constraint is not in the manifest
 
-- **WHEN** the exclusion list lists a constraint of level ERROR
+- **WHEN** the list `excluded` lists a constraint of level ERROR
 - **THEN** the manifest holds no entry for it
 
 ### Requirement: CNS-006 The manifest selects nodes with RFC 9535 queries
@@ -123,12 +123,13 @@ union of their nodes, each node once.
 
 Each entry SHALL hold these queries of [CNS-006]:
 
-1. Document context queries. They select, from a document, each node to which the constraint
-   applies. These nodes are the context nodes.
-2. Element context queries for each element type whose element can hold a context node. They
-   select the context nodes from an element of that type.
-3. Target queries. They run on an array that holds only one context node, and select the target
-   nodes of that context node.
+1. Document context queries. They select from a document the context nodes, to which the
+   constraint applies.
+2. Element context queries for each element type whose element can hold a context node. They run
+   on an array that holds only the element. An `allowed-values` entry can lack them for a type,
+   as a later requirement states.
+3. Target queries. They run on an array that holds only one context node, and select its target
+   nodes.
 
 #### Scenario: CNS-007.01 A target in another document
 
@@ -164,9 +165,9 @@ set lists the value. The node then gives one failure for each entry of the set t
 
 ### Requirement: CNS-009 An element decides an allowed-values entry only with its applicable set
 
-An `allowed-values` entry SHALL have element context queries for an element type only when each
-entry that can be in the applicable set of [CNS-008] of the same node, in a document, also has
-element context queries for that type.
+An `allowed-values` entry SHALL have the element context queries of [CNS-007] for an element type
+when, and only when, the element holds the context node of each entry that can be in the
+applicable set of [CNS-008] of each target node of the entry in an element of that type.
 
 #### Scenario: CNS-009.01 A property name that a parent entry allows
 
@@ -178,7 +179,9 @@ element context queries for that type.
 ### Requirement: CNS-010 A matches entry checks the full value against its pattern
 
 A `matches` entry SHALL hold an I-Regexp pattern of RFC 9485. Each target node SHALL hold a
-string that the pattern matches in full. Each other target node gives one failure.
+string that the pattern matches in full. Each other target node gives one failure. The generation
+SHALL fail for a `matches` constraint whose pattern or datatype gives no pattern that it can write
+as an I-Regexp.
 
 #### Scenario: CNS-010.01 A hash value with the wrong length
 
@@ -201,17 +204,17 @@ below the minimum or above the maximum of the entry. An entry can omit either bo
 For an `is-unique`, `index` or `index-has-key` entry, the key of a target node SHALL be the list
 of the values of the key fields of the entry. A key field is a query that runs on an array that
 holds only the target node. It gives null when it selects no value. When a key field has a
-pattern, its value is the first capture group of a full match, or null when the pattern does not
-match. A key whose values are all null is no key.
+prefix, its value is the rest of the string after the prefix, or null when the string does not
+start with the prefix. A key whose values are all null is no key.
 
 #### Scenario: CNS-012.01 A key field that selects nothing
 
 - **WHEN** an index entry has the one key field `@id`, and a part has no `id`
 - **THEN** the part has no key
 
-#### Scenario: CNS-012.02 A key field with a pattern
+#### Scenario: CNS-012.02 A key field with a prefix
 
-- **WHEN** a key field has the pattern `#(.*)`, and the value is `#a1b2`
+- **WHEN** a key field has the prefix `#`, and the value is `#a1b2`
 - **THEN** the value of the key field is `a1b2`
 
 ### Requirement: CNS-013 An is-unique entry fails for target nodes with the same key
@@ -308,6 +311,28 @@ Each failure SHALL have a location and an identifier, as [CNS-017] states for a 
   hexadecimal digits
 - **THEN** the element does not meet the constraint manifest
 
+### Requirement: CNS-021 An entry is reportable unless it cannot fail
+
+Each entry SHALL state whether it is reportable. It is reportable unless:
+
+1. It is an `allowed-values` entry with `allow-other` true.
+2. It is an `allowed-values` entry, and the JSON Schema allows only values that it lists.
+3. It is an `index-has-key` entry whose index is partial.
+4. The list `cannot-fail` of the exclusion list names it as [CNS-003] states, with the reason.
+
+The generation SHALL fail for a reportable entry without an `id`.
+
+#### Scenario: CNS-021.01 An open entry is not reportable
+
+- **WHEN** an `allowed-values` entry has `allow-other` true
+- **THEN** the entry is not reportable
+
+#### Scenario: CNS-021.02 A test that the schema makes always true
+
+- **WHEN** the schema allows no node for which the test of an `expect` entry is false, and the
+  list `cannot-fail` names the entry with that reason
+- **THEN** the entry is not reportable
+
 ### Requirement: CNS-019 The store checks the queries against a reference evaluator
 
 The store checks SHALL evaluate the vendored constraints with a reference evaluator that reads
@@ -321,9 +346,22 @@ corpus, and a generated document of each model that holds each definition and fl
   name
 - **THEN** the store checks fail
 
+### Requirement: CNS-022 The store checks the failures of the manifest against the reference evaluator
+
+The store checks SHALL evaluate the manifest with an RFC 9535 implementation, as [CNS-008] to
+[CNS-018] state, on the documents of [CNS-019]. They SHALL fail when the number of failures of an
+entry differs from the number that the reference evaluator of [CNS-019] gives for its constraint.
+
+#### Scenario: CNS-022.01 A pattern that the generation writes wrong
+
+- **WHEN** the I-Regexp of a `matches` entry rejects a value that the pattern of its constraint
+  accepts
+- **THEN** the manifest gives a failure that the reference evaluator does not give, and the store
+  checks fail
+
 ### Requirement: CNS-020 The corpus has a failing case for each reportable entry
 
-For each reportable entry of [CNS-005], the corpus SHALL hold a case with an input that conforms
+For each reportable entry of [CNS-021], the corpus SHALL hold a case with an input that conforms
 to the schema and fails that entry. The case lists the `id` of each failure of the input, once
 for each failure. The store checks SHALL fail when such a case is missing, or when the reference
 evaluator of [CNS-019] gives other failures than a case lists. They SHALL also fail when it gives
