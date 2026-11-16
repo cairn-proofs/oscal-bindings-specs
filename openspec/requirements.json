@@ -22,6 +22,126 @@
       "title": "A key gives the resource identifier"
     },
     {
+      "id": "BMB-005",
+      "capability": "backmatter-builders",
+      "title": "A builder input is invalid when its element fails the constraint manifest"
+    },
+    {
+      "id": "CNS-001",
+      "capability": "constraint-validation",
+      "title": "The store vendors the metaschema of each vendored OSCAL release"
+    },
+    {
+      "id": "CNS-002",
+      "capability": "constraint-validation",
+      "title": "A constraint that cannot work as written is defective"
+    },
+    {
+      "id": "CNS-003",
+      "capability": "constraint-validation",
+      "title": "The exclusion list names each defective constraint with its issue"
+    },
+    {
+      "id": "CNS-004",
+      "capability": "constraint-validation",
+      "title": "The store publishes a constraint manifest for each release"
+    },
+    {
+      "id": "CNS-005",
+      "capability": "constraint-validation",
+      "title": "The manifest holds each constraint that can decide validity"
+    },
+    {
+      "id": "CNS-006",
+      "capability": "constraint-validation",
+      "title": "The manifest selects nodes with RFC 9535 queries"
+    },
+    {
+      "id": "CNS-007",
+      "capability": "constraint-validation",
+      "title": "Each entry selects context nodes and target nodes"
+    },
+    {
+      "id": "CNS-008",
+      "capability": "constraint-validation",
+      "title": "An allowed-values entry checks the value against its applicable set"
+    },
+    {
+      "id": "CNS-009",
+      "capability": "constraint-validation",
+      "title": "An element decides an allowed-values entry only with its applicable set"
+    },
+    {
+      "id": "CNS-010",
+      "capability": "constraint-validation",
+      "title": "A matches entry checks the full value against its pattern"
+    },
+    {
+      "id": "CNS-011",
+      "capability": "constraint-validation",
+      "title": "A has-cardinality entry counts the target nodes of each context node"
+    },
+    {
+      "id": "CNS-012",
+      "capability": "constraint-validation",
+      "title": "A key is the list of the values of the key fields"
+    },
+    {
+      "id": "CNS-013",
+      "capability": "constraint-validation",
+      "title": "An is-unique entry fails for target nodes with the same key"
+    },
+    {
+      "id": "CNS-014",
+      "capability": "constraint-validation",
+      "title": "An index holds the keys of each index entry with the same name"
+    },
+    {
+      "id": "CNS-015",
+      "capability": "constraint-validation",
+      "title": "An index-has-key entry fails for a key that is not in the index"
+    },
+    {
+      "id": "CNS-016",
+      "capability": "constraint-validation",
+      "title": "An expect entry fails for a target node that its test does not select"
+    },
+    {
+      "id": "CNS-017",
+      "capability": "constraint-validation",
+      "title": "A document meets the manifest when no entry fails for it"
+    },
+    {
+      "id": "CNS-018",
+      "capability": "constraint-validation",
+      "title": "An element meets the manifest when no entry that it can decide fails"
+    },
+    {
+      "id": "CNS-019",
+      "capability": "constraint-validation",
+      "title": "The store checks the queries against a reference evaluator"
+    },
+    {
+      "id": "CNS-020",
+      "capability": "constraint-validation",
+      "title": "The corpus has a failing case for each reportable entry"
+    },
+    {
+      "id": "CNS-021",
+      "capability": "constraint-validation",
+      "title": "An entry is reportable unless it cannot fail"
+    },
+    {
+      "id": "CNS-022",
+      "capability": "constraint-validation",
+      "title": "The store checks the failures of the manifest against the reference evaluator"
+    },
+    {
+      "id": "CNS-023",
+      "capability": "constraint-validation",
+      "title": "The element queries of a single-or-many type are those of its item type"
+    },
+    {
       "id": "ELV-001",
       "capability": "element-validation",
       "title": "Validate a standalone element against a named type"
@@ -40,6 +160,11 @@
       "id": "ELV-004",
       "capability": "element-validation",
       "title": "A binding can limit the resources that element validation uses"
+    },
+    {
+      "id": "ELV-005",
+      "capability": "element-validation",
+      "title": "Element validation applies the constraints that the element can decide"
     },
     {
       "id": "ERR-001",
@@ -420,6 +545,11 @@
       "id": "PRS-014",
       "capability": "document-parsing",
       "title": "A distinguishing property selects the nested-union branch of parse failures"
+    },
+    {
+      "id": "PRS-015",
+      "capability": "document-parsing",
+      "title": "A constraint failure is a parse failure that names its constraint"
     },
     {
       "id": "SER-001",

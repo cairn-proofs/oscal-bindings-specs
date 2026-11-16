@@ -1,0 +1,72 @@
+{
+  "format": 1,
+  "oscal-release": "1.2.3",
+  "excluded": [
+    {
+      "id": "oscal-metadata-action-type-values",
+      "issue": "https://github.com/usnistgov/OSCAL/issues/2301"
+    },
+    {
+      "id": "oscal-metadata-action-system-values",
+      "issue": "https://github.com/usnistgov/OSCAL/issues/2301"
+    },
+    {
+      "id": "oscal-inventory-item-hardware-service-software-prop-name-values",
+      "issue": "https://github.com/usnistgov/OSCAL/issues/2255"
+    },
+    {
+      "id": "oscal-profile-merge-combine-method-values",
+      "issue": "https://github.com/usnistgov/OSCAL/issues/2259"
+    },
+    {
+      "id": "oscal-assesment-part-objective-cardinality",
+      "issue": "https://github.com/usnistgov/OSCAL/issues/2291"
+    },
+    {
+      "id": "oscal-assessment-method-id-cardinality",
+      "issue": "https://github.com/usnistgov/OSCAL/issues/2059"
+    },
+    {
+      "id": "oscal-system-implementation-validation-index",
+      "issue": "https://github.com/usnistgov/OSCAL/issues/2303"
+    },
+    {
+      "module": "oscal-mapping-common",
+      "definition": "field:relationship",
+      "kind": "allowed-values",
+      "issue": "https://github.com/usnistgov/OSCAL/issues/2302"
+    },
+    {
+      "module": "oscal-mapping-common",
+      "definition": "field:category",
+      "kind": "allowed-values",
+      "issue": "https://github.com/usnistgov/OSCAL/issues/2302"
+    }
+  ],
+  "cannot-fail": [
+    {
+      "id": "oscal-profile-req-merge-combine",
+      "reason": "The test `not(@method='merge')` is always true for a document that conforms to the schema, because the JSON Schema gives `combine` no `method` member."
+    },
+    {
+      "id": "oscal-metadata-link-reference-href-datatype-uri-reference",
+      "reason": "The pattern rejects only a value with white space at an end or a line break. The JSON Schema gives `href` the format `uri-reference`, and the schema check of the store rejects each such value."
+    },
+    {
+      "id": "oscal-system-information-pia-datatype-uri-reference",
+      "reason": "The pattern rejects only a value with white space at an end or a line break. The JSON Schema gives `href` the format `uri-reference`, and the schema check of the store rejects each such value."
+    },
+    {
+      "id": "oscal-diagram-datatype-uri-reference",
+      "reason": "The pattern rejects only a value with white space at an end or a line break. The JSON Schema gives `href` the format `uri-reference`, and the schema check of the store rejects each such value."
+    },
+    {
+      "id": "oscal-leveraged-authorization-link-rel-ssp-datatype-uri-reference",
+      "reason": "The pattern rejects only a value with white space at an end or a line break. The JSON Schema gives `href` the format `uri-reference`, and the schema check of the store rejects each such value."
+    },
+    {
+      "id": "oscal-unique-resource-base64-filename",
+      "reason": "The JSON Schema allows at most one `base64` member for each resource, so no key can repeat."
+    }
+  ]
+}

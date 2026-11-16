@@ -7,9 +7,11 @@ catalog:
     oscal-version: 1.2.3
     props:
       - name: release
+        ns: https://example.com/ns/corpus
         value: 1.10
         remarks: ~
       - name: count
+        ns: https://example.com/ns/corpus
         value: !!int 7
         remarks:
     remarks: null

@@ -1,11 +1,12 @@
 # Code owners review each pull request that changes the specs, the conformance corpus, the docs, the naming data,
-# the vendored schemas, the store tooling and its dependency pins, the release version, or CI.
+# the vendored schemas and metaschema, the store tooling and its dependency pins, the release version, or CI.
 # The main ruleset requires a code owner to approve the most recent push. Repository admins can bypass this rule on
 # a pull request, and the audit log records each bypass.
 /openspec/ @dfkunstler
 /corpus/ @dfkunstler
 /docs/ @dfkunstler
 /manifest/ @dfkunstler
+/metaschema/ @dfkunstler
 /schemas/ @dfkunstler
 /scripts/ @dfkunstler
 /.github/ @dfkunstler

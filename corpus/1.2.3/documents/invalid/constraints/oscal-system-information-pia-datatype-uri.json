@@ -1,0 +1,72 @@
+{
+  "system-security-plan": {
+    "uuid": "00000000-0000-4000-8000-000000000001",
+    "metadata": {
+      "title": "x",
+      "last-modified": "2024-01-02T03:04:05Z",
+      "version": "x",
+      "oscal-version": "1.2.3"
+    },
+    "import-profile": {
+      "href": "https://example.com/x"
+    },
+    "system-characteristics": {
+      "system-ids": [
+        {
+          "id": "x"
+        }
+      ],
+      "system-name": "x",
+      "description": "x",
+      "system-information": {
+        "information-types": [
+          {
+            "title": "x",
+            "description": "x"
+          }
+        ],
+        "links": [
+          {
+            "href": "zz-invalid",
+            "rel": "privacy-impact-assessment"
+          }
+        ]
+      },
+      "status": {
+        "state": "operational"
+      },
+      "authorization-boundary": {
+        "description": "x"
+      }
+    },
+    "system-implementation": {
+      "components": [
+        {
+          "uuid": "00000000-0000-4000-8000-000000000012",
+          "type": "x",
+          "title": "x",
+          "description": "x",
+          "status": {
+            "state": "under-development"
+          }
+        }
+      ]
+    },
+    "control-implementation": {
+      "description": "x",
+      "implemented-requirements": [
+        {
+          "uuid": "00000000-0000-4000-8000-000000000017",
+          "control-id": "x18",
+          "by-components": [
+            {
+              "component-uuid": "00000000-0000-4000-8000-000000000027",
+              "uuid": "00000000-0000-4000-8000-000000000028",
+              "description": "x"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

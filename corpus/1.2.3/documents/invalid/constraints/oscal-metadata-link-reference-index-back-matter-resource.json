@@ -1,0 +1,27 @@
+{
+  "assessment-plan": {
+    "uuid": "00000000-0000-4000-8000-000000000001",
+    "metadata": {
+      "title": "x",
+      "last-modified": "2024-01-02T03:04:05Z",
+      "version": "x",
+      "oscal-version": "1.2.3",
+      "links": [
+        {
+          "href": "#00000000-0000-4000-8000-0000000000ff",
+          "rel": "reference"
+        }
+      ]
+    },
+    "import-ssp": {
+      "href": "https://example.com/x"
+    },
+    "reviewed-controls": {
+      "control-selections": [
+        {
+          "include-all": {}
+        }
+      ]
+    }
+  }
+}

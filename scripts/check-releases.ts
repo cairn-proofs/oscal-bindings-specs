@@ -5,7 +5,8 @@
  *    spec artifact. A changed or removed name fails unless VERSION marks a breaking change. Fails closed: a shallow
  *    clone, a clone without release tags, or a missing origin/main fails the check.
  * 2. The released schema check: each file under a released schemas/<release>/ matches the file at the latest release
- *    tag of that OSCAL release.
+ *    tag of that OSCAL release. The same check covers metaschema/<release>/, from the release after the one that
+ *    first holds that directory.
  * 3. The name diff for reviewers: each names.json against the same file at the base ref (SPEC_IDS_BASE, default
  *    HEAD), with the cause of each change. It reports and does not fail.
  *
@@ -165,20 +166,26 @@ export function checkReleases(git: Git, files: Files, releases: string[], versio
     }
     const version = versionText === undefined ? undefined : parseVersion(versionText);
     if (!version) return { failures: ["[release-names] VERSION is not a spec artifact version"], lines };
-    const schemaReleases = files.list("schemas").map((f) => f.split("/")[1]).filter((r, i, a) => r && a.indexOf(r) === i);
-    for (const release of new Set([...releases, ...schemaReleases])) {
+    const releasesOf = (root: string) => files.list(root).map((f) => f.split("/")[1]).filter((r, i, a) => r && a.indexOf(r) === i);
+    const schemaReleases = releasesOf("schemas");
+    const metaschemaReleases = releasesOf("metaschema");
+    for (const release of new Set([...releases, ...schemaReleases, ...metaschemaReleases])) {
       const tags = releaseTags(git, release);
-      // Released schema check.
-      if (tags.length && schemaReleases.includes(release)) {
+      // Released schema check, and the same check for the vendored metaschema. A release tag that holds no
+      // metaschema directory yet is the release that adds it, so that check starts with the next release.
+      for (const [root, vendored] of [["schemas", schemaReleases], ["metaschema", metaschemaReleases]] as const) {
+        if (!tags.length || !vendored.includes(release)) continue;
         const tag = `v${tags[0].text}`;
-        const dir = `schemas/${release}`;
+        const dir = `${root}/${release}`;
+        const label = root === "schemas" ? "released-schema" : "released-metaschema";
         const atTag = git.list(tag, dir);
+        if (root === "metaschema" && !atTag.length) continue;
         for (const file of new Set([...atTag, ...files.list(dir)])) {
           const before = atTag.includes(file) ? git.show(tag, file) : undefined;
           const now = files.read(file);
-          if (before === undefined) failures.push(`[released-schema] ${file} is not in the release ${tag}`);
-          else if (now === undefined) failures.push(`[released-schema] ${file} of the release ${tag} is missing`);
-          else if (!before.equals(now)) failures.push(`[released-schema] ${file} differs from the release ${tag}`);
+          if (before === undefined) failures.push(`[${label}] ${file} is not in the release ${tag}`);
+          else if (now === undefined) failures.push(`[${label}] ${file} of the release ${tag} is missing`);
+          else if (!before.equals(now)) failures.push(`[${label}] ${file} differs from the release ${tag}`);
         }
       }
       // Release name check.
@@ -371,6 +378,25 @@ function selfTest(): number {
     return r.failures.some((f) => f.includes("is not in the release")) || JSON.stringify(r);
   });
   test("released schema: unchanged files pass", () => check(fakeGit({ tags: { "v0.2.0+oscal.1.2.3": tagged } }), { [N]: released, [S]: "{}" }, "0.2.1+oscal.1.2.3").failures.length === 0);
+  const M = "metaschema/1.2.3/oscal_catalog_metaschema.xml";
+  const taggedM = { files: { [N]: released, [S]: "{}", [M]: "<m/>" } };
+  test("released metaschema: a changed byte fails", () => {
+    const r = check(fakeGit({ tags: { "v0.2.0+oscal.1.2.3": taggedM } }), { [N]: released, [S]: "{}", [M]: "<m />" }, "0.2.1+oscal.1.2.3");
+    return r.failures.some((f) => f.includes("[released-metaschema]") && f.includes("differs")) || JSON.stringify(r);
+  });
+  test("released metaschema: an added file fails", () => {
+    const r = check(fakeGit({ tags: { "v0.2.0+oscal.1.2.3": taggedM } }), { [N]: released, [S]: "{}", [M]: "<m/>", "metaschema/1.2.3/extra.xml": "<e/>" }, "0.2.1+oscal.1.2.3");
+    return r.failures.some((f) => f.includes("[released-metaschema]") && f.includes("is not in the release")) || JSON.stringify(r);
+  });
+  test("released metaschema: a removed file fails", () => {
+    const two = { files: { ...taggedM.files, "metaschema/1.2.3/other.xml": "<o/>" } };
+    const r = check(fakeGit({ tags: { "v0.2.0+oscal.1.2.3": two } }), { [N]: released, [S]: "{}", [M]: "<m/>" }, "0.2.1+oscal.1.2.3");
+    return r.failures.some((f) => f.includes("[released-metaschema]") && f.includes("is missing")) || JSON.stringify(r);
+  });
+  test("released metaschema: unchanged files pass", () =>
+    check(fakeGit({ tags: { "v0.2.0+oscal.1.2.3": taggedM } }), { [N]: released, [S]: "{}", [M]: "<m/>" }, "0.2.1+oscal.1.2.3").failures.length === 0);
+  test("released metaschema: a release that holds no metaschema yet passes", () =>
+    check(fakeGit({ tags: { "v0.2.0+oscal.1.2.3": tagged } }), { [N]: released, [S]: "{}", [M]: "<m/>" }, "0.2.1+oscal.1.2.3").failures.length === 0);
   test("name diff: one override change gives one changed name with the cause override name", () => {
     const base = { [N]: m([["Hash", "#/definitions/h"], ["HashAlgorithm", "#/definitions/h/properties/a"]]), [O]: ov() };
     const now = { [N]: m([["Hash", "#/definitions/h"], ["Digest", "#/definitions/h/properties/a"]]), [O]: ov({ "#/definitions/h/properties/a": "Digest" }) };

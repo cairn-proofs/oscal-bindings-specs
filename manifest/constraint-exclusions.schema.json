@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/cairn-proofs/oscal-bindings-specs/manifest/constraint-exclusions.schema.json",
+  "title": "OSCAL constraint exclusion list, format 1",
+  "description": "The constraints of one OSCAL release that the constraint manifest leaves out as defective, and the entries that cannot fail. See openspec/specs/constraint-validation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "oscal-release", "excluded", "cannot-fail"],
+  "properties": {
+    "format": { "const": 1 },
+    "oscal-release": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$" },
+    "excluded": { "type": "array", "items": { "$ref": "#/definitions/excluded-item" } },
+    "cannot-fail": { "type": "array", "items": { "$ref": "#/definitions/cannot-fail-item" } }
+  },
+  "definitions": {
+    "constraint-id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$" },
+    "module": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+    "definition": { "type": "string", "pattern": "^(assembly|field|flag):[a-z][a-z0-9-]*$" },
+    "kind": { "enum": ["allowed-values", "matches", "has-cardinality", "is-unique", "index", "index-has-key", "expect"] },
+    "issue": { "type": "string", "pattern": "^https://github\\.com/usnistgov/OSCAL/issues/[1-9][0-9]*$" },
+    "reason": { "type": "string", "minLength": 1 },
+    "identity": {
+      "oneOf": [
+        { "required": ["id"], "properties": { "id": { "$ref": "#/definitions/constraint-id" } } },
+        {
+          "required": ["module", "definition", "kind"],
+          "properties": {
+            "module": { "$ref": "#/definitions/module" },
+            "definition": { "$ref": "#/definitions/definition" },
+            "kind": { "$ref": "#/definitions/kind" }
+          }
+        }
+      ]
+    },
+    "excluded-item": {
+      "allOf": [{ "$ref": "#/definitions/identity" }],
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["issue"],
+      "properties": {
+        "id": true, "module": true, "definition": true, "kind": true,
+        "issue": { "$ref": "#/definitions/issue" }
+      }
+    },
+    "cannot-fail-item": {
+      "allOf": [{ "$ref": "#/definitions/identity" }],
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reason"],
+      "properties": {
+        "id": true, "module": true, "definition": true, "kind": true,
+        "reason": { "$ref": "#/definitions/reason" }
+      }
+    }
+  }
+}
