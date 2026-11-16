@@ -109,9 +109,9 @@ The list `excluded` holds these 9 constraints:
 | `oscal-profile-merge-combine-method-values` | 1. The JSON Schema has no `method` on `combine`, so the target `@method` selects nothing. | [OSCAL#2259] |
 | `oscal-assesment-part-objective-cardinality` | 2. It fails for each assessment part that is not named `objective`. | [OSCAL#2291] |
 | `oscal-assessment-method-id-cardinality` | 3. It requires a property `method-id`, and no `allowed-values` constraint lists that name. | [OSCAL#2059] |
-| `oscal-system-implementation-validation-index` | 3. Its target holds an `href` that starts with `#`, and its key field has no pattern. The index holds bare UUIDs, so each target node fails. | A second new issue, filed before the exclusion list is complete |
-| The `allowed-values` constraint without an `id` on the mapping field `relationship` | 4. `has-oscal-namespace()` gives an error for a field (D4). | A new issue, filed before the exclusion list is complete |
-| The `allowed-values` constraint without an `id` on the mapping field `category` | 4. As above. | The same new issue |
+| `oscal-system-implementation-validation-index` | 3. Its target holds an `href` that starts with `#`, and its key field has no pattern. The index holds bare UUIDs, so each target node fails. | [OSCAL#2303] |
+| The `allowed-values` constraint without an `id` on the mapping field `relationship` | 4. `has-oscal-namespace()` gives an error for a field (D4). | [OSCAL#2302] |
+| The `allowed-values` constraint without an `id` on the mapping field `category` | 4. As above. | [OSCAL#2302] |
 
 `oscal-profile-req-merge-combine` is not defective. Its target selects `combine`, and its test
 `not(@method='merge')` is always true for a document that conforms to the schema, because the
@@ -389,3 +389,5 @@ an optional sign and one or more digits.
 [OSCAL#2259]: https://github.com/usnistgov/OSCAL/issues/2259
 [OSCAL#2291]: https://github.com/usnistgov/OSCAL/issues/2291
 [OSCAL#2301]: https://github.com/usnistgov/OSCAL/issues/2301
+[OSCAL#2302]: https://github.com/usnistgov/OSCAL/issues/2302
+[OSCAL#2303]: https://github.com/usnistgov/OSCAL/issues/2303
