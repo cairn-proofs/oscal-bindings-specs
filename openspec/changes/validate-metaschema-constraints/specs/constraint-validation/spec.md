@@ -279,8 +279,9 @@ failure.
 
 ### Requirement: CNS-017 A document meets the manifest when no entry fails for it
 
-A document meets the constraint manifest when no entry gives a failure of [CNS-008] to [CNS-016]
-for it, with the document context queries of [CNS-007]. Each failure SHALL have a location and
+A document meets the constraint manifest when no entry gives a failure for it, with the document
+context queries of [CNS-007]. The requirement for the kind of an entry states when the entry
+gives a failure. Each failure SHALL have a location and
 the `id` of its entry. The location is the target node, or the context node for a
 `has-cardinality` entry.
 
@@ -348,8 +349,8 @@ corpus, and a generated document of each model that holds each definition and fl
 
 ### Requirement: CNS-022 The store checks the failures of the manifest against the reference evaluator
 
-The store checks SHALL evaluate the manifest with an RFC 9535 implementation, as [CNS-008] to
-[CNS-018] state, on the documents of [CNS-019]. They SHALL fail when the number of failures of an
+The store checks SHALL evaluate the manifest with an RFC 9535 implementation, as [CNS-017] states
+for a document and [CNS-018] for an element, on the documents of [CNS-019]. They SHALL fail when the number of failures of an
 entry differs from the number that the reference evaluator of [CNS-019] gives for its constraint.
 
 #### Scenario: CNS-022.01 A pattern that the generation writes wrong
