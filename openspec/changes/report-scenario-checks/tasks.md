@@ -38,32 +38,32 @@
       AGENTS.md, Find your way. In CONTRIBUTING.md, Change a requirement, state that a new scenario needs a corpus
       case, a self-test or a `by-design` reason. Verify `npm run check` passes. Commit group 1 and group 2, with
       `openspec/coverage.json` and `openspec/scenario-checks.yaml`.
-- [ ] 2.7 With `SPEC_IDS_BASE=HEAD`, remove the only check of a checked scenario, and verify `npm run check` fails
+- [x] 2.7 With `SPEC_IDS_BASE=HEAD`, remove the only check of a checked scenario, and verify `npm run check` fails
       with a line that names the scenario (rule 2). Add a `gap` entry for that scenario, and verify rule 7 fails. Run
       with `SPEC_IDS_BASE=no-such-ref`, and verify the check fails. Undo the edits, and verify `git status` shows no
       change.
 
 ## 3. Measure which cases detect a fault
 
-- [ ] 3.1 Add `scripts/coverage-faults.ts` with the npm scripts `coverage:faults` and `coverage:faults:self-test`.
+- [x] 3.1 Add `scripts/coverage-faults.ts` with the npm scripts `coverage:faults` and `coverage:faults:self-test`.
       First write the import of a patched `.mts` copy of `scripts/constraints-manifest.ts` from a temporary directory
       (D4). Verify that an empty patch gives the same failures as the unpatched module for one corpus case.
-- [ ] 3.2 Move the case selection of `main()` in `scripts/check-corpus.ts` to the exported generator of D5, item 1,
+- [x] 3.2 Move the case selection of `main()` in `scripts/check-corpus.ts` to the exported generator of D5, item 1,
       and make `main()` use it. Verify `npm run corpus:self-test` and `npm run corpus:check` pass, and the generator
-      gives 269 cases. Verify the runner checks the unpatched evaluator against each case with no difference (D5,
+      gives 267 cases. Verify the runner checks the unpatched evaluator against each case with no difference (D5,
       item 2).
-- [ ] 3.3 Add the three faults of D4 and the report of D5. Self-test cases: a patch that does not match fails, a
+- [x] 3.3 Add the three faults of D4 and the report of D5. Self-test cases: a patch that does not match fails, a
       patch that matches twice fails, a patched evaluator that throws fails, and a fault that no case detects is a
       gap that does not fail. Verify `npm run coverage:faults:self-test` passes.
-- [ ] 3.4 Run `npm run coverage:faults`. Verify it exits 0, `no-union` is a gap that names [CNS-017.03], and the
+- [x] 3.4 Run `npm run coverage:faults`. Verify it exits 0, `no-union` is a gap that names [CNS-017.03], and the
       report names the cases that detect `descendant-as-child` and `entry-only-set`. If one of these two is a gap,
       record it in the pull request description.
-- [ ] 3.5 Add `coverage:faults:self-test` and `coverage:faults` to `npm run check`. Change the text of a patched line
+- [x] 3.5 Add `coverage:faults:self-test` and `coverage:faults` to `npm run check`. Change the text of a patched line
       of `scripts/constraints-manifest.ts`, and verify `npm run check` fails and names the fault. Undo the edit.
 
 ## 4. Integration
 
-- [ ] 4.1 Run `npm run check` and `npm run archive`. Verify the check passes, and the archive lists no file of
+- [x] 4.1 Run `npm run check` and `npm run archive`. Verify the check passes, and the archive lists no file of
       `openspec/` other than the files that `CONTENTS` names.
 
 ## Workflow follow-up

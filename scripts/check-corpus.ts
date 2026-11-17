@@ -130,7 +130,7 @@ function expectations(fail: (id: string, message: string) => void, covered: Set<
 const TYPE_OF: Record<string, string> = { "build-hash": "hash", "build-rlink": "back-matter-resource-rlink", "build-resource": "back-matter-resource" };
 const ID = /^[A-Z]{2,5}-\d{3}(?:\.\d{2})?$/;
 
-interface Case {
+export interface Case {
   id: string;
   operation: string;
   input?: string;
@@ -252,6 +252,79 @@ function assessmentPeriod(doc: Record<string, unknown>): { start?: string; end?:
   };
   return { start: pick(starts, -1), end: pick(ends, 1) };
 }
+/** A document that the corpus checks against the constraint manifest (CNS-020), and the failures that its case expects. */
+export interface DocumentInput {
+  document: unknown;
+  /** The `id` values of the expected failures, with each repeat. Empty for a case that expects a valid document. */
+  expected: string[];
+}
+
+/**
+ * The document of a case that the corpus checks against the constraint manifest, with the expected failures. The cases
+ * are the round-trip, parse, parse-typed, facade, assessment-period, and yaml-round-trip cases whose input conforms to
+ * the schema. Undefined for any other case, and for an input that cannot be read. `main()` and scripts/coverage-faults.ts
+ * both select the cases here, so they select the same cases.
+ */
+export function documentInput(c: Case, validateDocument: ValidateFunction): DocumentInput | undefined {
+  if (c.input === undefined) return undefined;
+  const file = path.join(ROOT, c.input);
+  try {
+    if (!fs.existsSync(file) || !fs.statSync(file).isFile()) return undefined;
+    switch (c.operation) {
+      case "round-trip":
+      case "parse-typed": {
+        const document: unknown = JSON.parse(fs.readFileSync(file, "utf8"));
+        return validateDocument(document) ? { document, expected: [] } : undefined;
+      }
+      case "facade":
+      case "assessment-period": {
+        if (c.operation === "facade" ? c["expected-category"] !== undefined : c["expected-period"] === undefined) return undefined;
+        const document: unknown = JSON.parse(fs.readFileSync(file, "utf8"));
+        return validateDocument(document) ? { document, expected: [] } : undefined;
+      }
+      case "parse": {
+        const document: unknown = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(fs.readFileSync(file)));
+        return validateDocument(document) ? { document, expected: c["expected-constraints"] ?? [] } : undefined;
+      }
+      case "yaml-round-trip": {
+        const result = readYaml(fs.readFileSync(file), validateDocument);
+        return result.ok ? { document: result.value, expected: [] } : undefined;
+      }
+      default:
+        return undefined;
+    }
+  } catch {
+    return undefined;
+  }
+}
+
+/** Each case of `cases` that `documentInput` selects, with its input. */
+export function* documentCases(cases: Case[], validateDocument: ValidateFunction): Generator<{ id: string; input: DocumentInput }> {
+  for (const c of cases) {
+    const input = documentInput(c, validateDocument);
+    if (input !== undefined) yield { id: c.id, input };
+  }
+}
+
+/** The complete schema, and a validator for a document. */
+export function loadSchema() {
+  const schema = JSON.parse(fs.readFileSync(SCHEMA, "utf8")) as {
+    $id: string;
+    definitions: Record<string, unknown>;
+    oneOf: { required?: string[] }[];
+  };
+  checkSchemaForReader(schema);
+  const ajv = new Ajv({ allErrors: true, strict: false });
+  addFormats(ajv);
+  ajv.addSchema(schema);
+  return { schema, ajv, validateDocument: ajv.getSchema(schema.$id) as ValidateFunction };
+}
+
+/** The cases of the case index of the release. */
+export function readCases(): Case[] {
+  return (JSON.parse(fs.readFileSync(`${ROOT}/cases.json`, "utf8")) as { cases: Case[] }).cases;
+}
+
 /** The requirement and scenario identifiers on the headings of every spec under openspec/. */
 function specIdentifiers(): Set<string> {
   const ids = new Set<string>();
@@ -385,16 +458,7 @@ function main(write: boolean): number {
   const { expectFailures, expectNone } = expectations(fail, coveredEntries);
   const checkBuilder = checkBuilderFactory(constraints, { expectFailures, expectNone }, fail);
 
-  const schema = JSON.parse(fs.readFileSync(SCHEMA, "utf8")) as {
-    $id: string;
-    definitions: Record<string, unknown>;
-    oneOf: { required?: string[] }[];
-  };
-  checkSchemaForReader(schema);
-  const ajv = new Ajv({ allErrors: true, strict: false });
-  addFormats(ajv);
-  ajv.addSchema(schema);
-  const validateDocument = ajv.getSchema(schema.$id) as ValidateFunction;
+  const { schema, ajv, validateDocument } = loadSchema();
   // The root keys of PRS-013: each required key of a root `oneOf` branch, other than `$schema`, selects that branch.
   const branchOfRootKey = new Map<string, ValidateFunction>();
   schema.oneOf.forEach((branch, i) => {
@@ -528,8 +592,9 @@ function main(write: boolean): number {
       case "round-trip": {
         const bytes = fs.readFileSync(inputPath);
         const doc: unknown = JSON.parse(bytes.toString("utf8"));
-        if (!validateDocument(doc)) fail(c.id, `input is not valid: ${ajv.errorsText(validateDocument.errors)}`);
-        else expectNone(c, constraints.ofDocument(doc));
+        const input = documentInput(c, validateDocument);
+        if (!input) fail(c.id, `input is not valid: ${ajv.errorsText(validateDocument.errors)}`);
+        else expectNone(c, constraints.ofDocument(input.document));
         if (!c["document-type"] || !Object.hasOwn(doc as object, c["document-type"]))
           fail(c.id, `input root is not document-type "${c["document-type"]}"`);
         if (c.source && sha256(bytes) !== c.source.sha256) fail(c.id, "input sha256 does not match the source sha256");
@@ -563,9 +628,10 @@ function main(write: boolean): number {
         } catch {
           break;
         }
-        if (validateDocument(doc)) {
+        const parsed = documentInput(c, validateDocument);
+        if (parsed) {
           if (c["expected-constraints"] === undefined) fail(c.id, "input is valid against the schema and the case has no expected-constraints, so parsing it is not an error");
-          else expectFailures(c, constraints.ofDocument(doc));
+          else expectFailures(c, constraints.ofDocument(parsed.document));
           break;
         }
         if (c["expected-constraints"] !== undefined) fail(c.id, "the input does not conform to the schema, so the case has no expected-constraints");
@@ -583,8 +649,9 @@ function main(write: boolean): number {
       }
       case "parse-typed": {
         const doc = JSON.parse(fs.readFileSync(inputPath, "utf8")) as object;
-        if (!validateDocument(doc)) fail(c.id, "input is not valid, so the case would not isolate the type check");
-        else expectNone(c, constraints.ofDocument(doc));
+        const typed = documentInput(c, validateDocument);
+        if (!typed) fail(c.id, "input is not valid, so the case would not isolate the type check");
+        else expectNone(c, constraints.ofDocument(typed.document));
         if (!DOCUMENT_TYPES.includes(c["document-type"] ?? "")) fail(c.id, "document-type is not an OSCAL type");
         else if (Object.hasOwn(doc, c["document-type"] ?? "")) fail(c.id, "input is the requested document type");
         break;
@@ -612,8 +679,9 @@ function main(write: boolean): number {
         used.add(expectedFile);
         const text = fs.readFileSync(inputPath, "utf8");
         const doc: unknown = JSON.parse(text);
-        if (!validateDocument(doc)) fail(c.id, `input is not valid: ${ajv.errorsText(validateDocument.errors)}`);
-        else expectNone(c, constraints.ofDocument(doc));
+        const facade = documentInput(c, validateDocument);
+        if (!facade) fail(c.id, `input is not valid: ${ajv.errorsText(validateDocument.errors)}`);
+        else expectNone(c, constraints.ofDocument(facade.document));
         const rootKeys = doc !== null && typeof doc === "object" ? Object.keys(doc) : [];
         if (rootKeys.length !== 1 || rootKeys[0] !== c["document-type"])
           fail(c.id, `the root keys of the input are not only document-type "${c["document-type"]}"`);
@@ -635,15 +703,16 @@ function main(write: boolean): number {
           if (supported) fail(c.id, "input supports the assessment period, so it cannot test access-error");
           break;
         }
-        if (!validateDocument(doc)) fail(c.id, `input is not valid: ${ajv.errorsText(validateDocument.errors)}`);
-        else expectNone(c, constraints.ofDocument(doc));
+        const period = documentInput(c, validateDocument);
+        if (!period) fail(c.id, `input is not valid: ${ajv.errorsText(validateDocument.errors)}`);
+        else expectNone(c, constraints.ofDocument(period.document));
         if (!supported) {
           fail(c.id, "input is not an Assessment Plan or Assessment Results, so it has no assessment period");
           break;
         }
-        const period = assessmentPeriod(doc);
+        const computedPeriod = assessmentPeriod(doc);
         for (const bound of ["start", "end"] as const) {
-          const computed = period[bound];
+          const computed = computedPeriod[bound];
           if (computed === undefined || normalizeDatetime(computed) !== expectedPeriod[bound])
             fail(c.id, `expected-period ${bound} is ${expectedPeriod[bound]}, but FAC-005 to FAC-007 give ${computed}`);
         }
@@ -681,7 +750,7 @@ function main(write: boolean): number {
           fail(c.id, `the YAML reader rejects the input (${result.fault}): ${result.detail}`);
           break;
         }
-        expectNone(c, constraints.ofDocument(result.value));
+        expectNone(c, constraints.ofDocument(documentInput(c, validateDocument)!.document));
         if (!c["document-type"] || !Object.hasOwn(result.value as object, c["document-type"]))
           fail(c.id, `input root is not document-type "${c["document-type"]}"`);
         if (c.source && sha256(bytes) !== c.source.sha256) fail(c.id, "input sha256 does not match the source sha256");
