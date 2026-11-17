@@ -1,0 +1,365 @@
+[
+ {
+  "id": "nested-controls-union",
+  "note": "CNS-017.03/CNS-006.01: the part is selected from both controls (context nodes c1 and c2): one failure per entry, not two",
+  "document": {
+   "catalog": {
+    "uuid": "11111111-1111-4111-8111-111111111111",
+    "metadata": {
+     "title": "t",
+     "last-modified": "2020-01-01T00:00:00Z",
+     "version": "1",
+     "oscal-version": "1.2.3"
+    },
+    "controls": [
+     {
+      "id": "c1",
+      "title": "t",
+      "controls": [
+       {
+        "id": "c2",
+        "title": "t",
+        "parts": [
+         {
+          "name": "bogus"
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "expected": [
+   "oscal-control-part-name",
+   "oscal-control-statement-part-name"
+  ]
+ },
+ {
+  "id": "triple-nested-controls-union",
+  "note": "the part is selected from three context nodes",
+  "document": {
+   "catalog": {
+    "uuid": "11111111-1111-4111-8111-111111111111",
+    "metadata": {
+     "title": "t",
+     "last-modified": "2020-01-01T00:00:00Z",
+     "version": "1",
+     "oscal-version": "1.2.3"
+    },
+    "controls": [
+     {
+      "id": "c1",
+      "title": "t",
+      "controls": [
+       {
+        "id": "c2",
+        "title": "t",
+        "controls": [
+         {
+          "id": "c3",
+          "title": "t",
+          "parts": [
+           {
+            "name": "bogus"
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "expected": [
+   "oscal-control-part-name",
+   "oscal-control-statement-part-name"
+  ]
+ },
+ {
+  "id": "flat-bad-part",
+  "note": "CNS-008.02: two closed entries in the applicable set give two failures",
+  "document": {
+   "catalog": {
+    "uuid": "11111111-1111-4111-8111-111111111111",
+    "metadata": {
+     "title": "t",
+     "last-modified": "2020-01-01T00:00:00Z",
+     "version": "1",
+     "oscal-version": "1.2.3"
+    },
+    "controls": [
+     {
+      "id": "c1",
+      "title": "t",
+      "parts": [
+       {
+        "name": "bogus"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "expected": [
+   "oscal-control-part-name",
+   "oscal-control-statement-part-name"
+  ]
+ },
+ {
+  "id": "listed-by-open-entry",
+  "note": "CNS-008.01: a value that another entry of the set lists",
+  "document": {
+   "catalog": {
+    "uuid": "11111111-1111-4111-8111-111111111111",
+    "metadata": {
+     "title": "t",
+     "last-modified": "2020-01-01T00:00:00Z",
+     "version": "1",
+     "oscal-version": "1.2.3"
+    },
+    "controls": [
+     {
+      "id": "c1",
+      "title": "t",
+      "parts": [
+       {
+        "name": "statement"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "expected": []
+ },
+ {
+  "id": "foreign-namespace",
+  "note": "filter: ns present and not the OSCAL namespace, the part is not a target",
+  "document": {
+   "catalog": {
+    "uuid": "11111111-1111-4111-8111-111111111111",
+    "metadata": {
+     "title": "t",
+     "last-modified": "2020-01-01T00:00:00Z",
+     "version": "1",
+     "oscal-version": "1.2.3"
+    },
+    "controls": [
+     {
+      "id": "c1",
+      "title": "t",
+      "parts": [
+       {
+        "name": "bogus",
+        "ns": "http://example.com/ns"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "expected": []
+ },
+ {
+  "id": "oscal-namespace",
+  "note": "filter: ns equals the OSCAL namespace, the part is a target",
+  "document": {
+   "catalog": {
+    "uuid": "11111111-1111-4111-8111-111111111111",
+    "metadata": {
+     "title": "t",
+     "last-modified": "2020-01-01T00:00:00Z",
+     "version": "1",
+     "oscal-version": "1.2.3"
+    },
+    "controls": [
+     {
+      "id": "c1",
+      "title": "t",
+      "parts": [
+       {
+        "name": "bogus",
+        "ns": "http://csrc.nist.gov/ns/oscal"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "expected": [
+   "oscal-control-part-name",
+   "oscal-control-statement-part-name"
+  ]
+ },
+ {
+  "id": "ns-null",
+  "note": "RFC 9535 existence test: a member with value null exists, so !@['ns'] is false and the part is not a target",
+  "document": {
+   "catalog": {
+    "uuid": "11111111-1111-4111-8111-111111111111",
+    "metadata": {
+     "title": "t",
+     "last-modified": "2020-01-01T00:00:00Z",
+     "version": "1",
+     "oscal-version": "1.2.3"
+    },
+    "controls": [
+     {
+      "id": "c1",
+      "title": "t",
+      "parts": [
+       {
+        "name": "bogus",
+        "ns": null
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "expected": []
+ },
+ {
+  "id": "ns-empty-string",
+  "note": "an empty ns exists and differs from the OSCAL namespace",
+  "document": {
+   "catalog": {
+    "uuid": "11111111-1111-4111-8111-111111111111",
+    "metadata": {
+     "title": "t",
+     "last-modified": "2020-01-01T00:00:00Z",
+     "version": "1",
+     "oscal-version": "1.2.3"
+    },
+    "controls": [
+     {
+      "id": "c1",
+      "title": "t",
+      "parts": [
+       {
+        "name": "bogus",
+        "ns": ""
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "expected": []
+ },
+ {
+  "id": "parts-as-object",
+  "note": "filter applies to the member values of an object (RFC 9535, 2.3.5.2); not schema-valid",
+  "document": {
+   "catalog": {
+    "uuid": "11111111-1111-4111-8111-111111111111",
+    "metadata": {
+     "title": "t",
+     "last-modified": "2020-01-01T00:00:00Z",
+     "version": "1",
+     "oscal-version": "1.2.3"
+    },
+    "controls": [
+     {
+      "id": "c1",
+      "title": "t",
+      "parts": {
+       "k": {
+        "name": "bogus"
+       }
+      }
+     }
+    ]
+   }
+  },
+  "expected": [
+   "oscal-control-part-name",
+   "oscal-control-statement-part-name"
+  ]
+ },
+ {
+  "id": "non-string-name",
+  "note": "spec choice: a target node that holds no string is listed by no entry; not schema-valid",
+  "document": {
+   "catalog": {
+    "uuid": "11111111-1111-4111-8111-111111111111",
+    "metadata": {
+     "title": "t",
+     "last-modified": "2020-01-01T00:00:00Z",
+     "version": "1",
+     "oscal-version": "1.2.3"
+    },
+    "controls": [
+     {
+      "id": "c1",
+      "title": "t",
+      "parts": [
+       {
+        "name": 5
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "expected": [
+   "oscal-control-part-name",
+   "oscal-control-statement-part-name"
+  ]
+ },
+ {
+  "id": "unicode-name",
+  "note": "a value outside the BMP and non-ASCII text compare as code points",
+  "document": {
+   "catalog": {
+    "uuid": "11111111-1111-4111-8111-111111111111",
+    "metadata": {
+     "title": "t",
+     "last-modified": "2020-01-01T00:00:00Z",
+     "version": "1",
+     "oscal-version": "1.2.3"
+    },
+    "controls": [
+     {
+      "id": "c1",
+      "title": "t",
+      "parts": [
+       {
+        "name": "😀名前"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "expected": [
+   "oscal-control-part-name",
+   "oscal-control-statement-part-name"
+  ]
+ },
+ {
+  "id": "no-controls",
+  "note": "no context node: no failure",
+  "document": {
+   "catalog": {
+    "uuid": "11111111-1111-4111-8111-111111111111",
+    "metadata": {
+     "title": "t",
+     "last-modified": "2020-01-01T00:00:00Z",
+     "version": "1",
+     "oscal-version": "1.2.3"
+    },
+    "controls": []
+   }
+  },
+  "expected": []
+ },
+ {
+  "id": "empty-object-root",
+  "note": "a root that is not a document: no context node",
+  "document": {},
+  "expected": []
+ }
+]
