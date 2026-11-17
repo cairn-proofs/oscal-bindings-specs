@@ -53,13 +53,13 @@ by-design:
   VER-001.02: The rule applies to the process of a binding repository, which no store script can observe.
   VER-002.01: The rule applies to the process of a binding repository, which no store script can observe.
   VER-002.02: The rule applies to the process of a binding repository, which no store script can observe.
-  VER-003.01: The releaser decides the version increment, and no store script can observe the decision.
-  VER-003.02: The releaser decides the version increment, and no store script can observe the decision.
-  VER-003.03: The releaser decides the version increment, and no store script can observe the decision.
-  VER-003.04: The releaser decides the version increment, and no store script can observe the decision.
-  VER-003.05: The releaser decides the version increment, and no store script can observe the decision.
-  VER-004.02: The releaser decides the version increment, and no store script can observe the decision.
-  VER-004.03: The releaser decides the version increment, and no store script can observe the decision.
+  VER-003.01: A reviewer decides the kind of each change, and no store script can observe the decision.
+  VER-003.02: A reviewer decides the kind of each change, and no store script can observe the decision.
+  VER-003.03: A reviewer decides the kind of each change, and no store script can observe the decision.
+  VER-003.04: A reviewer decides the kind of each change, and no store script can observe the decision.
+  VER-003.05: A reviewer decides the kind of each change, and no store script can observe the decision.
+  VER-004.02: A reviewer decides the kind of each change, and no store script can observe the decision.
+  VER-004.03: A reviewer decides the kind of each change, and no store script can observe the decision.
   VER-005.01: The rule applies to the process of a binding repository, which no store script can observe.
   VER-005.02: The rule applies to the process of a binding repository, which no store script can observe.
   VER-007.01: The rule applies to the process of a binding repository, which no store script can observe.

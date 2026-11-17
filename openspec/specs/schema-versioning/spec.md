@@ -43,62 +43,65 @@ the model-derivation capability states.
 
 ### Requirement: VER-003 The shared spec artifact uses Semantic Versioning for its own compatibility
 
-The shared spec artifact SHALL carry a Semantic Version. The artifact is the prose contract, the naming manifest, and
-the conformance corpus together. The major, minor, and patch components describe the compatibility of the contract
-itself, independent of OSCAL's numbering:
+The shared spec artifact SHALL carry a version that follows
+[Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html). The version MUST NOT have a pre-release label. The
+artifact is the prose contract, the naming manifest, and the conformance corpus together. The artifact is the public
+API of the version. Each change to the artifact is a break, an addition or a fix, and Semantic Versioning 2.0.0 gives
+the version increment for each kind.
 
-1. A major increment marks a breaking change to the contract a binding implements.
-2. A minor increment marks a backward-compatible addition.
-3. A patch increment marks a fix that does not change the contract.
-
-#### Scenario: VER-003.01 Contract break is a major increment
+#### Scenario: VER-003.01 Renamed canonical type is a break
 
 - **WHEN** a canonical type is renamed in the naming manifest
-- **THEN** the spec artifact's major version increments
+- **THEN** the change is a break
 
-#### Scenario: VER-003.02 Corpus fixture fix is a patch increment
+#### Scenario: VER-003.02 Corpus fixture fix is a fix
 
 - **WHEN** a conformance fixture is fixed without changing any required behavior
-- **THEN** the spec artifact's patch version increments
+- **THEN** the change is a fix
 
-#### Scenario: VER-003.03 Stricter parse rule or changed error category is a major increment
+#### Scenario: VER-003.03 Stricter parse rule or changed error category is a break
 
 - **WHEN** the contract makes a parse rule stricter, or changes the error category of a situation
-- **THEN** the spec artifact's major version increments
+- **THEN** the change is a break
 
-#### Scenario: VER-003.04 Addition is a minor increment
+#### Scenario: VER-003.04 Addition to the contract is an addition
 
 - **WHEN** the spec artifact adds a corpus case, an optional capability, or newly specified behavior, and changes no
   existing contract
-- **THEN** the spec artifact's minor version increments
+- **THEN** the change is an addition
 
-#### Scenario: VER-003.05 Prose clarification is a patch increment
+#### Scenario: VER-003.05 Prose clarification is a fix
 
 - **WHEN** the prose of a requirement becomes clearer, and no required behavior changes
-- **THEN** the spec artifact's patch version increments
+- **THEN** the change is a fix
+
+#### Scenario: VER-003.06 Pre-release label fails the version check
+
+- **WHEN** `VERSION` holds `1.0.0-rc.1+oscal.1.2.3`
+- **THEN** the store checks fail
 
 ### Requirement: VER-004 The OSCAL release is recorded as Semantic Versioning build metadata
 
 The spec artifact version SHALL carry the OSCAL release it describes as Semantic Versioning build metadata. Version
 precedence ignores build metadata. The OSCAL release therefore records provenance without acting as a compatibility
-signal. A new OSCAL release SHALL always update this build metadata. It SHALL drive a version increment only to the
-degree it changes the contract. A backward-compatible OSCAL release is a minor increment. A new OSCAL major version is
-a major increment.
+signal. A new OSCAL release SHALL always update this build metadata. The kind of the change, as [VER-003] defines it,
+depends on how the new OSCAL release changes the contract. A backward-compatible OSCAL release is an addition. A new
+OSCAL major version is a break.
 
 #### Scenario: VER-004.01 OSCAL release appears as build metadata
 
 - **WHEN** the spec artifact describes OSCAL release 1.2.3
 - **THEN** the version carries `+oscal.1.2.3` as build metadata
 
-#### Scenario: VER-004.02 Compatible OSCAL bump is a minor increment
+#### Scenario: VER-004.02 Compatible OSCAL release is an addition
 
 - **WHEN** the spec moves to a backward-compatible OSCAL release that adds optional fields
-- **THEN** the minor version increments and the build metadata updates to the new OSCAL release
+- **THEN** the change is an addition, and the build metadata updates to the new OSCAL release
 
-#### Scenario: VER-004.03 New OSCAL major version is a major increment
+#### Scenario: VER-004.03 New OSCAL major version is a break
 
 - **WHEN** the spec moves to a new OSCAL major version with breaking changes
-- **THEN** the major version increments and the build metadata updates to the new OSCAL release
+- **THEN** the change is a break, and the build metadata updates to the new OSCAL release
 
 #### Scenario: VER-004.04 Build metadata does not change precedence
 
@@ -159,3 +162,51 @@ MUST NOT need a change or a release of the store. The corpus states the same exp
 
 - **WHEN** a binding fixes a defect that a corpus case exercises
 - **THEN** the binding removes its own expected-failure entry, and the store does not change
+
+### Requirement: VER-008 The version is the latest release or one step above it
+
+The store checks SHALL compare the version in `VERSION` with the latest release. The latest release is the release
+tag of [VER-005] on the main branch with the highest precedence, for all OSCAL releases. The checks MUST fail unless
+the version is one of these:
+
+1. The version of the latest release, with the same build metadata.
+2. The next patch, minor or major version after the latest release.
+
+The checks MUST fail when they cannot find the latest release.
+
+#### Scenario: VER-008.01 One step above the latest release passes
+
+- **WHEN** the latest release is `v0.8.0+oscal.1.2.3`, and `VERSION` holds `0.8.1+oscal.1.2.3`, `0.9.0+oscal.1.2.3`
+  or `1.0.0+oscal.1.2.3`
+- **THEN** the version meets this requirement
+
+#### Scenario: VER-008.02 The latest release passes
+
+- **WHEN** the latest release is `v0.8.0+oscal.1.2.3`, and `VERSION` holds `0.8.0+oscal.1.2.3`
+- **THEN** the version meets this requirement
+
+#### Scenario: VER-008.03 Two steps above the latest release fail
+
+- **WHEN** the latest release is `v0.8.0+oscal.1.2.3`, and `VERSION` holds `0.10.0+oscal.1.2.3` or
+  `0.9.1+oscal.1.2.3`
+- **THEN** the store checks fail and name the latest release
+
+#### Scenario: VER-008.04 A version below the latest release fails
+
+- **WHEN** the latest release is `v0.8.0+oscal.1.2.3`, and `VERSION` holds `0.7.0+oscal.1.2.3`
+- **THEN** the store checks fail and name the latest release
+
+#### Scenario: VER-008.05 The latest version with other build metadata fails
+
+- **WHEN** the latest release is `v0.8.0+oscal.1.2.3`, and `VERSION` holds `0.8.0+oscal.1.2.4`
+- **THEN** the store checks fail and name the latest release
+
+#### Scenario: VER-008.06 A release for another OSCAL release is the latest release
+
+- **WHEN** the only release tag on the main branch is `v0.8.0+oscal.1.2.3`, and `VERSION` holds `0.9.0+oscal.1.2.4`
+- **THEN** the version meets this requirement
+
+#### Scenario: VER-008.07 No release on the main branch fails the check
+
+- **WHEN** the clone has release tags, and no release tag is on the main branch
+- **THEN** the store checks fail

@@ -647,6 +647,11 @@
       "title": "Each binding keeps its own expected conformance failures"
     },
     {
+      "id": "VER-008",
+      "capability": "schema-versioning",
+      "title": "The version is the latest release or one step above it"
+    },
+    {
       "id": "YML-001",
       "capability": "yaml-documents",
       "title": "YAML support is optional, and a binding that offers it conforms in full"
