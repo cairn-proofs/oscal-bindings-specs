@@ -1,0 +1,2963 @@
+{
+  "format": 1,
+  "scenarios": [
+    {
+      "capability": "backmatter-builders",
+      "corpus": [
+        "build-hash/default-algorithm"
+      ],
+      "id": "BMB-001.01"
+    },
+    {
+      "capability": "backmatter-builders",
+      "corpus": [
+        "build-hash/algorithm-string"
+      ],
+      "id": "BMB-001.02"
+    },
+    {
+      "capability": "backmatter-builders",
+      "corpus": [
+        "build-hash/invalid-algorithm"
+      ],
+      "id": "BMB-001.03"
+    },
+    {
+      "capability": "backmatter-builders",
+      "corpus": [
+        "build-hash/off-list-algorithm"
+      ],
+      "id": "BMB-001.04"
+    },
+    {
+      "capability": "backmatter-builders",
+      "corpus": [
+        "build-rlink/reference-only"
+      ],
+      "id": "BMB-002.01"
+    },
+    {
+      "capability": "backmatter-builders",
+      "corpus": [
+        "build-rlink/media-type-and-hashes"
+      ],
+      "id": "BMB-002.02"
+    },
+    {
+      "capability": "backmatter-builders",
+      "corpus": [
+        "build-resource/generated-identifier"
+      ],
+      "id": "BMB-003.01"
+    },
+    {
+      "capability": "backmatter-builders",
+      "corpus": [
+        "build-resource/omitted-inputs"
+      ],
+      "id": "BMB-003.02"
+    },
+    {
+      "capability": "backmatter-builders",
+      "corpus": [
+        "build-resource/invalid-document-id"
+      ],
+      "id": "BMB-003.03"
+    },
+    {
+      "capability": "backmatter-builders",
+      "corpus": [
+        "build-resource/key"
+      ],
+      "id": "BMB-004.01"
+    },
+    {
+      "capability": "backmatter-builders",
+      "corpus": [
+        "build-resource/key-with-title"
+      ],
+      "id": "BMB-004.02"
+    },
+    {
+      "capability": "backmatter-builders",
+      "corpus": [
+        "build-resource/non-ascii-key"
+      ],
+      "id": "BMB-004.03"
+    },
+    {
+      "capability": "backmatter-builders",
+      "corpus": [
+        "build-resource/key-and-identifier"
+      ],
+      "id": "BMB-004.04"
+    },
+    {
+      "capability": "backmatter-builders",
+      "corpus": [
+        "build-resource/empty-key"
+      ],
+      "id": "BMB-004.05"
+    },
+    {
+      "capability": "backmatter-builders",
+      "corpus": [
+        "build-hash/wrong-length"
+      ],
+      "id": "BMB-005.01"
+    },
+    {
+      "capability": "backmatter-builders",
+      "corpus": [
+        "build-resource/duplicate-rlink-href"
+      ],
+      "id": "BMB-005.02"
+    },
+    {
+      "capability": "constraint-validation",
+      "gap": 70,
+      "id": "CNS-001.01"
+    },
+    {
+      "capability": "constraint-validation",
+      "gap": 70,
+      "id": "CNS-001.02"
+    },
+    {
+      "capability": "constraint-validation",
+      "gap": 71,
+      "id": "CNS-002.01"
+    },
+    {
+      "capability": "constraint-validation",
+      "gap": 71,
+      "id": "CNS-002.02"
+    },
+    {
+      "capability": "constraint-validation",
+      "gap": 71,
+      "id": "CNS-002.03"
+    },
+    {
+      "capability": "constraint-validation",
+      "id": "CNS-003.01",
+      "self-test": [
+        {
+          "script": "scripts/check-constraint-exclusions.ts",
+          "test": "CNS-003.01: an unknown id fails"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "id": "CNS-003.02",
+      "self-test": [
+        {
+          "script": "scripts/check-constraint-exclusions.ts",
+          "test": "CNS-003.02: an issue outside usnistgov/OSCAL fails the schema"
+        },
+        {
+          "script": "scripts/check-constraint-exclusions.ts",
+          "test": "CNS-003.02: an item without an issue fails the schema"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "gap": 72,
+      "id": "CNS-004.01"
+    },
+    {
+      "capability": "constraint-validation",
+      "id": "CNS-004.02",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-004.02: a manifest that does not conform fails the check"
+        },
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-004.02: the manifest conforms to its JSON Schema"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "id": "CNS-005.01",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-005.01: the manifest holds no entry of the level WARNING"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "id": "CNS-005.02",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-005.02: the manifest holds no excluded constraint"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "gap": 73,
+      "id": "CNS-006.01"
+    },
+    {
+      "capability": "constraint-validation",
+      "id": "CNS-007.01",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "CNS-007.01: the target of a constraint with a doc() branch selects the nodes of the same document only"
+        },
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-007.01: the target queries of that entry select the nodes of the same document"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "id": "CNS-007.02",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-007.02: an element of the type hash has context queries for the hash entries"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "id": "CNS-008.01",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "CNS-008.01: a name that an open entry of the set lists gives no failure"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "corpus": [
+        "parse/constraint/oscal-activity-type-values",
+        "parse/constraint/oscal-activity-values",
+        "parse/constraint/oscal-assesment-part-objective-method-value",
+        "parse/constraint/oscal-assesment-part-objective-name",
+        "parse/constraint/oscal-assessment-objective-types",
+        "parse/constraint/oscal-back-matter-resource-prop-name-values",
+        "parse/constraint/oscal-back-matter-resource-prop-type-values",
+        "parse/constraint/oscal-catalog-metadata-prop-name",
+        "parse/constraint/oscal-component-allows-authenticated-scan-value",
+        "parse/constraint/oscal-component-hardware-service-software-prop-name-values",
+        "parse/constraint/oscal-component-implementation-point-value",
+        "parse/constraint/oscal-component-interconnection-prop-name-values",
+        "parse/constraint/oscal-component-interconnection-service-software-system-prop-name-values",
+        "parse/constraint/oscal-component-inventory-item-allows-authenticated-scan-values",
+        "parse/constraint/oscal-component-prop-allows-authenticated-scan-values",
+        "parse/constraint/oscal-component-prop-direction-values",
+        "parse/constraint/oscal-component-prop-implementation-point-values",
+        "parse/constraint/oscal-component-prop-ipaddress-class-values",
+        "parse/constraint/oscal-component-prop-is-public-values",
+        "parse/constraint/oscal-component-prop-is-virtual-values",
+        "parse/constraint/oscal-component-prop-name",
+        "parse/constraint/oscal-component-prop-name-values",
+        "parse/constraint/oscal-component-public-value",
+        "parse/constraint/oscal-component-software-prop-name-values",
+        "parse/constraint/oscal-component-virtual-value",
+        "parse/constraint/oscal-control-objective-part-method-prop-value",
+        "parse/constraint/oscal-control-objective-part-subpart-name",
+        "parse/constraint/oscal-control-part-name",
+        "parse/constraint/oscal-control-prop-name",
+        "parse/constraint/oscal-control-statement-part-name",
+        "parse/constraint/oscal-control-statement-part-prop-name",
+        "parse/constraint/oscal-control-statement-part-rmf-prop-name",
+        "parse/constraint/oscal-control-statement-part-subpart-name",
+        "parse/constraint/oscal-cvss-v4.0-ac-values",
+        "parse/constraint/oscal-cvss-v4.0-at-values",
+        "parse/constraint/oscal-cvss-v4.0-au-values",
+        "parse/constraint/oscal-cvss-v4.0-av-values",
+        "parse/constraint/oscal-cvss-v4.0-e-values",
+        "parse/constraint/oscal-cvss-v4.0-env-cia-values",
+        "parse/constraint/oscal-cvss-v4.0-mac-values",
+        "parse/constraint/oscal-cvss-v4.0-mat-values",
+        "parse/constraint/oscal-cvss-v4.0-mav-values",
+        "parse/constraint/oscal-cvss-v4.0-mpr-mvs-cia-values",
+        "parse/constraint/oscal-cvss-v4.0-msc-values",
+        "parse/constraint/oscal-cvss-v4.0-msi-msa-cia-values",
+        "parse/constraint/oscal-cvss-v4.0-mui-values",
+        "parse/constraint/oscal-cvss-v4.0-pr-cia-values",
+        "parse/constraint/oscal-cvss-v4.0-r-values",
+        "parse/constraint/oscal-cvss-v4.0-re-values",
+        "parse/constraint/oscal-cvss-v4.0-s-values",
+        "parse/constraint/oscal-cvss-v4.0-u-values",
+        "parse/constraint/oscal-cvss-v4.0-ui-values",
+        "parse/constraint/oscal-cvss-v4.0-v-values",
+        "parse/constraint/oscal-cvss-v4.0-vectors",
+        "parse/constraint/oscal-facet-cve-values",
+        "parse/constraint/oscal-facet-cvss2-access-complexity-values",
+        "parse/constraint/oscal-facet-cvss2-access-vector-values",
+        "parse/constraint/oscal-facet-cvss2-authentication-values",
+        "parse/constraint/oscal-facet-cvss2-cia-requirement-values",
+        "parse/constraint/oscal-facet-cvss2-collateral-damage-potential-values",
+        "parse/constraint/oscal-facet-cvss2-confidentiality-impact-values",
+        "parse/constraint/oscal-facet-cvss2-exploitability-values",
+        "parse/constraint/oscal-facet-cvss2-name-values",
+        "parse/constraint/oscal-facet-cvss2-remediation-level-values",
+        "parse/constraint/oscal-facet-cvss2-report-confidence-values",
+        "parse/constraint/oscal-facet-cvss3-access-complexity-values",
+        "parse/constraint/oscal-facet-cvss3-access-vector-values",
+        "parse/constraint/oscal-facet-cvss3-cia-impact-values",
+        "parse/constraint/oscal-facet-cvss3-cia-requirement-values",
+        "parse/constraint/oscal-facet-cvss3-exploit-code-maturity-values",
+        "parse/constraint/oscal-facet-cvss3-modified-attack-complexity-values",
+        "parse/constraint/oscal-facet-cvss3-modified-attack-vector-values",
+        "parse/constraint/oscal-facet-cvss3-modified-cia-values",
+        "parse/constraint/oscal-facet-cvss3-modified-scope-values",
+        "parse/constraint/oscal-facet-cvss3-modified-user-interaction-values",
+        "parse/constraint/oscal-facet-cvss3-name-values",
+        "parse/constraint/oscal-facet-cvss3-remediation-level",
+        "parse/constraint/oscal-facet-cvss3-report-confidence-values",
+        "parse/constraint/oscal-facet-cvss3-scope",
+        "parse/constraint/oscal-facet-cvss3-user-interaction",
+        "parse/constraint/oscal-facet-fedramp-values",
+        "parse/constraint/oscal-facet-name-core-values",
+        "parse/constraint/oscal-facet-prop-name-values",
+        "parse/constraint/oscal-facet-prop-state-values",
+        "parse/constraint/oscal-group-part-name",
+        "parse/constraint/oscal-group-prop-name",
+        "parse/constraint/oscal-implemented-component-prop-name-values",
+        "parse/constraint/oscal-implemented-requirement-statement-by-component-prop-control-origination-values",
+        "parse/constraint/oscal-implemented-requirement-statement-by-component-prop-name-values",
+        "parse/constraint/oscal-inventory-item-prop-is-scanned-values",
+        "parse/constraint/oscal-inventory-item-prop-name-values",
+        "parse/constraint/oscal-metadata-location-prop-name-values",
+        "parse/constraint/oscal-metadata-party-prop-name-values",
+        "parse/constraint/oscal-metadata-prop-name-values-metadata",
+        "parse/constraint/oscal-metadata-prop-name-values-property",
+        "parse/constraint/oscal-parameter-prop-name",
+        "parse/constraint/oscal-part-prop-name",
+        "parse/constraint/oscal-profile-modify-alter-prop-name-values",
+        "parse/constraint/oscal-response-prop-name",
+        "parse/constraint/oscal-response-prop-type-value",
+        "parse/constraint/oscal-risk-prop-name-values-entry",
+        "parse/constraint/oscal-risk-prop-name-values-risk",
+        "parse/constraint/oscal-rmf-parameter-prop-name",
+        "parse/constraint/oscal-software-component-prop-name",
+        "parse/constraint/oscal-system-characteristics-prop-cloud-deployment-model-values",
+        "parse/constraint/oscal-system-characteristics-prop-cloud-service-model-values",
+        "parse/constraint/oscal-system-characteristics-prop-name-values-system-characteristics-allowed-values-1",
+        "parse/constraint/oscal-system-characteristics-prop-name-values-system-characteristics-allowed-values-2",
+        "parse/constraint/oscal-system-characteristics-prop-sp-800-63-assurance-level-values",
+        "parse/constraint/oscal-system-information-prop-name-values",
+        "parse/constraint/oscal-system-information-prop-privacy-designation-values",
+        "parse/constraint/oscal-terms-and-conditions-part-name",
+        "parse/constraint/oscal-user-prop-name-values",
+        "parse/constraint/oscal-user-prop-privilege-level-values",
+        "parse/constraint/oscal-user-prop-type-values"
+      ],
+      "id": "CNS-008.02",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "CNS-008.02: a name that no entry of the set lists gives one failure for each closed entry"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "corpus": [
+        "element/property-name-of-parent-entry"
+      ],
+      "id": "CNS-009.01",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-009.01: the property entry has no element context queries for the type property"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "corpus": [
+        "parse/constraint/oscal-back-matter-resource-prop-published-datatype",
+        "parse/constraint/oscal-check-hash-length-SHA2-3-224",
+        "parse/constraint/oscal-check-hash-length-SHA2-3-256",
+        "parse/constraint/oscal-check-hash-length-SHA2-3-384",
+        "parse/constraint/oscal-check-hash-length-SHA2-3-512",
+        "parse/constraint/oscal-component-inherited-uuid-value-datatype-defined-component",
+        "parse/constraint/oscal-component-inherited-uuid-value-datatype-system-component",
+        "parse/constraint/oscal-component-prop-ipv4address-value-datatype",
+        "parse/constraint/oscal-component-prop-ipv6address-value-datatype",
+        "parse/constraint/oscal-component-prop-isa-date-value-datatype",
+        "parse/constraint/oscal-component-prop-uri-value-datatype",
+        "parse/constraint/oscal-component-release-date-value-datatype-defined-component",
+        "parse/constraint/oscal-component-release-date-value-datatype-system-component",
+        "parse/constraint/oscal-diagram-datatype-uri",
+        "parse/constraint/oscal-leveraged-authorization-link-rel-ssp-datatype-uri",
+        "parse/constraint/oscal-metadata-link-reference-href-datatype-uri",
+        "parse/constraint/oscal-metadata-link-resource-fragment-datatype",
+        "parse/constraint/oscal-metadata-location-address-country-regex",
+        "parse/constraint/oscal-risk-priority-datatype",
+        "parse/constraint/oscal-system-information-pia-datatype-uri"
+      ],
+      "id": "CNS-010.01",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "CNS-010.01: a hash value of 63 digits gives one failure"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "corpus": [
+        "parse/constraint/oscal-activity-type-cardinality",
+        "parse/constraint/oscal-assessment-method-cardinality",
+        "parse/constraint/oscal-assessment-objective-cardinality",
+        "parse/constraint/oscal-assessment-objects-cardinality",
+        "parse/constraint/oscal-by-component-export-provided-responsibility-cardinality",
+        "parse/constraint/oscal-implemented-requirement-by-component-cardinality",
+        "parse/constraint/oscal-metadata-location-title-address-email-address-telephone-cardinality"
+      ],
+      "id": "CNS-011.01",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "CNS-011.01: a context node with no target node has the count 0"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "gap": 74,
+      "id": "CNS-012.01"
+    },
+    {
+      "capability": "constraint-validation",
+      "id": "CNS-012.02",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "CNS-012.02: a key field with a prefix has the rest of the string as its value"
+        },
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-012.02: a key field with the pattern #(.*) has the prefix #"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "corpus": [
+        "parse/constraint/oscal-metadata-unique-document-id",
+        "parse/constraint/oscal-unique-activity-responsible-role",
+        "parse/constraint/oscal-unique-ap-local-definitions-component",
+        "parse/constraint/oscal-unique-ap-local-definitions-user",
+        "parse/constraint/oscal-unique-ar-attestation-responsible-party",
+        "parse/constraint/oscal-unique-ar-local-definitions-component",
+        "parse/constraint/oscal-unique-ar-local-definitions-user",
+        "parse/constraint/oscal-unique-associated-activity-responsible-role",
+        "parse/constraint/oscal-unique-component-definition-capability",
+        "parse/constraint/oscal-unique-component-definition-capability-incorporates-component",
+        "parse/constraint/oscal-unique-component-definition-control-implementation-set-parameter",
+        "parse/constraint/oscal-unique-component-definition-implemented-requirement-responsible-role",
+        "parse/constraint/oscal-unique-component-definition-implemented-requirement-set-parameter",
+        "parse/constraint/oscal-unique-component-definition-implemented-requirement-statement",
+        "parse/constraint/oscal-unique-component-definition-statement-responsible-role",
+        "parse/constraint/oscal-unique-defined-component-responsible-role",
+        "parse/constraint/oscal-unique-implemented-component-responsible-party",
+        "parse/constraint/oscal-unique-inherited-responsible-role",
+        "parse/constraint/oscal-unique-inventory-item-responsible-party",
+        "parse/constraint/oscal-unique-metadata-doc-id",
+        "parse/constraint/oscal-unique-metadata-property",
+        "parse/constraint/oscal-unique-metadata-responsible-party",
+        "parse/constraint/oscal-unique-poam-local-definitions-component",
+        "parse/constraint/oscal-unique-profile-modify-set-parameter",
+        "parse/constraint/oscal-unique-provided-responsible-role",
+        "parse/constraint/oscal-unique-resource-rlink-href",
+        "parse/constraint/oscal-unique-responsibility-responsible-role",
+        "parse/constraint/oscal-unique-satisfied-responsible-role",
+        "parse/constraint/oscal-unique-ssp-assessment-assets-component",
+        "parse/constraint/oscal-unique-ssp-authorization-boundary-diagram",
+        "parse/constraint/oscal-unique-ssp-by-component-set-parameter",
+        "parse/constraint/oscal-unique-ssp-control-implementation-set-parameter",
+        "parse/constraint/oscal-unique-ssp-data-flow-diagram",
+        "parse/constraint/oscal-unique-ssp-implemented-requirement-by-component",
+        "parse/constraint/oscal-unique-ssp-implemented-requirement-responsible-role",
+        "parse/constraint/oscal-unique-ssp-implemented-requirement-set-parameter",
+        "parse/constraint/oscal-unique-ssp-implemented-requirement-statement",
+        "parse/constraint/oscal-unique-ssp-implemented-requirement-statement-by-component",
+        "parse/constraint/oscal-unique-ssp-network-architecture-diagram",
+        "parse/constraint/oscal-unique-ssp-related-task-responsible-party",
+        "parse/constraint/oscal-unique-ssp-statement-responsible-role",
+        "parse/constraint/oscal-unique-ssp-system-characteristics-responsible-party",
+        "parse/constraint/oscal-unique-ssp-system-implementation-user",
+        "parse/constraint/oscal-unique-ssp-uses-component-responsible-party",
+        "parse/constraint/oscal-unique-step-responsible-role",
+        "parse/constraint/oscal-unique-system-component-responsible-role"
+      ],
+      "id": "CNS-013.01",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "CNS-013.01: three nodes with the same key give two failures"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "corpus": [
+        "parse/constraint/oscal-back-matter-resource-uuid-index",
+        "parse/constraint/oscal-by-component-export-provided-uuid-index-control-implementation",
+        "parse/constraint/oscal-catalog-controls",
+        "parse/constraint/oscal-catalog-groups",
+        "parse/constraint/oscal-catalog-groups-controls-parts",
+        "parse/constraint/oscal-catalog-params",
+        "parse/constraint/oscal-catalog-parts",
+        "parse/constraint/oscal-catalog-props",
+        "parse/constraint/oscal-index-metadata-location-uuid-metadata",
+        "parse/constraint/oscal-index-metadata-party-organizations-uuid-metadata",
+        "parse/constraint/oscal-index-metadata-party-uuid-metadata",
+        "parse/constraint/oscal-index-metadata-property-uuid",
+        "parse/constraint/oscal-index-metadata-role-id-metadata",
+        "parse/constraint/oscal-index-metadata-roles",
+        "parse/constraint/oscal-index-system-component-uuid",
+        "parse/constraint/oscal-index-system-implementation-component-uuid-service-system-implementation-index",
+        "parse/constraint/oscal-ssp-by-component-uuid-index",
+        "parse/constraint/oscal-system-implementation-component-leveraged-authorization-uuid-index",
+        "parse/constraint/oscal-system-implementation-component-uuid-index",
+        "parse/constraint/oscal-system-implementation-component-validation-uuid-index"
+      ],
+      "id": "CNS-014.01",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "CNS-014.01: two parties with the same identifier give one failure"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "id": "CNS-014.02",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "CNS-014.02 and D9: an index with a part in another document is partial, and still checks the local keys"
+        },
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-014.02: the index entry with a doc() branch states that its index is partial"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "corpus": [
+        "parse/constraint/oscal-by-component-export-provided-uuid-index-export",
+        "parse/constraint/oscal-component-prop-physical-location",
+        "parse/constraint/oscal-diagram-index-back-matter-resource-link-rel",
+        "parse/constraint/oscal-implemented-requirement-index-metadata-party-uuid",
+        "parse/constraint/oscal-implemented-requirement-index-metadata-role-id",
+        "parse/constraint/oscal-index-inventory-item-responsible-party-party-uuid",
+        "parse/constraint/oscal-index-inventory-item-responsible-party-role-id",
+        "parse/constraint/oscal-index-metadata-location-uuid-defined-component",
+        "parse/constraint/oscal-index-metadata-location-uuid-location-uuid",
+        "parse/constraint/oscal-index-metadata-party-organizations-uuid-member-of-organization",
+        "parse/constraint/oscal-index-metadata-party-uuid-party-uuid",
+        "parse/constraint/oscal-index-metadata-role-id-role-id",
+        "parse/constraint/oscal-index-system-implementation-component-uuid-service-system-implementation-index-has-key",
+        "parse/constraint/oscal-leveraged-authorization-index-back-matter-resource-ssp",
+        "parse/constraint/oscal-metadata-action-name-index-metadata-party-uuid",
+        "parse/constraint/oscal-metadata-action-name-index-metadata-role-id",
+        "parse/constraint/oscal-metadata-link-reference-index-back-matter-resource",
+        "parse/constraint/oscal-metadata-responsible-party-index-metadata-role-id",
+        "parse/constraint/oscal-system-implementation-component-depends-on-link-index",
+        "parse/constraint/oscal-system-implementation-component-prop-leveraged-authorization-uuid-index",
+        "parse/constraint/oscal-system-information-index-back-matter-resource-pia-link-rel"
+      ],
+      "id": "CNS-015.01",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "CNS-015.01: a responsible party with two party identifiers and one party gives one failure"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "id": "CNS-015.02",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "CNS-015.02 and D9: a provided-by link into the other document gives no failure"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "corpus": [
+        "parse/constraint/oscal-back-matter-resource-citation-title",
+        "parse/constraint/oscal-catalog-control-require-statement-when-appropriate",
+        "parse/constraint/oscal-metadata-link-uri-reference-no-media-type",
+        "parse/constraint/oscal-parameter-depends-on-deprecated"
+      ],
+      "id": "CNS-016.01",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "CNS-016.01: a parameter with the flag depends-on gives one failure"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "gap": 75,
+      "id": "CNS-017.01"
+    },
+    {
+      "capability": "constraint-validation",
+      "gap": 75,
+      "id": "CNS-017.02"
+    },
+    {
+      "capability": "constraint-validation",
+      "id": "CNS-017.03",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "CNS-017.03: a target node that the target queries of two context nodes select gives one failure"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "corpus": [
+        "element/responsible-party-unknown-party"
+      ],
+      "id": "CNS-018.01"
+    },
+    {
+      "capability": "constraint-validation",
+      "corpus": [
+        "element/hash-wrong-length"
+      ],
+      "id": "CNS-018.02",
+      "self-test": [
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "CNS-018.02: a hash element with a short value fails the entry of its algorithm"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "id": "CNS-019.01",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-019.01: the query check fails for a context query that selects a node of another definition"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "id": "CNS-020.01",
+      "self-test": [
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "CNS-020.01: a reportable entry without a case fails the check, one message for each entry"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "id": "CNS-020.02",
+      "self-test": [
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "CNS-020.02: a valid input that fails an entry fails the check"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "id": "CNS-021.01",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-021.01: an open allowed-values entry is not reportable"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "id": "CNS-021.02",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-021.02: an entry that the list cannot-fail names is not reportable"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "id": "CNS-022.01",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-022.01: the failure check fails for a pattern that rejects a valid value"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "gap": 76,
+      "id": "CNS-023.01"
+    },
+    {
+      "capability": "element-validation",
+      "corpus": [
+        "element/back-matter-valid",
+        "element/observation-valid",
+        "element/property-valid"
+      ],
+      "id": "ELV-001.01"
+    },
+    {
+      "capability": "element-validation",
+      "corpus": [
+        "element/back-matter-empty-resources",
+        "element/observation-missing-collected",
+        "element/parameter-selection-out-of-set",
+        "element/property-invalid-name"
+      ],
+      "id": "ELV-001.02"
+    },
+    {
+      "capability": "element-validation",
+      "corpus": [
+        "element-types/all"
+      ],
+      "id": "ELV-002.01"
+    },
+    {
+      "capability": "element-validation",
+      "corpus": [
+        "element/back-matter-valid"
+      ],
+      "id": "ELV-002.02"
+    },
+    {
+      "capability": "element-validation",
+      "corpus": [
+        "element/unknown-element-type"
+      ],
+      "id": "ELV-003.01"
+    },
+    {
+      "by-design": "Each binding sets and documents its own limit, so no store script can observe the rule.",
+      "capability": "element-validation",
+      "id": "ELV-004.01"
+    },
+    {
+      "by-design": "Each binding sets and documents its own limit, so no store script can observe the rule.",
+      "capability": "element-validation",
+      "id": "ELV-004.02"
+    },
+    {
+      "by-design": "Each binding sets and documents its own limit, so no store script can observe the rule.",
+      "capability": "element-validation",
+      "id": "ELV-004.03"
+    },
+    {
+      "capability": "element-validation",
+      "corpus": [
+        "element/hash-wrong-length"
+      ],
+      "id": "ELV-005.01"
+    },
+    {
+      "capability": "element-validation",
+      "corpus": [
+        "element/responsible-party-unknown-party"
+      ],
+      "id": "ELV-005.02"
+    },
+    {
+      "by-design": "The rule applies to how a binding surfaces a result, which no store script can observe.",
+      "capability": "error-model",
+      "id": "ERR-001.08"
+    },
+    {
+      "capability": "error-model",
+      "gap": 77,
+      "id": "ERR-002.01"
+    },
+    {
+      "capability": "error-model",
+      "gap": 77,
+      "id": "ERR-002.02"
+    },
+    {
+      "by-design": "Each binding sets and documents its own limit, so no store script can observe the rule.",
+      "capability": "error-model",
+      "id": "ERR-002.03"
+    },
+    {
+      "capability": "error-model",
+      "corpus": [
+        "parse/missing-required-field",
+        "parse/two-failures"
+      ],
+      "id": "ERR-003.01"
+    },
+    {
+      "capability": "error-model",
+      "corpus": [
+        "parse/not-json",
+        "parse/unknown-root"
+      ],
+      "id": "ERR-004.01"
+    },
+    {
+      "capability": "error-model",
+      "corpus": [
+        "yaml-parse/number-form",
+        "yaml-parse/syntax-error",
+        "yaml-parse/two-documents"
+      ],
+      "id": "ERR-004.02"
+    },
+    {
+      "by-design": "Each binding sets and documents its own limit, so no store script can observe the rule.",
+      "capability": "error-model",
+      "id": "ERR-004.03"
+    },
+    {
+      "capability": "error-model",
+      "gap": 78,
+      "id": "ERR-004.04"
+    },
+    {
+      "capability": "error-model",
+      "gap": 78,
+      "id": "ERR-004.05"
+    },
+    {
+      "capability": "error-model",
+      "corpus": [
+        "parse-typed/wrong-document-type"
+      ],
+      "id": "ERR-005.01"
+    },
+    {
+      "capability": "error-model",
+      "corpus": [
+        "parse-file/missing-file"
+      ],
+      "id": "ERR-006.01"
+    },
+    {
+      "capability": "error-model",
+      "gap": 79,
+      "id": "ERR-006.02"
+    },
+    {
+      "capability": "error-model",
+      "corpus": [
+        "assessment-period/catalog"
+      ],
+      "id": "ERR-007.01"
+    },
+    {
+      "capability": "error-model",
+      "corpus": [
+        "element/unknown-element-type"
+      ],
+      "id": "ERR-008.01"
+    },
+    {
+      "capability": "error-model",
+      "gap": 80,
+      "id": "ERR-009.01"
+    },
+    {
+      "capability": "error-model",
+      "gap": 80,
+      "id": "ERR-009.02"
+    },
+    {
+      "by-design": "The rule applies to how a binding surfaces a result, which no store script can observe.",
+      "capability": "error-model",
+      "id": "ERR-010.01"
+    },
+    {
+      "by-design": "Each binding sets and documents its own limit, so no store script can observe the rule.",
+      "capability": "error-model",
+      "id": "ERR-010.02"
+    },
+    {
+      "by-design": "Each binding sets and documents its own limit, so no store script can observe the rule.",
+      "capability": "error-model",
+      "id": "ERR-011.01"
+    },
+    {
+      "by-design": "Each binding sets and documents its own limit, so no store script can observe the rule.",
+      "capability": "error-model",
+      "id": "ERR-011.02"
+    },
+    {
+      "capability": "error-model",
+      "corpus": [
+        "parse-file/directory"
+      ],
+      "id": "ERR-012.01"
+    },
+    {
+      "by-design": "A file permission cannot be stored in the corpus.",
+      "capability": "error-model",
+      "id": "ERR-012.02"
+    },
+    {
+      "capability": "error-model",
+      "gap": 81,
+      "id": "ERR-012.03"
+    },
+    {
+      "capability": "error-model",
+      "corpus": [
+        "build-hash/invalid-algorithm"
+      ],
+      "id": "ERR-013.01"
+    },
+    {
+      "capability": "error-model",
+      "corpus": [
+        "build-resource/key-and-identifier"
+      ],
+      "id": "ERR-013.02"
+    },
+    {
+      "capability": "document-facade",
+      "corpus": [
+        "facade/catalog"
+      ],
+      "id": "FAC-001.01"
+    },
+    {
+      "capability": "document-facade",
+      "corpus": [
+        "facade/assessment-plan",
+        "facade/assessment-results",
+        "facade/catalog",
+        "facade/component-definition",
+        "facade/mapping-collection",
+        "facade/plan-of-action-and-milestones",
+        "facade/profile",
+        "facade/system-security-plan"
+      ],
+      "id": "FAC-002.01"
+    },
+    {
+      "capability": "document-facade",
+      "corpus": [
+        "facade/assessment-plan",
+        "facade/assessment-results",
+        "facade/catalog",
+        "facade/component-definition",
+        "facade/mapping-collection",
+        "facade/plan-of-action-and-milestones",
+        "facade/profile",
+        "facade/system-security-plan"
+      ],
+      "id": "FAC-002.02"
+    },
+    {
+      "capability": "document-facade",
+      "corpus": [
+        "facade/profile"
+      ],
+      "id": "FAC-003.01"
+    },
+    {
+      "capability": "document-facade",
+      "corpus": [
+        "facade/component-definition",
+        "facade/missing-file"
+      ],
+      "id": "FAC-003.02"
+    },
+    {
+      "capability": "document-facade",
+      "corpus": [
+        "assessment-period/catalog"
+      ],
+      "id": "FAC-004.04"
+    },
+    {
+      "capability": "document-facade",
+      "gap": 82,
+      "id": "FAC-005.01"
+    },
+    {
+      "capability": "document-facade",
+      "gap": 82,
+      "id": "FAC-005.02"
+    },
+    {
+      "capability": "document-facade",
+      "gap": 82,
+      "id": "FAC-005.03"
+    },
+    {
+      "capability": "document-facade",
+      "corpus": [
+        "assessment-period/seventh-fraction-digit"
+      ],
+      "id": "FAC-006.01"
+    },
+    {
+      "capability": "document-facade",
+      "corpus": [
+        "assessment-period/mixed-offsets"
+      ],
+      "id": "FAC-007.01"
+    },
+    {
+      "capability": "document-facade",
+      "corpus": [
+        "assessment-period/equal-instant"
+      ],
+      "id": "FAC-007.02"
+    },
+    {
+      "capability": "document-facade",
+      "corpus": [
+        "assessment-period/seventh-fraction-digit"
+      ],
+      "id": "FAC-007.03"
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-001.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-001.02 schema reorder does not change names"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-002.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-002.01 wrapper named from its body field"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-002.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-002.02 schema directive field is excluded"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "gap": 83,
+      "id": "MDL-002.03"
+    },
+    {
+      "capability": "model-derivation",
+      "gap": 84,
+      "id": "MDL-003.01"
+    },
+    {
+      "capability": "model-derivation",
+      "gap": 84,
+      "id": "MDL-003.02"
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-005.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-005.01 colliding short names get module-prefixed names"
+        }
+      ]
+    },
+    {
+      "by-design": "The rule applies to the generation of types by a binding, which no store script can observe.",
+      "capability": "model-derivation",
+      "id": "MDL-005.02"
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-005.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-005.03 a definition that clashes only with an inline type keeps its local name"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-006.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-006.01 merge branches are named With their property"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-006.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-006.02 branch named from its distinguishing property"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-006.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-006.03 branch children use the union name"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-007.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-007.01 ambiguous wrapper aborts and names it"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-007.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-007.02 wrapper count mismatch aborts"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-007.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-007.03 every collision appears in one report"
+        },
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-007.03 uncovered collisions are all reported"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "corpus": [
+        "parse/unknown-field-top"
+      ],
+      "id": "MDL-008.01"
+    },
+    {
+      "by-design": "The rule applies to the generation of types by a binding, which no store script can observe.",
+      "capability": "model-derivation",
+      "id": "MDL-009.01"
+    },
+    {
+      "by-design": "The rule applies to the generation of types by a binding, which no store script can observe.",
+      "capability": "model-derivation",
+      "id": "MDL-009.02"
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-010.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-010.01 inline object named from its parent"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-010.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-010.02 two inline types with the same local name stay distinct"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-010.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-010.03 nested inline type uses the canonical name of its parent"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-010.04",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-010.04 inline type in a union branch uses the name of the union"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-010.05",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-010.05 override name of a parent carries down"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-010.06",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-010.06 list items use the singular local name"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-011.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-011.02 closed enum gets a type"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-011.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-011.03 open enum is marked open"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-012.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-012.01 one-or-list property is a single-or-many type"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "gap": 85,
+      "id": "MDL-013.01"
+    },
+    {
+      "capability": "model-derivation",
+      "gap": 85,
+      "id": "MDL-013.02"
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-013.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-013.03 combine copies in three branches merge into one type"
+        },
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-013.03 copies in union branches merge"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-013.04",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-013.04 equal enum values at unrelated places do not merge"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "gap": 86,
+      "id": "MDL-014.01"
+    },
+    {
+      "capability": "model-derivation",
+      "gap": 86,
+      "id": "MDL-014.02"
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-015.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-015.01 local name maps to PascalCase"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "gap": 87,
+      "id": "MDL-016.01"
+    },
+    {
+      "capability": "model-derivation",
+      "gap": 88,
+      "id": "MDL-017.01"
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-018.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-018.01 enum named from owner and property"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-018.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-018.02 enum held directly by a definition"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-018.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-018.03 enums of an inline owner share its canonical name"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-018.04",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-018.04 enums with the same owner local name stay distinct"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "gap": 89,
+      "id": "MDL-018.05"
+    },
+    {
+      "capability": "model-derivation",
+      "gap": 90,
+      "id": "MDL-019.01"
+    },
+    {
+      "capability": "model-derivation",
+      "gap": 91,
+      "id": "MDL-020.01"
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-021.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-021.01 missing singular name aborts and names the list"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-021.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-021.02 branch without a distinguishing property aborts"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "id": "MDL-021.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-021.03 branch copies that differ abort"
+        },
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-021.03 merge of different structures aborts and names both"
+        }
+      ]
+    },
+    {
+      "capability": "model-derivation",
+      "gap": 92,
+      "id": "MDL-021.04"
+    },
+    {
+      "capability": "naming-manifest",
+      "gap": 93,
+      "id": "NAM-001.01"
+    },
+    {
+      "capability": "naming-manifest",
+      "id": "NAM-002.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-002.03 schema hash mismatch is detected"
+        }
+      ]
+    },
+    {
+      "capability": "naming-manifest",
+      "gap": 94,
+      "id": "NAM-003.01"
+    },
+    {
+      "capability": "naming-manifest",
+      "id": "NAM-003.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-003.02 duplicate name is invalid"
+        }
+      ]
+    },
+    {
+      "capability": "naming-manifest",
+      "gap": 94,
+      "id": "NAM-003.03"
+    },
+    {
+      "capability": "naming-manifest",
+      "id": "NAM-003.04",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-003.04 reference to a missing entry is invalid"
+        }
+      ]
+    },
+    {
+      "capability": "naming-manifest",
+      "id": "NAM-004.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-004.01 an entry without a kind fails"
+        }
+      ]
+    },
+    {
+      "capability": "naming-manifest",
+      "id": "NAM-004.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-004.03 distinguishing property that is not a key fails"
+        }
+      ]
+    },
+    {
+      "capability": "naming-manifest",
+      "gap": 95,
+      "id": "NAM-005.03"
+    },
+    {
+      "capability": "naming-manifest",
+      "gap": 96,
+      "id": "NAM-006.01"
+    },
+    {
+      "capability": "naming-manifest",
+      "id": "NAM-006.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-006.02 generation is reproducible"
+        }
+      ]
+    },
+    {
+      "capability": "naming-manifest",
+      "gap": 96,
+      "id": "NAM-006.03"
+    },
+    {
+      "capability": "naming-manifest",
+      "id": "NAM-007.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-007.01 existing type keeps its name"
+        },
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-007.01 pinned name wins over a changed rule"
+        }
+      ]
+    },
+    {
+      "capability": "naming-manifest",
+      "id": "NAM-007.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-007.02 new clashing definition is qualified"
+        }
+      ]
+    },
+    {
+      "capability": "naming-manifest",
+      "id": "NAM-008.01",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "NAM-008.01 removed released name fails"
+        },
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "NAM-008.01 rename without a breaking increment fails"
+        }
+      ]
+    },
+    {
+      "capability": "naming-manifest",
+      "id": "NAM-008.02",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "NAM-008.02 added type passes without a breaking increment"
+        }
+      ]
+    },
+    {
+      "capability": "naming-manifest",
+      "id": "NAM-008.04",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "NAM-008.04 permitted rename is listed"
+        }
+      ]
+    },
+    {
+      "capability": "naming-manifest",
+      "id": "NAM-009.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-009.01 a pointer in two entries is invalid"
+        }
+      ]
+    },
+    {
+      "capability": "naming-manifest",
+      "id": "NAM-009.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-009.02 unresolvable pointer is invalid"
+        }
+      ]
+    },
+    {
+      "capability": "naming-manifest",
+      "gap": 97,
+      "id": "NAM-009.03"
+    },
+    {
+      "capability": "naming-manifest",
+      "gap": 97,
+      "id": "NAM-009.04"
+    },
+    {
+      "capability": "naming-manifest",
+      "gap": 98,
+      "id": "NAM-010.01"
+    },
+    {
+      "capability": "naming-manifest",
+      "gap": 98,
+      "id": "NAM-010.02"
+    },
+    {
+      "capability": "naming-manifest",
+      "gap": 98,
+      "id": "NAM-010.03"
+    },
+    {
+      "capability": "naming-manifest",
+      "gap": 98,
+      "id": "NAM-010.04"
+    },
+    {
+      "capability": "naming-manifest",
+      "gap": 99,
+      "id": "NAM-011.01"
+    },
+    {
+      "capability": "naming-manifest",
+      "gap": 99,
+      "id": "NAM-011.02"
+    },
+    {
+      "by-design": "The rule applies to a consumer of the manifest, which no store script can observe.",
+      "capability": "naming-manifest",
+      "id": "NAM-012.01"
+    },
+    {
+      "capability": "naming-manifest",
+      "id": "NAM-012.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-012.02 manifest of another OSCAL release is rejected"
+        }
+      ]
+    },
+    {
+      "capability": "naming-manifest",
+      "id": "NAM-013.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-013.01 schema file name with a path fails"
+        }
+      ]
+    },
+    {
+      "capability": "naming-manifest",
+      "gap": 100,
+      "id": "NAM-013.02"
+    },
+    {
+      "by-design": "The rule applies to a consumer of the manifest, which no store script can observe.",
+      "capability": "naming-manifest",
+      "id": "NAM-014.01"
+    },
+    {
+      "capability": "naming-manifest",
+      "id": "NAM-015.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-015.01 override with an unknown pointer fails"
+        }
+      ]
+    },
+    {
+      "capability": "naming-manifest",
+      "id": "NAM-015.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-015.02 unused override fails"
+        }
+      ]
+    },
+    {
+      "capability": "naming-manifest",
+      "gap": 101,
+      "id": "NAM-015.03"
+    },
+    {
+      "capability": "naming-manifest",
+      "gap": 102,
+      "id": "NAM-016.01"
+    },
+    {
+      "capability": "naming-manifest",
+      "id": "NAM-017.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-017.01 dropped name is reported"
+        }
+      ]
+    },
+    {
+      "capability": "naming-manifest",
+      "gap": 103,
+      "id": "NAM-017.02"
+    },
+    {
+      "capability": "naming-manifest",
+      "gap": 104,
+      "id": "NAM-018.01"
+    },
+    {
+      "capability": "naming-manifest",
+      "id": "NAM-019.01",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "NAM-019.01 clone without release tags fails"
+        },
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "NAM-019.01 git error fails"
+        },
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "NAM-019.01 shallow clone fails"
+        }
+      ]
+    },
+    {
+      "capability": "naming-manifest",
+      "gap": 105,
+      "id": "NAM-019.02"
+    },
+    {
+      "capability": "naming-manifest",
+      "gap": 106,
+      "id": "NAM-020.01"
+    },
+    {
+      "capability": "naming-manifest",
+      "id": "NAM-021.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-021.01 a manifest that is not an object, or has no format member, gives one manifest failure"
+        }
+      ]
+    },
+    {
+      "capability": "naming-manifest",
+      "id": "NAM-022.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-022.01 format 2 gives one manifest failure that names 2"
+        }
+      ]
+    },
+    {
+      "capability": "naming-manifest",
+      "id": "NAM-022.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-022.02 format 2 and an unknown member give one failure and no json-schema failure"
+        }
+      ]
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "round-trip/assessment-plan",
+        "round-trip/assessment-results",
+        "round-trip/catalog",
+        "round-trip/component-definition",
+        "round-trip/mapping-collection",
+        "round-trip/minimal-catalog",
+        "round-trip/plan-of-action-and-milestones",
+        "round-trip/profile",
+        "round-trip/system-security-plan"
+      ],
+      "id": "PRS-001.01"
+    },
+    {
+      "capability": "document-parsing",
+      "gap": 107,
+      "id": "PRS-001.02"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/invalid-utf8"
+      ],
+      "id": "PRS-001.03"
+    },
+    {
+      "capability": "document-parsing",
+      "gap": 108,
+      "id": "PRS-002.01"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse-file/missing-file"
+      ],
+      "id": "PRS-002.02"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "round-trip/catalog"
+      ],
+      "id": "PRS-003.01"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse-typed/wrong-document-type"
+      ],
+      "id": "PRS-003.02"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/unknown-field-top"
+      ],
+      "id": "PRS-004.01"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/unknown-field-nested"
+      ],
+      "id": "PRS-004.02"
+    },
+    {
+      "capability": "document-parsing",
+      "gap": 109,
+      "id": "PRS-005.01"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/name-keyed-field"
+      ],
+      "id": "PRS-005.02"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/missing-required-field",
+        "parse/two-failures"
+      ],
+      "id": "PRS-006.01"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "element/property-invalid-name",
+        "parse/invalid-uuid"
+      ],
+      "id": "PRS-007.01"
+    },
+    {
+      "by-design": "The rule applies to the regex engine of a binding, which no store script can observe.",
+      "capability": "document-parsing",
+      "id": "PRS-007.02"
+    },
+    {
+      "by-design": "The rule applies to the regex engine of a binding, which no store script can observe.",
+      "capability": "document-parsing",
+      "id": "PRS-007.03"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/datetime-without-timezone"
+      ],
+      "id": "PRS-008.01"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/closed-enum-out-of-set"
+      ],
+      "id": "PRS-009.01"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "round-trip/open-enum-off-list"
+      ],
+      "id": "PRS-009.02"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "element/parameter-selection-out-of-set"
+      ],
+      "id": "PRS-009.03"
+    },
+    {
+      "by-design": "Each binding sets and documents its own limit, so no store script can observe the rule.",
+      "capability": "document-parsing",
+      "id": "PRS-010.01"
+    },
+    {
+      "by-design": "Each binding sets and documents its own limit, so no store script can observe the rule.",
+      "capability": "document-parsing",
+      "id": "PRS-010.02"
+    },
+    {
+      "by-design": "Each binding sets and documents its own limit, so no store script can observe the rule.",
+      "capability": "document-parsing",
+      "id": "PRS-010.03"
+    },
+    {
+      "by-design": "Each binding sets and documents its own limit, so no store script can observe the rule.",
+      "capability": "document-parsing",
+      "id": "PRS-010.04"
+    },
+    {
+      "by-design": "Each binding sets and documents its own limit, so no store script can observe the rule.",
+      "capability": "document-parsing",
+      "id": "PRS-011.01"
+    },
+    {
+      "by-design": "Each binding sets and documents its own limit, so no store script can observe the rule.",
+      "capability": "document-parsing",
+      "id": "PRS-011.02"
+    },
+    {
+      "by-design": "Each binding sets and documents its own limit, so no store script can observe the rule.",
+      "capability": "document-parsing",
+      "id": "PRS-011.03"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/many-failures"
+      ],
+      "id": "PRS-012.01"
+    },
+    {
+      "by-design": "Each binding sets and documents its own limit, so no store script can observe the rule.",
+      "capability": "document-parsing",
+      "id": "PRS-012.02"
+    },
+    {
+      "by-design": "Each binding sets and documents its own limit, so no store script can observe the rule.",
+      "capability": "document-parsing",
+      "id": "PRS-012.03"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/name-keyed-field"
+      ],
+      "id": "PRS-013.01"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/unknown-root"
+      ],
+      "id": "PRS-013.02"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/closed-enum-out-of-set"
+      ],
+      "id": "PRS-014.01"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/constraint/oscal-activity-type-cardinality",
+        "parse/constraint/oscal-activity-type-values",
+        "parse/constraint/oscal-activity-values",
+        "parse/constraint/oscal-assesment-part-objective-method-value",
+        "parse/constraint/oscal-assesment-part-objective-name",
+        "parse/constraint/oscal-assessment-method-cardinality",
+        "parse/constraint/oscal-assessment-objective-cardinality",
+        "parse/constraint/oscal-assessment-objective-types",
+        "parse/constraint/oscal-assessment-objects-cardinality",
+        "parse/constraint/oscal-back-matter-resource-citation-title",
+        "parse/constraint/oscal-back-matter-resource-prop-name-values",
+        "parse/constraint/oscal-back-matter-resource-prop-published-datatype",
+        "parse/constraint/oscal-back-matter-resource-prop-type-values",
+        "parse/constraint/oscal-back-matter-resource-uuid-index",
+        "parse/constraint/oscal-by-component-export-provided-responsibility-cardinality",
+        "parse/constraint/oscal-by-component-export-provided-uuid-index-control-implementation",
+        "parse/constraint/oscal-by-component-export-provided-uuid-index-export",
+        "parse/constraint/oscal-catalog-control-require-statement-when-appropriate",
+        "parse/constraint/oscal-catalog-controls",
+        "parse/constraint/oscal-catalog-groups",
+        "parse/constraint/oscal-catalog-groups-controls-parts",
+        "parse/constraint/oscal-catalog-metadata-prop-name",
+        "parse/constraint/oscal-catalog-params",
+        "parse/constraint/oscal-catalog-parts",
+        "parse/constraint/oscal-catalog-props",
+        "parse/constraint/oscal-check-hash-length-SHA2-3-224",
+        "parse/constraint/oscal-check-hash-length-SHA2-3-256",
+        "parse/constraint/oscal-check-hash-length-SHA2-3-384",
+        "parse/constraint/oscal-check-hash-length-SHA2-3-512",
+        "parse/constraint/oscal-component-allows-authenticated-scan-value",
+        "parse/constraint/oscal-component-hardware-service-software-prop-name-values",
+        "parse/constraint/oscal-component-implementation-point-value",
+        "parse/constraint/oscal-component-inherited-uuid-value-datatype-defined-component",
+        "parse/constraint/oscal-component-inherited-uuid-value-datatype-system-component",
+        "parse/constraint/oscal-component-interconnection-prop-name-values",
+        "parse/constraint/oscal-component-interconnection-service-software-system-prop-name-values",
+        "parse/constraint/oscal-component-inventory-item-allows-authenticated-scan-values",
+        "parse/constraint/oscal-component-prop-allows-authenticated-scan-values",
+        "parse/constraint/oscal-component-prop-direction-values",
+        "parse/constraint/oscal-component-prop-implementation-point-values",
+        "parse/constraint/oscal-component-prop-ipaddress-class-values",
+        "parse/constraint/oscal-component-prop-ipv4address-value-datatype",
+        "parse/constraint/oscal-component-prop-ipv6address-value-datatype",
+        "parse/constraint/oscal-component-prop-is-public-values",
+        "parse/constraint/oscal-component-prop-is-virtual-values",
+        "parse/constraint/oscal-component-prop-isa-date-value-datatype",
+        "parse/constraint/oscal-component-prop-name",
+        "parse/constraint/oscal-component-prop-name-values",
+        "parse/constraint/oscal-component-prop-physical-location",
+        "parse/constraint/oscal-component-prop-uri-value-datatype",
+        "parse/constraint/oscal-component-public-value",
+        "parse/constraint/oscal-component-release-date-value-datatype-defined-component",
+        "parse/constraint/oscal-component-release-date-value-datatype-system-component",
+        "parse/constraint/oscal-component-software-prop-name-values",
+        "parse/constraint/oscal-component-virtual-value",
+        "parse/constraint/oscal-control-objective-part-method-prop-value",
+        "parse/constraint/oscal-control-objective-part-subpart-name",
+        "parse/constraint/oscal-control-part-name",
+        "parse/constraint/oscal-control-prop-name",
+        "parse/constraint/oscal-control-statement-part-name",
+        "parse/constraint/oscal-control-statement-part-prop-name",
+        "parse/constraint/oscal-control-statement-part-rmf-prop-name",
+        "parse/constraint/oscal-control-statement-part-subpart-name",
+        "parse/constraint/oscal-cvss-v4.0-ac-values",
+        "parse/constraint/oscal-cvss-v4.0-at-values",
+        "parse/constraint/oscal-cvss-v4.0-au-values",
+        "parse/constraint/oscal-cvss-v4.0-av-values",
+        "parse/constraint/oscal-cvss-v4.0-e-values",
+        "parse/constraint/oscal-cvss-v4.0-env-cia-values",
+        "parse/constraint/oscal-cvss-v4.0-mac-values",
+        "parse/constraint/oscal-cvss-v4.0-mat-values",
+        "parse/constraint/oscal-cvss-v4.0-mav-values",
+        "parse/constraint/oscal-cvss-v4.0-mpr-mvs-cia-values",
+        "parse/constraint/oscal-cvss-v4.0-msc-values",
+        "parse/constraint/oscal-cvss-v4.0-msi-msa-cia-values",
+        "parse/constraint/oscal-cvss-v4.0-mui-values",
+        "parse/constraint/oscal-cvss-v4.0-pr-cia-values",
+        "parse/constraint/oscal-cvss-v4.0-r-values",
+        "parse/constraint/oscal-cvss-v4.0-re-values",
+        "parse/constraint/oscal-cvss-v4.0-s-values",
+        "parse/constraint/oscal-cvss-v4.0-u-values",
+        "parse/constraint/oscal-cvss-v4.0-ui-values",
+        "parse/constraint/oscal-cvss-v4.0-v-values",
+        "parse/constraint/oscal-cvss-v4.0-vectors",
+        "parse/constraint/oscal-diagram-datatype-uri",
+        "parse/constraint/oscal-diagram-index-back-matter-resource-link-rel",
+        "parse/constraint/oscal-facet-cve-values",
+        "parse/constraint/oscal-facet-cvss2-access-complexity-values",
+        "parse/constraint/oscal-facet-cvss2-access-vector-values",
+        "parse/constraint/oscal-facet-cvss2-authentication-values",
+        "parse/constraint/oscal-facet-cvss2-cia-requirement-values",
+        "parse/constraint/oscal-facet-cvss2-collateral-damage-potential-values",
+        "parse/constraint/oscal-facet-cvss2-confidentiality-impact-values",
+        "parse/constraint/oscal-facet-cvss2-exploitability-values",
+        "parse/constraint/oscal-facet-cvss2-name-values",
+        "parse/constraint/oscal-facet-cvss2-remediation-level-values",
+        "parse/constraint/oscal-facet-cvss2-report-confidence-values",
+        "parse/constraint/oscal-facet-cvss3-access-complexity-values",
+        "parse/constraint/oscal-facet-cvss3-access-vector-values",
+        "parse/constraint/oscal-facet-cvss3-cia-impact-values",
+        "parse/constraint/oscal-facet-cvss3-cia-requirement-values",
+        "parse/constraint/oscal-facet-cvss3-exploit-code-maturity-values",
+        "parse/constraint/oscal-facet-cvss3-modified-attack-complexity-values",
+        "parse/constraint/oscal-facet-cvss3-modified-attack-vector-values",
+        "parse/constraint/oscal-facet-cvss3-modified-cia-values",
+        "parse/constraint/oscal-facet-cvss3-modified-scope-values",
+        "parse/constraint/oscal-facet-cvss3-modified-user-interaction-values",
+        "parse/constraint/oscal-facet-cvss3-name-values",
+        "parse/constraint/oscal-facet-cvss3-remediation-level",
+        "parse/constraint/oscal-facet-cvss3-report-confidence-values",
+        "parse/constraint/oscal-facet-cvss3-scope",
+        "parse/constraint/oscal-facet-cvss3-user-interaction",
+        "parse/constraint/oscal-facet-fedramp-values",
+        "parse/constraint/oscal-facet-name-core-values",
+        "parse/constraint/oscal-facet-prop-name-values",
+        "parse/constraint/oscal-facet-prop-state-values",
+        "parse/constraint/oscal-group-part-name",
+        "parse/constraint/oscal-group-prop-name",
+        "parse/constraint/oscal-implemented-component-prop-name-values",
+        "parse/constraint/oscal-implemented-requirement-by-component-cardinality",
+        "parse/constraint/oscal-implemented-requirement-index-metadata-party-uuid",
+        "parse/constraint/oscal-implemented-requirement-index-metadata-role-id",
+        "parse/constraint/oscal-implemented-requirement-statement-by-component-prop-control-origination-values",
+        "parse/constraint/oscal-implemented-requirement-statement-by-component-prop-name-values",
+        "parse/constraint/oscal-index-inventory-item-responsible-party-party-uuid",
+        "parse/constraint/oscal-index-inventory-item-responsible-party-role-id",
+        "parse/constraint/oscal-index-metadata-location-uuid-defined-component",
+        "parse/constraint/oscal-index-metadata-location-uuid-location-uuid",
+        "parse/constraint/oscal-index-metadata-location-uuid-metadata",
+        "parse/constraint/oscal-index-metadata-party-organizations-uuid-member-of-organization",
+        "parse/constraint/oscal-index-metadata-party-organizations-uuid-metadata",
+        "parse/constraint/oscal-index-metadata-party-uuid-metadata",
+        "parse/constraint/oscal-index-metadata-party-uuid-party-uuid",
+        "parse/constraint/oscal-index-metadata-property-uuid",
+        "parse/constraint/oscal-index-metadata-role-id-metadata",
+        "parse/constraint/oscal-index-metadata-role-id-role-id",
+        "parse/constraint/oscal-index-metadata-roles",
+        "parse/constraint/oscal-index-system-component-uuid",
+        "parse/constraint/oscal-index-system-implementation-component-uuid-service-system-implementation-index",
+        "parse/constraint/oscal-index-system-implementation-component-uuid-service-system-implementation-index-has-key",
+        "parse/constraint/oscal-inventory-item-prop-is-scanned-values",
+        "parse/constraint/oscal-inventory-item-prop-name-values",
+        "parse/constraint/oscal-leveraged-authorization-index-back-matter-resource-ssp",
+        "parse/constraint/oscal-leveraged-authorization-link-rel-ssp-datatype-uri",
+        "parse/constraint/oscal-metadata-action-name-index-metadata-party-uuid",
+        "parse/constraint/oscal-metadata-action-name-index-metadata-role-id",
+        "parse/constraint/oscal-metadata-link-reference-href-datatype-uri",
+        "parse/constraint/oscal-metadata-link-reference-index-back-matter-resource",
+        "parse/constraint/oscal-metadata-link-resource-fragment-datatype",
+        "parse/constraint/oscal-metadata-link-uri-reference-no-media-type",
+        "parse/constraint/oscal-metadata-location-address-country-regex",
+        "parse/constraint/oscal-metadata-location-prop-name-values",
+        "parse/constraint/oscal-metadata-location-title-address-email-address-telephone-cardinality",
+        "parse/constraint/oscal-metadata-party-prop-name-values",
+        "parse/constraint/oscal-metadata-prop-name-values-metadata",
+        "parse/constraint/oscal-metadata-prop-name-values-property",
+        "parse/constraint/oscal-metadata-responsible-party-index-metadata-role-id",
+        "parse/constraint/oscal-metadata-unique-document-id",
+        "parse/constraint/oscal-parameter-depends-on-deprecated",
+        "parse/constraint/oscal-parameter-prop-name",
+        "parse/constraint/oscal-part-prop-name",
+        "parse/constraint/oscal-profile-modify-alter-prop-name-values",
+        "parse/constraint/oscal-response-prop-name",
+        "parse/constraint/oscal-response-prop-type-value",
+        "parse/constraint/oscal-risk-priority-datatype",
+        "parse/constraint/oscal-risk-prop-name-values-entry",
+        "parse/constraint/oscal-risk-prop-name-values-risk",
+        "parse/constraint/oscal-rmf-parameter-prop-name",
+        "parse/constraint/oscal-software-component-prop-name",
+        "parse/constraint/oscal-ssp-by-component-uuid-index",
+        "parse/constraint/oscal-system-characteristics-prop-cloud-deployment-model-values",
+        "parse/constraint/oscal-system-characteristics-prop-cloud-service-model-values",
+        "parse/constraint/oscal-system-characteristics-prop-name-values-system-characteristics-allowed-values-1",
+        "parse/constraint/oscal-system-characteristics-prop-name-values-system-characteristics-allowed-values-2",
+        "parse/constraint/oscal-system-characteristics-prop-sp-800-63-assurance-level-values",
+        "parse/constraint/oscal-system-implementation-component-depends-on-link-index",
+        "parse/constraint/oscal-system-implementation-component-leveraged-authorization-uuid-index",
+        "parse/constraint/oscal-system-implementation-component-prop-leveraged-authorization-uuid-index",
+        "parse/constraint/oscal-system-implementation-component-uuid-index",
+        "parse/constraint/oscal-system-implementation-component-validation-uuid-index",
+        "parse/constraint/oscal-system-information-index-back-matter-resource-pia-link-rel",
+        "parse/constraint/oscal-system-information-pia-datatype-uri",
+        "parse/constraint/oscal-system-information-prop-name-values",
+        "parse/constraint/oscal-system-information-prop-privacy-designation-values",
+        "parse/constraint/oscal-terms-and-conditions-part-name",
+        "parse/constraint/oscal-unique-activity-responsible-role",
+        "parse/constraint/oscal-unique-ap-local-definitions-component",
+        "parse/constraint/oscal-unique-ap-local-definitions-user",
+        "parse/constraint/oscal-unique-ar-attestation-responsible-party",
+        "parse/constraint/oscal-unique-ar-local-definitions-component",
+        "parse/constraint/oscal-unique-ar-local-definitions-user",
+        "parse/constraint/oscal-unique-associated-activity-responsible-role",
+        "parse/constraint/oscal-unique-component-definition-capability",
+        "parse/constraint/oscal-unique-component-definition-capability-incorporates-component",
+        "parse/constraint/oscal-unique-component-definition-control-implementation-set-parameter",
+        "parse/constraint/oscal-unique-component-definition-implemented-requirement-responsible-role",
+        "parse/constraint/oscal-unique-component-definition-implemented-requirement-set-parameter",
+        "parse/constraint/oscal-unique-component-definition-implemented-requirement-statement",
+        "parse/constraint/oscal-unique-component-definition-statement-responsible-role",
+        "parse/constraint/oscal-unique-defined-component-responsible-role",
+        "parse/constraint/oscal-unique-implemented-component-responsible-party",
+        "parse/constraint/oscal-unique-inherited-responsible-role",
+        "parse/constraint/oscal-unique-inventory-item-responsible-party",
+        "parse/constraint/oscal-unique-metadata-doc-id",
+        "parse/constraint/oscal-unique-metadata-property",
+        "parse/constraint/oscal-unique-metadata-responsible-party",
+        "parse/constraint/oscal-unique-poam-local-definitions-component",
+        "parse/constraint/oscal-unique-profile-modify-set-parameter",
+        "parse/constraint/oscal-unique-provided-responsible-role",
+        "parse/constraint/oscal-unique-resource-rlink-href",
+        "parse/constraint/oscal-unique-responsibility-responsible-role",
+        "parse/constraint/oscal-unique-satisfied-responsible-role",
+        "parse/constraint/oscal-unique-ssp-assessment-assets-component",
+        "parse/constraint/oscal-unique-ssp-authorization-boundary-diagram",
+        "parse/constraint/oscal-unique-ssp-by-component-set-parameter",
+        "parse/constraint/oscal-unique-ssp-control-implementation-set-parameter",
+        "parse/constraint/oscal-unique-ssp-data-flow-diagram",
+        "parse/constraint/oscal-unique-ssp-implemented-requirement-by-component",
+        "parse/constraint/oscal-unique-ssp-implemented-requirement-responsible-role",
+        "parse/constraint/oscal-unique-ssp-implemented-requirement-set-parameter",
+        "parse/constraint/oscal-unique-ssp-implemented-requirement-statement",
+        "parse/constraint/oscal-unique-ssp-implemented-requirement-statement-by-component",
+        "parse/constraint/oscal-unique-ssp-network-architecture-diagram",
+        "parse/constraint/oscal-unique-ssp-related-task-responsible-party",
+        "parse/constraint/oscal-unique-ssp-statement-responsible-role",
+        "parse/constraint/oscal-unique-ssp-system-characteristics-responsible-party",
+        "parse/constraint/oscal-unique-ssp-system-implementation-user",
+        "parse/constraint/oscal-unique-ssp-uses-component-responsible-party",
+        "parse/constraint/oscal-unique-step-responsible-role",
+        "parse/constraint/oscal-unique-system-component-responsible-role",
+        "parse/constraint/oscal-user-prop-name-values",
+        "parse/constraint/oscal-user-prop-privilege-level-values",
+        "parse/constraint/oscal-user-prop-type-values"
+      ],
+      "id": "PRS-015.01"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/schema-and-constraint-failure"
+      ],
+      "id": "PRS-015.02"
+    },
+    {
+      "capability": "document-parsing",
+      "gap": 110,
+      "id": "PRS-015.03"
+    },
+    {
+      "capability": "serialization",
+      "gap": 111,
+      "id": "SER-001.01"
+    },
+    {
+      "by-design": "The rule applies to the serialization paths of a binding, which no store script can observe.",
+      "capability": "serialization",
+      "id": "SER-001.02"
+    },
+    {
+      "capability": "serialization",
+      "corpus": [
+        "round-trip/minimal-catalog"
+      ],
+      "id": "SER-002.01"
+    },
+    {
+      "capability": "serialization",
+      "gap": 112,
+      "id": "SER-002.02"
+    },
+    {
+      "by-design": "The corpus compares canonical forms, and the canonical form erases formatting.",
+      "capability": "serialization",
+      "id": "SER-003.01"
+    },
+    {
+      "by-design": "The corpus compares canonical forms, and the canonical form erases formatting.",
+      "capability": "serialization",
+      "id": "SER-003.02"
+    },
+    {
+      "capability": "serialization",
+      "corpus": [
+        "round-trip/assessment-plan",
+        "round-trip/assessment-results",
+        "round-trip/catalog",
+        "round-trip/component-definition",
+        "round-trip/mapping-collection",
+        "round-trip/minimal-catalog",
+        "round-trip/plan-of-action-and-milestones",
+        "round-trip/profile",
+        "round-trip/system-security-plan"
+      ],
+      "id": "SER-004.01"
+    },
+    {
+      "capability": "serialization",
+      "gap": 113,
+      "id": "SER-004.02"
+    },
+    {
+      "capability": "serialization",
+      "gap": 113,
+      "id": "SER-004.03"
+    },
+    {
+      "capability": "serialization",
+      "corpus": [
+        "round-trip/assessment-plan",
+        "round-trip/assessment-results",
+        "round-trip/datetime-forms"
+      ],
+      "id": "SER-005.01"
+    },
+    {
+      "capability": "serialization",
+      "corpus": [
+        "round-trip/datetime-forms"
+      ],
+      "id": "SER-005.02"
+    },
+    {
+      "capability": "serialization",
+      "corpus": [
+        "round-trip/seven-fraction-digits"
+      ],
+      "id": "SER-005.03"
+    },
+    {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "binding-surface",
+      "id": "SRF-001.01"
+    },
+    {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "binding-surface",
+      "id": "SRF-001.02"
+    },
+    {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "binding-surface",
+      "id": "SRF-001.03"
+    },
+    {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "binding-surface",
+      "id": "SRF-002.01"
+    },
+    {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "binding-surface",
+      "id": "SRF-002.02"
+    },
+    {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "binding-surface",
+      "id": "SRF-002.03"
+    },
+    {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "binding-surface",
+      "id": "SRF-003.01"
+    },
+    {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "binding-surface",
+      "id": "SRF-003.02"
+    },
+    {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "binding-surface",
+      "id": "SRF-003.03"
+    },
+    {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "binding-surface",
+      "id": "SRF-003.04"
+    },
+    {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "binding-surface",
+      "id": "SRF-004.01"
+    },
+    {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "binding-surface",
+      "id": "SRF-004.02"
+    },
+    {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "binding-surface",
+      "id": "SRF-005.01"
+    },
+    {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "binding-surface",
+      "id": "SRF-005.02"
+    },
+    {
+      "capability": "binding-surface",
+      "id": "SRF-006.01",
+      "self-test": [
+        {
+          "script": "scripts/requirements.ts",
+          "test": "SRF-006.01: Index entry of a requirement"
+        }
+      ]
+    },
+    {
+      "capability": "binding-surface",
+      "id": "SRF-006.02",
+      "self-test": [
+        {
+          "script": "scripts/requirements.ts",
+          "test": "SRF-006.02: Current index passes the check"
+        },
+        {
+          "script": "scripts/requirements.ts",
+          "test": "SRF-006.02: Missing index fails the check"
+        },
+        {
+          "script": "scripts/requirements.ts",
+          "test": "SRF-006.02: Stale index fails the check"
+        }
+      ]
+    },
+    {
+      "capability": "binding-surface",
+      "id": "SRF-006.03",
+      "self-test": [
+        {
+          "script": "scripts/requirements.ts",
+          "test": "SRF-006.03: Retired requirement has no entry"
+        }
+      ]
+    },
+    {
+      "capability": "binding-surface",
+      "gap": 114,
+      "id": "SRF-006.04"
+    },
+    {
+      "capability": "binding-surface",
+      "id": "SRF-007.01",
+      "self-test": [
+        {
+          "script": "scripts/requirements.ts",
+          "test": "SRF-007.01: Entry with both kinds of identifier is invalid"
+        }
+      ]
+    },
+    {
+      "capability": "binding-surface",
+      "id": "SRF-007.02",
+      "self-test": [
+        {
+          "script": "scripts/requirements.ts",
+          "test": "SRF-007.02: Scenario identifier as binding-local is invalid"
+        },
+        {
+          "script": "scripts/requirements.ts",
+          "test": "SRF-007.02: Scenario identifier is invalid"
+        }
+      ]
+    },
+    {
+      "capability": "binding-surface",
+      "gap": 115,
+      "id": "SRF-007.03"
+    },
+    {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "schema-versioning",
+      "id": "VER-001.01"
+    },
+    {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "schema-versioning",
+      "id": "VER-001.02"
+    },
+    {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "schema-versioning",
+      "id": "VER-002.01"
+    },
+    {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "schema-versioning",
+      "id": "VER-002.02"
+    },
+    {
+      "by-design": "The releaser decides the version increment, and no store script can observe the decision.",
+      "capability": "schema-versioning",
+      "id": "VER-003.01"
+    },
+    {
+      "by-design": "The releaser decides the version increment, and no store script can observe the decision.",
+      "capability": "schema-versioning",
+      "id": "VER-003.02"
+    },
+    {
+      "by-design": "The releaser decides the version increment, and no store script can observe the decision.",
+      "capability": "schema-versioning",
+      "id": "VER-003.03"
+    },
+    {
+      "by-design": "The releaser decides the version increment, and no store script can observe the decision.",
+      "capability": "schema-versioning",
+      "id": "VER-003.04"
+    },
+    {
+      "by-design": "The releaser decides the version increment, and no store script can observe the decision.",
+      "capability": "schema-versioning",
+      "id": "VER-003.05"
+    },
+    {
+      "capability": "schema-versioning",
+      "gap": 116,
+      "id": "VER-004.01"
+    },
+    {
+      "by-design": "The releaser decides the version increment, and no store script can observe the decision.",
+      "capability": "schema-versioning",
+      "id": "VER-004.02"
+    },
+    {
+      "by-design": "The releaser decides the version increment, and no store script can observe the decision.",
+      "capability": "schema-versioning",
+      "id": "VER-004.03"
+    },
+    {
+      "capability": "schema-versioning",
+      "gap": 116,
+      "id": "VER-004.04"
+    },
+    {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "schema-versioning",
+      "id": "VER-005.01"
+    },
+    {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "schema-versioning",
+      "id": "VER-005.02"
+    },
+    {
+      "capability": "schema-versioning",
+      "gap": 117,
+      "id": "VER-006.01"
+    },
+    {
+      "capability": "schema-versioning",
+      "gap": 117,
+      "id": "VER-006.02"
+    },
+    {
+      "capability": "schema-versioning",
+      "gap": 117,
+      "id": "VER-006.03"
+    },
+    {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "schema-versioning",
+      "id": "VER-007.01"
+    },
+    {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "yaml-documents",
+      "id": "YML-001.01"
+    },
+    {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "yaml-documents",
+      "id": "YML-001.02"
+    },
+    {
+      "capability": "yaml-documents",
+      "corpus": [
+        "yaml-parse/syntax-error"
+      ],
+      "id": "YML-002.01",
+      "self-test": [
+        {
+          "script": "scripts/yaml-reader.ts",
+          "test": "YML-002.01 syntax error"
+        }
+      ]
+    },
+    {
+      "capability": "yaml-documents",
+      "corpus": [
+        "yaml-parse/two-documents"
+      ],
+      "id": "YML-002.02",
+      "self-test": [
+        {
+          "script": "scripts/yaml-reader.ts",
+          "test": "YML-002.02 two documents"
+        }
+      ]
+    },
+    {
+      "capability": "yaml-documents",
+      "corpus": [
+        "yaml-parse/no-document"
+      ],
+      "id": "YML-002.03",
+      "self-test": [
+        {
+          "script": "scripts/yaml-reader.ts",
+          "test": "YML-002.03 no document"
+        }
+      ]
+    },
+    {
+      "capability": "yaml-documents",
+      "corpus": [
+        "yaml-parse/utf-16"
+      ],
+      "id": "YML-002.04",
+      "self-test": [
+        {
+          "script": "scripts/yaml-reader.ts",
+          "test": "YML-002.04 UTF-16 with a byte order mark"
+        }
+      ]
+    },
+    {
+      "capability": "yaml-documents",
+      "id": "YML-003.01",
+      "self-test": [
+        {
+          "script": "scripts/yaml-reader.ts",
+          "test": "YML-003.01 nested structure"
+        }
+      ]
+    },
+    {
+      "capability": "yaml-documents",
+      "corpus": [
+        "yaml-parse/non-scalar-key"
+      ],
+      "id": "YML-003.02",
+      "self-test": [
+        {
+          "script": "scripts/yaml-reader.ts",
+          "test": "YML-003.02 key that is not a scalar"
+        }
+      ]
+    },
+    {
+      "capability": "yaml-documents",
+      "corpus": [
+        "yaml-parse/same-text-keys"
+      ],
+      "id": "YML-003.03",
+      "self-test": [
+        {
+          "script": "scripts/yaml-reader.ts",
+          "test": "YML-003.03 keys with the same text"
+        }
+      ]
+    },
+    {
+      "capability": "yaml-documents",
+      "corpus": [
+        "yaml-round-trip/string-scalars"
+      ],
+      "id": "YML-004.01",
+      "self-test": [
+        {
+          "script": "scripts/yaml-reader.ts",
+          "test": "YML-004.01 number form at a string location"
+        }
+      ]
+    },
+    {
+      "capability": "yaml-documents",
+      "corpus": [
+        "yaml-round-trip/string-scalars"
+      ],
+      "id": "YML-004.02",
+      "self-test": [
+        {
+          "script": "scripts/yaml-reader.ts",
+          "test": "YML-004.02 trailing zero at a string location"
+        }
+      ]
+    },
+    {
+      "capability": "yaml-documents",
+      "corpus": [
+        "yaml-round-trip/string-scalars"
+      ],
+      "id": "YML-004.03",
+      "self-test": [
+        {
+          "script": "scripts/yaml-reader.ts",
+          "test": "YML-004.03 boolean form at a string location"
+        }
+      ]
+    },
+    {
+      "capability": "yaml-documents",
+      "corpus": [
+        "yaml-round-trip/string-scalars"
+      ],
+      "id": "YML-004.04",
+      "self-test": [
+        {
+          "script": "scripts/yaml-reader.ts",
+          "test": "YML-004.04 null forms at a string location"
+        }
+      ]
+    },
+    {
+      "capability": "yaml-documents",
+      "corpus": [
+        "yaml-round-trip/string-scalars"
+      ],
+      "id": "YML-004.05",
+      "self-test": [
+        {
+          "script": "scripts/yaml-reader.ts",
+          "test": "YML-004.05 scalar tag at a string location"
+        }
+      ]
+    },
+    {
+      "capability": "yaml-documents",
+      "corpus": [
+        "yaml-round-trip/number-scalars"
+      ],
+      "id": "YML-004.06",
+      "self-test": [
+        {
+          "script": "scripts/yaml-reader.ts",
+          "test": "YML-004.06 quoted scalar at a number location"
+        }
+      ]
+    },
+    {
+      "capability": "yaml-documents",
+      "corpus": [
+        "yaml-parse/number-form"
+      ],
+      "id": "YML-004.07",
+      "self-test": [
+        {
+          "script": "scripts/yaml-reader.ts",
+          "test": "YML-004.07 hexadecimal form at a number location"
+        }
+      ]
+    },
+    {
+      "capability": "yaml-documents",
+      "corpus": [
+        "yaml-parse/boolean-form"
+      ],
+      "id": "YML-004.08",
+      "self-test": [
+        {
+          "script": "scripts/yaml-reader.ts",
+          "test": "YML-004.08 boolean location with true"
+        },
+        {
+          "script": "scripts/yaml-reader.ts",
+          "test": "YML-004.08 boolean location with yes"
+        }
+      ]
+    },
+    {
+      "capability": "yaml-documents",
+      "corpus": [
+        "yaml-round-trip/string-scalars"
+      ],
+      "id": "YML-004.09",
+      "self-test": [
+        {
+          "script": "scripts/yaml-reader.ts",
+          "test": "YML-004.09 datetime text is kept"
+        }
+      ]
+    },
+    {
+      "capability": "yaml-documents",
+      "corpus": [
+        "yaml-parse/plus-sign"
+      ],
+      "id": "YML-004.10",
+      "self-test": [
+        {
+          "script": "scripts/yaml-reader.ts",
+          "test": "YML-004.10 plus sign at a number location"
+        }
+      ]
+    },
+    {
+      "capability": "yaml-documents",
+      "gap": 118,
+      "id": "YML-005.01"
+    },
+    {
+      "capability": "yaml-documents",
+      "corpus": [
+        "yaml-round-trip/assessment-plan",
+        "yaml-round-trip/assessment-results",
+        "yaml-round-trip/catalog",
+        "yaml-round-trip/component-definition",
+        "yaml-round-trip/plan-of-action-and-milestones",
+        "yaml-round-trip/profile",
+        "yaml-round-trip/system-security-plan"
+      ],
+      "id": "YML-005.02"
+    },
+    {
+      "capability": "yaml-documents",
+      "corpus": [
+        "yaml-parse/unknown-field"
+      ],
+      "id": "YML-005.03",
+      "self-test": [
+        {
+          "script": "scripts/yaml-reader.ts",
+          "test": "YML-005.03 unknown field is rejected"
+        }
+      ]
+    },
+    {
+      "capability": "yaml-documents",
+      "corpus": [
+        "yaml-round-trip/number-scalars"
+      ],
+      "id": "YML-005.04",
+      "self-test": [
+        {
+          "script": "scripts/yaml-reader.ts",
+          "test": "YML-005.04 number text is the JSON number token"
+        }
+      ]
+    },
+    {
+      "by-design": "Each binding sets and documents its own limit, so no store script can observe the rule.",
+      "capability": "yaml-documents",
+      "id": "YML-005.05"
+    },
+    {
+      "capability": "yaml-documents",
+      "gap": 119,
+      "id": "YML-006.01"
+    },
+    {
+      "capability": "yaml-documents",
+      "gap": 119,
+      "id": "YML-006.02"
+    },
+    {
+      "capability": "yaml-documents",
+      "gap": 120,
+      "id": "YML-007.01"
+    },
+    {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "yaml-documents",
+      "id": "YML-007.02"
+    },
+    {
+      "capability": "yaml-documents",
+      "corpus": [
+        "yaml-round-trip/assessment-plan",
+        "yaml-round-trip/assessment-results",
+        "yaml-round-trip/boolean-scalar",
+        "yaml-round-trip/catalog",
+        "yaml-round-trip/component-definition",
+        "yaml-round-trip/number-scalars",
+        "yaml-round-trip/plan-of-action-and-milestones",
+        "yaml-round-trip/profile",
+        "yaml-round-trip/string-scalars",
+        "yaml-round-trip/system-security-plan"
+      ],
+      "id": "YML-008.01"
+    },
+    {
+      "capability": "yaml-documents",
+      "corpus": [
+        "yaml-round-trip/number-scalars"
+      ],
+      "id": "YML-008.02"
+    },
+    {
+      "capability": "yaml-documents",
+      "gap": 121,
+      "id": "YML-008.03"
+    },
+    {
+      "capability": "yaml-documents",
+      "corpus": [
+        "yaml-round-trip/number-scalars"
+      ],
+      "id": "YML-009.01",
+      "self-test": [
+        {
+          "script": "scripts/yaml-reader.ts",
+          "test": "YML-009.01 alias is read at its own location"
+        }
+      ]
+    },
+    {
+      "capability": "yaml-documents",
+      "corpus": [
+        "yaml-parse/alias-cycle"
+      ],
+      "id": "YML-009.02",
+      "self-test": [
+        {
+          "script": "scripts/yaml-reader.ts",
+          "test": "YML-009.02 alias inside its own anchored node"
+        }
+      ]
+    },
+    {
+      "capability": "yaml-documents",
+      "corpus": [
+        "yaml-round-trip/string-scalars"
+      ],
+      "id": "YML-009.03",
+      "self-test": [
+        {
+          "script": "scripts/yaml-reader.ts",
+          "test": "YML-009.03 tag on a sequence"
+        }
+      ]
+    },
+    {
+      "capability": "yaml-documents",
+      "corpus": [
+        "yaml-parse/merge-key"
+      ],
+      "id": "YML-009.04",
+      "self-test": [
+        {
+          "script": "scripts/yaml-reader.ts",
+          "test": "YML-009.04 merge key"
+        }
+      ]
+    },
+    {
+      "capability": "yaml-documents",
+      "corpus": [
+        "yaml-parse/number-form"
+      ],
+      "id": "YML-010.01",
+      "self-test": [
+        {
+          "script": "scripts/yaml-reader.ts",
+          "test": "YML-010.01 grammar error names its location"
+        }
+      ]
+    }
+  ]
+}
