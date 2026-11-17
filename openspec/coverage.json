@@ -625,6 +625,10 @@
     },
     {
       "capability": "constraint-validation",
+      "corpus": [
+        "parse/nested-control-part-name",
+        "parse/nested-control-part-name-three-levels"
+      ],
       "id": "CNS-017.03",
       "self-test": [
         {
@@ -2232,7 +2236,9 @@
         "parse/constraint/oscal-unique-system-component-responsible-role",
         "parse/constraint/oscal-user-prop-name-values",
         "parse/constraint/oscal-user-prop-privilege-level-values",
-        "parse/constraint/oscal-user-prop-type-values"
+        "parse/constraint/oscal-user-prop-type-values",
+        "parse/nested-control-part-name",
+        "parse/nested-control-part-name-three-levels"
       ],
       "id": "PRS-015.01"
     },
