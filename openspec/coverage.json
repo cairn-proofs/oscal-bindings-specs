@@ -2497,29 +2497,39 @@
       "id": "VER-002.02"
     },
     {
-      "by-design": "The releaser decides the version increment, and no store script can observe the decision.",
+      "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
       "capability": "schema-versioning",
       "id": "VER-003.01"
     },
     {
-      "by-design": "The releaser decides the version increment, and no store script can observe the decision.",
+      "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
       "capability": "schema-versioning",
       "id": "VER-003.02"
     },
     {
-      "by-design": "The releaser decides the version increment, and no store script can observe the decision.",
+      "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
       "capability": "schema-versioning",
       "id": "VER-003.03"
     },
     {
-      "by-design": "The releaser decides the version increment, and no store script can observe the decision.",
+      "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
       "capability": "schema-versioning",
       "id": "VER-003.04"
     },
     {
-      "by-design": "The releaser decides the version increment, and no store script can observe the decision.",
+      "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
       "capability": "schema-versioning",
       "id": "VER-003.05"
+    },
+    {
+      "capability": "schema-versioning",
+      "id": "VER-003.06",
+      "self-test": [
+        {
+          "script": "scripts/check-version.ts",
+          "test": "VER-003.06 pre-release label fails"
+        }
+      ]
     },
     {
       "capability": "schema-versioning",
@@ -2527,12 +2537,12 @@
       "id": "VER-004.01"
     },
     {
-      "by-design": "The releaser decides the version increment, and no store script can observe the decision.",
+      "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
       "capability": "schema-versioning",
       "id": "VER-004.02"
     },
     {
-      "by-design": "The releaser decides the version increment, and no store script can observe the decision.",
+      "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
       "capability": "schema-versioning",
       "id": "VER-004.03"
     },
@@ -2570,6 +2580,76 @@
       "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
       "capability": "schema-versioning",
       "id": "VER-007.01"
+    },
+    {
+      "capability": "schema-versioning",
+      "id": "VER-008.01",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "VER-008.01 one step above the latest release passes"
+        }
+      ]
+    },
+    {
+      "capability": "schema-versioning",
+      "id": "VER-008.02",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "VER-008.02 the latest release passes"
+        }
+      ]
+    },
+    {
+      "capability": "schema-versioning",
+      "id": "VER-008.03",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "VER-008.03 two steps above the latest release fail and name it"
+        }
+      ]
+    },
+    {
+      "capability": "schema-versioning",
+      "id": "VER-008.04",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "VER-008.04 a version below the latest release fails and names it"
+        }
+      ]
+    },
+    {
+      "capability": "schema-versioning",
+      "id": "VER-008.05",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "VER-008.05 the latest version with other build metadata fails and names the latest release"
+        }
+      ]
+    },
+    {
+      "capability": "schema-versioning",
+      "id": "VER-008.06",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "VER-008.06 a release for another OSCAL release is the latest release"
+        }
+      ]
+    },
+    {
+      "capability": "schema-versioning",
+      "id": "VER-008.07",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "VER-008.07 no release on the main branch fails"
+        }
+      ]
     },
     {
       "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
