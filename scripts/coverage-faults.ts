@@ -167,7 +167,10 @@ export async function runFaults(faults: Fault[], env: Env): Promise<{ failures: 
   return { failures, results };
 }
 
-/** The report: each fault, the identifier that it breaks, and the cases that detect it. A fault that no case detects is a gap. */
+/**
+ * The report for the output: each fault, the identifier that it breaks, and the number of cases that detect it. A fault
+ * that no case detects is a gap. The cases are in `summaryReport`.
+ */
 export function report(results: FaultResult[]): string[] {
   const lines = ["## Fault detection of the corpus", "", "The faults change the manifest evaluator, and are for allowed-values entries only.", ""];
   for (const [i, { fault, detected }] of results.entries()) {
@@ -175,7 +178,30 @@ export function report(results: FaultResult[]): string[] {
     lines.push(
       n === 0
         ? `${i + 1}. Gap: no case detects the fault \`${fault.id}\`, which breaks ${fault.breaks}.`
-        : `${i + 1}. The fault \`${fault.id}\` breaks ${fault.breaks}. ${n} case${n === 1 ? "" : "s"} ${n === 1 ? "detects" : "detect"} it: ${detected.join(", ")}.`,
+        : `${i + 1}. The fault \`${fault.id}\` breaks ${fault.breaks}. ${n} case${n === 1 ? "" : "s"} ${n === 1 ? "detects" : "detect"} it.`,
+    );
+  }
+  return lines;
+}
+
+/** The report for the job summary: the same lines as `report`, and each case on its own line in a collapsed block. */
+export function summaryReport(results: FaultResult[]): string[] {
+  const lines = ["## Fault detection of the corpus", "", "The faults change the manifest evaluator, and are for allowed-values entries only.", ""];
+  for (const { fault, detected } of results) {
+    const n = detected.length;
+    if (n === 0) {
+      lines.push(`**\`${fault.id}\`** breaks ${fault.breaks}. Gap: no case detects it.`, "");
+      continue;
+    }
+    lines.push(
+      `**\`${fault.id}\`** breaks ${fault.breaks}. ${n} case${n === 1 ? "" : "s"} ${n === 1 ? "detects" : "detect"} it.`,
+      "",
+      `<details><summary>Cases that detect \`${fault.id}\`</summary>`,
+      "",
+      ...detected.map((id) => `- ${id}`),
+      "",
+      "</details>",
+      "",
     );
   }
   return lines;
@@ -199,7 +225,7 @@ async function main(): Promise<number> {
     for (const failure of failures) console.error(failure);
     const lines = report(results);
     console.log(lines.join("\n"));
-    if (process.env.GITHUB_STEP_SUMMARY) fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${lines.join("\n")}\n`);
+    if (process.env.GITHUB_STEP_SUMMARY) fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${summaryReport(results).join("\n")}\n`);
     console.log(failures.length ? `\n${failures.length} fault failure(s)` : `\nfaults: ok (${FAULTS.length} faults, ${cases.length} cases)`);
     return failures.length ? 1 : 0;
   } finally {
@@ -282,9 +308,20 @@ async function selfTest(): Promise<number> {
       const { failures, results } = await runFaults([fault("f8", { find: "beta", replace: "BREAK" })], env({ evaluate: byCase(true) }));
       return (failures.length === 1 && failures[0].startsWith("[unpatched] c1") && results.length === 0) || show(failures);
     }],
-    ["the report names each fault, what it breaks, and the cases that detect it", async () => {
+    ["the report for the output names each fault, what it breaks, and the number of cases, and lists no case", async () => {
       const lines = report([{ fault: fault("f9"), detected: ["a", "b"] }, { fault: fault("f10"), detected: ["c"] }]).join("\n");
-      return (lines.includes("The fault `f9` breaks WID-001.01. 2 cases detect it: a, b.") && lines.includes("1 case detects it: c.")) || lines;
+      return (lines.includes("The fault `f9` breaks WID-001.01. 2 cases detect it.") && lines.includes("The fault `f10` breaks WID-001.01. 1 case detects it.") && !lines.includes("- a")) || lines;
+    }],
+    ["the report for the job summary lists each case on its own line, in a block for each fault, and shows a gap with no block", async () => {
+      const lines = summaryReport([{ fault: fault("f9"), detected: ["a", "b"] }, { fault: fault("f11"), detected: [] }]);
+      const text = lines.join("\n");
+      return (
+        lines.includes("- a") &&
+        lines.includes("- b") &&
+        text.includes("<details><summary>Cases that detect `f9`</summary>") &&
+        text.includes("**`f11`** breaks WID-001.01. Gap: no case detects it.") &&
+        !text.includes("Cases that detect `f11`")
+      ) || text;
     }],
   ];
 
