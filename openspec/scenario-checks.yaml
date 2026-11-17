@@ -1,0 +1,147 @@
+# The scenarios of openspec/specs/ that no corpus case and no self-test names.
+# `by-design`: the reason that no store script can check the scenario.
+# `gap`: the number of the issue in this store that tracks the scenario. The label of the issue is scenario-gap.
+# `npm run coverage:check` enforces the rules (design.md of the report-scenario-checks change, D3).
+# The `gap` list can get shorter, but not longer. A new scenario needs a corpus case, a self-test, or a `by-design` reason.
+
+by-design:
+  ELV-004.01: Each binding sets and documents its own limit, so no store script can observe the rule.
+  ELV-004.02: Each binding sets and documents its own limit, so no store script can observe the rule.
+  ELV-004.03: Each binding sets and documents its own limit, so no store script can observe the rule.
+  ERR-001.08: The rule applies to how a binding surfaces a result, which no store script can observe.
+  ERR-002.03: Each binding sets and documents its own limit, so no store script can observe the rule.
+  ERR-004.03: Each binding sets and documents its own limit, so no store script can observe the rule.
+  ERR-010.01: The rule applies to how a binding surfaces a result, which no store script can observe.
+  ERR-010.02: Each binding sets and documents its own limit, so no store script can observe the rule.
+  ERR-011.01: Each binding sets and documents its own limit, so no store script can observe the rule.
+  ERR-011.02: Each binding sets and documents its own limit, so no store script can observe the rule.
+  ERR-012.02: A file permission cannot be stored in the corpus.
+  MDL-005.02: The rule applies to the generation of types by a binding, which no store script can observe.
+  MDL-009.01: The rule applies to the generation of types by a binding, which no store script can observe.
+  MDL-009.02: The rule applies to the generation of types by a binding, which no store script can observe.
+  NAM-012.01: The rule applies to a consumer of the manifest, which no store script can observe.
+  NAM-014.01: The rule applies to a consumer of the manifest, which no store script can observe.
+  PRS-007.02: The rule applies to the regex engine of a binding, which no store script can observe.
+  PRS-007.03: The rule applies to the regex engine of a binding, which no store script can observe.
+  PRS-010.01: Each binding sets and documents its own limit, so no store script can observe the rule.
+  PRS-010.02: Each binding sets and documents its own limit, so no store script can observe the rule.
+  PRS-010.03: Each binding sets and documents its own limit, so no store script can observe the rule.
+  PRS-010.04: Each binding sets and documents its own limit, so no store script can observe the rule.
+  PRS-011.01: Each binding sets and documents its own limit, so no store script can observe the rule.
+  PRS-011.02: Each binding sets and documents its own limit, so no store script can observe the rule.
+  PRS-011.03: Each binding sets and documents its own limit, so no store script can observe the rule.
+  PRS-012.02: Each binding sets and documents its own limit, so no store script can observe the rule.
+  PRS-012.03: Each binding sets and documents its own limit, so no store script can observe the rule.
+  SER-001.02: The rule applies to the serialization paths of a binding, which no store script can observe.
+  SER-003.01: The corpus compares canonical forms, and the canonical form erases formatting.
+  SER-003.02: The corpus compares canonical forms, and the canonical form erases formatting.
+  SRF-001.01: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-001.02: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-001.03: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-002.01: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-002.02: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-002.03: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-003.01: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-003.02: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-003.03: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-003.04: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-004.01: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-004.02: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-005.01: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-005.02: The rule applies to the process of a binding repository, which no store script can observe.
+  VER-001.01: The rule applies to the process of a binding repository, which no store script can observe.
+  VER-001.02: The rule applies to the process of a binding repository, which no store script can observe.
+  VER-002.01: The rule applies to the process of a binding repository, which no store script can observe.
+  VER-002.02: The rule applies to the process of a binding repository, which no store script can observe.
+  VER-003.01: The releaser decides the version increment, and no store script can observe the decision.
+  VER-003.02: The releaser decides the version increment, and no store script can observe the decision.
+  VER-003.03: The releaser decides the version increment, and no store script can observe the decision.
+  VER-003.04: The releaser decides the version increment, and no store script can observe the decision.
+  VER-003.05: The releaser decides the version increment, and no store script can observe the decision.
+  VER-004.02: The releaser decides the version increment, and no store script can observe the decision.
+  VER-004.03: The releaser decides the version increment, and no store script can observe the decision.
+  VER-005.01: The rule applies to the process of a binding repository, which no store script can observe.
+  VER-005.02: The rule applies to the process of a binding repository, which no store script can observe.
+  VER-007.01: The rule applies to the process of a binding repository, which no store script can observe.
+  YML-001.01: The rule applies to the process of a binding repository, which no store script can observe.
+  YML-001.02: The rule applies to the process of a binding repository, which no store script can observe.
+  YML-005.05: Each binding sets and documents its own limit, so no store script can observe the rule.
+  YML-007.02: The rule applies to the process of a binding repository, which no store script can observe.
+
+gap:
+  CNS-001.01: 70
+  CNS-001.02: 70
+  CNS-002.01: 71
+  CNS-002.02: 71
+  CNS-002.03: 71
+  CNS-004.01: 72
+  CNS-006.01: 73
+  CNS-012.01: 74
+  CNS-017.01: 75
+  CNS-017.02: 75
+  CNS-023.01: 76
+  ERR-002.01: 77
+  ERR-002.02: 77
+  ERR-004.04: 78
+  ERR-004.05: 78
+  ERR-006.02: 79
+  ERR-009.01: 80
+  ERR-009.02: 80
+  ERR-012.03: 81
+  FAC-005.01: 82
+  FAC-005.02: 82
+  FAC-005.03: 82
+  MDL-002.03: 83
+  MDL-003.01: 84
+  MDL-003.02: 84
+  MDL-013.01: 85
+  MDL-013.02: 85
+  MDL-014.01: 86
+  MDL-014.02: 86
+  MDL-016.01: 87
+  MDL-017.01: 88
+  MDL-018.05: 89
+  MDL-019.01: 90
+  MDL-020.01: 91
+  MDL-021.04: 92
+  NAM-001.01: 93
+  NAM-003.01: 94
+  NAM-003.03: 94
+  NAM-005.03: 95
+  NAM-006.01: 96
+  NAM-006.03: 96
+  NAM-009.03: 97
+  NAM-009.04: 97
+  NAM-010.01: 98
+  NAM-010.02: 98
+  NAM-010.03: 98
+  NAM-010.04: 98
+  NAM-011.01: 99
+  NAM-011.02: 99
+  NAM-013.02: 100
+  NAM-015.03: 101
+  NAM-016.01: 102
+  NAM-017.02: 103
+  NAM-018.01: 104
+  NAM-019.02: 105
+  NAM-020.01: 106
+  PRS-001.02: 107
+  PRS-002.01: 108
+  PRS-005.01: 109
+  PRS-015.03: 110
+  SER-001.01: 111
+  SER-002.02: 112
+  SER-004.02: 113
+  SER-004.03: 113
+  SRF-006.04: 114
+  SRF-007.03: 115
+  VER-004.01: 116
+  VER-004.04: 116
+  VER-006.01: 117
+  VER-006.02: 117
+  VER-006.03: 117
+  YML-005.01: 118
+  YML-006.01: 119
+  YML-006.02: 119
+  YML-007.01: 120
+  YML-008.03: 121

@@ -238,8 +238,8 @@ function selfTest(): number {
         '[{"type":"MergeWithAsIs","property":"as-is"},{"type":"MergeWithCustom","property":"custom"},{"type":"MergeWithFlat","property":"flat"}]'
     );
   });
-  test("MDL-006 branch children use the union name", () => entryNamed(run(mergeSchema), "MergeCustom")?.sites.length === 1);
-  test("MDL-013 combine copies in three branches merge into one type", () => entryNamed(run(mergeSchema), "MergeCombine")?.sites.length === 3);
+  test("MDL-006.03 branch children use the union name", () => entryNamed(run(mergeSchema), "MergeCustom")?.sites.length === 1);
+  test("MDL-013.03 combine copies in three branches merge into one type", () => entryNamed(run(mergeSchema), "MergeCombine")?.sites.length === 3);
   const group = "oscal-complete-oscal-catalog:group";
   test("MDL-006.02 branch named from its distinguishing property", () => {
     const r = run(
@@ -418,7 +418,7 @@ function selfTest(): number {
     const r = run(schemaOf({ [sspStatus]: obj({}) }), {}, prev([{ name: "Status", kind: "object", sites: [D(sspStatus)] }]));
     return nameAt(r, D(sspStatus)) === "Status" && r.dropped.length === 0;
   });
-  test("NAM-007 pinned name wins over a changed rule", () =>
+  test("NAM-007.01 pinned name wins over a changed rule", () =>
     nameAt(run(schemaOf({ [hash]: obj({}) }), {}, prev([{ name: "Digest", kind: "object", sites: [D(hash)] }])), D(hash)) === "Digest");
   test("NAM-007.02 new clashing definition is qualified", () => {
     const other = "oscal-complete-oscal-poam:status";

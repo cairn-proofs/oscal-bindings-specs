@@ -93,6 +93,8 @@ The release steps are in [README.md, Release](README.md#release).
 | `openspec/config.yaml` | Authoring rules for OpenSpec artifacts | Yes. Read it before you write a change. This file does not copy its rules. |
 | `openspec/spec-ids.yaml` | Identifier ledger | Yes, in the commit that syncs or archives a change |
 | `openspec/requirements.json` | Requirement index | No. Run `npm run requirements:write`. |
+| `openspec/coverage.json` | The methods that check each scenario | No. Run `npm run coverage:write`. |
+| `openspec/scenario-checks.yaml` | The `by-design` reasons and `gap` issues of scenarios with no check | Yes |
 | `manifest/<release>/overrides.json` | Naming input | Yes |
 | `manifest/<release>/names.json` | Naming manifest that bindings read | No. Run `npm run names:write`. |
 | `manifest/<release>/constraints.json` | Constraint manifest that bindings read | No. Run `npm run constraints:write`. |
