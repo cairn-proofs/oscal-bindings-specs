@@ -4,7 +4,7 @@
  * rules of each kind of entry state them.
  */
 import type { Entry } from "./constraints-lib.js";
-import { run, type Hit } from "./jsonpath.js";
+import { run, runOnce, type Hit } from "./jsonpath.js";
 
 export interface ManifestFailure {
   /** The position of the entry in the manifest. */
@@ -43,7 +43,9 @@ export function evaluateManifest(entries: Entry[], data: unknown, form: Form): M
     failures.push({ entry: i, id: entries[i].id, location, key });
   };
   const queriesOf = (e: Entry): string[] | undefined => ("document" in form ? e.context.document : e.context.elements[form.element]);
-  const contexts = (e: Entry): Hit[] => dedupe((queriesOf(e) ?? []).flatMap((q) => run(q, data)));
+  // Many entries share their context queries, so each query runs once for the data.
+  const runOnData = runOnce(data);
+  const contexts = (e: Entry): Hit[] => dedupe((queriesOf(e) ?? []).flatMap((q) => runOnData(q)));
   /** The target nodes of a context node (CNS-007). The queries run on an array that holds the context node. */
   const targetsOf = (e: Entry, ctx: Hit): Hit[] =>
     dedupe(e.target.flatMap((q) => run(q, [ctx.value]).map((h) => ({ value: h.value, path: ctx.path + h.path.slice(4) }))));

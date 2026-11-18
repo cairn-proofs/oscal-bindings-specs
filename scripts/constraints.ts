@@ -16,7 +16,7 @@ import { corpusDocuments, elementsOf, generatedDocuments } from "./constraints-d
 import { Generator, serializeManifest, type ConstraintManifest, type Entry } from "./constraints-lib.js";
 import { evaluateManifest } from "./constraints-manifest.js";
 import { GenerationError, toIRegexp, datatypeIRegexp } from "./constraints-regex.js";
-import { compile, run } from "./jsonpath.js";
+import { compile, run, runOnce } from "./jsonpath.js";
 import { allNodes, loadDoc } from "./metapath.js";
 import type { Constraint } from "./metaschema.js";
 import { storeReleases } from "./names-lib.js";
@@ -258,6 +258,21 @@ function selfTest(): number {
     const withTarget = (q: string) => edited((m) => (m.entries[0].target = [q]));
     const bad = checkManifest(schema, withTarget("$"));
     return (bad.length === 1 && bad[0].includes("selects the array that holds the context node") && checkManifest(schema, withTarget("$[0]")).length === 0) || JSON.stringify(bad);
+  });
+  // runOnce is a speed-up of the constraint checks. It must give what run gives, for its own data only.
+  test("runOnce gives the hits of run, and the same array for a repeated query", () => {
+    const data = { a: [{ n: 1 }, { n: 2 }], b: { n: 3 } };
+    const once = runOnce(data);
+    return (
+      JSON.stringify(once("$..n")) === JSON.stringify(run("$..n", data)) &&
+      once("$..n") === once("$..n") &&
+      JSON.stringify(once("$.a[0]")) === JSON.stringify(run("$.a[0]", data))
+    );
+  });
+  test("runOnce keeps the results of different data apart", () => {
+    const first = runOnce({ n: 1 });
+    const second = runOnce({ n: 2 });
+    return (first("$.n")[0]?.value === 1 && second("$.n")[0]?.value === 2) || JSON.stringify([first("$.n"), second("$.n")]);
   });
   // CNS-006.01: the nodes of several queries of one entry are one set, with each node once.
   const synthetic = (fields: Partial<Entry>): Entry => ({
