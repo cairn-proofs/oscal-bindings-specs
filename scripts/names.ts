@@ -567,6 +567,16 @@ function selfTest(): number {
     return (problems.previous.length === 1 && problems.previous[0].includes("1.2.2") && problems.previous[0].includes("differs from the generator output")) || JSON.stringify(problems);
   });
 
+  test("NAM-016.01 previous manifest with a wrong schema hash", () => {
+    const failuresOf = (tamper: (m: Manifest) => Manifest) =>
+      withStore(["1.2.2", "1.2.3"], storeSchema, (r, m) => (r === "1.2.2" ? tamper(m) : m), (root) => runReleases(root).find((r) => r.release === "1.2.3")!.failures);
+    const wrong = failuresOf((m) => ({ ...m, schema: { ...m.schema, sha256: "0".repeat(64) } }));
+    const right = failuresOf((m) => m);
+    return (
+      (right.length === 0 && wrong.length === 1 && wrong[0].includes("previous manifest") && wrong[0].includes("schema.sha256 does not match")) || JSON.stringify([right, wrong])
+    );
+  });
+
   // Task 2.7: writer.
   test("NAM-006.02 generation is reproducible", () => {
     const s = schemaOf({ [hash]: obj({ algorithm: openEnum("SHA-256") }), [sspStatus]: obj({}) });

@@ -1821,8 +1821,13 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 102,
-      "id": "NAM-016.01"
+      "id": "NAM-016.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-016.01 previous manifest with a wrong schema hash"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
