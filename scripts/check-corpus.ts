@@ -13,8 +13,8 @@
  *    its JSON text is its expected file. A yaml-round-trip case that copies a source names the expected file of a JSON
  *    round-trip case, and --write does not write that file. Each key of `expected-absent-keys` is absent from the input.
  * 8. The reference YAML reader rejects a yaml-parse input, and the notes of the case name the fault code. A
- *    yaml-parse-file case is checked as a parse-file case is (check 6), except that its category is not-found only. A yaml-parse-typed case is checked as a
- *    parse-typed case is, with the reference YAML reader reading its input.
+ *    yaml-parse-file case is checked as a parse-file case is (check 6), except that its category is not-found only. A
+ *    yaml-parse-typed case is checked as a parse-typed case is, with the reference YAML reader reading its input.
  * 9. Each cited requirement or scenario identifier names a heading in the specs.
  * 10. No case has a `known-defects` field, and the index has no `defect-twins` field. Each binding keeps its own
  *     expected failures (VER-006).
@@ -45,8 +45,10 @@
  *     Only a build-resource case has `expected-uuid`.
  * 15. The BMB-004 namespace is the UUID version 5 of its URL in the URL namespace, the text of BMB-004 in the main spec
  *     contains the namespace, and docs/back-matter-keys.md contains the URL and the namespace.
- * 16. The `input-form` of a case is absent, `bytes`, or `path`, and only a facade case or a yaml-round-trip case has
- *     `path`. A yaml-parse-file case and a yaml-parse-typed case have none. A facade case has exactly one of `expected` and `expected-category`. With `expected`, the input is valid against the schema, its only
+ * 16. The `input-form` of a case is absent, `bytes`, or `path`. A round-trip, yaml-round-trip, or facade case can have
+ *     `bytes` or `path`. A parse or yaml-parse case can have `bytes`. A case of any other operation has no `input-form`
+ *     (README, Input forms). A facade case has exactly one of `expected` and `expected-category`. With `expected`, the
+ *     input is valid against the schema, its only
  *     root key is `document-type`, `expected` is the expected file of a round-trip case, and `expected` is the canonical
  *     form of the input, so the body, the metadata, the OSCAL version, and the identifier that the facade reads come
  *     from a known document. With `expected-category`, the category is not-found, the form is `path`, and the input
@@ -60,7 +62,7 @@
  *
  *   npm run corpus:check           check the corpus
  *   npm run corpus:write           regenerate each expected file, then check
- *   npm run corpus:self-test       run the rule scenarios of checks 7, 8, 12, 16, and 17
+ *   npm run corpus:self-test       run the self-tests of the rules
  */
 import { createHash } from "node:crypto";
 import fs from "node:fs";
@@ -112,6 +114,21 @@ const ARGUMENT_FIELDS: Record<string, string[]> = {
   "build-rlink": ["href", "media-type", "hashes"],
   "build-resource": ["key", "title", "identifier", "document-ids", "rlinks"],
 };
+/**
+ * The values of `input-form` that a case of each operation can have (README, Input forms). A case of an operation that
+ * is not a key has no `input-form`. An operation whose name ends with `-file` always gives the path to the binding.
+ */
+const INPUT_FORMS: Record<string, string[]> = {
+  "round-trip": ["bytes", "path"],
+  parse: ["bytes"],
+  "yaml-round-trip": ["bytes", "path"],
+  "yaml-parse": ["bytes"],
+  facade: ["bytes", "path"],
+};
+/** True when a case of `operation` can have the `input-form` value `form`. Each operation can have no form. */
+export function inputFormAllowed(operation: string, form: string | undefined): boolean {
+  return form === undefined || (Object.hasOwn(INPUT_FORMS, operation) && INPUT_FORMS[operation].includes(form));
+}
 interface Expectations {
   /** CNS-020: the failures equal the `expected-constraints` of the case, and each failed entry counts as covered. */
   expectFailures: (c: Case, failures: EntryFailure[]) => void;
@@ -284,17 +301,8 @@ export function typeMismatch(documentType: string | undefined, doc: object): str
   return undefined;
 }
 /**
- * The `input-form` of a case is absent, `bytes`, or `path`. Only a facade case or a yaml-round-trip case has `path`. A
- * yaml-parse-file case and a yaml-parse-typed case have no `input-form`, because the README defines none for them.
- */
-export function inputFormAllowed(operation: string, form: string | undefined): boolean {
-  if (form === undefined) return true;
-  if (operation === "yaml-parse-file" || operation === "yaml-parse-typed") return false;
-  return form === "bytes" || (form === "path" && (operation === "facade" || operation === "yaml-round-trip"));
-}
-/**
  * A message when the input of a parse-file or yaml-parse-file case cannot test `category`, else undefined. A parse-file
- * case has the category not-found or read-error. A yaml-parse-file case has not-found only (README, operation 9).
+ * case has the category not-found or read-error. A yaml-parse-file case has not-found only (README, operation `yaml-parse-file`).
  */
 export function parseFileProblem(operation: string, category: string | undefined, exists: boolean, isDirectory: boolean, input: string): string | undefined {
   if (category === "not-found") return exists ? `${input} exists, so it cannot test not-found` : undefined;
@@ -899,6 +907,10 @@ function selfTest(): number {
     return messages.length;
   };
   const cases: Array<[string, () => boolean | string]> = [
+    ["input-form: a round-trip, yaml-round-trip, or facade case can have bytes or path", () => ["round-trip", "yaml-round-trip", "facade"].every((o) => inputFormAllowed(o, undefined) && inputFormAllowed(o, "bytes") && inputFormAllowed(o, "path"))],
+    ["input-form: a parse or yaml-parse case can have bytes, and cannot have path", () => ["parse", "yaml-parse"].every((o) => inputFormAllowed(o, undefined) && inputFormAllowed(o, "bytes") && !inputFormAllowed(o, "path"))],
+    ["input-form: a case of any other operation has no form", () => ["parse-typed", "parse-file", "yaml-parse-typed", "yaml-parse-file", "assessment-period", "validate-element", "element-types", "build-hash", "toString"].every((o) => inputFormAllowed(o, undefined) && !inputFormAllowed(o, "bytes") && !inputFormAllowed(o, "path"))],
+    ["input-form: a value that is not bytes or path is not valid", () => !inputFormAllowed("round-trip", "text") && !inputFormAllowed("facade", "")],
     ["a document with an unknown property name fails two closed entries, each with its id", () => JSON.stringify(bad.map((f) => f.id).sort()) === '["oscal-control-prop-name","oscal-metadata-prop-name-values"]' || JSON.stringify(bad)],
     ["a valid document fails no entry", () => constraints.ofDocument(catalog([{ name: "label", value: "1" }])).length === 0],
     ["CNS-020: the listed identifiers equal the failures", () => constraintMismatch(["oscal-metadata-prop-name-values", "oscal-control-prop-name"], bad) === undefined],
@@ -931,7 +943,7 @@ function selfTest(): number {
       inputFormAllowed("yaml-parse", "bytes") && inputFormAllowed("parse", undefined) && !inputFormAllowed("parse", "text")],
     ["YML-006: a yaml-parse-file case and a yaml-parse-typed case have no input-form", () =>
       !inputFormAllowed("yaml-parse-file", "bytes") && !inputFormAllowed("yaml-parse-file", "path") && !inputFormAllowed("yaml-parse-typed", "bytes") &&
-      inputFormAllowed("yaml-parse-file", undefined) && inputFormAllowed("yaml-parse-typed", undefined) && inputFormAllowed("parse-typed", "bytes")],
+      inputFormAllowed("yaml-parse-file", undefined) && inputFormAllowed("yaml-parse-typed", undefined) && !inputFormAllowed("parse-typed", "bytes")],
     ["YML-006.02: a yaml-parse-file case has the category not-found only, and a parse-file case can have read-error", () =>
       parseFileProblem("yaml-parse-file", "not-found", false, false, "x") === undefined && parseFileProblem("yaml-parse-file", "not-found", true, false, "x") !== undefined &&
       parseFileProblem("yaml-parse-file", "read-error", true, true, "x") !== undefined && parseFileProblem("parse-file", "read-error", true, true, "x") === undefined &&

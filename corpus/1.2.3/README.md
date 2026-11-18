@@ -38,7 +38,8 @@ Each case has these fields:
    3. `expected-valid`: `true` or `false`, for element validation.
    4. `expected-period`: an object with the keys `start` and `end`, for an assessment period. Each value is a datetime
       in the canonical form of [Canonical JSON for conformance comparison](../../docs/canonical-json.md#datetimes), or
-      `null` for an empty bound.
+      `null` for an empty bound. A bound is empty when the facade returns no datetime for it. Both keys are always
+      present.
    5. `expected-uuid`: the identifier that the resource builder derives from the key, in lowercase, for a
       `build-resource` case.
    6. `expected-element`: the JSON of the element that a builder returns. The canonical form of the JSON of the result
@@ -55,8 +56,8 @@ Each case has these fields:
 7. Optional fields:
    1. `document-type`: the root key of the document type, for a round trip or a typed parse.
    2. `element-type`: the element-type name, for element validation.
-   3. `input-form`: `bytes` when the input must reach the binding as raw bytes, not as text. For a `facade` case or a
-      `yaml-round-trip` case, `path` when the document must be read from the input path.
+   3. `input-form`: how the input reaches the binding. The value is `bytes` or `path`. See
+      [Input forms](#input-forms).
    4. `expected-min-failures`: the lowest number of structured failure entries that the parse error carries.
    5. `expected-max-failures`: the highest number of structured failure entries that the parse error carries. It
       applies only to a `parse` case. Its value is an integer of 1 or more, and not less than `expected-min-failures`.
@@ -84,6 +85,41 @@ Each case has these fields:
 
 ## Operations
 
+A case has three parts that do not depend on each other: the operation, the form of the input, and the expected
+result. A new case can combine parts that this file defines, and a runner that supports each part needs no change for
+that case. A runner reports a case as not run, and not as passed, when it does not support the operation of the case,
+the `input-form` of the case, or a field of the case whose name starts with `expected`.
+
+### Input forms
+
+The `input-form` of a case states how the input reaches the binding. It does not change the expected result.
+
+1. No `input-form`: the runner reads the input file as UTF-8 text and gives the text to the binding.
+2. `bytes`: the runner gives the bytes of the input file to the binding, and does not decode them first
+   ([PRS-001](../../openspec/specs/document-parsing/spec.md#requirement-prs-001-parse-an-oscal-document-from-text-or-bytes)).
+3. `path`: the runner gives the input path to the binding, and the binding reads the file
+   ([PRS-002](../../openspec/specs/document-parsing/spec.md#requirement-prs-002-parse-an-oscal-document-from-a-file-path)).
+
+These operations can have an `input-form`. A case of any other operation has none.
+
+| Operation | `bytes` | `path` |
+|---|---|---|
+| `round-trip` | Yes | Yes |
+| `parse` | Yes | No |
+| `yaml-round-trip` | Yes | Yes |
+| `yaml-parse` | Yes | No |
+| `facade` | Yes | Yes |
+
+An operation whose name ends with `-file` always gives the input path to the binding, and its cases have no
+`input-form`.
+
+For a `round-trip` case, the form applies to the generic parse. With `bytes`, the generic parser gets the bytes. With
+`path`, the parse-from-file operation gets the path and takes the place of the generic parser. The typed parser of
+`document-type` gets the text of the input for each form. The descriptions of `yaml-round-trip` and `facade` state
+what each form means for them.
+
+### Operation list
+
 1. `round-trip`: parse the input with the generic parser and with the typed parser of `document-type`. Both must
    succeed. Serialize the parsed document. The canonical form of the output must be the same bytes as `expected`. The
    canonical form is defined in [Canonical JSON for conformance comparison](../../docs/canonical-json.md).
@@ -101,7 +137,9 @@ Each case has these fields:
    must report `expected-category`, or return the start and the end of `expected-period`. The runner normalizes each
    bound that the facade returns as [Canonical JSON for conformance comparison](../../docs/canonical-json.md#datetimes)
    states, and then compares it with the value in `expected-period`. An empty bound that the facade returns matches
-   `null`.
+   `null`. The runner does not normalize an empty bound. A datetime does not match `null`, and an empty bound does not
+   match a datetime. The binding chooses how the facade returns an empty bound, for example as a null value or an
+   absent optional value. A string with no characters is not an empty bound.
 6. `validate-element`: validate the input against `element-type`. The result must be `expected-valid`, or the
    operation must report `expected-category`. With `expected-constraints`, the `id` values of the
    constraint failures in the result must equal the list, with each repeat, unless the result
@@ -117,12 +155,16 @@ Each case has these fields:
    serialized YAML, and with `path`, the runner writes the serialized YAML to a file and gives the parse-from-file
    operation the path of that file. With no `input-form`, the second parse gets the serialized YAML as text.
    With `expected-absent-keys`, the runner also reads the serialized YAML as generic YAML, with no schema, and no
-   mapping at any depth may have a key in the list.
+   mapping at any depth may have a key in the list. The runner can use any YAML reader for this check. The reader
+   does not need to be part of the binding.
 8. `yaml-parse`: parse the YAML input with the YAML parse operation. The parser must report `expected-category`.
-9. `yaml-parse-file`: parse the YAML file at the input path with the YAML parse-from-file operation. The path does not
-   exist, and the parser must report `expected-category` (`not-found`) and name the path. The case has no `input-form`.
-10. `yaml-parse-typed`: parse the YAML input with the typed YAML parser of `document-type`. The parser must report
-    `expected-category`. The case has no `input-form`.
+9. `yaml-parse-file`: the YAML form of `parse-file`. Parse the YAML file at the input path with the YAML
+   parse-from-file operation. The parser must report `expected-category` and name the path. The only category of a
+   case is not-found, and the path does not exist, because
+   [YML-006](../../openspec/specs/yaml-documents/spec.md#requirement-yml-006-parse-an-oscal-document-from-a-yaml-file-path) names no other category. The
+   case has no `input-form`.
+10. `yaml-parse-typed`: the YAML form of `parse-typed`. Parse the YAML input with the typed YAML parser of
+    `document-type`. The parser must report `expected-category`. The case has no `input-form`.
 11. `element-types`: request the supported element types. The result must equal the list in `expected`, item by item
    and in the same order.
 12. `build-resource`: build a resource with `arguments`. Then compare the `uuid` of the resource with `expected-uuid`,
@@ -156,8 +198,12 @@ the validation error. It does not compare the `id` values of the failures.
 For each `round-trip` input, the non-raising validity check must return true. The check does not apply to a
 `yaml-round-trip` input.
 
-A binding that offers no YAML skips each operation whose name starts with `yaml-`. The yaml-documents capability
-makes YAML optional.
+An operation whose name starts with `yaml-` is the YAML form of the operation with the rest of the name. It uses the
+YAML operations of the binding in place of the JSON operations, and its entry in the operation list states each
+step. A binding that offers no YAML skips each operation whose name starts with `yaml-`. The yaml-documents capability makes YAML optional. A binding that offers YAML and no
+typed YAML parser also skips `yaml-parse-typed`, because
+[YML-007](../../openspec/specs/yaml-documents/spec.md#requirement-yml-007-a-typed-yaml-parser-behaves-as-a-typed-json-parser) makes the typed YAML parsers
+optional.
 
 ## How the corpus is checked
 
