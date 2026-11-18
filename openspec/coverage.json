@@ -1402,8 +1402,13 @@
     },
     {
       "capability": "model-derivation",
-      "gap": 88,
-      "id": "MDL-017.01"
+      "id": "MDL-017.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-017.01 override name replaces a rule-derived name"
+        }
+      ]
     },
     {
       "capability": "model-derivation",

@@ -355,6 +355,10 @@ function selfTest(): number {
   test("override name replaces a rule-derived name", () =>
     nameAt(run(schemaOf({ [hash]: obj({ algorithm: openEnum("SHA-256") }) }), { names: { [`${D(hash)}/properties/algorithm/anyOf/1`]: "DigestAlgorithm" } }), `${D(hash)}/properties/algorithm/anyOf/1`) ===
     "DigestAlgorithm");
+  test("MDL-017.01 override name replaces a rule-derived name", () => {
+    const s = schemaOf({ [risk]: obj({ "risk-log": obj({ start: str }) }) });
+    return nameAt(run(s), riskLog) === "RiskRiskLog" && nameAt(run(s, { names: { [riskLog]: "RiskLog" } }), riskLog) === "RiskLog";
+  });
   test("empty object definition is an object type", () => entryNamed(run(schemaOf({ "oscal-complete-oscal-control-common:include-all": obj({}) })), "IncludeAll")?.kind === "object");
   test("scalar definition has no entry", () => entryNamed(run(schemaOf({ "oscal-complete-oscal-metadata:remarks": str })), "Remarks") === undefined);
   test("MDL-003.01 scalar wrapper has no object entry", () => {
