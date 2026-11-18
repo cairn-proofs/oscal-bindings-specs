@@ -71,6 +71,16 @@ export const FAULTS: Fault[] = [
       },
     ],
   },
+  {
+    id: "case-insensitive",
+    breaks: "CNS-025.01",
+    patches: [
+      {
+        find: "if (set.some((i) => entries[i].values!.includes(String(value)))) continue;",
+        replace: "if (set.some((i) => entries[i].values!.some((v) => v.toLowerCase() === String(value).toLowerCase()))) continue;",
+      },
+    ],
+  },
 ];
 
 /** The text with each patch applied, or the failures. A patch applies only when its text occurs exactly once. */

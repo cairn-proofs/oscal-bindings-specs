@@ -731,6 +731,13 @@
       "id": "CNS-024.01"
     },
     {
+      "capability": "constraint-validation",
+      "corpus": [
+        "parse/allowed-value-case"
+      ],
+      "id": "CNS-025.01"
+    },
+    {
       "capability": "element-validation",
       "corpus": [
         "element/back-matter-valid",
@@ -2012,6 +2019,7 @@
     {
       "capability": "document-parsing",
       "corpus": [
+        "parse/allowed-value-case",
         "parse/constraint/oscal-activity-type-cardinality",
         "parse/constraint/oscal-activity-type-values",
         "parse/constraint/oscal-activity-values",
