@@ -863,12 +863,16 @@
     },
     {
       "capability": "error-model",
-      "gap": 78,
+      "corpus": [
+        "parse/invalid-utf8"
+      ],
       "id": "ERR-004.04"
     },
     {
       "capability": "error-model",
-      "gap": 78,
+      "corpus": [
+        "parse/allowed-value-case"
+      ],
       "id": "ERR-004.05"
     },
     {
