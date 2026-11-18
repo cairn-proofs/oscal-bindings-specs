@@ -608,7 +608,11 @@ function selfTest(): number {
   test("NAM-004.01 an entry without a kind fails", () => mutate((m) => delete (m.types[1] as Partial<Manifest["types"][number]>).kind).length > 0);
   test("NAM-013.01 schema file name with a path fails", () => mutate((m) => (m.schema.file = "../x.json")).length > 0);
   test("names.schema: a pointer with % fails", () => mutate((m) => (m.types[1].sites = ["#/definitions/a%20b"])).length > 0);
-  test("names.schema: an unknown member fails", () => mutate((m) => ((m.types[1] as unknown as Schema).extra = 1)).length > 0);
+  test("NAM-013.02 an unknown member of an entry fails", () => mutate((m) => ((m.types[1] as unknown as Schema).extra = 1)).length > 0);
+  test("NAM-013.02 an unknown member fails in an entry of each kind", () => {
+    const passed = sketch.types.map((_, i) => mutate((m) => ((m.types[i] as unknown as Schema).extra = 1)).length > 0);
+    return passed.every(Boolean) || JSON.stringify(passed);
+  });
   test("NAM-021.01 a manifest that is not an object, or has no format member, gives one manifest failure", () => {
     const outs = [validateManifest([], "{}", "1.2.3"), validateManifest("x", "{}", "1.2.3"), validateManifest(null, "{}", "1.2.3"), validateManifest((({ format: _f, ...rest }) => rest)(sketch), "{}", "1.2.3")];
     return outs.every((o) => o.length === 1 && o[0].startsWith("[manifest]")) || JSON.stringify(outs);

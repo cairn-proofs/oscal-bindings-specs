@@ -1772,8 +1772,17 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 100,
-      "id": "NAM-013.02"
+      "id": "NAM-013.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-013.02 an unknown member fails in an entry of each kind"
+        },
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-013.02 an unknown member of an entry fails"
+        }
+      ]
     },
     {
       "by-design": "The rule applies to a consumer of the manifest, which no store script can observe.",
