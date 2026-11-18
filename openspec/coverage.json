@@ -2327,8 +2327,8 @@
       "id": "SER-002.01"
     },
     {
+      "by-design": "The rule applies to the serialization paths of a binding, which no store script can observe.",
       "capability": "serialization",
-      "gap": 112,
       "id": "SER-002.02"
     },
     {
