@@ -221,6 +221,10 @@ function selfTest(): number {
     const documents = (JSON.parse(release.output) as Manifest).types.filter((t) => t.kind === "document").map((t) => t.name);
     return JSON.stringify([...documents].sort()) === JSON.stringify([...names].sort()) || JSON.stringify(documents);
   });
+  test("MDL-016.01 root schema name", () => {
+    const e = entryNamed(run(schemaOf({})), "OscalDocument");
+    return e?.kind === "document-union" && e.sites[0] === "#";
+  });
   test("document union lists the wrappers", () =>
     JSON.stringify(entryNamed(run(schemaOf({ "oscal-complete-oscal-catalog:profile": obj({}) }, ["profile", "catalog"])), "OscalDocument")?.members) ===
     '["CatalogDocument","ProfileDocument"]');

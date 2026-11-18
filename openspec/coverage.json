@@ -1392,8 +1392,13 @@
     },
     {
       "capability": "model-derivation",
-      "gap": 87,
-      "id": "MDL-016.01"
+      "id": "MDL-016.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-016.01 root schema name"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
