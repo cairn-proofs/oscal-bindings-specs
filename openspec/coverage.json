@@ -882,7 +882,9 @@
     },
     {
       "capability": "error-model",
-      "gap": 79,
+      "corpus": [
+        "parse-file/missing-file"
+      ],
       "id": "ERR-006.02"
     },
     {

@@ -294,7 +294,7 @@
       "operation": "parse-file",
       "input": "documents/does-not-exist.json",
       "expected-category": "not-found",
-      "requirements": ["PRS-002.02", "ERR-006.01"]
+      "requirements": ["PRS-002.02", "ERR-006.01", "ERR-006.02"]
     },
     {
       "id": "parse-file/directory",
