@@ -2599,7 +2599,6 @@
     },
     {
       "capability": "schema-versioning",
-      "gap": 117,
       "id": "VER-006.01",
       "self-test": [
         {
@@ -2614,7 +2613,6 @@
     },
     {
       "capability": "schema-versioning",
-      "gap": 117,
       "id": "VER-006.02",
       "self-test": [
         {
@@ -2629,7 +2627,6 @@
     },
     {
       "capability": "schema-versioning",
-      "gap": 117,
       "id": "VER-006.03",
       "self-test": [
         {

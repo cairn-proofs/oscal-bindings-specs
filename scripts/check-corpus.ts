@@ -450,6 +450,20 @@ function compareElement(c: Case, element: unknown, expected: unknown, fail: (id:
     fail(c.id, `expected-element is not the element that the arguments give: ${JSON.stringify(element)}`);
 }
 
+/** The failure for binding-specific data in the corpus index (VER-006), or undefined. */
+export function indexBindingData(index: object): string | undefined {
+  return Object.hasOwn(index, "defect-twins")
+    ? "the index has a defect-twins field. Each binding keeps its own expected failures (VER-006)."
+    : undefined;
+}
+
+/** The failure for binding-specific data in a corpus case (VER-006), or undefined. */
+export function caseBindingData(c: object): string | undefined {
+  return Object.hasOwn(c, "known-defects")
+    ? "the case has a known-defects field. Each binding keeps its own expected failures (VER-006)."
+    : undefined;
+}
+
 function main(write: boolean): number {
   const failures: string[] = [];
   const fail = (id: string, message: string) => failures.push(`[corpus] ${id}: ${message}`);
@@ -496,8 +510,8 @@ function main(write: boolean): number {
     cases: Case[];
   };
   if (index["oscal-release"] !== RELEASE) fail("cases.json", `oscal-release is not ${RELEASE}`);
-  if (Object.hasOwn(index, "defect-twins"))
-    fail("cases.json", "the index has a defect-twins field. Each binding keeps its own expected failures (VER-006).");
+  const indexData = indexBindingData(index);
+  if (indexData !== undefined) fail("cases.json", indexData);
   // The namespace of BMB-004 (check 15).
   if (uuidV5(URL_NAMESPACE, KEY_NAMESPACE_URL) !== KEY_NAMESPACE)
     fail("BMB-004", `the namespace ${KEY_NAMESPACE} is not the UUID version 5 of ${KEY_NAMESPACE_URL}`);
@@ -522,8 +536,8 @@ function main(write: boolean): number {
       if (!ID.test(req)) fail(c.id, `"${req}" is not a requirement or scenario identifier`);
       else if (!ids.has(req)) fail(c.id, `${req} names no heading in the specs`);
     }
-    if (Object.hasOwn(c, "known-defects"))
-      fail(c.id, "the case has a known-defects field. Each binding keeps its own expected failures (VER-006).");
+    const caseData = caseBindingData(c);
+    if (caseData !== undefined) fail(c.id, caseData);
     const max = c["expected-max-failures"];
     if (max !== undefined) {
       const min = c["expected-min-failures"];
@@ -824,6 +838,8 @@ function selfTest(): number {
   };
   const cases: Array<[string, () => boolean | string]> = [
     ["a document with an unknown property name fails two closed entries, each with its id", () => JSON.stringify(bad.map((f) => f.id).sort()) === '["oscal-control-prop-name","oscal-metadata-prop-name-values"]' || JSON.stringify(bad)],
+    ["VER-006.01: a case with a known-defects field fails the check", () => caseBindingData({ id: "t", "known-defects": ["x"] }) !== undefined && caseBindingData({ id: "t" }) === undefined],
+    ["VER-006.01: an index with a defect-twins field fails the check", () => indexBindingData({ "defect-twins": [] }) !== undefined && indexBindingData({ cases: [] }) === undefined],
     ["a valid document fails no entry", () => constraints.ofDocument(catalog([{ name: "label", value: "1" }])).length === 0],
     ["CNS-020: the listed identifiers equal the failures", () => constraintMismatch(["oscal-metadata-prop-name-values", "oscal-control-prop-name"], bad) === undefined],
     ["CNS-020.01: a reportable entry without a case fails the check, one message for each entry", () => uncoveredEntries(constraints.entries, new Set()).length === reportable.length && uncoveredEntries(constraints.entries, new Set(reportable)).length === 0 && uncoveredEntries(constraints.entries, new Set(reportable.slice(1))).length === 1],
