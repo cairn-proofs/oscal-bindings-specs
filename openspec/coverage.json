@@ -1178,18 +1178,33 @@
     },
     {
       "capability": "model-derivation",
-      "gap": 83,
-      "id": "MDL-002.03"
+      "id": "MDL-002.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-002.03 the eight wrapper names"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
-      "gap": 84,
-      "id": "MDL-003.01"
+      "id": "MDL-003.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-003.01 scalar wrapper has no object entry"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
-      "gap": 84,
-      "id": "MDL-003.02"
+      "id": "MDL-003.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-003.02 preserved wrappers stay wrappers"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
@@ -1389,13 +1404,23 @@
     },
     {
       "capability": "model-derivation",
-      "gap": 85,
-      "id": "MDL-013.01"
+      "id": "MDL-013.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-013.01 a shared type used by many document types yields one canonical type"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
-      "gap": 85,
-      "id": "MDL-013.02"
+      "id": "MDL-013.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-013.02 same local name with different structure is not deduplicated"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
@@ -1423,13 +1448,23 @@
     },
     {
       "capability": "model-derivation",
-      "gap": 86,
-      "id": "MDL-014.01"
+      "id": "MDL-014.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-014.01 local name of a definition"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
-      "gap": 86,
-      "id": "MDL-014.02"
+      "id": "MDL-014.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-014.02 local name of a list item"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
@@ -1443,13 +1478,23 @@
     },
     {
       "capability": "model-derivation",
-      "gap": 87,
-      "id": "MDL-016.01"
+      "id": "MDL-016.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-016.01 root schema name"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
-      "gap": 88,
-      "id": "MDL-017.01"
+      "id": "MDL-017.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-017.01 override name replaces a rule-derived name"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
@@ -1493,18 +1538,33 @@
     },
     {
       "capability": "model-derivation",
-      "gap": 89,
-      "id": "MDL-018.05"
+      "id": "MDL-018.05",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-018.05 enum in a list property uses the singular name"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
-      "gap": 90,
-      "id": "MDL-019.01"
+      "id": "MDL-019.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-019.01 identical places merge into one type that records both places"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
-      "gap": 91,
-      "id": "MDL-020.01"
+      "id": "MDL-020.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-020.01 clashing definitions are not merged"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
@@ -1542,8 +1602,13 @@
     },
     {
       "capability": "model-derivation",
-      "gap": 92,
-      "id": "MDL-021.04"
+      "id": "MDL-021.04",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-021.04 each missing singular name is reported"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
