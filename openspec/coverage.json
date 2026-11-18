@@ -1841,8 +1841,13 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 103,
-      "id": "NAM-017.02"
+      "id": "NAM-017.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-017.02 each dropped name is reported"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",

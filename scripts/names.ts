@@ -525,6 +525,18 @@ function selfTest(): number {
     const r = run(schemaOf({}), {}, prev([{ name: "Gone", kind: "object", sites: [D("oscal-complete-oscal-x:gone")] }]));
     return r.dropped.some((d) => d.startsWith("Gone")) || JSON.stringify(r.dropped);
   });
+  test("NAM-017.02 each dropped name is reported", () => {
+    const r = run(
+      schemaOf({ [hash]: obj({}) }),
+      {},
+      prev([
+        { name: "Gone", kind: "object", sites: [D("oscal-complete-oscal-x:gone")] },
+        { name: "Missing", kind: "object", sites: [D("oscal-complete-oscal-y:missing")] },
+        { name: "Hash", kind: "object", sites: [D(hash)] },
+      ]),
+    );
+    return (r.dropped.length === 2 && r.dropped.some((d) => d.startsWith("Gone")) && r.dropped.some((d) => d.startsWith("Missing"))) || JSON.stringify(r.dropped);
+  });
   test("NAM-007 override name changes a pinned name", () =>
     nameAt(run(schemaOf({ [hash]: obj({}) }), { names: { [D(hash)]: "Digest" } }, prev([{ name: "Hash", kind: "object", sites: [D(hash)] }])), D(hash)) === "Digest");
 
