@@ -350,6 +350,18 @@ function selfTest(): number {
       !text.includes("HashAlgorithm")
     );
   });
+  test("NAM-009.03 scalar definition with an enum has an entry", () => {
+    const e = entryNamed(run(schemaOf({ [riskStatus]: { anyOf: [ref("TokenDatatype"), { enum: ["open", "closed"] }] } })), "RiskStatus");
+    const real = committedEntry("RiskStatus");
+    return (e?.kind === "enum" && real?.kind === "enum" && real.sites[0] === `${D(riskStatus)}/anyOf/1`) || JSON.stringify([e, real]);
+  });
+  test("NAM-009.04 scalar definition without an enum has no entry", () => {
+    const constrained = "oscal-complete-oscal-metadata:email-address";
+    const wrapped = "oscal-complete-oscal-metadata:remarks";
+    const r = run(schemaOf({ [constrained]: { type: "string", pattern: "^.+@.+$", minLength: 1 }, [wrapped]: { $ref: "#/definitions/StringDatatype" }, [hash]: obj({}) }));
+    const holds = (site: string) => r.manifest?.types.some((t) => t.sites.some((p) => p === site || p.startsWith(`${site}/`)));
+    return (r.manifest !== undefined && holds(D(hash)) === true && holds(D(constrained)) === false && holds(D(wrapped)) === false) || JSON.stringify(r.failures);
+  });
   test("empty object definition is an object type", () => entryNamed(run(schemaOf({ "oscal-complete-oscal-control-common:include-all": obj({}) })), "IncludeAll")?.kind === "object");
   test("scalar definition has no entry", () => entryNamed(run(schemaOf({ "oscal-complete-oscal-metadata:remarks": str })), "Remarks") === undefined);
   test("lists of references need no singular name", () => run(schemaOf({ [hash]: obj({ links: list(ref(hash)) }) })).manifest !== undefined);

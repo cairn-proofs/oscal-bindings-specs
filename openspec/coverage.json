@@ -1667,13 +1667,23 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 97,
-      "id": "NAM-009.03"
+      "id": "NAM-009.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-009.03 scalar definition with an enum has an entry"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
-      "gap": 97,
-      "id": "NAM-009.04"
+      "id": "NAM-009.04",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-009.04 scalar definition without an enum has no entry"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
