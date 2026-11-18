@@ -618,6 +618,8 @@ function selfTest(): number {
       { name: "HashAlgorithm", kind: "enum", closed: false, sites: [`${D(hash)}/properties/algorithm/anyOf/1`] },
       { name: "MappingCollectionMappings", kind: "single-or-many", item: "Mapping", sites: [`${D(mc)}/properties/mappings`] },
       { name: "SystemSecurityPlanDocument", kind: "document", "body-field": "system-security-plan", sites: ["#/oneOf/4"] },
+      { name: "Hash", kind: "object", sites: [D(hash)] },
+      { name: "OscalDocument", kind: "document-union", members: ["SystemSecurityPlanDocument"], sites: ["#"] },
     ],
   };
   const schemaOnly = (data: unknown) => validateManifest(data, "{}", "1.2.3").filter((f) => f.startsWith("[json-schema]"));
