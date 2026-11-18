@@ -119,7 +119,7 @@
       "notes": "Written for this corpus. The base document of each invalid case."
     },
     {
-      "id": "round-trip/minimal-catalog-bytes",
+      "id": "round-trip/catalog-bytes",
       "operation": "round-trip",
       "input": "documents/valid/catalog.json",
       "input-form": "bytes",
@@ -127,6 +127,16 @@
       "expected": "expected/catalog.json",
       "requirements": ["PRS-001.02", "SER-004.01"],
       "notes": "The input and the expected file of round-trip/catalog, passed to the parser as raw bytes. The input has characters outside ASCII, so a parser that decodes the bytes in a wrong way gives another document. The parse returns the same document as the parse of its text."
+    },
+    {
+      "id": "round-trip/catalog-path",
+      "operation": "round-trip",
+      "input": "documents/valid/catalog.json",
+      "input-form": "path",
+      "document-type": "catalog",
+      "expected": "expected/catalog.json",
+      "requirements": ["PRS-002.01"],
+      "notes": "The input and the expected file of round-trip/catalog. The parse-from-file operation gets the path of the input. The input has characters outside ASCII, so a parser that decodes the file in a wrong way gives another document. The parse returns the same document as the parse of its text."
     },
     {
       "id": "round-trip/datetime-forms",
@@ -298,15 +308,6 @@
       "document-type": "catalog",
       "expected-category": "document-type-mismatch",
       "requirements": ["PRS-003.02", "ERR-005.01", "ERR-009.01"]
-    },
-    {
-      "id": "parse-file/valid-file",
-      "operation": "parse-file",
-      "input": "documents/valid/catalog.json",
-      "document-type": "catalog",
-      "expected": "expected/catalog.json",
-      "requirements": ["PRS-002.01"],
-      "notes": "The file is the input of round-trip/catalog, read from its path. The input has characters outside ASCII, so a parser that decodes the file in a wrong way gives another document. The parse returns the same document as the parse of its text."
     },
     {
       "id": "parse-file/missing-file",

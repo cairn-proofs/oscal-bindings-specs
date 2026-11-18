@@ -30,8 +30,8 @@ Each case has these fields:
 3. `input`: the input path, relative to this directory. An `element-types` case and a builder case have no `input`.
 4. `requirements`: the requirement and scenario identifiers that the case tests.
 5. One expected result:
-   1. `expected`: the path of the expected canonical form, for a round trip or a `parse-file` case. For
-      `element-types`, it is the path of the expected list.
+   1. `expected`: the path of the expected canonical form, for a round trip. For `element-types`, it is the path of the
+      expected list.
    2. `expected-category`: the error category, from the `categories` list. The list holds each category of the
       error-model capability that a portable case can reach. It does not hold the limit-exceeded category, because
       only a documented limit of a binding reaches it.
@@ -52,11 +52,10 @@ Each case has these fields:
    of the binding with the same JSON. The runner does not validate the item. The builder must
    report the error of an invalid item.
 7. Optional fields:
-   1. `document-type`: the root key of the document type, for a round trip, a typed parse, or a `parse-file` case
-      with `expected`.
+   1. `document-type`: the root key of the document type, for a round trip or a typed parse.
    2. `element-type`: the element-type name, for element validation.
-   3. `input-form`: `bytes` when the input must reach the binding as raw bytes, not as text. For a `facade` case,
-      `path` when the facade must be built from the input path.
+   3. `input-form`: how the input reaches the binding. The value is `bytes` or `path`. See
+      [Input forms](#input-forms).
    4. `expected-min-failures`: the lowest number of structured failure entries that the parse error carries.
    5. `expected-max-failures`: the highest number of structured failure entries that the parse error carries. It
       applies only to a `parse` case. Its value is an integer of 1 or more, and not less than `expected-min-failures`.
@@ -81,6 +80,41 @@ Each case has these fields:
 
 ## Operations
 
+A case has three parts that do not depend on each other: the operation, the form of the input, and the expected
+result. A new case can combine parts that this file defines, and a runner that supports each part needs no change for
+that case. A runner reports a case as not run, and not as passed, when it does not support the operation of the case,
+the `input-form` of the case, or a field of the case whose name starts with `expected`.
+
+### Input forms
+
+The `input-form` of a case states how the input reaches the binding. It does not change the expected result.
+
+1. No `input-form`: the runner reads the input file as UTF-8 text and gives the text to the binding.
+2. `bytes`: the runner gives the bytes of the input file to the binding, and does not decode them first
+   ([PRS-001](../../openspec/specs/document-parsing/spec.md#requirement-prs-001-parse-an-oscal-document-from-text-or-bytes)).
+3. `path`: the runner gives the input path to the binding, and the binding reads the file
+   ([PRS-002](../../openspec/specs/document-parsing/spec.md#requirement-prs-002-parse-an-oscal-document-from-a-file-path)).
+
+These operations can have an `input-form`. A case of any other operation has none.
+
+| Operation | `bytes` | `path` |
+|---|---|---|
+| `round-trip` | Yes | Yes |
+| `parse` | Yes | No |
+| `yaml-round-trip` | Yes | Yes |
+| `yaml-parse` | Yes | No |
+| `facade` | Yes | Yes |
+
+An operation whose name ends with `-file` always gives the input path to the binding, and its cases have no
+`input-form`.
+
+For a `round-trip` case, the form applies to the generic parse. With `bytes`, the generic parser gets the bytes. With
+`path`, the parse-from-file operation gets the path and takes the place of the generic parser. The typed parser of
+`document-type` gets the text of the input for each form. The descriptions of `yaml-round-trip` and `facade` state
+what each form means for them.
+
+### Operation list
+
 1. `round-trip`: parse the input with the generic parser and with the typed parser of `document-type`. Both must
    succeed. Serialize the parsed document. The canonical form of the output must be the same bytes as `expected`. The
    canonical form is defined in [Canonical JSON for conformance comparison](../../docs/canonical-json.md).
@@ -91,12 +125,9 @@ Each case has these fields:
    [PRS-010](../../openspec/specs/document-parsing/spec.md#requirement-prs-010-a-binding-can-limit-the-resources-that-a-parse-uses).
 3. `parse-typed`: parse the input with the typed parser of `document-type`. The parser must report
    `expected-category`.
-4. `parse-file`: parse the file at the input path. The case has `expected` or `expected-category`:
-   1. With `expected`, the path is a valid document of `document-type`. Parse the file with the generic parser and with
-      the typed parser of `document-type`. Both must succeed. Serialize the parsed document. The canonical form of the
-      output must be the same bytes as `expected`.
-   2. With `expected-category`, the parser must report the category and name the path. For the not-found category, the
-      path does not exist. For the read-error category, the path is a directory.
+4. `parse-file`: parse the file at the input path. For the not-found category, the path does not exist.
+   For the read-error category, the path is a directory. The parser must report `expected-category` and name the
+   path.
 5. `assessment-period`: wrap the parsed input in the document facade and request the assessment period. The facade
    must report `expected-category`, or return the start and the end of `expected-period`. The runner normalizes each
    bound that the facade returns as [Canonical JSON for conformance comparison](../../docs/canonical-json.md#datetimes)

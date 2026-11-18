@@ -1845,7 +1845,7 @@
     {
       "capability": "document-parsing",
       "corpus": [
-        "round-trip/minimal-catalog-bytes"
+        "round-trip/catalog-bytes"
       ],
       "id": "PRS-001.02"
     },
@@ -1859,28 +1859,16 @@
     {
       "capability": "document-parsing",
       "corpus": [
-        "parse-file/valid-file"
+        "round-trip/catalog-path"
       ],
-      "id": "PRS-002.01",
-      "self-test": [
-        {
-          "script": "scripts/check-corpus.ts",
-          "test": "PRS-002.01: a parse-file case with expected needs an existing file and a document type"
-        }
-      ]
+      "id": "PRS-002.01"
     },
     {
       "capability": "document-parsing",
       "corpus": [
         "parse-file/missing-file"
       ],
-      "id": "PRS-002.02",
-      "self-test": [
-        {
-          "script": "scripts/check-corpus.ts",
-          "test": "PRS-002.02: a not-found case needs a missing path, and a read-error case needs a directory"
-        }
-      ]
+      "id": "PRS-002.02"
     },
     {
       "capability": "document-parsing",
@@ -2327,7 +2315,7 @@
       "id": "SER-002.01"
     },
     {
-      "by-design": "The rule applies to the serialization paths of a binding, which no store script can observe.",
+      "by-design": "The corpus runs one serialization path, which SER-002.01 checks. A binding chooses its other paths, which no store script can observe.",
       "capability": "serialization",
       "id": "SER-002.02"
     },
@@ -2347,10 +2335,10 @@
         "round-trip/assessment-plan",
         "round-trip/assessment-results",
         "round-trip/catalog",
+        "round-trip/catalog-bytes",
         "round-trip/component-definition",
         "round-trip/mapping-collection",
         "round-trip/minimal-catalog",
-        "round-trip/minimal-catalog-bytes",
         "round-trip/plan-of-action-and-milestones",
         "round-trip/profile",
         "round-trip/system-security-plan"

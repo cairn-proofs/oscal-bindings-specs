@@ -33,7 +33,7 @@ by-design:
   PRS-012.02: Each binding sets and documents its own limit, so no store script can observe the rule.
   PRS-012.03: Each binding sets and documents its own limit, so no store script can observe the rule.
   SER-001.02: The rule applies to the serialization paths of a binding, which no store script can observe.
-  SER-002.02: The rule applies to the serialization paths of a binding, which no store script can observe.
+  SER-002.02: The corpus runs one serialization path, which SER-002.01 checks. A binding chooses its other paths, which no store script can observe.
   SER-003.01: The corpus compares canonical forms, and the canonical form erases formatting.
   SER-003.02: The corpus compares canonical forms, and the canonical form erases formatting.
   SRF-001.01: The rule applies to the process of a binding repository, which no store script can observe.
