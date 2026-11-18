@@ -14,6 +14,7 @@ import { check } from "iregexp-check";
 import { checkFailures, checkQueries, unitsOf } from "./constraints-check.js";
 import { corpusDocuments, elementsOf, generatedDocuments } from "./constraints-docs.js";
 import { Generator, serializeManifest, type ConstraintManifest, type Entry } from "./constraints-lib.js";
+import { evaluateManifest } from "./constraints-manifest.js";
 import { GenerationError, toIRegexp, datatypeIRegexp } from "./constraints-regex.js";
 import { compile, run } from "./jsonpath.js";
 import { allNodes, loadDoc } from "./metapath.js";
@@ -258,6 +259,31 @@ function selfTest(): number {
     const bad = checkManifest(schema, withTarget("$"));
     return (bad.length === 1 && bad[0].includes("selects the array that holds the context node") && checkManifest(schema, withTarget("$[0]")).length === 0) || JSON.stringify(bad);
   });
+  // CNS-006.01: the nodes of several queries of one entry are one set, with each node once.
+  const synthetic = (fields: Partial<Entry>): Entry => ({
+    id: "synthetic",
+    kind: "has-cardinality",
+    level: "ERROR",
+    reportable: true,
+    module: "m",
+    definition: "assembly:location",
+    context: { document: ["$..['locations'][*]"], elements: {} },
+    target: ["$[0]['title']"],
+    ...fields,
+  });
+  const locations = (...items: object[]) => ({ catalog: { metadata: { locations: items } } });
+  test("CNS-006.01: two target queries that select the same node count the node once", () => {
+    const entry = synthetic({ "max-occurs": 1, target: ["$[0]['title']", "$[0]['title']", "$[0]['address']"] });
+    const one = evaluateManifest([entry], locations({ uuid: "u", title: "t" }), { document: true });
+    const two = evaluateManifest([entry], locations({ uuid: "u", title: "t", address: {} }), { document: true });
+    return (one.length === 0 && two.length === 1) || JSON.stringify([one, two]);
+  });
+  test("CNS-006.01: two queries of a key field that select the same node give one value", () => {
+    const entry = synthetic({ kind: "is-unique", target: ["$[0]"], "key-fields": [{ target: ["$[0]['uuid']", "$[0]['uuid']"] }] });
+    const r = evaluateManifest([entry], locations({ uuid: "u" }), { document: true });
+    return r.length === 0 || JSON.stringify(r);
+  });
+
   test("CNS-007: the element types of kind document hold context nodes",() => one("oscal-catalog-parts").context.elements["catalog-document"] !== undefined);
 
   // CNS-019, CNS-022: the checks against the reference evaluator

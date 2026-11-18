@@ -261,8 +261,17 @@
     },
     {
       "capability": "constraint-validation",
-      "gap": 73,
-      "id": "CNS-006.01"
+      "id": "CNS-006.01",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-006.01: two queries of a key field that select the same node give one value"
+        },
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-006.01: two target queries that select the same node count the node once"
+        }
+      ]
     },
     {
       "capability": "constraint-validation",
