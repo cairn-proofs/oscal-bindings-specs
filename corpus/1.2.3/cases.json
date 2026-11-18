@@ -288,7 +288,7 @@
       "input": "documents/invalid/allowed-value-case.json",
       "expected-category": "parse-error",
       "expected-constraints": ["oscal-activity-type-values"],
-      "requirements": ["PRS-015.01", "CNS-025.01", "ERR-004.05"],
+      "requirements": ["PRS-015.01", "CNS-025.01", "ERR-004.05", "PRS-015.03"],
       "notes": "The entry oscal-activity-type-values is closed and lists the values INTERVIEW, EXAMINE and TEST. The method prop of the activity has the value test. This value differs from the listed value TEST only in case, and the entry gives one failure. The input is a copy of documents/invalid/constraints/oscal-activity-type-values.json with the value test in place of zz-invalid."
     },
     {

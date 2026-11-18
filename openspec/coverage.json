@@ -2302,7 +2302,9 @@
     },
     {
       "capability": "document-parsing",
-      "gap": 110,
+      "corpus": [
+        "parse/allowed-value-case"
+      ],
       "id": "PRS-015.03"
     },
     {
