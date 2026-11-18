@@ -661,6 +661,22 @@
       }
     },
     {
+      "id": "yaml-round-trip/catalog-bytes",
+      "operation": "yaml-round-trip",
+      "input": "documents/valid/catalog.yaml",
+      "input-form": "bytes",
+      "document-type": "catalog",
+      "expected": "expected/catalog.json",
+      "requirements": ["YML-005.01"],
+      "notes": "The YAML parse operation gets the raw bytes of the input, not text. The input is the same file as the input of yaml-round-trip/catalog.",
+      "source": {
+        "repository": "https://github.com/usnistgov/oscal-content",
+        "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
+        "path": "examples/catalog/yaml/basic_catalog.yaml",
+        "sha256": "a0c8f5449852931e0f68b151a684d2e08cb9c0249702052896a33101b99ae797"
+      }
+    },
+    {
       "id": "yaml-round-trip/profile",
       "operation": "yaml-round-trip",
       "input": "documents/valid/profile.yaml",

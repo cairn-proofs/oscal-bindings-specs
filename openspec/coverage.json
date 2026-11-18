@@ -2907,7 +2907,9 @@
     },
     {
       "capability": "yaml-documents",
-      "gap": 118,
+      "corpus": [
+        "yaml-round-trip/catalog-bytes"
+      ],
       "id": "YML-005.01"
     },
     {

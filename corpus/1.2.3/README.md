@@ -108,6 +108,7 @@ Each case has these fields:
    canonical form of the output must be the same bytes as `expected`. Then serialize the parsed document to YAML,
    parse that output with the YAML parse operation, and serialize the result to JSON. Its canonical form must also be
    the same bytes as `expected`.
+   With `input-form` `bytes`, the runner gives the YAML parse operation the raw bytes of the input, not text.
 8. `yaml-parse`: parse the YAML input with the YAML parse operation. The parser must report `expected-category`.
 9. `element-types`: request the supported element types. The result must equal the list in `expected`, item by item
    and in the same order.
