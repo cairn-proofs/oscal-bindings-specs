@@ -1452,8 +1452,13 @@
     },
     {
       "capability": "model-derivation",
-      "gap": 89,
-      "id": "MDL-018.05"
+      "id": "MDL-018.05",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-018.05 enum in a list property uses the singular name"
+        }
+      ]
     },
     {
       "capability": "model-derivation",

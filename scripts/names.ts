@@ -340,7 +340,7 @@ function selfTest(): number {
     const r = run(statusSchema);
     return ["StatusState", "SystemComponentStatusState", "FindingTargetStatusState"].every((n) => entryNamed(r, n)?.sites.length === 1);
   });
-  test("list item enum uses the singular name", () => {
+  test("MDL-018.05 enum in a list property uses the singular name", () => {
     const obs = "oscal-complete-oscal-assessment-common:observation";
     const items = `${D(obs)}/properties/methods/items`;
     return nameAt(run(schemaOf({ [obs]: obj({ methods: list(openEnum("TEST")) }) }), { "local-names": { [items]: "method" } }), `${items}/anyOf/1`) === "ObservationMethod";
