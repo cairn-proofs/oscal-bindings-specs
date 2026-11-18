@@ -218,6 +218,10 @@ function selfTest(): number {
     const r = run(schemaOf({ [cdci]: obj({ a: str }), [sspci]: obj({ b: str }) }));
     return nameAt(r, D(cdci)) === "ComponentDefinitionControlImplementation" && nameAt(r, D(sspci)) === "SspControlImplementation";
   });
+  test("MDL-013.02 same local name with different structure is not deduplicated", () => {
+    const r = run(schemaOf({ [cdci]: obj({ a: str }), [sspci]: obj({ a: obj({ x: str }) }) }));
+    return r.manifest !== undefined && r.manifest.types.filter((t) => t.name.endsWith("ControlImplementation")).length === 2 && r.manifest.types.every((t) => t.sites.length === 1 || t.kind === "document-union");
+  });
   const sspStatus = "oscal-complete-oscal-ssp:status";
   const sysComp = "oscal-complete-oscal-implementation-common:system-component";
   const finding = "oscal-complete-oscal-assessment-common:finding-target";
@@ -374,6 +378,22 @@ function selfTest(): number {
   test("MDL-013.04 equal enum values at unrelated places do not merge", () => {
     const r = run(twoMethods);
     return entryNamed(r, "MappingMethod")?.sites.length === 1 && entryNamed(r, "MappingProvenanceMethod")?.sites.length === 1;
+  });
+  test("MDL-013.01 a shared type used by many document types yields one canonical type", () => {
+    const metadata = "oscal-complete-oscal-metadata:metadata";
+    const r = run(
+      schemaOf(
+        {
+          [metadata]: obj({ title: str }),
+          "oscal-complete-oscal-catalog:catalog": obj({ metadata: ref(metadata) }),
+          "oscal-complete-oscal-catalog:profile": obj({ metadata: ref(metadata) }),
+          "oscal-complete-oscal-catalog:system-security-plan": obj({ metadata: ref(metadata) }),
+        },
+        ["catalog", "profile", "system-security-plan"],
+      ),
+    );
+    const metadataTypes = r.manifest?.types.filter((t) => t.name.includes("Metadata")) ?? [];
+    return (metadataTypes.length === 1 && metadataTypes[0].name === "Metadata" && metadataTypes[0].sites.length === 1) || JSON.stringify(r.failures);
   });
   test("explicit merge produces one type", () => {
     const sites = [`${D(mapping)}/properties/method/allOf/1`, `${D(mp)}/properties/method/allOf/1`];

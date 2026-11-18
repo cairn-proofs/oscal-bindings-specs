@@ -1318,13 +1318,23 @@
     },
     {
       "capability": "model-derivation",
-      "gap": 85,
-      "id": "MDL-013.01"
+      "id": "MDL-013.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-013.01 a shared type used by many document types yields one canonical type"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
-      "gap": 85,
-      "id": "MDL-013.02"
+      "id": "MDL-013.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-013.02 same local name with different structure is not deduplicated"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
