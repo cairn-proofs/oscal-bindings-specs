@@ -69,7 +69,6 @@ by-design:
   YML-007.02: The rule applies to the process of a binding repository, which no store script can observe.
 
 gap:
-  CNS-004.01: 72
   CNS-006.01: 73
   CNS-012.01: 74
   CNS-017.01: 75

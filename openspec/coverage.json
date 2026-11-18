@@ -205,8 +205,25 @@
     },
     {
       "capability": "constraint-validation",
-      "gap": 72,
-      "id": "CNS-004.01"
+      "id": "CNS-004.01",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-004.01: a manifest file that does not exist fails the check"
+        },
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-004.01: a manifest that a person edits by hand differs from the generation and fails the check"
+        },
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-004.01: an edit that changes only the layout of the file fails the check"
+        },
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-004.01: the committed manifest is the result of the generation, so the check passes"
+        }
+      ]
     },
     {
       "capability": "constraint-validation",

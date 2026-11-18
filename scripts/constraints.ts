@@ -85,6 +85,13 @@ function checkAgainstReference(gen: Generator, entries: Entry[]): string[] {
   return [...checkQueries(selected, entries, units), ...checkFailures(selected, entries, units)];
 }
 
+/** CNS-004: the problems of a committed manifest file, given the text that the generation gives. */
+export function checkCommitted(schema: object, file: string, committed: string | undefined, output: string): string[] {
+  const problems = committed === undefined ? [`${file} does not exist`] : checkManifest(schema, JSON.parse(committed));
+  if (committed !== undefined && committed !== output) problems.push(`${file} differs from the generator output. Run npm run constraints:write.`);
+  return problems;
+}
+
 function main(mode: "write" | "check"): number {
   const schema = readJson(SCHEMA_FILE) as object;
   let failed = 0;
@@ -107,8 +114,7 @@ function main(mode: "write" | "check"): number {
       continue;
     }
     const committed = fs.existsSync(file) ? fs.readFileSync(file, "utf8") : undefined;
-    const problems = committed === undefined ? [`${file} does not exist`] : checkManifest(schema, JSON.parse(committed));
-    if (committed !== undefined && committed !== output) problems.push(`${file} differs from the generator output. Run npm run constraints:write.`);
+    const problems = checkCommitted(schema, file, committed, output);
     if (problems.length === 0) problems.push(...checkAgainstReference(generator, entries));
     for (const p of problems) console.error(`${release}: ${p}`);
     if (problems.length) failed++;
@@ -162,6 +168,18 @@ function selfTest(): number {
     checkManifest(schema, edited((m) => delete (m.entries[0] as Partial<Entry>).kind)).length > 0 &&
     checkManifest(schema, edited((m) => m.entries.push({ ...m.entries[0], bogus: 1 } as Entry))).length > 0 &&
     checkManifest(schema, edited((m) => (m.format = 2))).length > 0);
+  const committedText = fs.readFileSync(fileOf("1.2.3"), "utf8");
+  const generated1 = serializeManifest(manifest);
+  test("CNS-004.01: the committed manifest is the result of the generation, so the check passes", () =>
+    checkCommitted(schema, fileOf("1.2.3"), committedText, generated1).length === 0 || JSON.stringify(checkCommitted(schema, fileOf("1.2.3"), committedText, generated1).slice(0, 3)));
+  test("CNS-004.01: a manifest that a person edits by hand differs from the generation and fails the check", () => {
+    const edit = committedText.replace('"reportable": true', '"reportable": false');
+    const problems = checkCommitted(schema, fileOf("1.2.3"), edit, generated1);
+    return (edit !== committedText && problems.length === 1 && problems[0].includes("differs from the generator output")) || JSON.stringify(problems);
+  });
+  test("CNS-004.01: an edit that changes only the layout of the file fails the check", () =>
+    checkCommitted(schema, fileOf("1.2.3"), `${committedText}\n`, generated1).some((p) => p.includes("differs from the generator output")));
+  test("CNS-004.01: a manifest file that does not exist fails the check", () => checkCommitted(schema, fileOf("1.2.3"), undefined, generated1).some((p) => p.includes("does not exist")));
   test("CNS-006: a pattern that is not an I-Regexp fails the check", () => checkManifest(schema, edited((m) => (m.entries.find((e) => e.id === "oscal-check-hash-length-SHA2-3-256")!.pattern = "\\d+"))).length > 0);
   test("CNS-006: every query compiles and every pattern is an I-Regexp", () => checkManifest(schema, manifest).length === 0);
   test("CNS-005.01: the manifest holds no entry of the level WARNING", () => entries.every((e) => e.level === "ERROR" || e.level === "CRITICAL"));
@@ -240,7 +258,7 @@ function selfTest(): number {
     const bad = checkManifest(schema, withTarget("$"));
     return (bad.length === 1 && bad[0].includes("selects the array that holds the context node") && checkManifest(schema, withTarget("$[0]")).length === 0) || JSON.stringify(bad);
   });
-  test("CNS-007: the element types of kind document hold context nodes", () => one("oscal-catalog-parts").context.elements["catalog-document"] !== undefined);
+  test("CNS-007: the element types of kind document hold context nodes",() => one("oscal-catalog-parts").context.elements["catalog-document"] !== undefined);
 
   // CNS-019, CNS-022: the checks against the reference evaluator
   const schemaFile = "schemas/1.2.3/oscal_complete_schema.json";
