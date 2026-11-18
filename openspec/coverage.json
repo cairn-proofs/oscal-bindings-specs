@@ -1481,8 +1481,21 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 94,
-      "id": "NAM-003.01"
+      "id": "NAM-003.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-003.01 a name with - fails"
+        },
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-003.01 a name with a quote fails"
+        },
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-003.01 a name with a space fails"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
@@ -1496,8 +1509,13 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 94,
-      "id": "NAM-003.03"
+      "id": "NAM-003.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-003.03 a name with a final newline fails"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",

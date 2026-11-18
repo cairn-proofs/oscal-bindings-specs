@@ -483,9 +483,10 @@ function selfTest(): number {
     return schemaOnly(m);
   };
   test("names.schema: the D4 sketch passes", () => schemaOnly(sketch).length === 0 || JSON.stringify(schemaOnly(sketch)));
-  test("names.schema: a name with a final newline fails", () => mutate((m) => (m.types[1].name = "HashAlgorithm\n")).length > 0);
-  test("names.schema: a name with - fails", () => mutate((m) => (m.types[1].name = "Bad-Name")).length > 0);
-  test("names.schema: a name with a quote fails", () => mutate((m) => (m.types[1].name = 'Bad"Name')).length > 0);
+  test("NAM-003.03 a name with a final newline fails", () => mutate((m) => (m.types[1].name = "HashAlgorithm\n")).length > 0);
+  test("NAM-003.01 a name with - fails", () => mutate((m) => (m.types[1].name = "Bad-Name")).length > 0);
+  test("NAM-003.01 a name with a quote fails", () => mutate((m) => (m.types[1].name = 'Bad"Name')).length > 0);
+  test("NAM-003.01 a name with a space fails", () => mutate((m) => (m.types[1].name = "Bad Name")).length > 0);
   test("NAM-004.01 an entry without a kind fails", () => mutate((m) => delete (m.types[1] as Partial<Manifest["types"][number]>).kind).length > 0);
   test("NAM-013.01 schema file name with a path fails", () => mutate((m) => (m.schema.file = "../x.json")).length > 0);
   test("names.schema: a pointer with % fails", () => mutate((m) => (m.types[1].sites = ["#/definitions/a%20b"])).length > 0);
