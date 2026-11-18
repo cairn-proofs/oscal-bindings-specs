@@ -2559,8 +2559,13 @@
     },
     {
       "capability": "schema-versioning",
-      "gap": 116,
-      "id": "VER-004.01"
+      "id": "VER-004.01",
+      "self-test": [
+        {
+          "script": "scripts/check-version.ts",
+          "test": "VER-004.01 OSCAL release appears as build metadata"
+        }
+      ]
     },
     {
       "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
@@ -2574,7 +2579,6 @@
     },
     {
       "capability": "schema-versioning",
-      "gap": 116,
       "id": "VER-004.04",
       "self-test": [
         {

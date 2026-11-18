@@ -38,6 +38,12 @@ function selfTest(): number {
     if (!ok) failed++;
     console.log(`${ok ? "PASS" : "FAIL"}  ${name}${ok ? "" : `\n      ${JSON.stringify(out)}`}`);
   }
+  // VER-004.01: the OSCAL release is the build metadata, and the check reads it from there.
+  const v = "2.4.1+oscal.1.2.3";
+  const ok = parseVersion(v)?.release === "1.2.3" && checkVersion(v, has).length === 0 && v.endsWith("+oscal.1.2.3");
+  const name = "VER-004.01 OSCAL release appears as build metadata";
+  if (!ok) failed++;
+  console.log(`${ok ? "PASS" : "FAIL"}  ${name}`);
   return failed ? 1 : 0;
 }
 
