@@ -353,6 +353,45 @@ function selfTest(): number {
   test("CNS-016.01: a parameter with the flag depends-on gives one failure", () =>
     same(run(byId("oscal-parameter-depends-on-deprecated"), catalog({ params: [{ id: "a", "depends-on": "b" }, { id: "b" }] })).failures.map((f) => f.location), ["$['catalog']['params'][0]"]));
 
+  // CNS-002: the defective constraints of the exclusion list show each rule.
+  const excluded = (JSON.parse(fs.readFileSync("manifest/1.2.3/constraint-exclusions.json", "utf8")) as { excluded: Array<{ id?: string }> }).excluded.map((x) => x.id);
+  test("CNS-002.01: a constraint that targets a child `type` of `action`, where `type` is a flag, selects nothing and is excluded", () => {
+    const c = byId("oscal-metadata-action-type-values")[0];
+    const json = catalog({ metadata: { actions: [{ uuid: "u", date: "2020-01-01T00:00:00Z", type: "bogus", system: "s" }] } });
+    const contexts = allNodes(loadDoc(json, model.roots)).filter((n) => n.def === c.def && n.kind !== "doc");
+    const selected = contexts.flatMap((n) => selectNodes(parseMetapath(c.target), n));
+    return (
+      (c.def.name === "action" && c.def.flags.some((f) => f.name === "type") && !c.def.children.some((x) => x.useName === "type") && contexts.length === 1 && selected.length === 0 && run(c, json).failures.length === 0 && excluded.includes(c.id!)) ||
+      JSON.stringify([contexts.length, selected.length, excluded.includes(c.id!)])
+    );
+  });
+  test("CNS-002.02: a has-cardinality constraint with a filter on @name='objective' fails for an assessment part with another name, and is excluded", () => {
+    const c = byId("oscal-assesment-part-objective-cardinality")[0];
+    const part = (name: string) => run(c, { "assessment-plan": { "terms-and-conditions": { parts: [{ name }] } } }).failures.map((f) => f.location);
+    return (
+      (c.kind === "has-cardinality" && c.minOccurs === 1 && c.target.startsWith(".[@name='objective']") && excluded.includes(c.id!) &&
+        same(part("other"), ["$['assessment-plan']['terms-and-conditions']['parts'][0]"]) === true) ||
+      JSON.stringify(part("other"))
+    );
+  });
+  test("CNS-002.03: a has-cardinality constraint on local objectives fails for each local objective, and no other constraint allows its target", () => {
+    const c = byId("oscal-assessment-method-id-cardinality")[0];
+    const all = model.constraints.filter((x) => x.level === "ERROR" || x.level === "CRITICAL");
+    const document = (parts: object[], count = 2) => ({ "assessment-plan": { "local-definitions": { "objectives-and-methods": Array.from({ length: count }, (_, i) => ({ uuid: `u${i}`, "control-id": "c", parts })) } } });
+    // Without the target, the constraint fails for each local objective.
+    const without = run(c, document([{ name: "objective" }])).failures.map((f) => f.location);
+    // With the target, the constraint holds, but a closed allowed-values constraint fails for the name `method-id`.
+    const withTarget = run(all, document([{ name: "objective", props: [{ name: "method-id", value: "x" }] }], 1));
+    const ofCardinality = withTarget.failures.filter((f) => f.id === c.id);
+    const ofNames = withTarget.failures.filter((f) => f.constraint.kind === "allowed-values" && f.location.endsWith("['props'][0]['name']"));
+    return (
+      (c.kind === "has-cardinality" && c.minOccurs === 1 && excluded.includes(c.id!) &&
+        same(without, ["$['assessment-plan']['local-definitions']['objectives-and-methods'][0]", "$['assessment-plan']['local-definitions']['objectives-and-methods'][1]"]) === true &&
+        ofCardinality.length === 0 && ofNames.length > 0) ||
+      JSON.stringify([without, ofCardinality.length, ofNames.length])
+    );
+  });
+
   // The rules of design D7.
   test("D7.1: a has-cardinality entry counts 0 for a context node with no target node (CNS-011)", () =>
     run(custom(locationDef, { kind: "has-cardinality", target: "title", minOccurs: 1 }), location({})).failures.length === 1);

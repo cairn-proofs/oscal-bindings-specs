@@ -151,18 +151,33 @@
     },
     {
       "capability": "constraint-validation",
-      "gap": 71,
-      "id": "CNS-002.01"
+      "id": "CNS-002.01",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "CNS-002.01: a constraint that targets a child `type` of `action`, where `type` is a flag, selects nothing and is excluded"
+        }
+      ]
     },
     {
       "capability": "constraint-validation",
-      "gap": 71,
-      "id": "CNS-002.02"
+      "id": "CNS-002.02",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "CNS-002.02: a has-cardinality constraint with a filter on @name='objective' fails for an assessment part with another name, and is excluded"
+        }
+      ]
     },
     {
       "capability": "constraint-validation",
-      "gap": 71,
-      "id": "CNS-002.03"
+      "id": "CNS-002.03",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "CNS-002.03: a has-cardinality constraint on local objectives fails for each local objective, and no other constraint allows its target"
+        }
+      ]
     },
     {
       "capability": "constraint-validation",
