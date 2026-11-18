@@ -2971,7 +2971,13 @@
       "corpus": [
         "yaml-parse-file/missing-file"
       ],
-      "id": "YML-006.02"
+      "id": "YML-006.02",
+      "self-test": [
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "YML-006.02: a yaml-parse-file case has the category not-found only, and a parse-file case can have read-error"
+        }
+      ]
     },
     {
       "capability": "yaml-documents",
@@ -3013,7 +3019,13 @@
       "corpus": [
         "yaml-round-trip/minimal-catalog"
       ],
-      "id": "YML-008.03"
+      "id": "YML-008.03",
+      "self-test": [
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "YML-008.03: expected-absent-keys finds a key at any depth"
+        }
+      ]
     },
     {
       "capability": "yaml-documents",

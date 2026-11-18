@@ -78,6 +78,9 @@ Each case has these fields:
    7. `source`: the repository, commit, path, and `sha256` of a document copied from another repository.
    8. `notes`: an explanation for people. For a `yaml-parse` case, the notes name the fault code of the reference
       YAML reader in backticks, for example `` `grammar` ``.
+   9. `expected-absent-keys`: for a `yaml-round-trip` case, the keys that the serialized YAML must not hold at any
+      depth ([YML-008](../../openspec/specs/yaml-documents/spec.md#requirement-yml-008-serialize-an-oscal-document-to-yaml)).
+      Each key is absent from the input, so a serializer that writes it has written an absent field.
 
 ## Operations
 
@@ -109,12 +112,17 @@ Each case has these fields:
    parse that output with the YAML parse operation, and serialize the result to JSON. Its canonical form must also be
    the same bytes as `expected`.
    With `input-form` `bytes`, the runner gives the YAML parse operation the raw bytes of the input, not text. With
-   `input-form` `path`, the runner gives the YAML parse-from-file operation the path of the input.
+   `input-form` `path`, the runner gives the YAML parse-from-file operation the path of the input. The second parse
+   uses the same form as the first: with `bytes`, the runner gives the parse operation the UTF-8 bytes of the
+   serialized YAML, and with `path`, the runner writes the serialized YAML to a file and gives the parse-from-file
+   operation the path of that file. With no `input-form`, the second parse gets the serialized YAML as text.
+   With `expected-absent-keys`, the runner also reads the serialized YAML as generic YAML, with no schema, and no
+   mapping at any depth may have a key in the list.
 8. `yaml-parse`: parse the YAML input with the YAML parse operation. The parser must report `expected-category`.
 9. `yaml-parse-file`: parse the YAML file at the input path with the YAML parse-from-file operation. The path does not
-   exist, and the parser must report `expected-category` (`not-found`) and name the path.
+   exist, and the parser must report `expected-category` (`not-found`) and name the path. The case has no `input-form`.
 10. `yaml-parse-typed`: parse the YAML input with the typed YAML parser of `document-type`. The parser must report
-    `expected-category`.
+    `expected-category`. The case has no `input-form`.
 11. `element-types`: request the supported element types. The result must equal the list in `expected`, item by item
    and in the same order.
 12. `build-resource`: build a resource with `arguments`. Then compare the `uuid` of the resource with `expected-uuid`,

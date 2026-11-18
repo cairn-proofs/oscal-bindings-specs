@@ -340,7 +340,7 @@
       "input": "documents/valid/assessment-plan-timing-kinds.json",
       "expected-period": { "start": "2026-01-15T08:00:00Z", "end": "2026-03-31T23:59:59Z" },
       "requirements": ["FAC-005.01"],
-      "notes": "The start comes from an on-date of a task. The end comes from a within-date-range of a nested task, so a binding that skips nested tasks gives the end 2026-02-28T00:00:00Z. The at-frequency timing of the third task gives no datetime. The input is synthetic."
+      "notes": "The tasks are not in date order. The start comes from an on-date of the second task, so a binding that takes the first start in document order gives 2026-02-01T00:00:00Z. The end comes from a within-date-range of a nested task in the first task, so a binding that takes the last end in document order gives the on-date 2026-01-15T08:00:00Z, and a binding that skips nested tasks gives 2026-02-28T00:00:00Z. The at-frequency timing of the third task gives no datetime. The input is synthetic."
     },
     {
       "id": "assessment-period/at-frequency-only",
@@ -800,8 +800,9 @@
       "input": "documents/valid/minimal-catalog.yaml",
       "document-type": "catalog",
       "expected": "expected/minimal-catalog.json",
+      "expected-absent-keys": ["groups", "controls", "back-matter", "parties", "roles", "locations", "responsible-parties", "props", "links", "remarks"],
       "requirements": ["YML-008.03"],
-      "notes": "The catalog has only its required fields, so every optional field is absent. A serializer that writes an absent field as null gives the string \"null\" at a string location and a parse error at any other location (YML-004.04), so the second parse of the round trip fails. The input is the YAML form of documents/valid/minimal-catalog.json."
+      "notes": "The catalog has only its required fields, so every optional field is absent. A serializer that writes an absent field as null gives the string \"null\" at a string location and a parse error at any other location (YML-004.04), so the second parse of the round trip fails. A serializer that writes an absent field as an empty value passes the round trip, so the runner also reads the serialized YAML as generic YAML and checks that none of the keys in expected-absent-keys occurs. The input is the YAML form of documents/valid/minimal-catalog.json."
     },
     {
       "id": "yaml-round-trip/boolean-scalar",
