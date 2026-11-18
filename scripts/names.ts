@@ -332,6 +332,19 @@ function selfTest(): number {
   test("scalar definition has no entry", () => entryNamed(run(schemaOf({ "oscal-complete-oscal-metadata:remarks": str })), "Remarks") === undefined);
   test("lists of references need no singular name", () => run(schemaOf({ [hash]: obj({ links: list(ref(hash)) }) })).manifest !== undefined);
 
+  // The committed manifest of OSCAL 1.2.3, for the scenarios that name an entry of it.
+  const committed = JSON.parse(fs.readFileSync("manifest/1.2.3/names.json", "utf8")) as Manifest;
+  const committedEntry = (name: string) => committed.types.find((t) => t.name === name);
+  test("NAM-001.01 definition identified by its definition pointer", () => {
+    const pointer = D(hash);
+    const derived = entryNamed(run(schemaOf({ [hash]: obj({ algorithm: openEnum("SHA-256") }) })), "Hash");
+    const real = committedEntry("Hash");
+    return (
+      (JSON.stringify(derived?.sites) === JSON.stringify([pointer]) && JSON.stringify(real?.sites) === JSON.stringify([pointer]) && pointer === "#/definitions/oscal-complete-oscal-metadata:hash") ||
+      JSON.stringify([derived?.sites, real?.sites])
+    );
+  });
+
   // Task 2.4: merges.
   const parties = "oscal-complete-oscal-metadata:metadata";
   const partiesItems = `${D(parties)}/properties/parties/items`;

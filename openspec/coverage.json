@@ -1461,8 +1461,13 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 93,
-      "id": "NAM-001.01"
+      "id": "NAM-001.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-001.01 definition identified by its definition pointer"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
