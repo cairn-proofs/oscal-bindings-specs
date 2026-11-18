@@ -1811,8 +1811,13 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 101,
-      "id": "NAM-015.03"
+      "id": "NAM-015.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-015.03 explicit merge with an unknown pointer fails"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",

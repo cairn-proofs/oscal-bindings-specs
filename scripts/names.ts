@@ -501,6 +501,10 @@ function selfTest(): number {
   test("NAM-015.01 override with an unknown pointer fails", () => failsWith(run(schemaOf({}), { names: { "#/definitions/nope": "Nope" } }), "#/definitions/nope does not resolve"));
   test("NAM-015.02 unused override fails", () =>
     failsWith(run(schemaOf({ [hash]: obj({ algorithm: openEnum("SHA-256") }) }), { names: { [`${D(hash)}/properties/algorithm/anyOf/1`]: "HashAlgorithm" } }), "[unused-override]"));
+  test("NAM-015.03 explicit merge with an unknown pointer fails", () => {
+    const sites = [`${D(mapping)}/properties/method/allOf/1`, "#/definitions/nope"];
+    return failsWith(run(twoMethods, { merges: [sites] }), "#/definitions/nope does not resolve");
+  });
   test("NAM-005 local name on a place that is not a list item fails", () => failsWith(run(schemaOf({ [hash]: obj({}) }), { "local-names": { [D(hash)]: "hash" } }), "[unused-override]"));
   test("NAM-005 merge of one type fails", () => failsWith(run(schemaOf({ [hash]: obj({}) }), { merges: [[D(hash), D(hash)]] }), "[unused-override]"));
 
