@@ -119,6 +119,16 @@
       "notes": "Written for this corpus. The base document of each invalid case."
     },
     {
+      "id": "round-trip/minimal-catalog-bytes",
+      "operation": "round-trip",
+      "input": "documents/valid/minimal-catalog.json",
+      "input-form": "bytes",
+      "document-type": "catalog",
+      "expected": "expected/minimal-catalog.json",
+      "requirements": ["PRS-001.02", "SER-004.01"],
+      "notes": "The input and the expected file of round-trip/minimal-catalog, passed to the parser as raw bytes. The parse returns the same document as the parse of its text."
+    },
+    {
       "id": "round-trip/datetime-forms",
       "operation": "round-trip",
       "input": "documents/valid/datetime-forms.json",

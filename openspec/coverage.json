@@ -1844,7 +1844,9 @@
     },
     {
       "capability": "document-parsing",
-      "gap": 107,
+      "corpus": [
+        "round-trip/minimal-catalog-bytes"
+      ],
       "id": "PRS-001.02"
     },
     {
@@ -2328,6 +2330,7 @@
         "round-trip/component-definition",
         "round-trip/mapping-collection",
         "round-trip/minimal-catalog",
+        "round-trip/minimal-catalog-bytes",
         "round-trip/plan-of-action-and-milestones",
         "round-trip/profile",
         "round-trip/system-security-plan"
