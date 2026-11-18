@@ -30,8 +30,8 @@ Each case has these fields:
 3. `input`: the input path, relative to this directory. An `element-types` case and a builder case have no `input`.
 4. `requirements`: the requirement and scenario identifiers that the case tests.
 5. One expected result:
-   1. `expected`: the path of the expected canonical form, for a round trip. For `element-types`, it is the path of the
-      expected list.
+   1. `expected`: the path of the expected canonical form, for a round trip or a `parse-file` case. For
+      `element-types`, it is the path of the expected list.
    2. `expected-category`: the error category, from the `categories` list. The list holds each category of the
       error-model capability that a portable case can reach. It does not hold the limit-exceeded category, because
       only a documented limit of a binding reaches it.
@@ -52,7 +52,8 @@ Each case has these fields:
    of the binding with the same JSON. The runner does not validate the item. The builder must
    report the error of an invalid item.
 7. Optional fields:
-   1. `document-type`: the root key of the document type, for a round trip or a typed parse.
+   1. `document-type`: the root key of the document type, for a round trip, a typed parse, or a `parse-file` case
+      with `expected`.
    2. `element-type`: the element-type name, for element validation.
    3. `input-form`: `bytes` when the input must reach the binding as raw bytes, not as text. For a `facade` case,
       `path` when the facade must be built from the input path.
@@ -90,9 +91,12 @@ Each case has these fields:
    [PRS-010](../../openspec/specs/document-parsing/spec.md#requirement-prs-010-a-binding-can-limit-the-resources-that-a-parse-uses).
 3. `parse-typed`: parse the input with the typed parser of `document-type`. The parser must report
    `expected-category`.
-4. `parse-file`: parse the file at the input path. For the not-found category, the path does not exist.
-   For the read-error category, the path is a directory. The parser must report `expected-category` and name the
-   path.
+4. `parse-file`: parse the file at the input path. The case has `expected` or `expected-category`:
+   1. With `expected`, the path is a valid document of `document-type`. Parse the file with the generic parser and with
+      the typed parser of `document-type`. Both must succeed. Serialize the parsed document. The canonical form of the
+      output must be the same bytes as `expected`.
+   2. With `expected-category`, the parser must report the category and name the path. For the not-found category, the
+      path does not exist. For the read-error category, the path is a directory.
 5. `assessment-period`: wrap the parsed input in the document facade and request the assessment period. The facade
    must report `expected-category`, or return the start and the end of `expected-period`. The runner normalizes each
    bound that the facade returns as [Canonical JSON for conformance comparison](../../docs/canonical-json.md#datetimes)

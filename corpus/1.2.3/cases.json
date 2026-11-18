@@ -300,6 +300,15 @@
       "requirements": ["PRS-003.02", "ERR-005.01", "ERR-009.01"]
     },
     {
+      "id": "parse-file/valid-file",
+      "operation": "parse-file",
+      "input": "documents/valid/minimal-catalog.json",
+      "document-type": "catalog",
+      "expected": "expected/minimal-catalog.json",
+      "requirements": ["PRS-002.01"],
+      "notes": "The file is the input of round-trip/minimal-catalog, read from its path. The parse returns the same document as the parse of its text."
+    },
+    {
       "id": "parse-file/missing-file",
       "operation": "parse-file",
       "input": "documents/does-not-exist.json",

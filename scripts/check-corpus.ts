@@ -55,10 +55,14 @@
  *     with `expected-valid` false that conforms to it, and a builder element that conforms to it and fails the manifest
  *     need the field. Each reportable entry of the constraint manifest has a case whose input fails it. No input that a
  *     case expects to be valid, and no element that a builder case expects, fails an entry.
+ * 18. A parse-file case has exactly one of `expected` and `expected-category` (PRS-002). With `expected`, the input is an
+ *     existing file, the case has a `document-type`, and the input and the expected file pass the checks of a facade case
+ *     with `expected` (check 16). With the category not-found, the input does not exist. With the category read-error,
+ *     the input is a directory.
  *
  *   npm run corpus:check           check the corpus
  *   npm run corpus:write           regenerate each expected file, then check
- *   npm run corpus:self-test       run the rule scenarios of check 17
+ *   npm run corpus:self-test       run the rule scenarios of checks 17 and 18
  */
 import { createHash } from "node:crypto";
 import fs from "node:fs";
@@ -261,8 +265,8 @@ export interface DocumentInput {
 
 /**
  * The document of a case that the corpus checks against the constraint manifest, with the expected failures. The cases
- * are the round-trip, parse, parse-typed, facade, assessment-period, and yaml-round-trip cases whose input conforms to
- * the schema. Undefined for any other case, and for an input that cannot be read. `main()` and scripts/coverage-faults.ts
+ * are the round-trip, parse, parse-typed, parse-file with `expected`, facade, assessment-period, and yaml-round-trip
+ * cases whose input conforms to the schema. Undefined for any other case, and for an input that cannot be read. `main()` and scripts/coverage-faults.ts
  * both select the cases here, so they select the same cases.
  */
 export function documentInput(c: Case, validateDocument: ValidateFunction): DocumentInput | undefined {
@@ -276,9 +280,10 @@ export function documentInput(c: Case, validateDocument: ValidateFunction): Docu
         const document: unknown = JSON.parse(fs.readFileSync(file, "utf8"));
         return validateDocument(document) ? { document, expected: [] } : undefined;
       }
+      case "parse-file":
       case "facade":
       case "assessment-period": {
-        if (c.operation === "facade" ? c["expected-category"] !== undefined : c["expected-period"] === undefined) return undefined;
+        if (c.operation === "assessment-period" ? c["expected-period"] === undefined : c.operation === "facade" ? c["expected-category"] !== undefined : c.expected === undefined) return undefined;
         const document: unknown = JSON.parse(fs.readFileSync(file, "utf8"));
         return validateDocument(document) ? { document, expected: [] } : undefined;
       }
@@ -450,6 +455,26 @@ function compareElement(c: Case, element: unknown, expected: unknown, fail: (id:
     fail(c.id, `expected-element is not the element that the arguments give: ${JSON.stringify(element)}`);
 }
 
+/**
+ * Check 18 (PRS-002): the fault of a parse-file case, or undefined. A case has exactly one of `expected` and
+ * `expected-category`. With `expected`, the input is an existing file and the case has a document type. With the
+ * category not-found, the input does not exist. With the category read-error, the input is a directory.
+ */
+export function parseFileFault(c: Case, exists: boolean, isDirectory: boolean): string | undefined {
+  const category = c["expected-category"];
+  if ((category === undefined) === (c.expected === undefined))
+    return "a parse-file case needs exactly one of expected and expected-category";
+  if (c.expected !== undefined) {
+    if (!exists || isDirectory) return `${c.input} is not an existing file, so it cannot test a successful parse`;
+    if (!DOCUMENT_TYPES.includes(c["document-type"] ?? "")) return "document-type is not an OSCAL type";
+    return undefined;
+  }
+  if (category === "not-found") return exists ? `${c.input} exists, so it cannot test not-found` : undefined;
+  if (category === "read-error")
+    return exists && isDirectory ? undefined : `${c.input} is not a directory, so it cannot test read-error`;
+  return "a parse-file case has the category not-found or read-error";
+}
+
 function main(write: boolean): number {
   const failures: string[] = [];
   const fail = (id: string, message: string) => failures.push(`[corpus] ${id}: ${message}`);
@@ -512,6 +537,24 @@ function main(write: boolean): number {
   const seen = new Set<string>();
   const used = new Set<string>();
   const covered = new Set<string>();
+
+  /** Checks 16 and 18: the input is a valid document of the only root key `document-type`, and `expected` is its canonical form. */
+  const knownDocument = (c: Case, inputPath: string) => {
+    const expectedFile = c.expected as string;
+    used.add(expectedFile);
+    const text = fs.readFileSync(inputPath, "utf8");
+    const doc: unknown = JSON.parse(text);
+    const known = documentInput(c, validateDocument);
+    if (!known) fail(c.id, `input is not valid: ${ajv.errorsText(validateDocument.errors)}`);
+    else expectNone(c, constraints.ofDocument(known.document));
+    const rootKeys = doc !== null && typeof doc === "object" ? Object.keys(doc) : [];
+    if (rootKeys.length !== 1 || rootKeys[0] !== c["document-type"])
+      fail(c.id, `the root keys of the input are not only document-type "${c["document-type"]}"`);
+    if (!jsonExpected.has(expectedFile)) fail(c.id, `${expectedFile} is not the expected file of a round-trip case`);
+    const expectedPath = path.join(ROOT, expectedFile);
+    if (!fs.existsSync(expectedPath) || fs.readFileSync(expectedPath, "utf8") !== canonicalize(text))
+      fail(c.id, `${expectedFile} is not the canonical form of the input`);
+  };
 
   for (const c of index.cases) {
     if (seen.has(c.id)) fail(c.id, "the id is not unique");
@@ -576,7 +619,7 @@ function main(write: boolean): number {
       continue;
     }
     const inputPath = path.join(ROOT, c.input);
-    if (c.operation !== "parse-file" && !(c.operation === "facade" && category !== undefined)) {
+    if (c.operation === "parse-file" ? c.expected !== undefined : !(c.operation === "facade" && category !== undefined)) {
       used.add(c.input);
       if (!fs.existsSync(inputPath)) {
         fail(c.id, `input ${c.input} does not exist`);
@@ -656,14 +699,13 @@ function main(write: boolean): number {
         else if (Object.hasOwn(doc, c["document-type"] ?? "")) fail(c.id, "input is the requested document type");
         break;
       }
-      case "parse-file":
-        if (category === "not-found") {
-          if (fs.existsSync(inputPath)) fail(c.id, `${c.input} exists, so it cannot test not-found`);
-        } else if (category === "read-error") {
-          if (!fs.existsSync(inputPath) || !fs.statSync(inputPath).isDirectory())
-            fail(c.id, `${c.input} is not a directory, so it cannot test read-error`);
-        } else fail(c.id, "a parse-file case has the category not-found or read-error");
+      case "parse-file": {
+        const exists = fs.existsSync(inputPath);
+        const fault = parseFileFault(c, exists, exists && fs.statSync(inputPath).isDirectory());
+        if (fault !== undefined) fail(c.id, fault);
+        else if (c.expected !== undefined) knownDocument(c, inputPath);
         break;
+      }
       case "facade": {
         if ((category === undefined) === (c.expected === undefined)) {
           fail(c.id, "a facade case needs exactly one of expected and expected-category");
@@ -675,20 +717,7 @@ function main(write: boolean): number {
           if (fs.existsSync(inputPath)) fail(c.id, `${c.input} exists, so it cannot test not-found`);
           break;
         }
-        const expectedFile = c.expected as string;
-        used.add(expectedFile);
-        const text = fs.readFileSync(inputPath, "utf8");
-        const doc: unknown = JSON.parse(text);
-        const facade = documentInput(c, validateDocument);
-        if (!facade) fail(c.id, `input is not valid: ${ajv.errorsText(validateDocument.errors)}`);
-        else expectNone(c, constraints.ofDocument(facade.document));
-        const rootKeys = doc !== null && typeof doc === "object" ? Object.keys(doc) : [];
-        if (rootKeys.length !== 1 || rootKeys[0] !== c["document-type"])
-          fail(c.id, `the root keys of the input are not only document-type "${c["document-type"]}"`);
-        if (!jsonExpected.has(expectedFile)) fail(c.id, `${expectedFile} is not the expected file of a round-trip case`);
-        const expectedPath = path.join(ROOT, expectedFile);
-        if (!fs.existsSync(expectedPath) || fs.readFileSync(expectedPath, "utf8") !== canonicalize(text))
-          fail(c.id, `${expectedFile} is not the canonical form of the input`);
+        knownDocument(c, inputPath);
         break;
       }
       case "assessment-period": {
@@ -807,7 +836,7 @@ function main(write: boolean): number {
   return failures.length ? 1 : 0;
 }
 
-/** The rule scenarios of check 17 (CNS-020). They run the reference evaluator on documents made for the test. */
+/** The rule scenarios of checks 17 (CNS-020) and 18 (PRS-002). They run the reference evaluator on documents made for the test. */
 function selfTest(): number {
   const constraints = CorpusConstraints.load(RELEASE);
   const metadata = { title: "t", "last-modified": "2024-01-02T03:04:05Z", version: "1", "oscal-version": RELEASE };
@@ -822,6 +851,11 @@ function selfTest(): number {
     check({ id: "t", operation: "parse", requirements: [], ...c }, failures);
     return messages.length;
   };
+  const pf = (c: Partial<Case>, exists: boolean, isDirectory: boolean) =>
+    parseFileFault({ id: "t", operation: "parse-file", input: "p", requirements: [], ...c }, exists, isDirectory);
+  const withFile: Partial<Case> = { expected: "e", "document-type": "catalog" };
+  const notFound: Partial<Case> = { "expected-category": "not-found" };
+  const readError: Partial<Case> = { "expected-category": "read-error" };
   const cases: Array<[string, () => boolean | string]> = [
     ["a document with an unknown property name fails two closed entries, each with its id", () => JSON.stringify(bad.map((f) => f.id).sort()) === '["oscal-control-prop-name","oscal-metadata-prop-name-values"]' || JSON.stringify(bad)],
     ["a valid document fails no entry", () => constraints.ofDocument(catalog([{ name: "label", value: "1" }])).length === 0],
@@ -835,6 +869,9 @@ function selfTest(): number {
     ["CNS-020.02: a valid input that fails an entry fails the check", () => run(expectNone, {}, bad) === 1 && run(expectNone, {}, []) === 0],
     ["CNS-020: a listed failure that does not occur fails the check", () => run(expectFailures, { "expected-constraints": ["oscal-control-prop-name"] }, []) === 1],
     ["CNS-018.02: a hash element with a short value fails the entry of its algorithm", () => hashFailures.map((f) => f.id).join() === "oscal-check-hash-length-SHA2-3-256" || JSON.stringify(hashFailures)],
+    ["PRS-002.01: a parse-file case with expected needs an existing file and a document type", () => pf(withFile, true, false) === undefined && pf(withFile, false, false) !== undefined && pf(withFile, true, true) !== undefined && pf({ expected: "e" }, true, false) !== undefined],
+    ["PRS-002: a parse-file case has exactly one of expected and expected-category", () => pf({}, true, false) !== undefined && pf({ ...withFile, "expected-category": "not-found" }, false, false) !== undefined],
+    ["PRS-002.02: a not-found case needs a missing path, and a read-error case needs a directory", () => pf(notFound, false, false) === undefined && pf(notFound, true, false) !== undefined && pf(readError, true, true) === undefined && pf(readError, true, false) !== undefined && pf({ "expected-category": "parse-error" }, true, false) !== undefined],
     ["CNS-018: an element type without a definition gives no failure", () => constraints.ofElement("no-such-type", {}).length === 0],
   ];
   let failed = 0;

@@ -1858,15 +1858,29 @@
     },
     {
       "capability": "document-parsing",
-      "gap": 108,
-      "id": "PRS-002.01"
+      "corpus": [
+        "parse-file/valid-file"
+      ],
+      "id": "PRS-002.01",
+      "self-test": [
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "PRS-002.01: a parse-file case with expected needs an existing file and a document type"
+        }
+      ]
     },
     {
       "capability": "document-parsing",
       "corpus": [
         "parse-file/missing-file"
       ],
-      "id": "PRS-002.02"
+      "id": "PRS-002.02",
+      "self-test": [
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "PRS-002.02: a not-found case needs a missing path, and a read-error case needs a directory"
+        }
+      ]
     },
     {
       "capability": "document-parsing",
