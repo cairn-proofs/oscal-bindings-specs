@@ -1879,8 +1879,13 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 105,
-      "id": "NAM-019.02"
+      "id": "NAM-019.02",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "NAM-019.02 no tag holds a manifest: pass without comparison"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",

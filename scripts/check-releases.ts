@@ -387,7 +387,7 @@ function selfTest(): number {
     const r = check(git, { [N]: released, [S]: "{}" }, "0.8.1+oscal.1.2.3");
     return (r.failures.length === 0 && r.lines.some((l) => l.includes("compared with v0.2.0"))) || JSON.stringify(r);
   });
-  test("no tag holds a manifest: pass without comparison", () => {
+  test("NAM-019.02 no tag holds a manifest: pass without comparison", () => {
     const r = check(fakeGit({ tags: { "v0.1.0+oscal.1.2.3": { files: { [S]: "{}" } } } }), { [N]: released, [S]: "{}" }, "0.2.0+oscal.1.2.3");
     return (r.failures.length === 0 && r.lines.some((l) => l.includes("nothing to compare"))) || JSON.stringify(r);
   });
