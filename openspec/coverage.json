@@ -1612,8 +1612,13 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 93,
-      "id": "NAM-001.01"
+      "id": "NAM-001.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-001.01 definition identified by its definition pointer"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
@@ -1627,8 +1632,21 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 94,
-      "id": "NAM-003.01"
+      "id": "NAM-003.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-003.01 a name with - fails"
+        },
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-003.01 a name with a quote fails"
+        },
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-003.01 a name with a space fails"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
@@ -1642,8 +1660,13 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 94,
-      "id": "NAM-003.03"
+      "id": "NAM-003.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-003.03 a name with a final newline fails"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
@@ -1677,13 +1700,23 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 95,
-      "id": "NAM-005.03"
+      "id": "NAM-005.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-005.03 a name change is an override edit"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
-      "gap": 96,
-      "id": "NAM-006.01"
+      "id": "NAM-006.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-006.01 hand edit of the manifest fails the check"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
@@ -1697,8 +1730,13 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 96,
-      "id": "NAM-006.03"
+      "id": "NAM-006.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-006.03 edit of a previous release manifest fails the check"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
@@ -1780,43 +1818,83 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 97,
-      "id": "NAM-009.03"
+      "id": "NAM-009.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-009.03 scalar definition with an enum has an entry"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
-      "gap": 97,
-      "id": "NAM-009.04"
+      "id": "NAM-009.04",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-009.04 scalar definition without an enum has no entry"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
-      "gap": 98,
-      "id": "NAM-010.01"
+      "id": "NAM-010.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-010.01 document entry records its body field"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
-      "gap": 98,
-      "id": "NAM-010.02"
+      "id": "NAM-010.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-010.02 union entry records each branch"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
-      "gap": 98,
-      "id": "NAM-010.03"
+      "id": "NAM-010.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-010.03 enum entry records whether it is open"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
-      "gap": 98,
-      "id": "NAM-010.04"
+      "id": "NAM-010.04",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-010.04 single-or-many entry records its item type"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
-      "gap": 99,
-      "id": "NAM-011.01"
+      "id": "NAM-011.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-011.01 enum entry holds no enum value"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
-      "gap": 99,
-      "id": "NAM-011.02"
+      "id": "NAM-011.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-011.02 object entry holds no field name"
+        }
+      ]
     },
     {
       "by-design": "The rule applies to a consumer of the manifest, which no store script can observe.",
@@ -1845,8 +1923,17 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 100,
-      "id": "NAM-013.02"
+      "id": "NAM-013.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-013.02 an unknown member fails in an entry of each kind"
+        },
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-013.02 an unknown member of an entry fails"
+        }
+      ]
     },
     {
       "by-design": "The rule applies to a consumer of the manifest, which no store script can observe.",
@@ -1875,13 +1962,23 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 101,
-      "id": "NAM-015.03"
+      "id": "NAM-015.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-015.03 explicit merge with an unknown pointer fails"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
-      "gap": 102,
-      "id": "NAM-016.01"
+      "id": "NAM-016.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-016.01 previous manifest with a wrong schema hash"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
@@ -1895,13 +1992,23 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 103,
-      "id": "NAM-017.02"
+      "id": "NAM-017.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-017.02 each dropped name is reported"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
-      "gap": 104,
-      "id": "NAM-018.01"
+      "id": "NAM-018.01",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "NAM-018.01 highest precedence tag is the latest release"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
@@ -1923,12 +2030,19 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 105,
-      "id": "NAM-019.02"
+      "id": "NAM-019.02",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "NAM-019.02 no tag holds a manifest: pass without comparison"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
-      "gap": 106,
+      "corpus": [
+        "round-trip/group-without-distinguishing-property"
+      ],
       "id": "NAM-020.01"
     },
     {

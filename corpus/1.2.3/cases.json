@@ -119,6 +119,15 @@
       "notes": "Written for this corpus. The base document of each invalid case."
     },
     {
+      "id": "round-trip/group-without-distinguishing-property",
+      "operation": "round-trip",
+      "input": "documents/valid/group-without-distinguishing-property.json",
+      "document-type": "catalog",
+      "expected": "expected/group-without-distinguishing-property.json",
+      "requirements": ["NAM-020.01"],
+      "notes": "Written for this corpus. The group holds a title and neither groups nor controls, so it conforms to both branches of the catalog group union."
+    },
+    {
       "id": "round-trip/datetime-forms",
       "operation": "round-trip",
       "input": "documents/valid/datetime-forms.json",

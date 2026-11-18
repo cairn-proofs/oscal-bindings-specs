@@ -7,9 +7,10 @@
  *
  *   npm run names:write        regenerate each names.json
  *   npm run names:check        validate each file, regenerate in memory, and compare with the committed names.json
- *   npm run names:self-test    run the rule scenarios on small schemas in memory
+ *   npm run names:self-test    run the rule scenarios on small schemas in memory, and on small stores in a temporary directory
  */
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import {
   derive,
@@ -83,6 +84,18 @@ export function runReleases(root = "."): ReleaseRun[] {
   return runs;
 }
 
+/** The problems of the committed names.json of a release: it does not validate, or it differs from the generated text. */
+export function committedProblems(root: string, release: string, output: string): string[] {
+  const file = path.join(root, "manifest", release, "names.json");
+  const committed = fs.existsSync(file) ? fs.readFileSync(file, "utf8") : undefined;
+  const schemaBytes = fs.readFileSync(path.join(root, "schemas", release, SCHEMA_FILE));
+  const problems = committed === undefined ? [`${file} does not exist`] : validateManifest(JSON.parse(committed), schemaBytes, release);
+  if (committed !== undefined && committed !== output) {
+    problems.push(`${file} differs from the generator output. Edit overrides.json and run npm run names:write.`);
+  }
+  return problems;
+}
+
 function main(mode: "write" | "check"): number {
   const runs = runReleases();
   let failed = 0;
@@ -100,12 +113,7 @@ function main(mode: "write" | "check"): number {
       console.log(`${run.release}: wrote ${file} (${(JSON.parse(run.output) as Manifest).types.length} types)`);
       continue;
     }
-    const committed = fs.existsSync(file) ? fs.readFileSync(file, "utf8") : undefined;
-    const schemaBytes = fs.readFileSync(path.join("schemas", run.release, SCHEMA_FILE));
-    const problems = committed === undefined ? [`${file} does not exist`] : validateManifest(JSON.parse(committed), schemaBytes, run.release);
-    if (committed !== undefined && committed !== run.output) {
-      problems.push(`${file} differs from the generator output. Edit overrides.json and run npm run names:write.`);
-    }
+    const problems = committedProblems(".", run.release, run.output);
     for (const p of problems) console.error(`${run.release}: ${p}`);
     if (problems.length) failed++;
     else console.log(`${run.release}: ${file} matches the generator output`);
@@ -362,6 +370,77 @@ function selfTest(): number {
   test("override name replaces a rule-derived name", () =>
     nameAt(run(schemaOf({ [hash]: obj({ algorithm: openEnum("SHA-256") }) }), { names: { [`${D(hash)}/properties/algorithm/anyOf/1`]: "DigestAlgorithm" } }), `${D(hash)}/properties/algorithm/anyOf/1`) ===
     "DigestAlgorithm");
+  test("NAM-005.03 a name change is an override edit", () => {
+    const schema = schemaOf({ [hash]: obj({ algorithm: openEnum("SHA-256") }) });
+    const site = `${D(hash)}/properties/algorithm/anyOf/1`;
+    const before = run(schema);
+    const after = run(schema, { names: { [site]: "DigestAlgorithm" } });
+    if (before.manifest === undefined || after.manifest === undefined) return JSON.stringify([before.failures, after.failures]);
+    const text = serialize(after.manifest as unknown as Json);
+    return (
+      nameAt(before, site) === "HashAlgorithm" &&
+      nameAt(after, site) === "DigestAlgorithm" &&
+      text.includes('"name": "DigestAlgorithm"') &&
+      !text.includes("HashAlgorithm")
+    );
+  });
+  test("NAM-009.03 scalar definition with an enum has an entry", () => {
+    const e = entryNamed(run(schemaOf({ [riskStatus]: { anyOf: [ref("TokenDatatype"), { enum: ["open", "closed"] }] } })), "RiskStatus");
+    const real = committedEntry("RiskStatus");
+    return (e?.kind === "enum" && real?.kind === "enum" && real.sites[0] === `${D(riskStatus)}/anyOf/1`) || JSON.stringify([e, real]);
+  });
+  test("NAM-009.04 scalar definition without an enum has no entry", () => {
+    const constrained = "oscal-complete-oscal-metadata:email-address";
+    const wrapped = "oscal-complete-oscal-metadata:remarks";
+    const r = run(schemaOf({ [constrained]: { type: "string", pattern: "^.+@.+$", minLength: 1 }, [wrapped]: { $ref: "#/definitions/StringDatatype" }, [hash]: obj({}) }));
+    const holds = (site: string) => r.manifest?.types.some((t) => t.sites.some((p) => p === site || p.startsWith(`${site}/`)));
+    return (r.manifest !== undefined && holds(D(hash)) === true && holds(D(constrained)) === false && holds(D(wrapped)) === false) || JSON.stringify(r.failures);
+  });
+  const sameJson = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b);
+  test("NAM-010.01 document entry records its body field", () => {
+    const e = entryNamed(run(schemaOf({ "oscal-complete-oscal-catalog:system-security-plan": obj({}) }, ["system-security-plan"])), "SystemSecurityPlanDocument");
+    const real = committedEntry("SystemSecurityPlanDocument");
+    return (e?.kind === "document" && e["body-field"] === "system-security-plan" && real?.kind === "document" && real["body-field"] === "system-security-plan") || JSON.stringify([e, real]);
+  });
+  test("NAM-010.02 union entry records each branch", () => {
+    const groupSchema = schemaOf({
+      [group]: { type: "object", anyOf: [{ properties: { title: str, groups: list(ref(group)) } }, { properties: { title: str, controls: list(str) } }] },
+    });
+    const branches = (e: Manifest["types"][number] | undefined, prefix: string) =>
+      sameJson(
+        [...(e?.variants ?? [])].sort((a, b) => a.property.localeCompare(b.property)).map((v) => ({ property: v.property, type: v.type })),
+        [
+          { property: "controls", type: `${prefix}WithControls` },
+          { property: "groups", type: `${prefix}WithGroups` },
+        ],
+      );
+    const e = entryNamed(run(groupSchema), "Group");
+    const real = committedEntry("CatalogGroup");
+    return (e?.kind === "union" && real?.kind === "union" && branches(e, "Group") && branches(real, "CatalogGroup")) || JSON.stringify([e, real]);
+  });
+  test("NAM-010.03 enum entry records whether it is open", () => {
+    const e = entryNamed(run(schemaOf({ [hash]: obj({ algorithm: openEnum("SHA-256") }) })), "HashAlgorithm");
+    const real = committedEntry("HashAlgorithm");
+    return (e?.kind === "enum" && e.closed === false && real?.kind === "enum" && real.closed === false) || JSON.stringify([e, real]);
+  });
+  test("NAM-010.04 single-or-many entry records its item type", () => {
+    const e = entryNamed(run(schemaOf({ [mapping]: obj({ uuid: str }), [mc]: obj({ mappings: { anyOf: [ref(mapping), { type: "array", minItems: 1, items: ref(mapping) }] } }) })), "MappingCollectionMappings");
+    const real = committedEntry("MappingCollectionMappings");
+    return (e?.kind === "single-or-many" && e.item === "Mapping" && real?.kind === "single-or-many" && real.item === "Mapping") || JSON.stringify([e, real]);
+  });
+  const members = (e: Manifest["types"][number] | undefined) => Object.keys(e ?? {}).sort();
+  test("NAM-011.01 enum entry holds no enum value", () => {
+    const e = entryNamed(run(schemaOf({ [hash]: obj({ algorithm: openEnum("SHA-256") }) })), "HashAlgorithm");
+    const real = committedEntry("HashAlgorithm");
+    const keys = ["closed", "kind", "name", "sites"];
+    return (sameJson(members(e), keys) && sameJson(members(real), keys) && !JSON.stringify([e, real]).includes("SHA-256")) || JSON.stringify([e, real]);
+  });
+  test("NAM-011.02 object entry holds no field name", () => {
+    const e = entryNamed(run(schemaOf({ [hash]: obj({ algorithm: openEnum("SHA-256"), value: str }) })), "Hash");
+    const real = committedEntry("Hash");
+    const keys = ["kind", "name", "sites"];
+    return (sameJson(members(e), keys) && sameJson(members(real), keys) && !JSON.stringify([e, real]).includes("algorithm")) || JSON.stringify([e, real]);
+  });
   test("MDL-017.01 override name replaces a rule-derived name", () => {
     const s = schemaOf({ [risk]: obj({ "risk-log": obj({ start: str }) }) });
     return nameAt(run(s), riskLog) === "RiskRiskLog" && nameAt(run(s, { names: { [riskLog]: "RiskLog" } }), riskLog) === "RiskLog";
@@ -380,6 +459,19 @@ function selfTest(): number {
     return entryNamed(r, "OscalDocument")?.kind === "document-union" && entryNamed(r, "MappingCollectionMappings")?.kind === "single-or-many";
   });
   test("lists of references need no singular name", () => run(schemaOf({ [hash]: obj({ links: list(ref(hash)) }) })).manifest !== undefined);
+
+  // The committed manifest of OSCAL 1.2.3, for the scenarios that name an entry of it.
+  const committed = JSON.parse(fs.readFileSync("manifest/1.2.3/names.json", "utf8")) as Manifest;
+  const committedEntry = (name: string) => committed.types.find((t) => t.name === name);
+  test("NAM-001.01 definition identified by its definition pointer", () => {
+    const pointer = D(hash);
+    const derived = entryNamed(run(schemaOf({ [hash]: obj({ algorithm: openEnum("SHA-256") }) })), "Hash");
+    const real = committedEntry("Hash");
+    return (
+      (JSON.stringify(derived?.sites) === JSON.stringify([pointer]) && JSON.stringify(real?.sites) === JSON.stringify([pointer]) && pointer === "#/definitions/oscal-complete-oscal-metadata:hash") ||
+      JSON.stringify([derived?.sites, real?.sites])
+    );
+  });
 
   // Task 2.4: merges.
   const parties = "oscal-complete-oscal-metadata:metadata";
@@ -483,6 +575,10 @@ function selfTest(): number {
   test("NAM-015.01 override with an unknown pointer fails", () => failsWith(run(schemaOf({}), { names: { "#/definitions/nope": "Nope" } }), "#/definitions/nope does not resolve"));
   test("NAM-015.02 unused override fails", () =>
     failsWith(run(schemaOf({ [hash]: obj({ algorithm: openEnum("SHA-256") }) }), { names: { [`${D(hash)}/properties/algorithm/anyOf/1`]: "HashAlgorithm" } }), "[unused-override]"));
+  test("NAM-015.03 explicit merge with an unknown pointer fails", () => {
+    const sites = [`${D(mapping)}/properties/method/allOf/1`, "#/definitions/nope"];
+    return failsWith(run(twoMethods, { merges: [sites] }), "#/definitions/nope does not resolve");
+  });
   test("NAM-005 local name on a place that is not a list item fails", () => failsWith(run(schemaOf({ [hash]: obj({}) }), { "local-names": { [D(hash)]: "hash" } }), "[unused-override]"));
   test("NAM-005 merge of one type fails", () => failsWith(run(schemaOf({ [hash]: obj({}) }), { merges: [[D(hash), D(hash)]] }), "[unused-override]"));
 
@@ -503,8 +599,69 @@ function selfTest(): number {
     const r = run(schemaOf({}), {}, prev([{ name: "Gone", kind: "object", sites: [D("oscal-complete-oscal-x:gone")] }]));
     return r.dropped.some((d) => d.startsWith("Gone")) || JSON.stringify(r.dropped);
   });
+  test("NAM-017.02 each dropped name is reported", () => {
+    const r = run(
+      schemaOf({ [hash]: obj({}) }),
+      {},
+      prev([
+        { name: "Gone", kind: "object", sites: [D("oscal-complete-oscal-x:gone")] },
+        { name: "Missing", kind: "object", sites: [D("oscal-complete-oscal-y:missing")] },
+        { name: "Hash", kind: "object", sites: [D(hash)] },
+      ]),
+    );
+    return (r.dropped.length === 2 && r.dropped.some((d) => d.startsWith("Gone")) && r.dropped.some((d) => d.startsWith("Missing"))) || JSON.stringify(r.dropped);
+  });
   test("NAM-007 override name changes a pinned name", () =>
     nameAt(run(schemaOf({ [hash]: obj({}) }), { names: { [D(hash)]: "Digest" } }, prev([{ name: "Hash", kind: "object", sites: [D(hash)] }])), D(hash)) === "Digest");
+
+  // A store on disk in a temporary directory, for the scenarios of the checks that read the store. Each release holds
+  // the generated manifest, and `tamper` can change the committed copy of a release.
+  const withStore = <T>(releases: string[], schema: string, tamper: (release: string, manifest: Manifest) => Manifest, fn: (root: string) => T): T => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "names-store-"));
+    try {
+      let previous: Manifest | undefined;
+      for (const release of releases) {
+        fs.mkdirSync(path.join(root, "schemas", release), { recursive: true });
+        fs.mkdirSync(path.join(root, "manifest", release), { recursive: true });
+        fs.writeFileSync(path.join(root, "schemas", release, SCHEMA_FILE), schema);
+        fs.writeFileSync(path.join(root, "manifest", release, "overrides.json"), JSON.stringify(emptyOverrides(release)));
+        const manifest = derive({ release, schemaFile: SCHEMA_FILE, schemaBytes: schema, overrides: emptyOverrides(release), previous }).manifest;
+        if (manifest === undefined) throw new Error("the test schema gives no manifest");
+        fs.writeFileSync(path.join(root, "manifest", release, "names.json"), serialize(tamper(release, structuredClone(manifest)) as unknown as Json));
+        previous = manifest;
+      }
+      return fn(root);
+    } finally {
+      fs.rmSync(root, { recursive: true, force: true });
+    }
+  };
+  const storeSchema = schemaOf({ [hash]: obj({ algorithm: openEnum("SHA-256") }), [sspStatus]: obj({}) });
+  const renameHash = (m: Manifest): Manifest => {
+    m.types.find((t) => t.name === "Hash")!.name = "Digest";
+    return m;
+  };
+  const problemsOf = (root: string, release: string) => committedProblems(root, release, runReleases(root).find((r) => r.release === release)!.output!);
+  test("NAM-006.01 hand edit of the manifest fails the check", () => {
+    const edited = withStore(["1.2.3"], storeSchema, (_r, m) => renameHash(m), (root) => problemsOf(root, "1.2.3"));
+    const clean = withStore(["1.2.3"], storeSchema, (_r, m) => m, (root) => problemsOf(root, "1.2.3"));
+    return (clean.length === 0 && edited.length === 1 && edited[0].includes("differs from the generator output")) || JSON.stringify([clean, edited]);
+  });
+  test("NAM-006.03 edit of a previous release manifest fails the check", () => {
+    const problems = withStore(["1.2.2", "1.2.3"], storeSchema, (r, m) => (r === "1.2.2" ? renameHash(m) : m), (root) => ({
+      previous: problemsOf(root, "1.2.2"),
+    }));
+    return (problems.previous.length === 1 && problems.previous[0].includes("1.2.2") && problems.previous[0].includes("differs from the generator output")) || JSON.stringify(problems);
+  });
+
+  test("NAM-016.01 previous manifest with a wrong schema hash", () => {
+    const failuresOf = (tamper: (m: Manifest) => Manifest) =>
+      withStore(["1.2.2", "1.2.3"], storeSchema, (r, m) => (r === "1.2.2" ? tamper(m) : m), (root) => runReleases(root).find((r) => r.release === "1.2.3")!.failures);
+    const wrong = failuresOf((m) => ({ ...m, schema: { ...m.schema, sha256: "0".repeat(64) } }));
+    const right = failuresOf((m) => m);
+    return (
+      (right.length === 0 && wrong.length === 1 && wrong[0].includes("previous manifest") && wrong[0].includes("schema.sha256 does not match")) || JSON.stringify([right, wrong])
+    );
+  });
 
   // Task 2.7: writer.
   test("NAM-006.02 generation is reproducible", () => {
@@ -535,6 +692,8 @@ function selfTest(): number {
       { name: "HashAlgorithm", kind: "enum", closed: false, sites: [`${D(hash)}/properties/algorithm/anyOf/1`] },
       { name: "MappingCollectionMappings", kind: "single-or-many", item: "Mapping", sites: [`${D(mc)}/properties/mappings`] },
       { name: "SystemSecurityPlanDocument", kind: "document", "body-field": "system-security-plan", sites: ["#/oneOf/4"] },
+      { name: "Hash", kind: "object", sites: [D(hash)] },
+      { name: "OscalDocument", kind: "document-union", members: ["SystemSecurityPlanDocument"], sites: ["#"] },
     ],
   };
   const schemaOnly = (data: unknown) => validateManifest(data, "{}", "1.2.3").filter((f) => f.startsWith("[json-schema]"));
@@ -544,13 +703,18 @@ function selfTest(): number {
     return schemaOnly(m);
   };
   test("names.schema: the D4 sketch passes", () => schemaOnly(sketch).length === 0 || JSON.stringify(schemaOnly(sketch)));
-  test("names.schema: a name with a final newline fails", () => mutate((m) => (m.types[1].name = "HashAlgorithm\n")).length > 0);
-  test("names.schema: a name with - fails", () => mutate((m) => (m.types[1].name = "Bad-Name")).length > 0);
-  test("names.schema: a name with a quote fails", () => mutate((m) => (m.types[1].name = 'Bad"Name')).length > 0);
+  test("NAM-003.03 a name with a final newline fails", () => mutate((m) => (m.types[1].name = "HashAlgorithm\n")).length > 0);
+  test("NAM-003.01 a name with - fails", () => mutate((m) => (m.types[1].name = "Bad-Name")).length > 0);
+  test("NAM-003.01 a name with a quote fails", () => mutate((m) => (m.types[1].name = 'Bad"Name')).length > 0);
+  test("NAM-003.01 a name with a space fails", () => mutate((m) => (m.types[1].name = "Bad Name")).length > 0);
   test("NAM-004.01 an entry without a kind fails", () => mutate((m) => delete (m.types[1] as Partial<Manifest["types"][number]>).kind).length > 0);
   test("NAM-013.01 schema file name with a path fails", () => mutate((m) => (m.schema.file = "../x.json")).length > 0);
   test("names.schema: a pointer with % fails", () => mutate((m) => (m.types[1].sites = ["#/definitions/a%20b"])).length > 0);
-  test("names.schema: an unknown member fails", () => mutate((m) => ((m.types[1] as unknown as Schema).extra = 1)).length > 0);
+  test("NAM-013.02 an unknown member of an entry fails", () => mutate((m) => ((m.types[1] as unknown as Schema).extra = 1)).length > 0);
+  test("NAM-013.02 an unknown member fails in an entry of each kind", () => {
+    const passed = sketch.types.map((_, i) => mutate((m) => ((m.types[i] as unknown as Schema).extra = 1)).length > 0);
+    return passed.every(Boolean) || JSON.stringify(passed);
+  });
   test("NAM-021.01 a manifest that is not an object, or has no format member, gives one manifest failure", () => {
     const outs = [validateManifest([], "{}", "1.2.3"), validateManifest("x", "{}", "1.2.3"), validateManifest(null, "{}", "1.2.3"), validateManifest((({ format: _f, ...rest }) => rest)(sketch), "{}", "1.2.3")];
     return outs.every((o) => o.length === 1 && o[0].startsWith("[manifest]")) || JSON.stringify(outs);
