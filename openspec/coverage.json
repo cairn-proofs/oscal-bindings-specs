@@ -1727,13 +1727,23 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 99,
-      "id": "NAM-011.01"
+      "id": "NAM-011.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-011.01 enum entry holds no enum value"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
-      "gap": 99,
-      "id": "NAM-011.02"
+      "id": "NAM-011.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-011.02 object entry holds no field name"
+        }
+      ]
     },
     {
       "by-design": "The rule applies to a consumer of the manifest, which no store script can observe.",

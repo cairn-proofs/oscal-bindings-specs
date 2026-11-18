@@ -394,6 +394,19 @@ function selfTest(): number {
     const real = committedEntry("MappingCollectionMappings");
     return (e?.kind === "single-or-many" && e.item === "Mapping" && real?.kind === "single-or-many" && real.item === "Mapping") || JSON.stringify([e, real]);
   });
+  const members = (e: Manifest["types"][number] | undefined) => Object.keys(e ?? {}).sort();
+  test("NAM-011.01 enum entry holds no enum value", () => {
+    const e = entryNamed(run(schemaOf({ [hash]: obj({ algorithm: openEnum("SHA-256") }) })), "HashAlgorithm");
+    const real = committedEntry("HashAlgorithm");
+    const keys = ["closed", "kind", "name", "sites"];
+    return (sameJson(members(e), keys) && sameJson(members(real), keys) && !JSON.stringify([e, real]).includes("SHA-256")) || JSON.stringify([e, real]);
+  });
+  test("NAM-011.02 object entry holds no field name", () => {
+    const e = entryNamed(run(schemaOf({ [hash]: obj({ algorithm: openEnum("SHA-256"), value: str }) })), "Hash");
+    const real = committedEntry("Hash");
+    const keys = ["kind", "name", "sites"];
+    return (sameJson(members(e), keys) && sameJson(members(real), keys) && !JSON.stringify([e, real]).includes("algorithm")) || JSON.stringify([e, real]);
+  });
   test("empty object definition is an object type", () => entryNamed(run(schemaOf({ "oscal-complete-oscal-control-common:include-all": obj({}) })), "IncludeAll")?.kind === "object");
   test("scalar definition has no entry", () => entryNamed(run(schemaOf({ "oscal-complete-oscal-metadata:remarks": str })), "Remarks") === undefined);
   test("lists of references need no singular name", () => run(schemaOf({ [hash]: obj({ links: list(ref(hash)) }) })).manifest !== undefined);
