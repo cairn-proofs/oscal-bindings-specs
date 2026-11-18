@@ -234,6 +234,12 @@ function selfTest(): number {
     const r = run(schemaOf({ [cdci]: obj({ a: str }), [sspci]: obj({ b: str }) }));
     return nameAt(r, D(cdci)) === "ComponentDefinitionControlImplementation" && nameAt(r, D(sspci)) === "SspControlImplementation";
   });
+  test("MDL-020.01 clashing definitions are not merged", () => {
+    const r = run(schemaOf({ [cdci]: obj({ a: str }), [sspci]: obj({ b: str }) }));
+    const a = entryNamed(r, "ComponentDefinitionControlImplementation");
+    const b = entryNamed(r, "SspControlImplementation");
+    return a?.sites.length === 1 && b?.sites.length === 1 && a.sites[0] === D(cdci) && b.sites[0] === D(sspci);
+  });
   test("MDL-013.02 same local name with different structure is not deduplicated", () => {
     const r = run(schemaOf({ [cdci]: obj({ a: str }), [sspci]: obj({ a: obj({ x: str }) }) }));
     return r.manifest !== undefined && r.manifest.types.filter((t) => t.name.endsWith("ControlImplementation")).length === 2 && r.manifest.types.every((t) => t.sites.length === 1 || t.kind === "document-union");

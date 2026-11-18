@@ -1472,8 +1472,13 @@
     },
     {
       "capability": "model-derivation",
-      "gap": 91,
-      "id": "MDL-020.01"
+      "id": "MDL-020.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-020.01 clashing definitions are not merged"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
