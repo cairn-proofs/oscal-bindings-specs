@@ -796,8 +796,17 @@
     },
     {
       "capability": "constraint-validation",
-      "gap": 76,
-      "id": "CNS-023.01"
+      "id": "CNS-023.01",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-023.01: the element context queries of mapping-collection-mappings are those of mapping"
+        },
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-023.01: the queries apply to each of the two mappings of a list, on an array that holds only the mapping"
+        }
+      ]
     },
     {
       "capability": "constraint-validation",

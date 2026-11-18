@@ -284,6 +284,22 @@ function selfTest(): number {
     return r.length === 0 || JSON.stringify(r);
   });
 
+  // CNS-023.01: the element queries of mapping-collection-mappings are those of mapping, and a list is checked item by item.
+  test("CNS-023.01: the element context queries of mapping-collection-mappings are those of mapping", () => {
+    const withQueries = entries.filter((e) => e.context.elements["mapping"] !== undefined || e.context.elements["mapping-collection-mappings"] !== undefined);
+    return (
+      (withQueries.length > 0 && withQueries.every((e) => JSON.stringify(e.context.elements["mapping"]) === JSON.stringify(e.context.elements["mapping-collection-mappings"]))) ||
+      "an entry has other queries for the single-or-many type than for its item type"
+    );
+  });
+  test("CNS-023.01: the queries apply to each of the two mappings of a list, on an array that holds only the mapping", () => {
+    const list = [{ uuid: "a" }, { uuid: "b", props: [{ name: "bogus", value: "v" }] }];
+    const form = { element: "mapping-collection-mappings" };
+    const perItem = list.map((item) => evaluateManifest(entries, [item], form).map((f) => `${f.id} ${f.location}`));
+    return (
+      JSON.stringify(perItem) === JSON.stringify([[], ["oscal-metadata-prop-name-values $[0]['props'][0]['name']"]]) || JSON.stringify(perItem)
+    );
+  });
   test("CNS-007: the element types of kind document hold context nodes",() => one("oscal-catalog-parts").context.elements["catalog-document"] !== undefined);
 
   // CNS-019, CNS-022: the checks against the reference evaluator
