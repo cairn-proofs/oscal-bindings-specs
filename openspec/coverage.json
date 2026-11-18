@@ -1549,8 +1549,13 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 95,
-      "id": "NAM-005.03"
+      "id": "NAM-005.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-005.03 a name change is an override edit"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",

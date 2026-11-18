@@ -328,6 +328,20 @@ function selfTest(): number {
   test("override name replaces a rule-derived name", () =>
     nameAt(run(schemaOf({ [hash]: obj({ algorithm: openEnum("SHA-256") }) }), { names: { [`${D(hash)}/properties/algorithm/anyOf/1`]: "DigestAlgorithm" } }), `${D(hash)}/properties/algorithm/anyOf/1`) ===
     "DigestAlgorithm");
+  test("NAM-005.03 a name change is an override edit", () => {
+    const schema = schemaOf({ [hash]: obj({ algorithm: openEnum("SHA-256") }) });
+    const site = `${D(hash)}/properties/algorithm/anyOf/1`;
+    const before = run(schema);
+    const after = run(schema, { names: { [site]: "DigestAlgorithm" } });
+    if (before.manifest === undefined || after.manifest === undefined) return JSON.stringify([before.failures, after.failures]);
+    const text = serialize(after.manifest as unknown as Json);
+    return (
+      nameAt(before, site) === "HashAlgorithm" &&
+      nameAt(after, site) === "DigestAlgorithm" &&
+      text.includes('"name": "DigestAlgorithm"') &&
+      !text.includes("HashAlgorithm")
+    );
+  });
   test("empty object definition is an object type", () => entryNamed(run(schemaOf({ "oscal-complete-oscal-control-common:include-all": obj({}) })), "IncludeAll")?.kind === "object");
   test("scalar definition has no entry", () => entryNamed(run(schemaOf({ "oscal-complete-oscal-metadata:remarks": str })), "Remarks") === undefined);
   test("lists of references need no singular name", () => run(schemaOf({ [hash]: obj({ links: list(ref(hash)) }) })).manifest !== undefined);
