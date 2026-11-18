@@ -2359,13 +2359,31 @@
     },
     {
       "capability": "serialization",
-      "gap": 113,
-      "id": "SER-004.02"
+      "id": "SER-004.02",
+      "self-test": [
+        {
+          "script": "scripts/check-canonical-json.ts",
+          "test": "SER-004.02: a different array order gives another canonical form"
+        },
+        {
+          "script": "scripts/check-canonical-json.ts",
+          "test": "SER-004.02: a different key order gives the same canonical form"
+        }
+      ]
     },
     {
       "capability": "serialization",
-      "gap": 113,
-      "id": "SER-004.03"
+      "id": "SER-004.03",
+      "self-test": [
+        {
+          "script": "scripts/check-canonical-json.ts",
+          "test": "SER-004.03: different whitespace gives the same canonical form"
+        },
+        {
+          "script": "scripts/check-canonical-json.ts",
+          "test": "SER-004.03: whitespace inside a string value is kept"
+        }
+      ]
     },
     {
       "capability": "serialization",

@@ -18,6 +18,11 @@ const cases: Array<[string, () => string, string]> = [
   ["key order by UTF-16 code units", () => canonicalize('{"\\ud83d\\ude00":1,"\\ufb33":2,"a":3,"B":4}'), '{"B":4,"a":3,"\ud83d\ude00":1,"\ufb33":2}'],
   ["nested objects sorted, arrays kept", () => canonicalize('{"b":[3,1,2],"a":{"d":1,"c":2}}'), '{"a":{"c":2,"d":1},"b":[3,1,2]}'],
   ["no whitespace", () => canonicalize('{ "a" : [ 1 , 2 ] }'), '{"a":[1,2]}'],
+  // SER-004: two outputs of the same document are equivalent when their canonical forms are the same bytes.
+  ["SER-004.02: a different key order gives the same canonical form", () => (canonicalize('{"b":1,"a":{"d":2,"c":[3,{"f":4,"e":5}]}}') === canonicalize('{"a":{"c":[3,{"e":5,"f":4}],"d":2},"b":1}') ? "equivalent" : "different"), "equivalent"],
+  ["SER-004.02: a different array order gives another canonical form", () => (canonicalize('{"a":[1,2]}') === canonicalize('{"a":[2,1]}') ? "equivalent" : "different"), "different"],
+  ["SER-004.03: different whitespace gives the same canonical form", () => (canonicalize('{"a":[1,2],"b":{"c":"d e"}}') === canonicalize('{\n\t"a" : [ 1,\r\n 2 ] ,\n  "b": { "c" : "d e" }\n}\n') ? "equivalent" : "different"), "equivalent"],
+  ["SER-004.03: whitespace inside a string value is kept", () => (canonicalize('{"a":"d e"}') === canonicalize('{"a":"d  e"}') ? "equivalent" : "different"), "different"],
   ["string escapes", () => canonicalize('"\\u0041\\u000a\\u001f\\""'), '"A\\n\\u001f\\""'],
   // docs/canonical-json.md, Datetimes.
   ["zero offset to Z", () => normalizeDatetime("2024-01-02T03:04:05+00:00"), "2024-01-02T03:04:05Z"],
