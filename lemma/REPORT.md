@@ -59,7 +59,7 @@ Everything worked first time.
 2. **Verify:** `dafny verify --solver-path $Z3 --verify-included-files dafny/Api.dfy`, then the same without the flag on
    `dafny/SpecProps.dfy`. `dafny translate` and `dafny verify` verify only the root file unless
    `--verify-included-files` is given. A translate-only run prints "1 verified", which is misleading.
-3. **Translate:** `dafny translate js|py --no-verify --include-runtime -o build/js/oscal dafny/Api.dfy`. With
+3. **Translate:** `dafny translate js|py --no-verify --include-runtime -o build/js/lemma dafny/Api.dfy`. With
    `--include-runtime` each output stands alone, so the Python runtime is the `_dafny/` copy Dafny emits. The
    `DafnyRuntimePython` 4.11.0 wheel downloads from PyPI but was not needed.
 4. **Strings:** the Dafny 4 default `--unicode-char` was not overridden.
@@ -95,7 +95,7 @@ Everything worked first time.
 1. **Dafny total:** 933 lines.
 2. **Proof to code in `Impl.dfy`:** 169 : 272, about 0.6.
 3. **Spec to implementation (code plus contracts):** 133 : 296.
-4. **Generated JS:** `oscal.js` is 2,976 lines and 88 KB. The runtime is the first 1,188 lines and the generated
+4. **Generated JS:** `lemma.js` is 2,976 lines and 88 KB. The runtime is the first 1,188 lines and the generated
    modules about 1,788.
 5. **Generated Python:** `Spec.py` 396, `Impl.py` 527, `Parser.py` 460, `Api.py` 31, glue 31, which is 1,445 lines.
    With the `_dafny/` runtime (589) and `System_` (20), the total is 2,054 lines and 72 KB.

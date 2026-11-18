@@ -4,7 +4,7 @@ Usage: python3 -I harness/run.py [--out build/results-py.json]"""
 import json, os, sys, time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(HERE, "../build/py/oscal-py"))
+sys.path.insert(0, os.path.join(HERE, "../build/py/lemma-py"))
 sys.setrecursionlimit(10000)
 import _dafny, Spec, Parser, Api  # noqa: E402  (the generated modules)
 

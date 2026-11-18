@@ -4,7 +4,7 @@
 "use strict";
 const fs = require("fs");
 const path = require("path");
-const { _dafny, Spec, Parser, Api } = require(process.env.OSCAL_JS_LIB || "../build/js/oscal_lib.js");
+const { _dafny, Spec, Parser, Api } = require(process.env.LEMMA_JS_LIB || "../build/js/lemma_lib.js");
 
 const ROOT = path.resolve(__dirname, "../..");
 const MANIFEST = path.join(ROOT, "manifest/1.2.3/constraints.json");

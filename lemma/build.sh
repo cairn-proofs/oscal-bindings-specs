@@ -11,12 +11,12 @@ Z3="${Z3:-$PWD/.venv-z3/bin/z3}"
 # 2. Translate. The runtime is included so that each output stands alone.
 rm -rf build/js build/py
 mkdir -p build/js build/py
-dafny translate js --no-verify --include-runtime -o build/js/oscal dafny/Api.dfy
-dafny translate py --no-verify --include-runtime -o build/py/oscal dafny/Api.dfy
+dafny translate js --no-verify --include-runtime -o build/js/lemma dafny/Api.dfy
+dafny translate py --no-verify --include-runtime -o build/py/lemma dafny/Api.dfy
 
 # 3. The JS output runs Main when loaded and exports nothing: cut the last line, export the modules.
-head -n -1 build/js/oscal.js > build/js/oscal_lib.js
-echo 'module.exports = { _dafny, Spec, Impl, Parser, Api };' >> build/js/oscal_lib.js
+head -n -1 build/js/lemma.js > build/js/lemma_lib.js
+echo 'module.exports = { _dafny, Spec, Impl, Parser, Api };' >> build/js/lemma_lib.js
 
 # 4. JS runtime dependency
 [ -d node_modules/bignumber.js ] || npm install --no-audit --no-fund --silent bignumber.js@9.1.2
