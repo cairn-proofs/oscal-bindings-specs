@@ -811,6 +811,15 @@
       "requirements": ["YML-006.02", "ERR-006.01"]
     },
     {
+      "id": "yaml-parse-typed/wrong-document-type",
+      "operation": "yaml-parse-typed",
+      "input": "documents/valid/profile.yaml",
+      "document-type": "catalog",
+      "expected-category": "document-type-mismatch",
+      "requirements": ["YML-007.01", "PRS-003.02", "ERR-005.01"],
+      "notes": "The input is a valid Profile in YAML, and the typed parser is for a Catalog. The input is the same file as the input of yaml-round-trip/profile."
+    },
+    {
       "id": "yaml-parse/syntax-error",
       "operation": "yaml-parse",
       "input": "documents/invalid/yaml-syntax-error.yaml",

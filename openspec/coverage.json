@@ -869,7 +869,8 @@
     {
       "capability": "error-model",
       "corpus": [
-        "parse-typed/wrong-document-type"
+        "parse-typed/wrong-document-type",
+        "yaml-parse-typed/wrong-document-type"
       ],
       "id": "ERR-005.01"
     },
@@ -1866,7 +1867,8 @@
     {
       "capability": "document-parsing",
       "corpus": [
-        "parse-typed/wrong-document-type"
+        "parse-typed/wrong-document-type",
+        "yaml-parse-typed/wrong-document-type"
       ],
       "id": "PRS-003.02"
     },
@@ -2973,7 +2975,9 @@
     },
     {
       "capability": "yaml-documents",
-      "gap": 120,
+      "corpus": [
+        "yaml-parse-typed/wrong-document-type"
+      ],
       "id": "YML-007.01"
     },
     {

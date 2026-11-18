@@ -113,18 +113,20 @@ Each case has these fields:
 8. `yaml-parse`: parse the YAML input with the YAML parse operation. The parser must report `expected-category`.
 9. `yaml-parse-file`: parse the YAML file at the input path with the YAML parse-from-file operation. The path does not
    exist, and the parser must report `expected-category` (`not-found`) and name the path.
-10. `element-types`: request the supported element types. The result must equal the list in `expected`, item by item
+10. `yaml-parse-typed`: parse the YAML input with the typed YAML parser of `document-type`. The parser must report
+    `expected-category`.
+11. `element-types`: request the supported element types. The result must equal the list in `expected`, item by item
    and in the same order.
-11. `build-resource`: build a resource with `arguments`. Then compare the `uuid` of the resource with `expected-uuid`,
+12. `build-resource`: build a resource with `arguments`. Then compare the `uuid` of the resource with `expected-uuid`,
     compare the resource with `expected-element`, or check that the builder reports `expected-category`. When the
     arguments have no `key` and no `identifier`, the builder generates the identifier. `expected-element` then has no
     `uuid`. The runner checks that the `uuid` of the result matches the UUID datatype of the schema, removes `uuid`
     from the result, and compares the rest with `expected-element`.
-12. `build-hash`: build a hash with `arguments`. Compare the hash with `expected-element`, or check that the builder
+13. `build-hash`: build a hash with `arguments`. Compare the hash with `expected-element`, or check that the builder
     reports `expected-category`. A hash with no `algorithm` has the algorithm SHA-256.
-13. `build-rlink`: build an rlink with `arguments`. Compare the rlink with `expected-element`, or check that the builder
+14. `build-rlink`: build an rlink with `arguments`. Compare the rlink with `expected-element`, or check that the builder
     reports `expected-category`. An omitted `media-type` or `hashes` is absent from the result.
-14. `facade`: build the document facade from the input, as `input-form` states:
+15. `facade`: build the document facade from the input, as `input-form` states:
     1. `input-form` is absent: parse the input with the generic parser, and wrap the result in the facade.
     2. `input-form` is `bytes`: build the facade from the raw bytes of the input.
     3. `input-form` is `path`: build the facade from the input path.

@@ -13,7 +13,8 @@
  *    its JSON text is its expected file. A yaml-round-trip case that copies a source names the expected file of a JSON
  *    round-trip case, and --write does not write that file.
  * 8. The reference YAML reader rejects a yaml-parse input, and the notes of the case name the fault code. A
- *    yaml-parse-file case is checked as a parse-file case is (check 6).
+ *    yaml-parse-file case is checked as a parse-file case is (check 6). A yaml-parse-typed case is checked as a
+ *    parse-typed case is, with the reference YAML reader reading its input.
  * 9. Each cited requirement or scenario identifier names a heading in the specs.
  * 10. No case has a `known-defects` field, and the index has no `defect-twins` field. Each binding keeps its own
  *     expected failures (VER-006).
@@ -59,7 +60,7 @@
  *
  *   npm run corpus:check           check the corpus
  *   npm run corpus:write           regenerate each expected file, then check
- *   npm run corpus:self-test       run the rule scenarios of checks 12 and 17
+ *   npm run corpus:self-test       run the rule scenarios of checks 8, 12, 16, and 17
  */
 import { createHash } from "node:crypto";
 import fs from "node:fs";
@@ -98,6 +99,7 @@ const OPERATIONS = [
   "yaml-round-trip",
   "yaml-parse",
   "yaml-parse-file",
+  "yaml-parse-typed",
   "element-types",
   "build-resource",
   "build-hash",
@@ -270,6 +272,12 @@ export function periodMismatches(
   }
   return messages;
 }
+/** A message when `documentType` is not an OSCAL type, or when the input has that root key. Undefined for a type mismatch. */
+export function typeMismatch(documentType: string | undefined, doc: object): string | undefined {
+  if (!DOCUMENT_TYPES.includes(documentType ?? "")) return "document-type is not an OSCAL type";
+  if (Object.hasOwn(doc, documentType ?? "")) return "input is the requested document type";
+  return undefined;
+}
 /** The `input-form` of a case is absent, `bytes`, or `path`. Only a facade case or a yaml-round-trip case has `path`. */
 export function inputFormAllowed(operation: string, form: string | undefined): boolean {
   return form === undefined || form === "bytes" || (form === "path" && (operation === "facade" || operation === "yaml-round-trip"));
@@ -308,7 +316,8 @@ export function documentInput(c: Case, validateDocument: ValidateFunction): Docu
         const document: unknown = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(fs.readFileSync(file)));
         return validateDocument(document) ? { document, expected: c["expected-constraints"] ?? [] } : undefined;
       }
-      case "yaml-round-trip": {
+      case "yaml-round-trip":
+      case "yaml-parse-typed": {
         const result = readYaml(fs.readFileSync(file), validateDocument);
         return result.ok ? { document: result.value, expected: [] } : undefined;
       }
@@ -673,8 +682,8 @@ function main(write: boolean): number {
         const typed = documentInput(c, validateDocument);
         if (!typed) fail(c.id, "input is not valid, so the case would not isolate the type check");
         else expectNone(c, constraints.ofDocument(typed.document));
-        if (!DOCUMENT_TYPES.includes(c["document-type"] ?? "")) fail(c.id, "document-type is not an OSCAL type");
-        else if (Object.hasOwn(doc, c["document-type"] ?? "")) fail(c.id, "input is the requested document type");
+        const mismatch = typeMismatch(c["document-type"], doc);
+        if (mismatch) fail(c.id, mismatch);
         break;
       }
       case "parse-file":
@@ -789,6 +798,17 @@ function main(write: boolean): number {
           fail(c.id, `${c.expected} is not the canonical form of the YAML input`);
         break;
       }
+      case "yaml-parse-typed": {
+        const result = readYaml(fs.readFileSync(inputPath), validateDocument);
+        if (!result.ok) {
+          fail(c.id, `the YAML reader rejects the input (${result.fault}), so the case would not isolate the type check: ${result.detail}`);
+          break;
+        }
+        expectNone(c, constraints.ofDocument(documentInput(c, validateDocument)!.document));
+        const mismatch = typeMismatch(c["document-type"], result.value as object);
+        if (mismatch) fail(c.id, mismatch);
+        break;
+      }
       case "yaml-parse": {
         const result = readYaml(fs.readFileSync(inputPath), validateDocument);
         if (result.ok) {
@@ -870,6 +890,8 @@ function selfTest(): number {
     ["YML-006: a yaml-round-trip case and a facade case can have input-form path, and a parse case cannot", () =>
       inputFormAllowed("yaml-round-trip", "path") && inputFormAllowed("facade", "path") && !inputFormAllowed("parse", "path") && !inputFormAllowed("yaml-parse", "path") &&
       inputFormAllowed("yaml-parse", "bytes") && inputFormAllowed("parse", undefined) && !inputFormAllowed("parse", "text")],
+    ["YML-007: a typed parse case needs an OSCAL type that is not the root key of the input", () =>
+      typeMismatch("catalog", { profile: {} }) === undefined && typeMismatch("catalog", { catalog: {} }) !== undefined && typeMismatch("book", { profile: {} }) !== undefined && typeMismatch(undefined, { profile: {} }) !== undefined],
     ["CNS-018: an element type without a definition gives no failure", () => constraints.ofElement("no-such-type", {}).length === 0],
   ];
   let failed = 0;
