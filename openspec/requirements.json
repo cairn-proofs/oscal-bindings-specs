@@ -562,6 +562,26 @@
       "title": "A constraint failure is a parse failure that names its constraint"
     },
     {
+      "id": "PRS-016",
+      "capability": "document-parsing",
+      "title": "The patterns of the schema decide a value, not its format keyword"
+    },
+    {
+      "id": "PRS-017",
+      "capability": "document-parsing",
+      "title": "A URI value matches the grammar of RFC 3986"
+    },
+    {
+      "id": "PRS-018",
+      "capability": "document-parsing",
+      "title": "An email address holds no control character"
+    },
+    {
+      "id": "PRS-019",
+      "capability": "document-parsing",
+      "title": "A date-time value matches the grammar of RFC 3339"
+    },
+    {
       "id": "SER-001",
       "capability": "serialization",
       "title": "Serialization emits OSCAL property keys"

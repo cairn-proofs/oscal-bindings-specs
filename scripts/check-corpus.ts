@@ -69,14 +69,12 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { Ajv, type ValidateFunction } from "ajv";
-import addFormatsModule from "ajv-formats";
 
 import { canonicalize, normalizeDatetime } from "./canonical-json.js";
+import { addDatatypeFormats } from "./datatype-rules.js";
 import { CorpusConstraints, type EntryFailure } from "./corpus-constraints.js";
 import type { Entry } from "./constraints-lib.js";
 import { checkSchemaForReader, readYaml } from "./yaml-reader.js";
-
-const addFormats = addFormatsModule as unknown as (ajv: Ajv) => Ajv;
 
 const RELEASE = fs.readFileSync("VERSION", "utf8").trim().split("+oscal.")[1];
 const ROOT = `corpus/${RELEASE}`;
@@ -387,7 +385,7 @@ export function loadSchema() {
   };
   checkSchemaForReader(schema);
   const ajv = new Ajv({ allErrors: true, strict: false });
-  addFormats(ajv);
+  addDatatypeFormats(ajv);
   ajv.addSchema(schema);
   return { schema, ajv, validateDocument: ajv.getSchema(schema.$id) as ValidateFunction };
 }

@@ -2570,6 +2570,146 @@
       "id": "PRS-015.03"
     },
     {
+      "capability": "document-parsing",
+      "corpus": [
+        "round-trip/email-forms"
+      ],
+      "id": "PRS-016.01"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/datetime-lowercase-zone"
+      ],
+      "id": "PRS-016.02"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/uri-reference-and-constraint-failure"
+      ],
+      "id": "PRS-016.03"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/uri-reference-space"
+      ],
+      "id": "PRS-017.01"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/uri-reference-invalid-escape"
+      ],
+      "id": "PRS-017.02"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/uri-reference-open-bracket"
+      ],
+      "id": "PRS-017.03"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/uri-reference-trailing-space"
+      ],
+      "id": "PRS-017.04"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/uri-reference-control-character"
+      ],
+      "id": "PRS-017.05"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/uri-space"
+      ],
+      "id": "PRS-017.06"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "round-trip/uri-forms"
+      ],
+      "id": "PRS-017.07"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "element/back-matter-rlink-href-space"
+      ],
+      "id": "PRS-017.08"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "build-rlink/href-space"
+      ],
+      "id": "PRS-017.09"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/uri-reference-non-ascii"
+      ],
+      "id": "PRS-017.10"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/uri-reference-backslash"
+      ],
+      "id": "PRS-017.11"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/uri-reference-trailing-line-feed"
+      ],
+      "id": "PRS-017.12"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/uri-no-path-after-scheme"
+      ],
+      "id": "PRS-017.13"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/email-control-character"
+      ],
+      "id": "PRS-018.01"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "round-trip/email-forms"
+      ],
+      "id": "PRS-018.02"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/email-delete-character"
+      ],
+      "id": "PRS-018.03"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/datetime-two-digit-year"
+      ],
+      "id": "PRS-019.01"
+    },
+    {
       "capability": "serialization",
       "corpus": [
         "round-trip/component-definition"

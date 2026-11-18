@@ -50,19 +50,19 @@
     },
     {
       "id": "oscal-metadata-link-reference-href-datatype-uri-reference",
-      "reason": "The pattern rejects only a value with white space at an end or a line break. The JSON Schema gives `href` the format `uri-reference`, and the schema check of the store rejects each such value."
+      "reason": "The pattern rejects only a value with white space at an end or a line break. PRS-017 requires that `href` matches the production `URI-reference` of RFC 3986. The production allows no white space, so each such value does not conform to the schema."
     },
     {
       "id": "oscal-system-information-pia-datatype-uri-reference",
-      "reason": "The pattern rejects only a value with white space at an end or a line break. The JSON Schema gives `href` the format `uri-reference`, and the schema check of the store rejects each such value."
+      "reason": "The pattern rejects only a value with white space at an end or a line break. PRS-017 requires that `href` matches the production `URI-reference` of RFC 3986. The production allows no white space, so each such value does not conform to the schema."
     },
     {
       "id": "oscal-diagram-datatype-uri-reference",
-      "reason": "The pattern rejects only a value with white space at an end or a line break. The JSON Schema gives `href` the format `uri-reference`, and the schema check of the store rejects each such value."
+      "reason": "The pattern rejects only a value with white space at an end or a line break. PRS-017 requires that `href` matches the production `URI-reference` of RFC 3986. The production allows no white space, so each such value does not conform to the schema."
     },
     {
       "id": "oscal-leveraged-authorization-link-rel-ssp-datatype-uri-reference",
-      "reason": "The pattern rejects only a value with white space at an end or a line break. The JSON Schema gives `href` the format `uri-reference`, and the schema check of the store rejects each such value."
+      "reason": "The pattern rejects only a value with white space at an end or a line break. PRS-017 requires that `href` matches the production `URI-reference` of RFC 3986. The production allows no white space, so each such value does not conform to the schema."
     },
     {
       "id": "oscal-unique-resource-base64-filename",

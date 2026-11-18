@@ -166,6 +166,22 @@
       "notes": "Written for this corpus."
     },
     {
+      "id": "round-trip/uri-forms",
+      "operation": "round-trip",
+      "input": "documents/valid/uri-forms.json",
+      "document-type": "catalog",
+      "expected": "expected/uri-forms.json",
+      "requirements": ["PRS-017.07"]
+    },
+    {
+      "id": "round-trip/email-forms",
+      "operation": "round-trip",
+      "input": "documents/valid/email-forms.json",
+      "document-type": "catalog",
+      "expected": "expected/email-forms.json",
+      "requirements": ["PRS-016.01", "PRS-018.02"]
+    },
+    {
       "id": "round-trip/open-enum-off-list",
       "operation": "round-trip",
       "input": "documents/valid/open-enum-off-list.json",
@@ -263,6 +279,142 @@
       "expected-category": "parse-error",
       "expected-max-failures": 1,
       "requirements": ["PRS-008.01", "PRS-013"]
+    },
+    {
+      "id": "parse/uri-reference-space",
+      "operation": "parse",
+      "input": "documents/invalid/uri-reference-space.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-017.01"]
+    },
+    {
+      "id": "parse/uri-reference-invalid-escape",
+      "operation": "parse",
+      "input": "documents/invalid/uri-reference-invalid-escape.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-017.02"]
+    },
+    {
+      "id": "parse/uri-reference-open-bracket",
+      "operation": "parse",
+      "input": "documents/invalid/uri-reference-open-bracket.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-017.03"]
+    },
+    {
+      "id": "parse/uri-reference-trailing-space",
+      "operation": "parse",
+      "input": "documents/invalid/uri-reference-trailing-space.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-017.04"]
+    },
+    {
+      "id": "parse/uri-reference-control-character",
+      "operation": "parse",
+      "input": "documents/invalid/uri-reference-control-character.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-017.05"]
+    },
+    {
+      "id": "parse/uri-space",
+      "operation": "parse",
+      "input": "documents/invalid/uri-space.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-017.06"]
+    },
+    {
+      "id": "parse/uri-no-path-after-scheme",
+      "operation": "parse",
+      "input": "documents/invalid/uri-no-path-after-scheme.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-017.13"]
+    },
+    {
+      "id": "parse/uri-reference-non-ascii",
+      "operation": "parse",
+      "input": "documents/invalid/uri-reference-non-ascii.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-017.10"]
+    },
+    {
+      "id": "parse/uri-reference-backslash",
+      "operation": "parse",
+      "input": "documents/invalid/uri-reference-backslash.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-017.11"]
+    },
+    {
+      "id": "parse/uri-reference-trailing-line-feed",
+      "operation": "parse",
+      "input": "documents/invalid/uri-reference-trailing-line-feed.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-017.12"]
+    },
+    {
+      "id": "parse/email-control-character",
+      "operation": "parse",
+      "input": "documents/invalid/email-control-character.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-018.01"]
+    },
+    {
+      "id": "parse/email-delete-character",
+      "operation": "parse",
+      "input": "documents/invalid/email-delete-character.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-018.03"]
+    },
+    {
+      "id": "parse/datetime-lowercase-zone",
+      "operation": "parse",
+      "input": "documents/invalid/datetime-lowercase-zone.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-016.02"]
+    },
+    {
+      "id": "parse/datetime-two-digit-year",
+      "operation": "parse",
+      "input": "documents/invalid/datetime-two-digit-year.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-019.01"]
+    },
+    {
+      "id": "parse/uri-reference-and-constraint-failure",
+      "operation": "parse",
+      "input": "documents/invalid/uri-reference-and-constraint-failure.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-016.03"],
+      "notes": "The href is not a valid URI reference, so the schema reports one failure. The property priority alone gives three constraint failures, which is more than the maximum, so the parse error carries no entry for them."
     },
     {
       "id": "parse/closed-enum-out-of-set",
@@ -531,6 +683,14 @@
       "requirements": ["ELV-001.01", "ELV-002.02"]
     },
     {
+      "id": "element/back-matter-rlink-href-space",
+      "operation": "validate-element",
+      "input": "elements/back-matter-rlink-href-space.json",
+      "element-type": "back-matter",
+      "expected-valid": false,
+      "requirements": ["PRS-017.08"]
+    },
+    {
       "id": "element/back-matter-empty-resources",
       "operation": "validate-element",
       "input": "elements/back-matter-empty-resources.json",
@@ -653,6 +813,13 @@
       "arguments": {"href": "https://example.org/policies/access-control.pdf", "media-type": "application/pdf", "hashes": [{"algorithm": "SHA-256", "value": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"}]},
       "expected-element": {"href": "https://example.org/policies/access-control.pdf", "media-type": "application/pdf", "hashes": [{"algorithm": "SHA-256", "value": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"}]},
       "requirements": ["BMB-002.02"]
+    },
+    {
+      "id": "build-rlink/href-space",
+      "operation": "build-rlink",
+      "arguments": {"href": "a b"},
+      "expected-category": "builder-error",
+      "requirements": ["PRS-017.09"]
     },
     {
       "id": "build-resource/generated-identifier",
