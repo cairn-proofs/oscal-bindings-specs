@@ -101,7 +101,12 @@ operation.
 2. `npm ci`
 3. `npm run check`
 
-`npm run check` runs these checks. CI runs the same command on each pull request.
+`npm run check` runs these checks one after another, and it is the gate to run before a pull request. `npm run check:parallel`
+runs the same steps at the same time, and CI runs it on each pull request. It reads the steps from the `check` script of
+`package.json`, so the list exists in one place. A step that fails stops the start of new steps, and the output of the
+failed step is the first thing that the run prints. `npm run check:parallel -- --jobs <n>` limits the steps that run at
+once, and `npm run check:parallel:self-test` runs its self-test. The longest step, `npm run constraints:check`, sets the
+wall time of a parallel run.
 
 1. The TypeScript typecheck.
 2. The identifier checker and its self-test.
@@ -115,8 +120,9 @@ operation.
 7. The YAML reader self-test. `scripts/yaml-reader.ts` is the reference reader that the corpus check uses for YAML
    inputs.
 8. The corpus check (see [corpus/1.2.3/README.md](corpus/1.2.3/README.md)).
-9. The archive self-test, `npm run archive:self-test`. It builds the archive from `HEAD` and checks that it holds
-   `openspec/requirements.json` and `openspec/traceability.schema.json`.
+9. The archive self-test, `npm run archive:self-test`. It builds the archive from `HEAD` and checks that it holds each
+   file of `metaschema/<release>/`, `openspec/requirements.json`, `openspec/traceability.schema.json`, and the other
+   paths of `CONTENTS`.
 10. The binding link check and its self-test, `npm run binding-links:check`. It fails when a tracked file outside
     `openspec/changes/` links an individual issue or pull request in a binding repository. The binding repositories are
     the repositories in [Known implementations](#known-implementations) and each `oscal-bindings-*` repository other
@@ -132,9 +138,7 @@ operation.
     `openspec/coverage.json` differs from the generator output, or when a scenario has no corpus case, no self-test, and
     no entry in `openspec/scenario-checks.yaml`. `npm run coverage:faults` runs the corpus against faulty evaluators and
     lists the cases that detect each fault. See [CONTRIBUTING.md](CONTRIBUTING.md#change-a-requirement).
-14. The archive self-test, `npm run archive:self-test`: it checks that the archive that `npm run archive` builds from
-    `HEAD` holds each file of `metaschema/<release>/` and the other paths of `CONTENTS`.
-15. `openspec validate --all --strict`.
+14. `openspec validate --all --strict`.
 
 To change a canonical name, edit `manifest/<release>/overrides.json`, run `npm run names:write`, and commit both
 files.
@@ -180,7 +184,7 @@ Open the `.tc.json` file there with the Threat Composer VS Code extension or web
 
 1. Merge the pull request that sets the new version in `VERSION`. See [Version](#version).
 2. Push the tag `v<VERSION>` on that commit of `main`, for example `v0.1.0+oscal.1.2.3`.
-3. CI runs `npm run check`, builds the archive with `npm run archive`, and attaches the archive and `SHA256SUMS` to a
+3. CI runs `npm run check:parallel`, builds the archive with `npm run archive`, and attaches the archive and `SHA256SUMS` to a
    draft GitHub release. CI fails when the tag is not on `main` or does not match `VERSION`.
 4. Review the draft and publish it.
 5. Each binding that calls `pin-move-check.yml` gets its pin-move issue on its next scheduled run. Open the issue by
