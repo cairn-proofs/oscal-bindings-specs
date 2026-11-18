@@ -1,0 +1,23 @@
+{
+  "catalog": {
+    "uuid": "2f6e5c2a-6b0e-4b8e-9a3e-1c7d0b5f4a10",
+    "metadata": {
+      "title": "Minimal catalog",
+      "last-modified": "2024-01-02T03:04:05Z",
+      "version": "1.0",
+      "oscal-version": "1.2.3"
+    },
+    "back-matter": {
+      "resources": [
+        {
+          "uuid": "7b1c3d52-8e4f-4a6b-9c0d-2e5f6a7b8c91",
+          "rlinks": [
+            {
+              "href": "/a\\b"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
