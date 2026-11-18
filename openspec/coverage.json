@@ -1516,8 +1516,13 @@
     },
     {
       "capability": "model-derivation",
-      "gap": 92,
-      "id": "MDL-021.04"
+      "id": "MDL-021.04",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-021.04 each missing singular name is reported"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",

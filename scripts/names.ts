@@ -460,6 +460,15 @@ function selfTest(): number {
   });
   test("MDL-021.01 missing singular name aborts and names the list", () =>
     failsWith(run(schemaOf({ [poam]: obj({ origins: list(obj({ actor: str })) }) })), `the list ${D(poam)}/properties/origins needs`));
+  test("MDL-021.04 each missing singular name is reported", () => {
+    const other = "oscal-complete-oscal-assessment-common:finding";
+    const r = run(schemaOf({ [poam]: obj({ origins: list(obj({ actor: str })) }), [other]: obj({ targets: list(obj({ id: str })) }) }));
+    const missing = r.failures.filter((f) => f.startsWith("[missing-singular]"));
+    return (
+      (r.manifest === undefined && missing.length === 2 && missing.some((f) => f.includes(`${D(poam)}/properties/origins`)) && missing.some((f) => f.includes(`${D(other)}/properties/targets`))) ||
+      JSON.stringify(r.failures)
+    );
+  });
   test("MDL-021.02 branch without a distinguishing property aborts", () =>
     failsWith(run(schemaOf({ [group]: { type: "object", anyOf: [{ properties: { title: str } }, { properties: { title: str } }] } })), `${D(group)}/anyOf/0`));
   test("MDL-021.03 merge of different structures aborts and names both", () => {
