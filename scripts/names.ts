@@ -337,6 +337,17 @@ function selfTest(): number {
     "DigestAlgorithm");
   test("empty object definition is an object type", () => entryNamed(run(schemaOf({ "oscal-complete-oscal-control-common:include-all": obj({}) })), "IncludeAll")?.kind === "object");
   test("scalar definition has no entry", () => entryNamed(run(schemaOf({ "oscal-complete-oscal-metadata:remarks": str })), "Remarks") === undefined);
+  test("MDL-003.01 scalar wrapper has no object entry", () => {
+    const uuidKey = "oscal-complete-oscal-metadata:uuid";
+    const r = run(schemaOf({ [uuidKey]: { type: "string", pattern: "^[0-9A-Fa-f]{8}$" } }));
+    return r.manifest !== undefined && entryNamed(r, "Uuid") === undefined && nameAt(r, D(uuidKey)) === undefined;
+  });
+  test("MDL-003.02 preserved wrappers stay wrappers", () => {
+    const m = "oscal-complete-oscal-mapping:mapping-collection";
+    const mp = "oscal-complete-oscal-mapping-common:mapping";
+    const r = run(schemaOf({ [mp]: obj({ uuid: str }), [m]: obj({ mappings: { anyOf: [ref(mp), { type: "array", minItems: 1, items: ref(mp) }] } }) }));
+    return entryNamed(r, "OscalDocument")?.kind === "document-union" && entryNamed(r, "MappingCollectionMappings")?.kind === "single-or-many";
+  });
   test("lists of references need no singular name", () => run(schemaOf({ [hash]: obj({ links: list(ref(hash)) }) })).manifest !== undefined);
 
   // Task 2.4: merges.

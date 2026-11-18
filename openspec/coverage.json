@@ -1102,13 +1102,23 @@
     },
     {
       "capability": "model-derivation",
-      "gap": 84,
-      "id": "MDL-003.01"
+      "id": "MDL-003.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-003.01 scalar wrapper has no object entry"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
-      "gap": 84,
-      "id": "MDL-003.02"
+      "id": "MDL-003.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-003.02 preserved wrappers stay wrappers"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
