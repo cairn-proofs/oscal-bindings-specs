@@ -1912,7 +1912,9 @@
     },
     {
       "capability": "document-parsing",
-      "gap": 109,
+      "corpus": [
+        "round-trip/component-definition"
+      ],
       "id": "PRS-005.01"
     },
     {
