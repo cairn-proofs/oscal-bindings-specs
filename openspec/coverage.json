@@ -3010,7 +3010,9 @@
     },
     {
       "capability": "yaml-documents",
-      "gap": 121,
+      "corpus": [
+        "yaml-round-trip/minimal-catalog"
+      ],
       "id": "YML-008.03"
     },
     {

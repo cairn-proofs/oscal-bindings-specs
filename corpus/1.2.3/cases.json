@@ -795,6 +795,15 @@
       "notes": "The quoted \"443\" and the plain 443.0 at port-range locations are the number 443. The alias *port at a property value is the string \"443\". The metadata version \"1.0\" stays a string after serialization."
     },
     {
+      "id": "yaml-round-trip/minimal-catalog",
+      "operation": "yaml-round-trip",
+      "input": "documents/valid/minimal-catalog.yaml",
+      "document-type": "catalog",
+      "expected": "expected/minimal-catalog.json",
+      "requirements": ["YML-008.03"],
+      "notes": "The catalog has only its required fields, so every optional field is absent. A serializer that writes an absent field as null gives the string \"null\" at a string location and a parse error at any other location (YML-004.04), so the second parse of the round trip fails. The input is the YAML form of documents/valid/minimal-catalog.json."
+    },
+    {
       "id": "yaml-round-trip/boolean-scalar",
       "operation": "yaml-round-trip",
       "input": "documents/valid/boolean-scalar.yaml",
