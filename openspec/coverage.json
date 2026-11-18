@@ -876,7 +876,8 @@
     {
       "capability": "error-model",
       "corpus": [
-        "parse-file/missing-file"
+        "parse-file/missing-file",
+        "yaml-parse-file/missing-file"
       ],
       "id": "ERR-006.01"
     },
@@ -2958,12 +2959,16 @@
     },
     {
       "capability": "yaml-documents",
-      "gap": 119,
+      "corpus": [
+        "yaml-round-trip/profile-path"
+      ],
       "id": "YML-006.01"
     },
     {
       "capability": "yaml-documents",
-      "gap": 119,
+      "corpus": [
+        "yaml-parse-file/missing-file"
+      ],
       "id": "YML-006.02"
     },
     {

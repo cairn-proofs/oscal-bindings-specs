@@ -691,6 +691,22 @@
       }
     },
     {
+      "id": "yaml-round-trip/profile-path",
+      "operation": "yaml-round-trip",
+      "input": "documents/valid/profile.yaml",
+      "input-form": "path",
+      "document-type": "profile",
+      "expected": "expected/profile.json",
+      "requirements": ["YML-006.01"],
+      "notes": "The YAML parse-from-file operation gets the path of the input. The input is the same file as the input of yaml-round-trip/profile.",
+      "source": {
+        "repository": "https://github.com/usnistgov/oscal-content",
+        "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
+        "path": "examples/profile/yaml/basic_profile.yaml",
+        "sha256": "f6611d2cbcd210f7fd8ab5df95682ca4fe7be1d418c5cb70352693eca8e1af84"
+      }
+    },
+    {
       "id": "yaml-round-trip/component-definition",
       "operation": "yaml-round-trip",
       "input": "documents/valid/component-definition.yaml",
@@ -786,6 +802,13 @@
       "expected": "expected/boolean-scalar.json",
       "requirements": ["YML-004", "YML-008.01"],
       "notes": "The plain scalar true at the as-is location is the boolean true."
+    },
+    {
+      "id": "yaml-parse-file/missing-file",
+      "operation": "yaml-parse-file",
+      "input": "documents/does-not-exist.yaml",
+      "expected-category": "not-found",
+      "requirements": ["YML-006.02", "ERR-006.01"]
     },
     {
       "id": "yaml-parse/syntax-error",

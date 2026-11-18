@@ -12,7 +12,8 @@
  * 7. A yaml-round-trip input reads with the reference YAML reader (scripts/yaml-reader.ts), and the canonical form of
  *    its JSON text is its expected file. A yaml-round-trip case that copies a source names the expected file of a JSON
  *    round-trip case, and --write does not write that file.
- * 8. The reference YAML reader rejects a yaml-parse input, and the notes of the case name the fault code.
+ * 8. The reference YAML reader rejects a yaml-parse input, and the notes of the case name the fault code. A
+ *    yaml-parse-file case is checked as a parse-file case is (check 6).
  * 9. Each cited requirement or scenario identifier names a heading in the specs.
  * 10. No case has a `known-defects` field, and the index has no `defect-twins` field. Each binding keeps its own
  *     expected failures (VER-006).
@@ -43,8 +44,8 @@
  *     Only a build-resource case has `expected-uuid`.
  * 15. The BMB-004 namespace is the UUID version 5 of its URL in the URL namespace, the text of BMB-004 in the main spec
  *     contains the namespace, and docs/back-matter-keys.md contains the URL and the namespace.
- * 16. A facade case has an `input-form` that is absent, `bytes`, or `path`, and only a facade case has `path`. It has
- *     exactly one of `expected` and `expected-category`. With `expected`, the input is valid against the schema, its only
+ * 16. The `input-form` of a case is absent, `bytes`, or `path`, and only a facade case or a yaml-round-trip case has
+ *     `path`. A facade case has exactly one of `expected` and `expected-category`. With `expected`, the input is valid against the schema, its only
  *     root key is `document-type`, `expected` is the expected file of a round-trip case, and `expected` is the canonical
  *     form of the input, so the body, the metadata, the OSCAL version, and the identifier that the facade reads come
  *     from a known document. With `expected-category`, the category is not-found, the form is `path`, and the input
@@ -96,6 +97,7 @@ const OPERATIONS = [
   "validate-element",
   "yaml-round-trip",
   "yaml-parse",
+  "yaml-parse-file",
   "element-types",
   "build-resource",
   "build-hash",
@@ -267,6 +269,10 @@ export function periodMismatches(
       messages.push(`expected-period ${bound} is ${expected[bound]}, but FAC-005 to FAC-007 give ${value ?? null}`);
   }
   return messages;
+}
+/** The `input-form` of a case is absent, `bytes`, or `path`. Only a facade case or a yaml-round-trip case has `path`. */
+export function inputFormAllowed(operation: string, form: string | undefined): boolean {
+  return form === undefined || form === "bytes" || (form === "path" && (operation === "facade" || operation === "yaml-round-trip"));
 }
 /** A document that the corpus checks against the constraint manifest (CNS-020), and the failures that its case expects. */
 export interface DocumentInput {
@@ -592,7 +598,7 @@ function main(write: boolean): number {
       continue;
     }
     const inputPath = path.join(ROOT, c.input);
-    if (c.operation !== "parse-file" && !(c.operation === "facade" && category !== undefined)) {
+    if (c.operation !== "parse-file" && c.operation !== "yaml-parse-file" && !(c.operation === "facade" && category !== undefined)) {
       used.add(c.input);
       if (!fs.existsSync(inputPath)) {
         fail(c.id, `input ${c.input} does not exist`);
@@ -601,8 +607,7 @@ function main(write: boolean): number {
     }
 
     const form = c["input-form"];
-    if (form !== undefined && !(form === "bytes" || (form === "path" && c.operation === "facade")))
-      fail(c.id, `input-form "${form}" is not valid for a ${c.operation} case`);
+    if (!inputFormAllowed(c.operation, form)) fail(c.id, `input-form "${form}" is not valid for a ${c.operation} case`);
 
     switch (c.operation) {
       case "round-trip": {
@@ -673,12 +678,13 @@ function main(write: boolean): number {
         break;
       }
       case "parse-file":
+      case "yaml-parse-file":
         if (category === "not-found") {
           if (fs.existsSync(inputPath)) fail(c.id, `${c.input} exists, so it cannot test not-found`);
         } else if (category === "read-error") {
           if (!fs.existsSync(inputPath) || !fs.statSync(inputPath).isDirectory())
             fail(c.id, `${c.input} is not a directory, so it cannot test read-error`);
-        } else fail(c.id, "a parse-file case has the category not-found or read-error");
+        } else fail(c.id, `a ${c.operation} case has the category not-found or read-error`);
         break;
       case "facade": {
         if ((category === undefined) === (c.expected === undefined)) {
@@ -861,6 +867,9 @@ function selfTest(): number {
       periodMismatches({ start: null, end: null }, { start: "2026-01-01T00:00:00Z", end: "2026-01-01T00:00:00Z" }).length === 2 &&
       periodMismatches({ start: "2026-01-01T00:00:00Z", end: "2026-01-01T00:00:00Z" }, {}).length === 2 &&
       periodMismatches({ start: "2026-01-01T00:00:00Z", end: null }, { start: "2026-01-01T00:00:00+00:00" }).length === 0],
+    ["YML-006: a yaml-round-trip case and a facade case can have input-form path, and a parse case cannot", () =>
+      inputFormAllowed("yaml-round-trip", "path") && inputFormAllowed("facade", "path") && !inputFormAllowed("parse", "path") && !inputFormAllowed("yaml-parse", "path") &&
+      inputFormAllowed("yaml-parse", "bytes") && inputFormAllowed("parse", undefined) && !inputFormAllowed("parse", "text")],
     ["CNS-018: an element type without a definition gives no failure", () => constraints.ofElement("no-such-type", {}).length === 0],
   ];
   let failed = 0;

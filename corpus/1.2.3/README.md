@@ -55,8 +55,8 @@ Each case has these fields:
 7. Optional fields:
    1. `document-type`: the root key of the document type, for a round trip or a typed parse.
    2. `element-type`: the element-type name, for element validation.
-   3. `input-form`: `bytes` when the input must reach the binding as raw bytes, not as text. For a `facade` case,
-      `path` when the facade must be built from the input path.
+   3. `input-form`: `bytes` when the input must reach the binding as raw bytes, not as text. For a `facade` case or a
+      `yaml-round-trip` case, `path` when the document must be read from the input path.
    4. `expected-min-failures`: the lowest number of structured failure entries that the parse error carries.
    5. `expected-max-failures`: the highest number of structured failure entries that the parse error carries. It
       applies only to a `parse` case. Its value is an integer of 1 or more, and not less than `expected-min-failures`.
@@ -108,20 +108,23 @@ Each case has these fields:
    canonical form of the output must be the same bytes as `expected`. Then serialize the parsed document to YAML,
    parse that output with the YAML parse operation, and serialize the result to JSON. Its canonical form must also be
    the same bytes as `expected`.
-   With `input-form` `bytes`, the runner gives the YAML parse operation the raw bytes of the input, not text.
+   With `input-form` `bytes`, the runner gives the YAML parse operation the raw bytes of the input, not text. With
+   `input-form` `path`, the runner gives the YAML parse-from-file operation the path of the input.
 8. `yaml-parse`: parse the YAML input with the YAML parse operation. The parser must report `expected-category`.
-9. `element-types`: request the supported element types. The result must equal the list in `expected`, item by item
+9. `yaml-parse-file`: parse the YAML file at the input path with the YAML parse-from-file operation. The path does not
+   exist, and the parser must report `expected-category` (`not-found`) and name the path.
+10. `element-types`: request the supported element types. The result must equal the list in `expected`, item by item
    and in the same order.
-10. `build-resource`: build a resource with `arguments`. Then compare the `uuid` of the resource with `expected-uuid`,
+11. `build-resource`: build a resource with `arguments`. Then compare the `uuid` of the resource with `expected-uuid`,
     compare the resource with `expected-element`, or check that the builder reports `expected-category`. When the
     arguments have no `key` and no `identifier`, the builder generates the identifier. `expected-element` then has no
     `uuid`. The runner checks that the `uuid` of the result matches the UUID datatype of the schema, removes `uuid`
     from the result, and compares the rest with `expected-element`.
-11. `build-hash`: build a hash with `arguments`. Compare the hash with `expected-element`, or check that the builder
+12. `build-hash`: build a hash with `arguments`. Compare the hash with `expected-element`, or check that the builder
     reports `expected-category`. A hash with no `algorithm` has the algorithm SHA-256.
-12. `build-rlink`: build an rlink with `arguments`. Compare the rlink with `expected-element`, or check that the builder
+13. `build-rlink`: build an rlink with `arguments`. Compare the rlink with `expected-element`, or check that the builder
     reports `expected-category`. An omitted `media-type` or `hashes` is absent from the result.
-13. `facade`: build the document facade from the input, as `input-form` states:
+14. `facade`: build the document facade from the input, as `input-form` states:
     1. `input-form` is absent: parse the input with the generic parser, and wrap the result in the facade.
     2. `input-form` is `bytes`: build the facade from the raw bytes of the input.
     3. `input-form` is `path`: build the facade from the input path.
