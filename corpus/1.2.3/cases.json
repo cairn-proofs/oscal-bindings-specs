@@ -260,7 +260,7 @@
       "input": "documents/invalid/nested-control-part-name.json",
       "expected-category": "parse-error",
       "expected-constraints": ["oscal-control-part-name", "oscal-control-statement-part-name"],
-      "requirements": ["PRS-015.01", "CNS-017.03"],
+      "requirements": ["PRS-015.01", "CNS-017.03", "CNS-024.01"],
       "notes": "Control ac-2.1 is in control ac-2 and has a part with the name bogus. The target query of oscal-control-statement-part-name selects that part from each ancestor control, and the entry still gives one failure. Every control has a statement part, so the entry oscal-catalog-control-require-statement-when-appropriate does not fail. The input is adapted and trimmed from AC-2 and AC-2(1) of the SP 800-53 rev5 catalog in usnistgov/oscal-content at commit 78650f02ad9321bb7b817846f8fbd4f2bcd620de."
     },
     {
@@ -269,7 +269,7 @@
       "input": "documents/invalid/nested-control-part-name-three-levels.json",
       "expected-category": "parse-error",
       "expected-constraints": ["oscal-control-part-name", "oscal-control-statement-part-name"],
-      "requirements": ["PRS-015.01", "CNS-017.03"],
+      "requirements": ["PRS-015.01", "CNS-017.03", "CNS-024.01"],
       "notes": "Control ac-2.1.1 is in control ac-2.1, which is in control ac-2, and has a part with the name bogus. The target query of oscal-control-statement-part-name selects that part from each of the three ancestor controls, and the entry still gives one failure. Every control has a statement part, so the entry oscal-catalog-control-require-statement-when-appropriate does not fail. The input is adapted and trimmed from AC-2 and AC-2(1) of the SP 800-53 rev5 catalog in usnistgov/oscal-content at commit 78650f02ad9321bb7b817846f8fbd4f2bcd620de. SP 800-53 has no third level, so control ac-2.1.1 is synthetic."
     },
     {
