@@ -395,7 +395,7 @@ function selfTest(): number {
   // The rules of design D7.
   test("D7.1: a has-cardinality entry counts 0 for a context node with no target node (CNS-011)", () =>
     run(custom(locationDef, { kind: "has-cardinality", target: "title", minOccurs: 1 }), location({})).failures.length === 1);
-  test("D7.2 and CNS-012.01: a key whose values are all null is no key", () =>
+  test("CNS-012.01 and D7.2: a key whose values are all null is no key", () =>
     same(run(byId("oscal-catalog-parts"), catalog({ controls: [{ id: "c", title: "t", parts: [{ name: "n" }, { name: "n" }] }] })).failures.length, 0) &&
     same(run(byId("oscal-catalog-parts"), catalog({ controls: [{ id: "c", title: "t", parts: [{ id: "a", name: "n" }, { id: "a", name: "n" }] }] })).failures.length, 1));
   test("D7.3: each value of a key field is a key, and each one that the index lacks gives a failure", () =>

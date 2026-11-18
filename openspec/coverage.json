@@ -500,8 +500,13 @@
     },
     {
       "capability": "constraint-validation",
-      "gap": 74,
-      "id": "CNS-012.01"
+      "id": "CNS-012.01",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "CNS-012.01 and D7.2: a key whose values are all null is no key"
+        }
+      ]
     },
     {
       "capability": "constraint-validation",
