@@ -8,7 +8,7 @@
       "input": "documents/valid/catalog.json",
       "document-type": "catalog",
       "expected": "expected/catalog.json",
-      "requirements": ["PRS-001.01", "PRS-003.01", "SER-004.01"],
+      "requirements": ["PRS-001.01", "PRS-003.01", "SER-004.01", "ERR-002.01"],
       "source": {
         "repository": "https://github.com/usnistgov/oscal-content",
         "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
@@ -115,7 +115,7 @@
       "input": "documents/valid/minimal-catalog.json",
       "document-type": "catalog",
       "expected": "expected/minimal-catalog.json",
-      "requirements": ["PRS-001.01", "SER-002.01", "SER-004.01"],
+      "requirements": ["PRS-001.01", "SER-002.01", "SER-004.01", "ERR-002.01"],
       "notes": "Written for this corpus. The base document of each invalid case."
     },
     {
@@ -150,7 +150,7 @@
       "operation": "parse",
       "input": "documents/invalid/not-json.json",
       "expected-category": "parse-error",
-      "requirements": ["ERR-004.01", "ERR-009.02"]
+      "requirements": ["ERR-004.01", "ERR-009.02", "ERR-002.02"]
     },
     {
       "id": "parse/invalid-utf8",

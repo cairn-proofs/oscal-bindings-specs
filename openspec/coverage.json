@@ -813,12 +813,17 @@
     },
     {
       "capability": "error-model",
-      "gap": 77,
+      "corpus": [
+        "round-trip/catalog",
+        "round-trip/minimal-catalog"
+      ],
       "id": "ERR-002.01"
     },
     {
       "capability": "error-model",
-      "gap": 77,
+      "corpus": [
+        "parse/not-json"
+      ],
       "id": "ERR-002.02"
     },
     {
