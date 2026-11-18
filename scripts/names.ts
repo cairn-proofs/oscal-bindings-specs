@@ -415,7 +415,7 @@ function selfTest(): number {
     const metadataTypes = r.manifest?.types.filter((t) => t.name.includes("Metadata")) ?? [];
     return (metadataTypes.length === 1 && metadataTypes[0].name === "Metadata" && metadataTypes[0].sites.length === 1) || JSON.stringify(r.failures);
   });
-  test("explicit merge produces one type", () => {
+  test("MDL-019.01 identical places merge into one type that records both places", () => {
     const sites = [`${D(mapping)}/properties/method/allOf/1`, `${D(mp)}/properties/method/allOf/1`];
     const e = entryNamed(run(twoMethods, { merges: [sites] }), "MappingMethod");
     return e?.sites.length === 2 && entryNamed(run(twoMethods, { merges: [sites] }), "MappingProvenanceMethod") === undefined;

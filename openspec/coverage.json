@@ -1462,8 +1462,13 @@
     },
     {
       "capability": "model-derivation",
-      "gap": 90,
-      "id": "MDL-019.01"
+      "id": "MDL-019.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-019.01 identical places merge into one type that records both places"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
