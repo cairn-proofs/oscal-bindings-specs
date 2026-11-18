@@ -2460,8 +2460,13 @@
     },
     {
       "capability": "binding-surface",
-      "gap": 114,
-      "id": "SRF-006.04"
+      "id": "SRF-006.04",
+      "self-test": [
+        {
+          "script": "scripts/build-archive.ts",
+          "test": "SRF-006.04 the spec artifact holds the requirement index"
+        }
+      ]
     },
     {
       "capability": "binding-surface",
@@ -2565,7 +2570,13 @@
     {
       "capability": "schema-versioning",
       "gap": 116,
-      "id": "VER-004.04"
+      "id": "VER-004.04",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "VER-004.04 build metadata does not change precedence"
+        }
+      ]
     },
     {
       "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
@@ -2580,17 +2591,43 @@
     {
       "capability": "schema-versioning",
       "gap": 117,
-      "id": "VER-006.01"
+      "id": "VER-006.01",
+      "self-test": [
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "VER-006.01: a case with a known-defects field fails the check"
+        },
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "VER-006.01: an index with a defect-twins field fails the check"
+        }
+      ]
     },
     {
       "capability": "schema-versioning",
       "gap": 117,
-      "id": "VER-006.02"
+      "id": "VER-006.02",
+      "self-test": [
+        {
+          "script": "scripts/check-binding-links.ts",
+          "test": "VER-006.02 issue URL fails"
+        },
+        {
+          "script": "scripts/check-binding-links.ts",
+          "test": "VER-006.02 pull URL fails"
+        }
+      ]
     },
     {
       "capability": "schema-versioning",
       "gap": 117,
-      "id": "VER-006.03"
+      "id": "VER-006.03",
+      "self-test": [
+        {
+          "script": "scripts/check-binding-links.ts",
+          "test": "VER-006.03 repository and tracker links pass"
+        }
+      ]
     },
     {
       "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",

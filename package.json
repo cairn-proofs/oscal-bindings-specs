@@ -25,7 +25,7 @@
     "content:evaluate": "tsx scripts/evaluate-content.ts",
     "content:self-test": "tsx scripts/evaluate-content.ts --self-test",
     "validate": "openspec validate --all --strict",
-    "check": "npm run typecheck && npm run spec-ids:self-test && npm run spec-ids && npm run requirements:self-test && npm run requirements:check && npm run version:self-test && npm run version:check && npm run schemas:verify && npm run metaschema:verify && npm run exclusions:self-test && npm run exclusions:check && npm run reference:self-test && npm run constraints:self-test && npm run constraints:check && npm run content:self-test && npm run canonical:self-test && npm run yaml-reader:self-test && npm run corpus:self-test && npm run corpus:cases:self-test && npm run corpus:check && npm run binding-links:self-test && npm run binding-links:check && npm run names:self-test && npm run names:check && npm run releases:self-test && npm run releases:check && npm run coverage:self-test && npm run coverage:check && npm run coverage:faults:self-test && npm run coverage:faults && npm run validate",
+    "check": "npm run typecheck && npm run spec-ids:self-test && npm run spec-ids && npm run requirements:self-test && npm run requirements:check && npm run version:self-test && npm run version:check && npm run schemas:verify && npm run metaschema:verify && npm run exclusions:self-test && npm run exclusions:check && npm run reference:self-test && npm run constraints:self-test && npm run constraints:check && npm run content:self-test && npm run canonical:self-test && npm run yaml-reader:self-test && npm run corpus:self-test && npm run corpus:cases:self-test && npm run corpus:check && npm run archive:self-test && npm run binding-links:self-test && npm run binding-links:check && npm run names:self-test && npm run names:check && npm run releases:self-test && npm run releases:check && npm run coverage:self-test && npm run coverage:check && npm run coverage:faults:self-test && npm run coverage:faults && npm run validate",
     "names:write": "tsx scripts/names.ts --write",
     "names:check": "tsx scripts/names.ts",
     "names:self-test": "tsx scripts/names.ts --self-test",
@@ -47,7 +47,8 @@
     "coverage:self-test": "tsx scripts/coverage.ts --self-test",
     "coverage:faults": "tsx scripts/coverage-faults.ts",
     "coverage:faults:self-test": "tsx scripts/coverage-faults.ts --self-test",
-    "archive": "tsx scripts/build-archive.ts"
+    "archive": "tsx scripts/build-archive.ts",
+    "archive:self-test": "tsx scripts/build-archive.ts --self-test"
   },
   "dependencies": {
     "@xmldom/xmldom": "0.9.12",
