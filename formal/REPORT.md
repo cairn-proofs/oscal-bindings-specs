@@ -19,7 +19,7 @@ some of them (5.4). Go/no-go is in section 8.
 
 ## 0. Layout and reproduction
 
-All paths are relative to `lemma/` (this directory was `pilot/` when the report was written).
+All paths are relative to `formal/` (this directory was `pilot/` when the report was written).
 
 | Path | What |
 |---|---|
@@ -49,9 +49,9 @@ Everything worked first time.
 |---|---|---|
 | .NET SDK | 8.0.134 (`8.0.134-0ubuntu1~24.04.1`) | `apt-get install -y dotnet-sdk-8.0` |
 | Dafny | 4.11.0 | `dotnet tool install --global dafny --version 4.11.0`; `export PATH=$PATH:~/.dotnet/tools` |
-| Z3 | 4.12.1, 64 bit | `python3 -m venv lemma/.venv-z3 && lemma/.venv-z3/bin/pip install z3-solver==4.12.1.0` |
+| Z3 | 4.12.1, 64 bit | `python3 -m venv formal/.venv-z3 && formal/.venv-z3/bin/pip install z3-solver==4.12.1.0` |
 | Node | v22.23.4 (preinstalled) | none |
-| `bignumber.js` | 9.1.2 | `npm install bignumber.js@9.1.2` (in `lemma/`) |
+| `bignumber.js` | 9.1.2 | `npm install bignumber.js@9.1.2` (in `formal/`) |
 | Python | 3.13.18 (preinstalled) | none |
 
 1. **Z3 location:** the pip binary is `.venv-z3/bin/z3`, not `site-packages/z3/bin`. It is passed to Dafny with
@@ -59,7 +59,7 @@ Everything worked first time.
 2. **Verify:** `dafny verify --solver-path $Z3 --verify-included-files dafny/Api.dfy`, then the same without the flag on
    `dafny/SpecProps.dfy`. `dafny translate` and `dafny verify` verify only the root file unless
    `--verify-included-files` is given. A translate-only run prints "1 verified", which is misleading.
-3. **Translate:** `dafny translate js|py --no-verify --include-runtime -o build/js/lemma dafny/Api.dfy`. With
+3. **Translate:** `dafny translate js|py --no-verify --include-runtime -o build/js/formal dafny/Api.dfy`. With
    `--include-runtime` each output stands alone, so the Python runtime is the `_dafny/` copy Dafny emits. The
    `DafnyRuntimePython` 4.11.0 wheel downloads from PyPI but was not needed.
 4. **Strings:** the Dafny 4 default `--unicode-char` was not overridden.
@@ -95,7 +95,7 @@ Everything worked first time.
 1. **Dafny total:** 933 lines.
 2. **Proof to code in `Impl.dfy`:** 169 : 272, about 0.6.
 3. **Spec to implementation (code plus contracts):** 133 : 296.
-4. **Generated JS:** `lemma.js` is 2,976 lines and 88 KB. The runtime is the first 1,188 lines and the generated
+4. **Generated JS:** `formal.js` is 2,976 lines and 88 KB. The runtime is the first 1,188 lines and the generated
    modules about 1,788.
 5. **Generated Python:** `Spec.py` 396, `Impl.py` 527, `Parser.py` 460, `Api.py` 31, glue 31, which is 1,445 lines.
    With the `_dafny/` runtime (589) and `System_` (20), the total is 2,054 lines and 72 KB.

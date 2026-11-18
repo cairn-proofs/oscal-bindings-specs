@@ -12,10 +12,10 @@ s=open(p).read()
 assert s.count(old)==1,(old,s.count(old))
 open(p,'w').write(s.replace(old,new))
 PY
-dafny translate js --no-verify --include-runtime -o $d/lemma $d/dafny/Api.dfy >/dev/null
-head -n -1 $d/lemma.js > $d/lib.js; echo 'module.exports = { _dafny, Spec, Impl, Parser, Api };' >> $d/lib.js
+dafny translate js --no-verify --include-runtime -o $d/formal $d/dafny/Api.dfy >/dev/null
+head -n -1 $d/formal.js > $d/lib.js; echo 'module.exports = { _dafny, Spec, Impl, Parser, Api };' >> $d/lib.js
 echo "== $name"
-LEMMA_JS_LIB=$PWD/$d/lib.js node harness/run.js --out build/mutants/$name.json 2>&1 | grep -E '"(total|agree)"|DISAGREE|language' | head -0
+FORMAL_JS_LIB=$PWD/$d/lib.js node harness/run.js --out build/mutants/$name.json 2>&1 | grep -E '"(total|agree)"|DISAGREE|language' | head -0
 python3 - $name <<'PY'
 import json,sys
 r=json.load(open(f'build/mutants/{sys.argv[1]}.json'))

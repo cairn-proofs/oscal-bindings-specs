@@ -129,10 +129,10 @@ def main():
         print(f, count_plain(os.path.join(d, f)))
     for f, h in (("run.js", False), ("run.py", True)):
         print("harness/" + f, count_plain(os.path.join(HERE, "harness", f), hash_comments=h))
-    gen = {"js (lemma.js incl. runtime)": os.path.join(HERE, "build/js/lemma.js")}
+    gen = {"js (formal.js incl. runtime)": os.path.join(HERE, "build/js/formal.js")}
     for k, p in gen.items():
         print(k, sum(1 for _ in open(p)), "lines", os.path.getsize(p), "bytes")
-    pydir = os.path.join(HERE, "build/py/lemma-py")
+    pydir = os.path.join(HERE, "build/py/formal-py")
     tot = 0; totb = 0
     for root, _, files in os.walk(pydir):
         for f in files:

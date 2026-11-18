@@ -1,7 +1,60 @@
 /*
- * Compiled implementation of the allowed-values check, with proofs that it equals the ghost specification in
- * Spec.dfy. Written in the imperative style (loops, accumulators, a set, a map) so that the proof is not just
- * a copy of the specification. Nothing here is trusted: every method ensures equality with a Spec function.
+ * ===========================================================================================================
+ * The program that computes the failures, and the proof that it is right
+ * ===========================================================================================================
+ *
+ * Spec.dfy DEFINES the failures of a document. This file COMPUTES them. Read Spec.dfy first: this file
+ * follows the same sections in the same order, and each method here has the name of a Spec definition with
+ * an `I` (for implementation) at the end. For example, `DedupI` computes what `Dedup` defines.
+ *
+ * THE ONE IDEA TO HOLD ON TO
+ *
+ * Every method carries a line of the form
+ *
+ *     ensures out == SpecDefinition(...)
+ *
+ * Dafny proves that line for every possible input before it compiles anything. So whatever a method does
+ * inside, its result equals the Spec definition. You do not need to trust the loops below: you need only
+ * read the `ensures` lines.
+ *
+ * WHY THE CODE DIFFERS FROM THE SPEC
+ *
+ * Spec.dfy is written to be easy to read, not fast. The program here uses loops, a set and a table, which is
+ * how real code is written. Where the program works differently from the spec, Dafny needs help to see that
+ * the results are equal; that help is the `invariant`, `assert` and `lemma` lines. Three places differ in a
+ * real way, and they are where the proof carries information:
+ *
+ *   1. VisitAcc   collects descendants into one growing list instead of joining many small lists.
+ *   2. DedupI     remembers the locations it has seen in a set instead of searching the list again.
+ *   3. CheckAllowedValues  builds a table from each location to the entries that select it, once, instead
+ *                 of asking every entry again for every node (the spec's `Applicable`).
+ *
+ * Everywhere else the program mirrors the spec almost line by line, and the proof is short.
+ *
+ * HOW TO READ THE PROOF NOTATION
+ *
+ *   method M(x) returns (out)   A procedure with a result `out`. Unlike a ghost function, it is compiled.
+ *   function F(x): T            A compiled function (no `ghost`): it is code that runs.
+ *   ensures c                   What Dafny proves about the result, for every input.
+ *   requires c                  What the caller must guarantee.
+ *   while c invariant I { }     A loop. Dafny proves I holds before the loop and after each pass, so I holds
+ *                               when the loop ends. Most invariants here say "what I have so far equals the
+ *                               spec applied to the first i items".
+ *   assert c                    A stepping stone. Dafny proves c and then uses it.
+ *   lemma L ensures c { }       A proved fact, used by calling it like a method. It produces no code.
+ *   {:opaque} / reveal          Hides a definition from the solver until a proof `reveal`s it. This keeps
+ *                               the solver from getting lost in large formulas; it does not change meaning.
+ *
+ * RECURRING ASSERTS
+ *
+ * Many loops contain these two lines:
+ *
+ *     assert ns[..i + 1][..i] == ns[..i];
+ *     assert ns[..i + 1][i] == ns[i];
+ *
+ * They say "the first i+1 items, minus the last, are the first i items" and "the last of the first i+1 items
+ * is item i". That is obvious to a person, but Dafny needs it spelled out to connect the loop, which walks
+ * forward, to the spec, which is written from the last item (see "A pattern that repeats" in Spec.dfy).
  */
 include "Spec.dfy"
 
@@ -9,8 +62,11 @@ module Impl {
   import opened Spec
 
   // ---------------------------------------------------------------------------------------------------------
-  // Lookup of an object member
+  // Lookup of an object member (Spec section 4: FindKey, Lookup)
   // ---------------------------------------------------------------------------------------------------------
+
+  // Walks the members from the front and returns the first one named k.
+  // Invariant: the answer for all members equals the answer for the members not yet looked at.
   method FindKeyI(ms: seq<Member>, k: string) returns (r: Option<Json>)
     ensures r == FindKey(ms, k)
   {
@@ -30,6 +86,7 @@ module Impl {
     return None;
   }
 
+  // The member k of a value, if the value is an object.
   method LookupI(j: Json, k: string) returns (r: Option<Json>)
     ensures r == Lookup(j, k)
   {
@@ -37,8 +94,10 @@ module Impl {
   }
 
   // ---------------------------------------------------------------------------------------------------------
-  // Children, and the descendants of a node with an accumulator
+  // Children and descendants (Spec section 4: Children, VisitJ)
   // ---------------------------------------------------------------------------------------------------------
+
+  // The children of a node, built one at a time. Invariant: after i passes, `out` holds the first i children.
   method ChildrenI(n: Node) returns (out: seq<Node>)
     ensures out == Children(n)
   {
@@ -58,7 +117,12 @@ module Impl {
     }
   }
 
-  // The descendants-or-self of a value, appended to an accumulator.
+  // The node and all nodes below it (the spec's VisitJ), added to the end of an existing list `acc`.
+  //
+  // The spec builds a separate list for each subtree and joins them. This method instead passes ONE list down
+  // the tree and adds to it. Its promise, `out == acc + VisitJ(p, j)`, says the result is the same as joining.
+  // The proof needs nothing beyond the loop invariants: Dafny knows that joining lists is associative,
+  // (a + b) + c == a + (b + c).
   method VisitAcc(p: Path, j: Json, acc: seq<Node>) returns (out: seq<Node>)
     ensures out == acc + VisitJ(p, j)
     decreases j
@@ -88,7 +152,10 @@ module Impl {
   }
 
   // ---------------------------------------------------------------------------------------------------------
-  // Filters
+  // Filters (Spec section 5: OperandValue, JEq, CmpEq, EvalLog, FilterNodes)
+  //
+  // These mirror the spec one to one. The only difference is that `||` and `&&` stop early when the left side
+  // already decides the answer, which gives the same result.
   // ---------------------------------------------------------------------------------------------------------
   method OperandValueI(o: Operand, cur: Node) returns (r: Option<Json>)
     ensures r == OperandValue(o, cur)
@@ -143,6 +210,7 @@ module Impl {
     }
   }
 
+  // Keeps the nodes for which the filter is true. Invariant: `out` is the spec's answer for the first i nodes.
   method FilterNodesI(f: LogExpr, ns: seq<Node>) returns (out: seq<Node>)
     ensures out == FilterNodes(f, ns)
   {
@@ -161,7 +229,10 @@ module Impl {
   }
 
   // ---------------------------------------------------------------------------------------------------------
-  // Selectors, segments, queries
+  // Selectors, segments and queries (Spec section 5: ApplySel, ApplySeg, RunQuery)
+  //
+  // Each `...AllI` method applies a step to each node of a list with a loop; the spec does the same with
+  // recursion. The invariant of each loop is "the result so far is the spec's result for the first i nodes".
   // ---------------------------------------------------------------------------------------------------------
   method ApplySelI(s: Selector, n: Node) returns (out: seq<Node>)
     ensures out == ApplySel(s, n)
@@ -199,6 +270,7 @@ module Impl {
     assert ns[..i] == ns;
   }
 
+  // A descendant segment uses VisitAcc with an empty starting list, which equals the spec's Visit.
   method ApplySegI(g: Segment, n: Node) returns (out: seq<Node>)
     ensures out == ApplySeg(g, n)
   {
@@ -228,6 +300,9 @@ module Impl {
     assert ns[..i] == ns;
   }
 
+  // Applies the segments of a query one after another.
+  // Invariant: running the remaining segments on `out` gives the same result as running the whole query on
+  // the start nodes.
   method RunQueryI(q: Query, ns: seq<Node>) returns (out: seq<Node>)
     ensures out == RunQuery(q, ns)
   {
@@ -244,9 +319,14 @@ module Impl {
   }
 
   // ---------------------------------------------------------------------------------------------------------
-  // CNS-006: union of nodes, each location once. The specification keeps a list and searches it; the
-  // implementation keeps the set of locations seen so far.
+  // CNS-006: union of nodes, each location once (Spec section 6: Dedup, RunAll)
+  //
+  // The spec checks each node against the locations of the list built so far. The program keeps a set,
+  // `seen`, of the locations already kept, so the check is one set lookup.
   // ---------------------------------------------------------------------------------------------------------
+
+  // A fact about sets that the solver does not find by itself: adding a node to the end of a list adds
+  // exactly its location to the set of locations.
   lemma PathsOfSnoc(ns: seq<Node>, x: Node)
     ensures PathsOf(ns + [x]) == PathsOf(ns) + {x.path}
   {
@@ -264,6 +344,9 @@ module Impl {
     }
   }
 
+  // Removes repeated locations, keeping the first node of each.
+  // Invariants: `out` is the spec's Dedup of the first i nodes, and `seen` is exactly the set of locations in
+  // `out`. The second invariant is why one set lookup gives the same answer as the spec's search.
   method DedupI(ns: seq<Node>) returns (out: seq<Node>)
     ensures out == Dedup(ns)
   {
@@ -305,7 +388,10 @@ module Impl {
   }
 
   // ---------------------------------------------------------------------------------------------------------
-  // CNS-007: context nodes and target nodes
+  // CNS-007 and CNS-024: context nodes and target nodes (Spec section 7)
+  //
+  // These mirror the spec directly: run the queries, move locations into the document (Rebase), remove
+  // repeats.
   // ---------------------------------------------------------------------------------------------------------
   method ContextNodesI(e: Entry, doc: Json) returns (out: seq<Node>)
     ensures out == ContextNodes(e, doc)
@@ -359,11 +445,20 @@ module Impl {
   }
 
   // ---------------------------------------------------------------------------------------------------------
-  // CNS-008 and CNS-017: the failures of a document.
+  // CNS-008 and CNS-017: the failures of a document (Spec section 8)
   //
-  // The specification recomputes, for each target node, the applicable set by testing every entry. The
-  // implementation computes the target nodes of each entry once, builds a table from each location to the
-  // entries that select it, and reads the applicable set of a node from the table.
+  // This is the part where the program and the spec differ most, so the proof is longest here.
+  //
+  // The spec defines the applicable set of a node by asking every entry "do you target this location?".
+  // Done literally, that recomputes every entry's targets for every node. The program instead:
+  //
+  //   1. computes the target nodes of each entry once, into `tg`;
+  //   2. builds a table `app` from each location to the list of entries that target it;
+  //   3. for each target node, reads its applicable set from the table.
+  //
+  // The proof shows that the table holds exactly the applicable sets. It is stated by two predicates,
+  // TableUpTo (the table after i entries are added) and TableMid (the table while entry i is being added),
+  // and a few small lemmas that each prove one step.
   // ---------------------------------------------------------------------------------------------------------
 
   // The table holds, for each location, exactly the entries j < i whose target nodes include it.
@@ -381,20 +476,24 @@ module Impl {
       ((j < i && p in PathsOf(tg[j])) || (j == i && p in PathsOf(tg[i][..m])))
   }
 
+  // Unpacks TableUpTo for one location p and one entry j. (The predicate is opaque; see the header.)
   lemma TableAt(app: map<Path, seq<nat>>, tg: seq<seq<Node>>, i: nat, p: Path, j: nat)
     requires i <= |tg| && TableUpTo(app, tg, i)
     ensures (p in app && j in app[p]) <==> (j < i && p in PathsOf(tg[j]))
   { reveal TableUpTo(); }
 
+  // The empty table is correct before any entry is added.
   lemma TableEmpty(tg: seq<seq<Node>>)
     ensures TableUpTo(map[], tg, 0)
   { reveal TableUpTo(); }
 
+  // Unpacks TableMid for one location and one entry.
   lemma TableMidAt(app: map<Path, seq<nat>>, tg: seq<seq<Node>>, i: nat, m: nat, p: Path, j: nat)
     requires i < |tg| && m <= |tg[i]| && TableMid(app, tg, i, m)
     ensures (p in app && j in app[p]) <==> ((j < i && p in PathsOf(tg[j])) || (j == i && p in PathsOf(tg[i][..m])))
   { reveal TableMid(); }
 
+  // A table that is correct after i entries is also correct "entry i, with 0 of its nodes added".
   lemma TableMidStart(app: map<Path, seq<nat>>, tg: seq<seq<Node>>, i: nat)
     requires i < |tg| && TableUpTo(app, tg, i)
     ensures TableMid(app, tg, i, 0)
@@ -429,6 +528,7 @@ module Impl {
     }
   }
 
+  // When all nodes of entry i are added, the table is correct after i + 1 entries.
   lemma TableMidDone(app: map<Path, seq<nat>>, tg: seq<seq<Node>>, i: nat)
     requires i < |tg| && TableMid(app, tg, i, |tg[i]|)
     ensures TableUpTo(app, tg, i + 1)
@@ -441,6 +541,7 @@ module Impl {
     }
   }
 
+  // Every entry number in the table is a real entry (less than i), so it is safe to look it up.
   lemma TableBound(app: map<Path, seq<nat>>, tg: seq<seq<Node>>, i: nat, p: Path)
     requires i <= |tg| && TableUpTo(app, tg, i) && p in app
     ensures forall j :: j in app[p] ==> j < i
@@ -448,6 +549,9 @@ module Impl {
     forall j | j in app[p] ensures j < i { TableAt(app, tg, i, p, j); }
   }
 
+  // Whether some entry in the list S lists the value v. This is the spec's ValueListed, for a list of entry
+  // numbers read from the table. The long `assert ... by { }` shows that adding one more entry to the part of
+  // S already checked changes the answer exactly as `||` would.
   method ListedI(es: seq<Entry>, S: seq<nat>, v: Option<string>) returns (r: bool)
     requires forall j :: j in S ==> j < |es|
     ensures r == exists j: nat :: j in S && j < |es| && Lists(es[j], v)
@@ -479,6 +583,8 @@ module Impl {
     assert S[..k] == S;
   }
 
+  // THE MAIN METHOD. Its promise is the theorem of this directory: the result equals the spec's Failures.
+  // Api.Check calls it.
   method CheckAllowedValues(es: seq<Entry>, doc: Json) returns (out: seq<Failure>)
     ensures out == Failures(es, doc)
   {
@@ -535,7 +641,8 @@ module Impl {
         var n := tg[i][m];
         assert tg[i][..m + 1][..m] == tg[i][..m];
         assert tg[i][..m + 1][m] == n;
-        // the table knows the applicable set of the node
+        // The table knows the applicable set of the node: entry i is in it (TableAt), every number in it is a
+        // real entry (TableBound), and it is exactly the spec's applicable set (AppIsApplicable).
         assert n.path in PathsOf(tg[i]) by { assert n in tg[i]; }
         TableAt(app, tg, |es|, n.path, i);
         assert n.path in app && i in app[n.path];
@@ -555,12 +662,15 @@ module Impl {
     }
   }
 
-  // The value of a node, computed (the specification's StrValue).
+  // The string value of a node, as code. The spec's StrValue is ghost, so the program needs its own copy;
+  // the `ensures` line proves the two agree.
   function StrValue'(n: Node): Option<string>
     ensures StrValue'(n) == StrValue(n)
   { if n.val.JStr? then Some(n.val.s) else None }
 
-  // For a node of the entry i, the table entry of its location is the applicable set of the specification.
+  // The key fact for step 3: for a node of an entry, the table's list for its location contains exactly the
+  // entries of the spec's applicable set. So "some entry in the table's list lists the value" is the same as
+  // the spec's ValueListed.
   lemma AppIsApplicable(es: seq<Entry>, doc: Json, tg: seq<seq<Node>>, app: map<Path, seq<nat>>, n: Node)
     requires |tg| == |es|
     requires forall j :: 0 <= j < |es| ==> tg[j] == Targets(es[j], doc)

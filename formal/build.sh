@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Verify, then compile to JavaScript and Python. Outputs go to lemma/build/. See REPORT.md.
+# Verify, then compile to JavaScript and Python. Outputs go to formal/build/. See REPORT.md.
 set -euo pipefail
 cd "$(dirname "$0")"
 export PATH="$PATH:$HOME/.dotnet/tools"
@@ -11,12 +11,12 @@ Z3="${Z3:-$PWD/.venv-z3/bin/z3}"
 # 2. Translate. The runtime is included so that each output stands alone.
 rm -rf build/js build/py
 mkdir -p build/js build/py
-dafny translate js --no-verify --include-runtime -o build/js/lemma dafny/Api.dfy
-dafny translate py --no-verify --include-runtime -o build/py/lemma dafny/Api.dfy
+dafny translate js --no-verify --include-runtime -o build/js/formal dafny/Api.dfy
+dafny translate py --no-verify --include-runtime -o build/py/formal dafny/Api.dfy
 
 # 3. The JS output runs Main when loaded and exports nothing: cut the last line, export the modules.
-head -n -1 build/js/lemma.js > build/js/lemma_lib.js
-echo 'module.exports = { _dafny, Spec, Impl, Parser, Api };' >> build/js/lemma_lib.js
+head -n -1 build/js/formal.js > build/js/formal_lib.js
+echo 'module.exports = { _dafny, Spec, Impl, Parser, Api };' >> build/js/formal_lib.js
 
 # 4. JS runtime dependency
 [ -d node_modules/bignumber.js ] || npm install --no-audit --no-fund --silent bignumber.js@9.1.2
