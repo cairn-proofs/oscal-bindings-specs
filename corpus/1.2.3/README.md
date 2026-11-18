@@ -195,6 +195,14 @@ what each form means for them.
 For a builder case with `expected-constraints`, the runner checks only that the builder reports
 the validation error. It does not compare the `id` values of the failures.
 
+For each case with `expected-category`, the runner also tests the category tree of
+[ERR-009](../../openspec/specs/error-model/spec.md#requirement-err-009-error-categories-form-a-tree). A test for a
+category is true when the category is `expected-category` or an ancestor of it, and false for each other category in
+`categories`. The only parent in the tree is parse-error, which is the parent of document-type-mismatch. For example,
+a `parse-typed` error of the category document-type-mismatch is also in the parse-error category. A `parse` error of
+the category parse-error is not in the document-type-mismatch category. An error of the category not-found or
+read-error is not in the parse-error category.
+
 For each `round-trip` input, the non-raising validity check must return true. The check does not apply to a
 `yaml-round-trip` input.
 

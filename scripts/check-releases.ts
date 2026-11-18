@@ -331,6 +331,12 @@ function selfTest(): number {
     const r = check(fakeGit({ tags: { "v0.2.0+oscal.1.2.3": tagged } }), { [N]: m([["Hash", "#/definitions/h"], ["Status", "#/definitions/s"], ["New", "#/definitions/n"]]), [S]: "{}" }, "0.2.1+oscal.1.2.3");
     return r.failures.length === 0 || JSON.stringify(r);
   });
+  test("VER-004.04 build metadata does not change precedence", () => {
+    const a = parseVersion("2.4.1+oscal.1.2.3")!;
+    const b = parseVersion("2.4.1+oscal.1.2.4")!;
+    const c = parseVersion("2.4.2+oscal.1.2.3")!;
+    return (precedence(a, b) === 0 && precedence(b, a) === 0 && precedence(a, c) < 0) || [precedence(a, b), precedence(a, c)].join();
+  });
   const step = (version: string, tags: Record<string, { main?: boolean; files: Record<string, string> }> = { "v0.8.0+oscal.1.2.3": tagged }) =>
     check(fakeGit({ tags }), { [N]: released, [S]: "{}" }, version);
   const stepFails = (r: Report) => r.failures.filter((f) => f.startsWith("[version-step]"));
@@ -374,6 +380,11 @@ function selfTest(): number {
     const r = check(fakeGit({ tags: { "v0.9.0+oscal.1.2.3": old, "v0.10.0+oscal.1.2.3": tagged } }), { [N]: released, [S]: "{}" }, "0.10.1+oscal.1.2.3");
     return (r.failures.length === 0 && r.lines.some((l) => l.includes("v0.10.0"))) || JSON.stringify(r);
   });
+  test("NAM-018.01 highest precedence tag is the latest release", () => {
+    const older = { files: { [N]: m([["Old", "#/definitions/h"]]), [S]: "{}" } };
+    const r = check(fakeGit({ tags: { "v0.5.0+oscal.1.2.3": older, "v0.6.0+oscal.1.2.3": tagged } }), { [N]: released, [S]: "{}" }, "0.6.1+oscal.1.2.3");
+    return (r.failures.length === 0 && r.lines.some((l) => l.includes("compared with v0.6.0+oscal.1.2.3"))) || JSON.stringify(r);
+  });
   test("baseline: tags off main, other releases, and other grammars are ignored", () => {
     const bad = { files: { [N]: m([["Other", "#/definitions/h"]]), [S]: "{}" } };
     const git = fakeGit({
@@ -382,7 +393,7 @@ function selfTest(): number {
     const r = check(git, { [N]: released, [S]: "{}" }, "0.8.1+oscal.1.2.3");
     return (r.failures.length === 0 && r.lines.some((l) => l.includes("compared with v0.2.0"))) || JSON.stringify(r);
   });
-  test("no tag holds a manifest: pass without comparison", () => {
+  test("NAM-019.02 no tag holds a manifest: pass without comparison", () => {
     const r = check(fakeGit({ tags: { "v0.1.0+oscal.1.2.3": { files: { [S]: "{}" } } } }), { [N]: released, [S]: "{}" }, "0.2.0+oscal.1.2.3");
     return (r.failures.length === 0 && r.lines.some((l) => l.includes("nothing to compare"))) || JSON.stringify(r);
   });

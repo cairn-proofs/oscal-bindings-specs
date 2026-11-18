@@ -115,28 +115,69 @@
     },
     {
       "capability": "constraint-validation",
-      "gap": 70,
-      "id": "CNS-001.01"
+      "id": "CNS-001.01",
+      "self-test": [
+        {
+          "script": "scripts/check-metaschema-digests.ts",
+          "test": "CNS-001.01: a changed byte in a module fails the digest check"
+        },
+        {
+          "script": "scripts/check-metaschema-digests.ts",
+          "test": "CNS-001.01: a changed byte in metaschema-datatypes.xsd fails the digest check"
+        },
+        {
+          "script": "scripts/check-metaschema-digests.ts",
+          "test": "CNS-001.01: a missing module fails the digest check"
+        },
+        {
+          "script": "scripts/check-metaschema-digests.ts",
+          "test": "CNS-001.01: the unchanged files pass the digest check"
+        }
+      ]
     },
     {
       "capability": "constraint-validation",
-      "gap": 70,
-      "id": "CNS-001.02"
+      "id": "CNS-001.02",
+      "self-test": [
+        {
+          "script": "scripts/build-archive.ts",
+          "test": "CNS-001.02: the archive holds each file of metaschema/<release>/, with each module, the datatypes file and SHA256SUMS"
+        },
+        {
+          "script": "scripts/build-archive.ts",
+          "test": "CNS-001.02: the archive of a list without metaschema holds no metaschema file"
+        }
+      ]
     },
     {
       "capability": "constraint-validation",
-      "gap": 71,
-      "id": "CNS-002.01"
+      "id": "CNS-002.01",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "CNS-002.01: a constraint that targets a child `type` of `action`, where `type` is a flag, selects nothing and is excluded"
+        }
+      ]
     },
     {
       "capability": "constraint-validation",
-      "gap": 71,
-      "id": "CNS-002.02"
+      "id": "CNS-002.02",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "CNS-002.02: a has-cardinality constraint with a filter on @name='objective' fails for an assessment part with another name, and is excluded"
+        }
+      ]
     },
     {
       "capability": "constraint-validation",
-      "gap": 71,
-      "id": "CNS-002.03"
+      "id": "CNS-002.03",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "CNS-002.03: a has-cardinality constraint on local objectives fails for each local objective, and no other constraint allows its target"
+        }
+      ]
     },
     {
       "capability": "constraint-validation",
@@ -164,8 +205,25 @@
     },
     {
       "capability": "constraint-validation",
-      "gap": 72,
-      "id": "CNS-004.01"
+      "id": "CNS-004.01",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-004.01: a manifest file that does not exist fails the check"
+        },
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-004.01: a manifest that a person edits by hand differs from the generation and fails the check"
+        },
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-004.01: an edit that changes only the layout of the file fails the check"
+        },
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-004.01: the committed manifest is the result of the generation, so the check passes"
+        }
+      ]
     },
     {
       "capability": "constraint-validation",
@@ -203,8 +261,17 @@
     },
     {
       "capability": "constraint-validation",
-      "gap": 73,
-      "id": "CNS-006.01"
+      "id": "CNS-006.01",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-006.01: two queries of a key field that select the same node give one value"
+        },
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-006.01: two target queries that select the same node count the node once"
+        }
+      ]
     },
     {
       "capability": "constraint-validation",
@@ -433,8 +500,13 @@
     },
     {
       "capability": "constraint-validation",
-      "gap": 74,
-      "id": "CNS-012.01"
+      "id": "CNS-012.01",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "CNS-012.01 and D7.2: a key whose values are all null is no key"
+        }
+      ]
     },
     {
       "capability": "constraint-validation",
@@ -615,12 +687,17 @@
     },
     {
       "capability": "constraint-validation",
-      "gap": 75,
+      "corpus": [
+        "parse/allowed-value-case"
+      ],
       "id": "CNS-017.01"
     },
     {
       "capability": "constraint-validation",
-      "gap": 75,
+      "corpus": [
+        "round-trip/catalog",
+        "round-trip/system-security-plan"
+      ],
       "id": "CNS-017.02"
     },
     {
@@ -719,8 +796,17 @@
     },
     {
       "capability": "constraint-validation",
-      "gap": 76,
-      "id": "CNS-023.01"
+      "id": "CNS-023.01",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-023.01: the element context queries of mapping-collection-mappings are those of mapping"
+        },
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-023.01: the queries apply to each of the two mappings of a list, on an array that holds only the mapping"
+        }
+      ]
     },
     {
       "capability": "constraint-validation",
@@ -813,12 +899,17 @@
     },
     {
       "capability": "error-model",
-      "gap": 77,
+      "corpus": [
+        "round-trip/catalog",
+        "round-trip/minimal-catalog"
+      ],
       "id": "ERR-002.01"
     },
     {
       "capability": "error-model",
-      "gap": 77,
+      "corpus": [
+        "parse/not-json"
+      ],
       "id": "ERR-002.02"
     },
     {
@@ -858,12 +949,16 @@
     },
     {
       "capability": "error-model",
-      "gap": 78,
+      "corpus": [
+        "parse/invalid-utf8"
+      ],
       "id": "ERR-004.04"
     },
     {
       "capability": "error-model",
-      "gap": 78,
+      "corpus": [
+        "parse/allowed-value-case"
+      ],
       "id": "ERR-004.05"
     },
     {
@@ -884,7 +979,9 @@
     },
     {
       "capability": "error-model",
-      "gap": 79,
+      "corpus": [
+        "parse-file/missing-file"
+      ],
       "id": "ERR-006.02"
     },
     {
@@ -903,12 +1000,16 @@
     },
     {
       "capability": "error-model",
-      "gap": 80,
+      "corpus": [
+        "parse-typed/wrong-document-type"
+      ],
       "id": "ERR-009.01"
     },
     {
       "capability": "error-model",
-      "gap": 80,
+      "corpus": [
+        "parse/not-json"
+      ],
       "id": "ERR-009.02"
     },
     {
@@ -945,7 +1046,9 @@
     },
     {
       "capability": "error-model",
-      "gap": 81,
+      "corpus": [
+        "parse-file/directory"
+      ],
       "id": "ERR-012.03"
     },
     {
@@ -1100,18 +1203,33 @@
     },
     {
       "capability": "model-derivation",
-      "gap": 83,
-      "id": "MDL-002.03"
+      "id": "MDL-002.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-002.03 the eight wrapper names"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
-      "gap": 84,
-      "id": "MDL-003.01"
+      "id": "MDL-003.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-003.01 scalar wrapper has no object entry"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
-      "gap": 84,
-      "id": "MDL-003.02"
+      "id": "MDL-003.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-003.02 preserved wrappers stay wrappers"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
@@ -1311,13 +1429,23 @@
     },
     {
       "capability": "model-derivation",
-      "gap": 85,
-      "id": "MDL-013.01"
+      "id": "MDL-013.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-013.01 a shared type used by many document types yields one canonical type"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
-      "gap": 85,
-      "id": "MDL-013.02"
+      "id": "MDL-013.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-013.02 same local name with different structure is not deduplicated"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
@@ -1345,13 +1473,23 @@
     },
     {
       "capability": "model-derivation",
-      "gap": 86,
-      "id": "MDL-014.01"
+      "id": "MDL-014.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-014.01 local name of a definition"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
-      "gap": 86,
-      "id": "MDL-014.02"
+      "id": "MDL-014.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-014.02 local name of a list item"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
@@ -1365,13 +1503,23 @@
     },
     {
       "capability": "model-derivation",
-      "gap": 87,
-      "id": "MDL-016.01"
+      "id": "MDL-016.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-016.01 root schema name"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
-      "gap": 88,
-      "id": "MDL-017.01"
+      "id": "MDL-017.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-017.01 override name replaces a rule-derived name"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
@@ -1415,18 +1563,33 @@
     },
     {
       "capability": "model-derivation",
-      "gap": 89,
-      "id": "MDL-018.05"
+      "id": "MDL-018.05",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-018.05 enum in a list property uses the singular name"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
-      "gap": 90,
-      "id": "MDL-019.01"
+      "id": "MDL-019.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-019.01 identical places merge into one type that records both places"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
-      "gap": 91,
-      "id": "MDL-020.01"
+      "id": "MDL-020.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-020.01 clashing definitions are not merged"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
@@ -1464,13 +1627,23 @@
     },
     {
       "capability": "model-derivation",
-      "gap": 92,
-      "id": "MDL-021.04"
+      "id": "MDL-021.04",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-021.04 each missing singular name is reported"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
-      "gap": 93,
-      "id": "NAM-001.01"
+      "id": "NAM-001.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-001.01 definition identified by its definition pointer"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
@@ -1484,8 +1657,21 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 94,
-      "id": "NAM-003.01"
+      "id": "NAM-003.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-003.01 a name with - fails"
+        },
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-003.01 a name with a quote fails"
+        },
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-003.01 a name with a space fails"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
@@ -1499,8 +1685,13 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 94,
-      "id": "NAM-003.03"
+      "id": "NAM-003.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-003.03 a name with a final newline fails"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
@@ -1534,13 +1725,23 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 95,
-      "id": "NAM-005.03"
+      "id": "NAM-005.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-005.03 a name change is an override edit"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
-      "gap": 96,
-      "id": "NAM-006.01"
+      "id": "NAM-006.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-006.01 hand edit of the manifest fails the check"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
@@ -1554,8 +1755,13 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 96,
-      "id": "NAM-006.03"
+      "id": "NAM-006.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-006.03 edit of a previous release manifest fails the check"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
@@ -1637,43 +1843,83 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 97,
-      "id": "NAM-009.03"
+      "id": "NAM-009.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-009.03 scalar definition with an enum has an entry"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
-      "gap": 97,
-      "id": "NAM-009.04"
+      "id": "NAM-009.04",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-009.04 scalar definition without an enum has no entry"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
-      "gap": 98,
-      "id": "NAM-010.01"
+      "id": "NAM-010.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-010.01 document entry records its body field"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
-      "gap": 98,
-      "id": "NAM-010.02"
+      "id": "NAM-010.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-010.02 union entry records each branch"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
-      "gap": 98,
-      "id": "NAM-010.03"
+      "id": "NAM-010.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-010.03 enum entry records whether it is open"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
-      "gap": 98,
-      "id": "NAM-010.04"
+      "id": "NAM-010.04",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-010.04 single-or-many entry records its item type"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
-      "gap": 99,
-      "id": "NAM-011.01"
+      "id": "NAM-011.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-011.01 enum entry holds no enum value"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
-      "gap": 99,
-      "id": "NAM-011.02"
+      "id": "NAM-011.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-011.02 object entry holds no field name"
+        }
+      ]
     },
     {
       "by-design": "The rule applies to a consumer of the manifest, which no store script can observe.",
@@ -1702,8 +1948,17 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 100,
-      "id": "NAM-013.02"
+      "id": "NAM-013.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-013.02 an unknown member fails in an entry of each kind"
+        },
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-013.02 an unknown member of an entry fails"
+        }
+      ]
     },
     {
       "by-design": "The rule applies to a consumer of the manifest, which no store script can observe.",
@@ -1732,13 +1987,23 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 101,
-      "id": "NAM-015.03"
+      "id": "NAM-015.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-015.03 explicit merge with an unknown pointer fails"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
-      "gap": 102,
-      "id": "NAM-016.01"
+      "id": "NAM-016.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-016.01 previous manifest with a wrong schema hash"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
@@ -1752,13 +2017,23 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 103,
-      "id": "NAM-017.02"
+      "id": "NAM-017.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-017.02 each dropped name is reported"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
-      "gap": 104,
-      "id": "NAM-018.01"
+      "id": "NAM-018.01",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "NAM-018.01 highest precedence tag is the latest release"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
@@ -1780,12 +2055,19 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 105,
-      "id": "NAM-019.02"
+      "id": "NAM-019.02",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "NAM-019.02 no tag holds a manifest: pass without comparison"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
-      "gap": 106,
+      "corpus": [
+        "round-trip/group-without-distinguishing-property"
+      ],
       "id": "NAM-020.01"
     },
     {
@@ -1835,7 +2117,9 @@
     },
     {
       "capability": "document-parsing",
-      "gap": 107,
+      "corpus": [
+        "round-trip/catalog-bytes"
+      ],
       "id": "PRS-001.02"
     },
     {
@@ -1847,7 +2131,9 @@
     },
     {
       "capability": "document-parsing",
-      "gap": 108,
+      "corpus": [
+        "round-trip/catalog-path"
+      ],
       "id": "PRS-002.01"
     },
     {
@@ -1888,7 +2174,9 @@
     },
     {
       "capability": "document-parsing",
-      "gap": 109,
+      "corpus": [
+        "round-trip/component-definition"
+      ],
       "id": "PRS-005.01"
     },
     {
@@ -2276,12 +2564,16 @@
     },
     {
       "capability": "document-parsing",
-      "gap": 110,
+      "corpus": [
+        "parse/allowed-value-case"
+      ],
       "id": "PRS-015.03"
     },
     {
       "capability": "serialization",
-      "gap": 111,
+      "corpus": [
+        "round-trip/component-definition"
+      ],
       "id": "SER-001.01"
     },
     {
@@ -2297,8 +2589,8 @@
       "id": "SER-002.01"
     },
     {
+      "by-design": "The corpus runs one serialization path, which SER-002.01 checks. A binding chooses its other paths, which no store script can observe.",
       "capability": "serialization",
-      "gap": 112,
       "id": "SER-002.02"
     },
     {
@@ -2317,6 +2609,7 @@
         "round-trip/assessment-plan",
         "round-trip/assessment-results",
         "round-trip/catalog",
+        "round-trip/catalog-bytes",
         "round-trip/component-definition",
         "round-trip/mapping-collection",
         "round-trip/minimal-catalog",
@@ -2328,13 +2621,31 @@
     },
     {
       "capability": "serialization",
-      "gap": 113,
-      "id": "SER-004.02"
+      "id": "SER-004.02",
+      "self-test": [
+        {
+          "script": "scripts/check-canonical-json.ts",
+          "test": "SER-004.02: a different array order gives another canonical form"
+        },
+        {
+          "script": "scripts/check-canonical-json.ts",
+          "test": "SER-004.02: a different key order gives the same canonical form"
+        }
+      ]
     },
     {
       "capability": "serialization",
-      "gap": 113,
-      "id": "SER-004.03"
+      "id": "SER-004.03",
+      "self-test": [
+        {
+          "script": "scripts/check-canonical-json.ts",
+          "test": "SER-004.03: different whitespace gives the same canonical form"
+        },
+        {
+          "script": "scripts/check-canonical-json.ts",
+          "test": "SER-004.03: whitespace inside a string value is kept"
+        }
+      ]
     },
     {
       "capability": "serialization",
@@ -2469,8 +2780,13 @@
     },
     {
       "capability": "binding-surface",
-      "gap": 114,
-      "id": "SRF-006.04"
+      "id": "SRF-006.04",
+      "self-test": [
+        {
+          "script": "scripts/build-archive.ts",
+          "test": "SRF-006.04 the spec artifact holds the requirement index"
+        }
+      ]
     },
     {
       "capability": "binding-surface",
@@ -2498,8 +2814,13 @@
     },
     {
       "capability": "binding-surface",
-      "gap": 115,
-      "id": "SRF-007.03"
+      "id": "SRF-007.03",
+      "self-test": [
+        {
+          "script": "scripts/build-archive.ts",
+          "test": "SRF-007.03 the spec artifact holds the traceability JSON Schema"
+        }
+      ]
     },
     {
       "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
@@ -2558,8 +2879,13 @@
     },
     {
       "capability": "schema-versioning",
-      "gap": 116,
-      "id": "VER-004.01"
+      "id": "VER-004.01",
+      "self-test": [
+        {
+          "script": "scripts/check-version.ts",
+          "test": "VER-004.01 OSCAL release appears as build metadata"
+        }
+      ]
     },
     {
       "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
@@ -2573,8 +2899,13 @@
     },
     {
       "capability": "schema-versioning",
-      "gap": 116,
-      "id": "VER-004.04"
+      "id": "VER-004.04",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "VER-004.04 build metadata does not change precedence"
+        }
+      ]
     },
     {
       "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
@@ -2588,18 +2919,41 @@
     },
     {
       "capability": "schema-versioning",
-      "gap": 117,
-      "id": "VER-006.01"
+      "id": "VER-006.01",
+      "self-test": [
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "VER-006.01: a case with a known-defects field fails the check"
+        },
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "VER-006.01: an index with a defect-twins field fails the check"
+        }
+      ]
     },
     {
       "capability": "schema-versioning",
-      "gap": 117,
-      "id": "VER-006.02"
+      "id": "VER-006.02",
+      "self-test": [
+        {
+          "script": "scripts/check-binding-links.ts",
+          "test": "VER-006.02 issue URL fails"
+        },
+        {
+          "script": "scripts/check-binding-links.ts",
+          "test": "VER-006.02 pull URL fails"
+        }
+      ]
     },
     {
       "capability": "schema-versioning",
-      "gap": 117,
-      "id": "VER-006.03"
+      "id": "VER-006.03",
+      "self-test": [
+        {
+          "script": "scripts/check-binding-links.ts",
+          "test": "VER-006.03 repository and tracker links pass"
+        }
+      ]
     },
     {
       "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
