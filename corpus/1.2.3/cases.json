@@ -150,7 +150,7 @@
       "operation": "parse",
       "input": "documents/invalid/not-json.json",
       "expected-category": "parse-error",
-      "requirements": ["ERR-004.01"]
+      "requirements": ["ERR-004.01", "ERR-009.02"]
     },
     {
       "id": "parse/invalid-utf8",
@@ -287,7 +287,7 @@
       "input": "documents/valid/profile.json",
       "document-type": "catalog",
       "expected-category": "document-type-mismatch",
-      "requirements": ["PRS-003.02", "ERR-005.01"]
+      "requirements": ["PRS-003.02", "ERR-005.01", "ERR-009.01"]
     },
     {
       "id": "parse-file/missing-file",

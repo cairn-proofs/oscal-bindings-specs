@@ -901,12 +901,16 @@
     },
     {
       "capability": "error-model",
-      "gap": 80,
+      "corpus": [
+        "parse-typed/wrong-document-type"
+      ],
       "id": "ERR-009.01"
     },
     {
       "capability": "error-model",
-      "gap": 80,
+      "corpus": [
+        "parse/not-json"
+      ],
       "id": "ERR-009.02"
     },
     {
