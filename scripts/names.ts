@@ -186,6 +186,18 @@ function selfTest(): number {
   // Task 2.3: naming rules.
   const param = "oscal-complete-oscal-control-common:parameter";
   test("MDL-015.01 local name maps to PascalCase", () => nameAt(run(schemaOf({ [param]: obj({ id: str }) })), D(param)) === "Parameter");
+  test("MDL-014.01 local name of a definition", () => {
+    // The local name is the key after the colon. An inline object takes the canonical name of this parent plus its own key.
+    const hashKey = "oscal-complete-oscal-metadata:hash";
+    const r = run(schemaOf({ [hashKey]: obj({ extra: obj({ value: str }) }) }));
+    return nameAt(r, D(hashKey)) === "Hash" && nameAt(r, `${D(hashKey)}/properties/extra`) === "HashExtra";
+  });
+  test("MDL-014.02 local name of a list item", () => {
+    const obsKey = "oscal-complete-oscal-assessment-common:observation";
+    const items = `${D(obsKey)}/properties/methods/items`;
+    const r = run(schemaOf({ [obsKey]: obj({ methods: list(obj({ step: str })) }) }), { "local-names": { [items]: "method" } });
+    return nameAt(r, items) === "ObservationMethod" && entryNamed(r, "ObservationMethods") === undefined;
+  });
   test("MDL-001.02 schema reorder does not change names", () => {
     const a = run(schemaOf({ "oscal-complete-oscal-catalog:profile": obj({}) }, ["catalog", "profile"]));
     const b = run(schemaOf({ "oscal-complete-oscal-catalog:profile": obj({}) }, ["profile", "catalog"]));

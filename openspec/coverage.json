@@ -1362,13 +1362,23 @@
     },
     {
       "capability": "model-derivation",
-      "gap": 86,
-      "id": "MDL-014.01"
+      "id": "MDL-014.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-014.01 local name of a definition"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
-      "gap": 86,
-      "id": "MDL-014.02"
+      "id": "MDL-014.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-014.02 local name of a list item"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
