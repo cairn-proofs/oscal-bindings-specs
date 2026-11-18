@@ -1851,8 +1851,13 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 104,
-      "id": "NAM-018.01"
+      "id": "NAM-018.01",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "NAM-018.01 highest precedence tag is the latest release"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
