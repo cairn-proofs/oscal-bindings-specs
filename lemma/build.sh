@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Verify, then compile to JavaScript and Python. Outputs go to pilot/build/. See REPORT.md.
+# Verify, then compile to JavaScript and Python. Outputs go to lemma/build/. See REPORT.md.
 set -euo pipefail
 cd "$(dirname "$0")"
 export PATH="$PATH:$HOME/.dotnet/tools"

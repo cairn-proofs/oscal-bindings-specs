@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # usage: make.sh name 'python-replace-old' 'new' file
 set -e
-cd /home/user/oscal-bindings-specs/pilot
+cd "$(dirname "$0")"
 . build/env.sh
 name=$1; old=$2; new=$3; file=$4
 d=build/mutants/$name; rm -rf $d; mkdir -p $d/dafny; cp dafny/*.dfy $d/dafny/

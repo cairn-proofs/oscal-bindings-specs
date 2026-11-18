@@ -19,7 +19,7 @@ some of them (5.4). Go/no-go is in section 8.
 
 ## 0. Layout and reproduction
 
-All paths are relative to `pilot/`.
+All paths are relative to `lemma/` (this directory was `pilot/` when the report was written).
 
 | Path | What |
 |---|---|
@@ -49,9 +49,9 @@ Everything worked first time.
 |---|---|---|
 | .NET SDK | 8.0.134 (`8.0.134-0ubuntu1~24.04.1`) | `apt-get install -y dotnet-sdk-8.0` |
 | Dafny | 4.11.0 | `dotnet tool install --global dafny --version 4.11.0`; `export PATH=$PATH:~/.dotnet/tools` |
-| Z3 | 4.12.1, 64 bit | `python3 -m venv pilot/.venv-z3 && pilot/.venv-z3/bin/pip install z3-solver==4.12.1.0` |
+| Z3 | 4.12.1, 64 bit | `python3 -m venv lemma/.venv-z3 && lemma/.venv-z3/bin/pip install z3-solver==4.12.1.0` |
 | Node | v22.23.4 (preinstalled) | none |
-| `bignumber.js` | 9.1.2 | `npm install bignumber.js@9.1.2` (in `pilot/`) |
+| `bignumber.js` | 9.1.2 | `npm install bignumber.js@9.1.2` (in `lemma/`) |
 | Python | 3.13.18 (preinstalled) | none |
 
 1. **Z3 location:** the pip binary is `.venv-z3/bin/z3`, not `site-packages/z3/bin`. It is passed to Dafny with
