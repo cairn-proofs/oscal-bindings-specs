@@ -7,7 +7,10 @@
  * 1. A patch that does not occur exactly once in the source fails the run, and the failure names the fault.
  * 2. The unpatched evaluator must give the expected failures for each case. Otherwise the run fails.
  * 3. A patched evaluator that throws for a case fails the run.
- * 4. A fault that no case detects is a gap. A gap does not fail the run.
+ * 4. A fault that no case detects fails the run.
+ * 5. A fault is valid only when an input that conforms to the schema can change the list of failure identifiers that the
+ *    runner compares. A fault that changes only the location, the entry, or the key of a failure is not valid, because the
+ *    runner compares the `id` of each failure only.
  *
  * The faults are for `allowed-values` entries only. The report goes to the output, and to $GITHUB_STEP_SUMMARY when that
  * is set.
@@ -134,7 +137,10 @@ export interface FaultResult {
 
 const failuresOf = (evaluate: Evaluate, env: Env, input: DocumentInput): ManifestFailure[] => evaluate(env.entries, input.document, { document: true });
 
-/** Runs each fault on each case. Faults that fail to apply or to run are in `failures`, and have no result. */
+/**
+ * Runs each fault on each case. A fault that fails to apply or to run is in `failures`, and has no result. A fault that no
+ * case detects is in `failures` and in `results`, so the report still lists it.
+ */
 export async function runFaults(faults: Fault[], env: Env): Promise<{ failures: string[]; results: FaultResult[] }> {
   const failures: string[] = [];
   const results: FaultResult[] = [];
@@ -172,7 +178,13 @@ export async function runFaults(faults: Fault[], env: Env): Promise<{ failures: 
         break;
       }
     }
-    if (!threw) results.push({ fault, detected });
+    if (threw) continue;
+    results.push({ fault, detected });
+    if (detected.length === 0) {
+      failures.push(
+        `[fault ${fault.id}] no case detects the fault, which breaks ${fault.breaks}. Add a corpus case that detects it, or remove the fault if no input that conforms to the schema can change the list of failure identifiers.`,
+      );
+    }
   }
   return { failures, results };
 }
@@ -309,10 +321,17 @@ async function selfTest(): Promise<number> {
       const { failures, results } = await runFaults([fault("f6", { find: "beta", replace: "BREAK" })], env());
       return (failures.length === 0 && show(results[0].detected) === '["c1"]') || show({ failures, results });
     }],
-    ["a fault that no case detects is a gap that does not fail the run", async () => {
+    ["a fault that no case detects fails the run, the failure names the fault and what it breaks, and the report still lists it", async () => {
       const { failures, results } = await runFaults([fault("f7", { find: "beta", replace: "same" })], env());
       const lines = report(results).join("\n");
-      return (failures.length === 0 && results[0].detected.length === 0 && lines.includes("Gap: no case detects the fault `f7`, which breaks WID-001.01.")) || show({ failures, lines });
+      return (
+        failures.length === 1 &&
+        failures[0].includes("f7") &&
+        failures[0].includes("WID-001.01") &&
+        results.length === 1 &&
+        results[0].detected.length === 0 &&
+        lines.includes("Gap: no case detects the fault `f7`, which breaks WID-001.01.")
+      ) || show({ failures, lines });
     }],
     ["the unpatched evaluator that differs from the expected failures fails the run, and no fault runs", async () => {
       const { failures, results } = await runFaults([fault("f8", { find: "beta", replace: "BREAK" })], env({ evaluate: byCase(true) }));
