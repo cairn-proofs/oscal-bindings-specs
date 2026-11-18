@@ -109,7 +109,8 @@ operation.
    records, and `npm run requirements:check`: it fails when `openspec/requirements.json` differs from the generator
    output.
 4. The `VERSION` check and its self-test. See [Version](#version).
-5. The schema `sha256` check.
+5. The schema `sha256` check, the metaschema `sha256` check, and the self-test of the metaschema check
+   (`npm run metaschema:self-test`).
 6. The canonical JSON self-test.
 7. The YAML reader self-test. `scripts/yaml-reader.ts` is the reference reader that the corpus check uses for YAML
    inputs.
@@ -125,7 +126,9 @@ operation.
     rule in [Version](#version). These checks read git tags and history, so they fail in a shallow clone or a clone
     without tags. They also list each name change against the base ref (`SPEC_IDS_BASE`, default `HEAD`), and CI
     writes that list to the job summary.
-12. `openspec validate --all --strict`.
+12. The archive self-test, `npm run archive:self-test`: it checks that the archive that `npm run archive` builds from
+    `HEAD` holds each file of `metaschema/<release>/` and the other paths of `CONTENTS`.
+13. `openspec validate --all --strict`.
 
 To change a canonical name, edit `manifest/<release>/overrides.json`, run `npm run names:write`, and commit both
 files.
