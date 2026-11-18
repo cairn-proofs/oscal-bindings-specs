@@ -301,7 +301,7 @@
       "operation": "parse-file",
       "input": "documents/valid",
       "expected-category": "read-error",
-      "requirements": ["ERR-012.01"]
+      "requirements": ["ERR-012.01", "ERR-012.03"]
     },
     {
       "id": "assessment-period/catalog",

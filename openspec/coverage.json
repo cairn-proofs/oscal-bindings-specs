@@ -949,7 +949,9 @@
     },
     {
       "capability": "error-model",
-      "gap": 81,
+      "corpus": [
+        "parse-file/directory"
+      ],
       "id": "ERR-012.03"
     },
     {
