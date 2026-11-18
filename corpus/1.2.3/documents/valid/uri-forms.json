@@ -1,0 +1,62 @@
+{
+  "catalog": {
+    "uuid": "4b2e8c1d-7a3f-4d5e-9b6c-0a1f2e3d4c50",
+    "metadata": {
+      "title": "URI forms",
+      "last-modified": "2024-01-02T03:04:05Z",
+      "version": "1.0",
+      "oscal-version": "1.2.3",
+      "props": [
+        {
+          "name": "x",
+          "ns": "https://example.org/ns",
+          "value": "v"
+        },
+        {
+          "name": "y",
+          "ns": "urn:example:ns",
+          "value": "v"
+        }
+      ]
+    },
+    "back-matter": {
+      "resources": [
+        {
+          "uuid": "7b1c3d52-8e4f-4a6b-9c0d-2e5f6a7b8c91",
+          "rlinks": [
+            {
+              "href": "#a"
+            },
+            {
+              "href": "../x"
+            },
+            {
+              "href": "a%20b"
+            },
+            {
+              "href": "./a:b"
+            },
+            {
+              "href": "//h/p"
+            },
+            {
+              "href": "?q"
+            },
+            {
+              "href": "https://example.org/a"
+            },
+            {
+              "href": "ftp://u:pw@h:21/x"
+            },
+            {
+              "href": "http://[::1]/"
+            },
+            {
+              "href": ""
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

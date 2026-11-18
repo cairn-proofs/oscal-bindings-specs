@@ -1,0 +1,72 @@
+# The scenarios of openspec/specs/ that no corpus case and no self-test names.
+# `by-design`: the reason that no store script can check the scenario.
+# `gap`: the number of the issue in this store that tracks the scenario. The label of the issue is scenario-gap.
+# `npm run coverage:check` enforces the rules (design.md of the report-scenario-checks change, D3).
+# The `gap` list can get shorter, but not longer. A new scenario needs a corpus case, a self-test, or a `by-design` reason.
+
+by-design:
+  ELV-004.01: Each binding sets and documents its own limit, so no store script can observe the rule.
+  ELV-004.02: Each binding sets and documents its own limit, so no store script can observe the rule.
+  ELV-004.03: Each binding sets and documents its own limit, so no store script can observe the rule.
+  ERR-001.08: The rule applies to how a binding surfaces a result, which no store script can observe.
+  ERR-002.03: Each binding sets and documents its own limit, so no store script can observe the rule.
+  ERR-004.03: Each binding sets and documents its own limit, so no store script can observe the rule.
+  ERR-010.01: The rule applies to how a binding surfaces a result, which no store script can observe.
+  ERR-010.02: Each binding sets and documents its own limit, so no store script can observe the rule.
+  ERR-011.01: Each binding sets and documents its own limit, so no store script can observe the rule.
+  ERR-011.02: Each binding sets and documents its own limit, so no store script can observe the rule.
+  ERR-012.02: A file permission cannot be stored in the corpus.
+  MDL-005.02: The rule applies to the generation of types by a binding, which no store script can observe.
+  MDL-009.01: The rule applies to the generation of types by a binding, which no store script can observe.
+  MDL-009.02: The rule applies to the generation of types by a binding, which no store script can observe.
+  NAM-012.01: The rule applies to a consumer of the manifest, which no store script can observe.
+  NAM-014.01: The rule applies to a consumer of the manifest, which no store script can observe.
+  PRS-007.02: The rule applies to the regex engine of a binding, which no store script can observe.
+  PRS-007.03: The rule applies to the regex engine of a binding, which no store script can observe.
+  PRS-010.01: Each binding sets and documents its own limit, so no store script can observe the rule.
+  PRS-010.02: Each binding sets and documents its own limit, so no store script can observe the rule.
+  PRS-010.03: Each binding sets and documents its own limit, so no store script can observe the rule.
+  PRS-010.04: Each binding sets and documents its own limit, so no store script can observe the rule.
+  PRS-011.01: Each binding sets and documents its own limit, so no store script can observe the rule.
+  PRS-011.02: Each binding sets and documents its own limit, so no store script can observe the rule.
+  PRS-011.03: Each binding sets and documents its own limit, so no store script can observe the rule.
+  PRS-012.02: Each binding sets and documents its own limit, so no store script can observe the rule.
+  PRS-012.03: Each binding sets and documents its own limit, so no store script can observe the rule.
+  SER-001.02: The rule applies to the serialization paths of a binding, which no store script can observe.
+  SER-002.02: The corpus runs one serialization path, which SER-002.01 checks. A binding chooses its other paths, which no store script can observe.
+  SER-003.01: The corpus compares canonical forms, and the canonical form erases formatting.
+  SER-003.02: The corpus compares canonical forms, and the canonical form erases formatting.
+  SRF-001.01: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-001.02: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-001.03: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-002.01: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-002.02: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-002.03: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-003.01: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-003.02: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-003.03: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-003.04: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-004.01: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-004.02: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-005.01: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-005.02: The rule applies to the process of a binding repository, which no store script can observe.
+  VER-001.01: The rule applies to the process of a binding repository, which no store script can observe.
+  VER-001.02: The rule applies to the process of a binding repository, which no store script can observe.
+  VER-002.01: The rule applies to the process of a binding repository, which no store script can observe.
+  VER-002.02: The rule applies to the process of a binding repository, which no store script can observe.
+  VER-003.01: A reviewer decides the kind of each change, and no store script can observe the decision.
+  VER-003.02: A reviewer decides the kind of each change, and no store script can observe the decision.
+  VER-003.03: A reviewer decides the kind of each change, and no store script can observe the decision.
+  VER-003.04: A reviewer decides the kind of each change, and no store script can observe the decision.
+  VER-003.05: A reviewer decides the kind of each change, and no store script can observe the decision.
+  VER-004.02: A reviewer decides the kind of each change, and no store script can observe the decision.
+  VER-004.03: A reviewer decides the kind of each change, and no store script can observe the decision.
+  VER-005.01: The rule applies to the process of a binding repository, which no store script can observe.
+  VER-005.02: The rule applies to the process of a binding repository, which no store script can observe.
+  VER-007.01: The rule applies to the process of a binding repository, which no store script can observe.
+  YML-001.01: The rule applies to the process of a binding repository, which no store script can observe.
+  YML-001.02: The rule applies to the process of a binding repository, which no store script can observe.
+  YML-005.05: Each binding sets and documents its own limit, so no store script can observe the rule.
+  YML-007.02: The rule applies to the process of a binding repository, which no store script can observe.
+
+gap:

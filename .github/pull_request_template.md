@@ -8,7 +8,7 @@
 
 1. Reason for each change to `overrides.json`:
 2. Metaschema source (file and definition) of each new singular local name:
-3. Released names that change, if any, and the `VERSION` increment:
+3. Released names that change, if any, and the `VERSION` increment (see [Version](../README.md#version)):
 
 The CI job summary lists each changed name with its cause. `names.json` is generated, so review `overrides.json`
 and that list.

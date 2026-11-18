@@ -17,7 +17,7 @@ import fs from "node:fs";
 import { pathToFileURL } from "node:url";
 
 import { Ajv, type ErrorObject, type ValidateFunction } from "ajv";
-import addFormatsModule from "ajv-formats";
+import { addDatatypeFormats } from "./datatype-rules.js";
 import { isAlias, isMap, isScalar, isSeq, parseAllDocuments, type Document, type Node } from "yaml";
 
 /** Why the reader rejects an input. Each corpus case and self-test input names one reason. */
@@ -231,11 +231,10 @@ export function checkSchemaForReader(schema: { $id: string; definitions: Record<
 
 /** The document validator for a release, with the start-up check of design.md, D4. */
 export function documentValidator(schemaPath: string): ValidateFunction {
-  const addFormats = addFormatsModule as unknown as (ajv: Ajv) => Ajv;
   const schema = JSON.parse(fs.readFileSync(schemaPath, "utf8")) as { $id: string; definitions: Record<string, unknown> };
   checkSchemaForReader(schema);
   const ajv = new Ajv({ allErrors: true, strict: false });
-  addFormats(ajv);
+  addDatatypeFormats(ajv);
   ajv.addSchema(schema);
   return ajv.getSchema(schema.$id) as ValidateFunction;
 }

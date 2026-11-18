@@ -8,7 +8,7 @@
       "input": "documents/valid/catalog.json",
       "document-type": "catalog",
       "expected": "expected/catalog.json",
-      "requirements": ["PRS-001.01", "PRS-003.01", "SER-004.01"],
+      "requirements": ["PRS-001.01", "PRS-003.01", "SER-004.01", "ERR-002.01", "CNS-017.02"],
       "source": {
         "repository": "https://github.com/usnistgov/oscal-content",
         "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
@@ -36,7 +36,7 @@
       "input": "documents/valid/component-definition.json",
       "document-type": "component-definition",
       "expected": "expected/component-definition.json",
-      "requirements": ["PRS-001.01", "SER-004.01"],
+      "requirements": ["PRS-001.01", "SER-004.01", "PRS-005.01", "SER-001.01"],
       "source": {
         "repository": "https://github.com/usnistgov/oscal-content",
         "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
@@ -50,7 +50,7 @@
       "input": "documents/valid/system-security-plan.json",
       "document-type": "system-security-plan",
       "expected": "expected/system-security-plan.json",
-      "requirements": ["PRS-001.01", "SER-004.01"],
+      "requirements": ["PRS-001.01", "SER-004.01", "CNS-017.02"],
       "source": {
         "repository": "https://github.com/usnistgov/oscal-content",
         "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
@@ -115,8 +115,37 @@
       "input": "documents/valid/minimal-catalog.json",
       "document-type": "catalog",
       "expected": "expected/minimal-catalog.json",
-      "requirements": ["PRS-001.01", "SER-002.01", "SER-004.01"],
+      "requirements": ["PRS-001.01", "SER-002.01", "SER-004.01", "ERR-002.01"],
       "notes": "Written for this corpus. The base document of each invalid case."
+    },
+    {
+      "id": "round-trip/catalog-bytes",
+      "operation": "round-trip",
+      "input": "documents/valid/catalog.json",
+      "input-form": "bytes",
+      "document-type": "catalog",
+      "expected": "expected/catalog.json",
+      "requirements": ["PRS-001.02", "SER-004.01"],
+      "notes": "The input and the expected file of round-trip/catalog, passed to the parser as raw bytes. The input has characters outside ASCII, so a parser that decodes the bytes in a wrong way gives another document. The parse returns the same document as the parse of its text."
+    },
+    {
+      "id": "round-trip/catalog-path",
+      "operation": "round-trip",
+      "input": "documents/valid/catalog.json",
+      "input-form": "path",
+      "document-type": "catalog",
+      "expected": "expected/catalog.json",
+      "requirements": ["PRS-002.01"],
+      "notes": "The input and the expected file of round-trip/catalog. The parse-from-file operation gets the path of the input. The input has characters outside ASCII, so a parser that decodes the file in a wrong way gives another document. The parse returns the same document as the parse of its text."
+    },
+    {
+      "id": "round-trip/group-without-distinguishing-property",
+      "operation": "round-trip",
+      "input": "documents/valid/group-without-distinguishing-property.json",
+      "document-type": "catalog",
+      "expected": "expected/group-without-distinguishing-property.json",
+      "requirements": ["NAM-020.01"],
+      "notes": "Written for this corpus. The group holds a title and neither groups nor controls, so it conforms to both branches of the catalog group union."
     },
     {
       "id": "round-trip/datetime-forms",
@@ -137,6 +166,22 @@
       "notes": "Written for this corpus."
     },
     {
+      "id": "round-trip/uri-forms",
+      "operation": "round-trip",
+      "input": "documents/valid/uri-forms.json",
+      "document-type": "catalog",
+      "expected": "expected/uri-forms.json",
+      "requirements": ["PRS-017.07"]
+    },
+    {
+      "id": "round-trip/email-forms",
+      "operation": "round-trip",
+      "input": "documents/valid/email-forms.json",
+      "document-type": "catalog",
+      "expected": "expected/email-forms.json",
+      "requirements": ["PRS-016.01", "PRS-018.02"]
+    },
+    {
       "id": "round-trip/open-enum-off-list",
       "operation": "round-trip",
       "input": "documents/valid/open-enum-off-list.json",
@@ -150,7 +195,7 @@
       "operation": "parse",
       "input": "documents/invalid/not-json.json",
       "expected-category": "parse-error",
-      "requirements": ["ERR-004.01"]
+      "requirements": ["ERR-004.01", "ERR-009.02", "ERR-002.02"]
     },
     {
       "id": "parse/invalid-utf8",
@@ -158,7 +203,7 @@
       "input": "documents/invalid/invalid-utf8.json",
       "input-form": "bytes",
       "expected-category": "parse-error",
-      "requirements": ["PRS-001.03"]
+      "requirements": ["PRS-001.03", "ERR-004.04"]
     },
     {
       "id": "parse/unknown-root",
@@ -236,6 +281,142 @@
       "requirements": ["PRS-008.01", "PRS-013"]
     },
     {
+      "id": "parse/uri-reference-space",
+      "operation": "parse",
+      "input": "documents/invalid/uri-reference-space.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-017.01"]
+    },
+    {
+      "id": "parse/uri-reference-invalid-escape",
+      "operation": "parse",
+      "input": "documents/invalid/uri-reference-invalid-escape.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-017.02"]
+    },
+    {
+      "id": "parse/uri-reference-open-bracket",
+      "operation": "parse",
+      "input": "documents/invalid/uri-reference-open-bracket.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-017.03"]
+    },
+    {
+      "id": "parse/uri-reference-trailing-space",
+      "operation": "parse",
+      "input": "documents/invalid/uri-reference-trailing-space.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-017.04"]
+    },
+    {
+      "id": "parse/uri-reference-control-character",
+      "operation": "parse",
+      "input": "documents/invalid/uri-reference-control-character.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-017.05"]
+    },
+    {
+      "id": "parse/uri-space",
+      "operation": "parse",
+      "input": "documents/invalid/uri-space.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-017.06"]
+    },
+    {
+      "id": "parse/uri-no-path-after-scheme",
+      "operation": "parse",
+      "input": "documents/invalid/uri-no-path-after-scheme.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-017.13"]
+    },
+    {
+      "id": "parse/uri-reference-non-ascii",
+      "operation": "parse",
+      "input": "documents/invalid/uri-reference-non-ascii.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-017.10"]
+    },
+    {
+      "id": "parse/uri-reference-backslash",
+      "operation": "parse",
+      "input": "documents/invalid/uri-reference-backslash.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-017.11"]
+    },
+    {
+      "id": "parse/uri-reference-trailing-line-feed",
+      "operation": "parse",
+      "input": "documents/invalid/uri-reference-trailing-line-feed.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-017.12"]
+    },
+    {
+      "id": "parse/email-control-character",
+      "operation": "parse",
+      "input": "documents/invalid/email-control-character.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-018.01"]
+    },
+    {
+      "id": "parse/email-delete-character",
+      "operation": "parse",
+      "input": "documents/invalid/email-delete-character.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-018.03"]
+    },
+    {
+      "id": "parse/datetime-lowercase-zone",
+      "operation": "parse",
+      "input": "documents/invalid/datetime-lowercase-zone.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-016.02"]
+    },
+    {
+      "id": "parse/datetime-two-digit-year",
+      "operation": "parse",
+      "input": "documents/invalid/datetime-two-digit-year.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-019.01"]
+    },
+    {
+      "id": "parse/uri-reference-and-constraint-failure",
+      "operation": "parse",
+      "input": "documents/invalid/uri-reference-and-constraint-failure.json",
+      "expected-category": "parse-error",
+      "expected-min-failures": 1,
+      "expected-max-failures": 1,
+      "requirements": ["PRS-016.03"],
+      "notes": "The href is not a valid URI reference, so the schema reports one failure. The property priority alone gives three constraint failures, which is more than the maximum, so the parse error carries no entry for them."
+    },
+    {
       "id": "parse/closed-enum-out-of-set",
       "operation": "parse",
       "input": "documents/invalid/closed-enum-out-of-set.json",
@@ -255,26 +436,53 @@
       "notes": "The metadata has no title, so the schema reports one failure. The property priority also fails a constraint, and the parse error carries no entry for it."
     },
     {
+      "id": "parse/nested-control-part-name",
+      "operation": "parse",
+      "input": "documents/invalid/nested-control-part-name.json",
+      "expected-category": "parse-error",
+      "expected-constraints": ["oscal-control-part-name", "oscal-control-statement-part-name"],
+      "requirements": ["PRS-015.01", "CNS-017.03", "CNS-024.01"],
+      "notes": "Control ac-2.1 is in control ac-2 and has a part with the name bogus. The target query of oscal-control-statement-part-name selects that part from each ancestor control, and the entry still gives one failure. Every control has a statement part, so the entry oscal-catalog-control-require-statement-when-appropriate does not fail. The input is adapted and trimmed from AC-2 and AC-2(1) of the SP 800-53 rev5 catalog in usnistgov/oscal-content at commit 78650f02ad9321bb7b817846f8fbd4f2bcd620de."
+    },
+    {
+      "id": "parse/nested-control-part-name-three-levels",
+      "operation": "parse",
+      "input": "documents/invalid/nested-control-part-name-three-levels.json",
+      "expected-category": "parse-error",
+      "expected-constraints": ["oscal-control-part-name", "oscal-control-statement-part-name"],
+      "requirements": ["PRS-015.01", "CNS-017.03", "CNS-024.01"],
+      "notes": "Control ac-2.1.1 is in control ac-2.1, which is in control ac-2, and has a part with the name bogus. The target query of oscal-control-statement-part-name selects that part from each of the three ancestor controls, and the entry still gives one failure. Every control has a statement part, so the entry oscal-catalog-control-require-statement-when-appropriate does not fail. The input is adapted and trimmed from AC-2 and AC-2(1) of the SP 800-53 rev5 catalog in usnistgov/oscal-content at commit 78650f02ad9321bb7b817846f8fbd4f2bcd620de. SP 800-53 has no third level, so control ac-2.1.1 is synthetic."
+    },
+    {
+      "id": "parse/allowed-value-case",
+      "operation": "parse",
+      "input": "documents/invalid/allowed-value-case.json",
+      "expected-category": "parse-error",
+      "expected-constraints": ["oscal-activity-type-values"],
+      "requirements": ["PRS-015.01", "CNS-025.01", "ERR-004.05", "PRS-015.03", "CNS-017.01"],
+      "notes": "The entry oscal-activity-type-values is closed and lists the values INTERVIEW, EXAMINE and TEST. The method prop of the activity has the value test. This value differs from the listed value TEST only in case, and the entry gives one failure. The input is a copy of documents/invalid/constraints/oscal-activity-type-values.json with the value test in place of zz-invalid."
+    },
+    {
       "id": "parse-typed/wrong-document-type",
       "operation": "parse-typed",
       "input": "documents/valid/profile.json",
       "document-type": "catalog",
       "expected-category": "document-type-mismatch",
-      "requirements": ["PRS-003.02", "ERR-005.01"]
+      "requirements": ["PRS-003.02", "ERR-005.01", "ERR-009.01"]
     },
     {
       "id": "parse-file/missing-file",
       "operation": "parse-file",
       "input": "documents/does-not-exist.json",
       "expected-category": "not-found",
-      "requirements": ["PRS-002.02", "ERR-006.01"]
+      "requirements": ["PRS-002.02", "ERR-006.01", "ERR-006.02"]
     },
     {
       "id": "parse-file/directory",
       "operation": "parse-file",
       "input": "documents/valid",
       "expected-category": "read-error",
-      "requirements": ["ERR-012.01"]
+      "requirements": ["ERR-012.01", "ERR-012.03"]
     },
     {
       "id": "assessment-period/catalog",
@@ -306,6 +514,30 @@
       "expected-period": { "start": "2026-03-01T05:00:00.1234567-05:00", "end": "2026-03-01T06:00:00.0000001-05:00" },
       "requirements": ["FAC-007.03", "FAC-006.01"],
       "notes": "Both bounds come from the second result. A binding that keeps six fraction digits sees equal instants."
+    },
+    {
+      "id": "assessment-period/timing-kinds",
+      "operation": "assessment-period",
+      "input": "documents/valid/assessment-plan-timing-kinds.json",
+      "expected-period": { "start": "2026-01-15T08:00:00Z", "end": "2026-03-31T23:59:59Z" },
+      "requirements": ["FAC-005.01"],
+      "notes": "The tasks are not in date order. The start comes from an on-date of the second task, so a binding that takes the first start in document order gives 2026-02-01T00:00:00Z. The end comes from a within-date-range of a nested task in the first task, so a binding that takes the last end in document order gives the on-date 2026-01-15T08:00:00Z, and a binding that skips nested tasks gives 2026-02-28T00:00:00Z. The at-frequency timing of the third task gives no datetime. The input is synthetic."
+    },
+    {
+      "id": "assessment-period/at-frequency-only",
+      "operation": "assessment-period",
+      "input": "documents/valid/assessment-plan-at-frequency.json",
+      "expected-period": { "start": null, "end": null },
+      "requirements": ["FAC-005.02"],
+      "notes": "A task and its nested task have only at-frequency timing, so both bounds are empty. The value null stands for an empty bound. The input is synthetic."
+    },
+    {
+      "id": "assessment-period/on-date",
+      "operation": "assessment-period",
+      "input": "documents/valid/assessment-plan-on-date.json",
+      "expected-period": { "start": "2026-05-04T10:30:00-04:00", "end": "2026-05-04T10:30:00-04:00" },
+      "requirements": ["FAC-005.03"],
+      "notes": "The only task has an on-date, which is both the start and the end. The offset stays as written. The input is synthetic."
     },
     {
       "id": "facade/catalog",
@@ -451,6 +683,14 @@
       "requirements": ["ELV-001.01", "ELV-002.02"]
     },
     {
+      "id": "element/back-matter-rlink-href-space",
+      "operation": "validate-element",
+      "input": "elements/back-matter-rlink-href-space.json",
+      "element-type": "back-matter",
+      "expected-valid": false,
+      "requirements": ["PRS-017.08"]
+    },
+    {
       "id": "element/back-matter-empty-resources",
       "operation": "validate-element",
       "input": "elements/back-matter-empty-resources.json",
@@ -575,6 +815,13 @@
       "requirements": ["BMB-002.02"]
     },
     {
+      "id": "build-rlink/href-space",
+      "operation": "build-rlink",
+      "arguments": {"href": "a b"},
+      "expected-category": "builder-error",
+      "requirements": ["PRS-017.09"]
+    },
+    {
       "id": "build-resource/generated-identifier",
       "operation": "build-resource",
       "arguments": {"title": "Access Control Policy"},
@@ -610,12 +857,44 @@
       }
     },
     {
+      "id": "yaml-round-trip/catalog-bytes",
+      "operation": "yaml-round-trip",
+      "input": "documents/valid/catalog.yaml",
+      "input-form": "bytes",
+      "document-type": "catalog",
+      "expected": "expected/catalog.json",
+      "requirements": ["YML-005.01"],
+      "notes": "The YAML parse operation gets the raw bytes of the input, not text. The input is the same file as the input of yaml-round-trip/catalog.",
+      "source": {
+        "repository": "https://github.com/usnistgov/oscal-content",
+        "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
+        "path": "examples/catalog/yaml/basic_catalog.yaml",
+        "sha256": "a0c8f5449852931e0f68b151a684d2e08cb9c0249702052896a33101b99ae797"
+      }
+    },
+    {
       "id": "yaml-round-trip/profile",
       "operation": "yaml-round-trip",
       "input": "documents/valid/profile.yaml",
       "document-type": "profile",
       "expected": "expected/profile.json",
       "requirements": ["YML-005.02", "YML-008.01"],
+      "source": {
+        "repository": "https://github.com/usnistgov/oscal-content",
+        "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
+        "path": "examples/profile/yaml/basic_profile.yaml",
+        "sha256": "f6611d2cbcd210f7fd8ab5df95682ca4fe7be1d418c5cb70352693eca8e1af84"
+      }
+    },
+    {
+      "id": "yaml-round-trip/profile-path",
+      "operation": "yaml-round-trip",
+      "input": "documents/valid/profile.yaml",
+      "input-form": "path",
+      "document-type": "profile",
+      "expected": "expected/profile.json",
+      "requirements": ["YML-006.01"],
+      "notes": "The YAML parse-from-file operation gets the path of the input. The input is the same file as the input of yaml-round-trip/profile.",
       "source": {
         "repository": "https://github.com/usnistgov/oscal-content",
         "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
@@ -712,6 +991,16 @@
       "notes": "The quoted \"443\" and the plain 443.0 at port-range locations are the number 443. The alias *port at a property value is the string \"443\". The metadata version \"1.0\" stays a string after serialization."
     },
     {
+      "id": "yaml-round-trip/minimal-catalog",
+      "operation": "yaml-round-trip",
+      "input": "documents/valid/minimal-catalog.yaml",
+      "document-type": "catalog",
+      "expected": "expected/minimal-catalog.json",
+      "expected-absent-keys": ["groups", "controls", "back-matter", "parties", "roles", "locations", "responsible-parties", "props", "links", "remarks"],
+      "requirements": ["YML-008.03"],
+      "notes": "The catalog has only its required fields, so every optional field is absent. A serializer that writes an absent field as null gives the string \"null\" at a string location and a parse error at any other location (YML-004.04), so the second parse of the round trip fails. A serializer that writes an absent field as an empty value passes the round trip, so the runner also reads the serialized YAML as generic YAML and checks that none of the keys in expected-absent-keys occurs. The input is the YAML form of documents/valid/minimal-catalog.json."
+    },
+    {
       "id": "yaml-round-trip/boolean-scalar",
       "operation": "yaml-round-trip",
       "input": "documents/valid/boolean-scalar.yaml",
@@ -719,6 +1008,22 @@
       "expected": "expected/boolean-scalar.json",
       "requirements": ["YML-004", "YML-008.01"],
       "notes": "The plain scalar true at the as-is location is the boolean true."
+    },
+    {
+      "id": "yaml-parse-file/missing-file",
+      "operation": "yaml-parse-file",
+      "input": "documents/does-not-exist.yaml",
+      "expected-category": "not-found",
+      "requirements": ["YML-006.02", "ERR-006.01"]
+    },
+    {
+      "id": "yaml-parse-typed/wrong-document-type",
+      "operation": "yaml-parse-typed",
+      "input": "documents/valid/profile.yaml",
+      "document-type": "catalog",
+      "expected-category": "document-type-mismatch",
+      "requirements": ["YML-007.01", "PRS-003.02", "ERR-005.01"],
+      "notes": "The input is a valid Profile in YAML, and the typed parser is for a Catalog. The input is the same file as the input of yaml-round-trip/profile."
     },
     {
       "id": "yaml-parse/syntax-error",

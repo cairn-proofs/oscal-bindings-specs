@@ -142,6 +142,16 @@
       "title": "The element queries of a single-or-many type are those of its item type"
     },
     {
+      "id": "CNS-024",
+      "capability": "constraint-validation",
+      "title": "The location of a node says when two selections are the same node"
+    },
+    {
+      "id": "CNS-025",
+      "capability": "constraint-validation",
+      "title": "An allowed-values entry compares values character for character"
+    },
+    {
       "id": "ELV-001",
       "capability": "element-validation",
       "title": "Validate a standalone element against a named type"
@@ -552,6 +562,26 @@
       "title": "A constraint failure is a parse failure that names its constraint"
     },
     {
+      "id": "PRS-016",
+      "capability": "document-parsing",
+      "title": "The patterns of the schema decide a value, not its format keyword"
+    },
+    {
+      "id": "PRS-017",
+      "capability": "document-parsing",
+      "title": "A URI value matches the grammar of RFC 3986"
+    },
+    {
+      "id": "PRS-018",
+      "capability": "document-parsing",
+      "title": "An email address holds no control character"
+    },
+    {
+      "id": "PRS-019",
+      "capability": "document-parsing",
+      "title": "A date-time value matches the grammar of RFC 3339"
+    },
+    {
       "id": "SER-001",
       "capability": "serialization",
       "title": "Serialization emits OSCAL property keys"
@@ -645,6 +675,11 @@
       "id": "VER-007",
       "capability": "schema-versioning",
       "title": "Each binding keeps its own expected conformance failures"
+    },
+    {
+      "id": "VER-008",
+      "capability": "schema-versioning",
+      "title": "The version is the latest release or one step above it"
     },
     {
       "id": "YML-001",

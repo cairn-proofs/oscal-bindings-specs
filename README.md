@@ -101,30 +101,45 @@ operation.
 2. `npm ci`
 3. `npm run check`
 
-`npm run check` runs these checks. CI runs the same command on each pull request.
+`npm run check` runs these checks one after another, and it is the gate to run before a pull request. `npm run check:parallel`
+runs the same steps at the same time, and CI runs it on each pull request. It reads the steps from the `check` script of
+`package.json`, so the list exists in one place. A step that fails stops the start of new steps, and the output of the
+failed step is the first thing that the run prints. `npm run check:parallel -- --jobs <n>` limits the steps that run at
+once, and `npm run check:parallel:self-test` runs its self-test. The longest step, `npm run constraints:check`, sets the
+wall time of a parallel run.
 
 1. The TypeScript typecheck.
 2. The identifier checker and its self-test.
 3. The requirement index generator self-test, which also checks the traceability record JSON Schema on sample
    records, and `npm run requirements:check`: it fails when `openspec/requirements.json` differs from the generator
    output.
-4. The `VERSION` check and its self-test.
-5. The schema `sha256` check.
+4. The `VERSION` check and its self-test. See [Version](#version).
+5. The schema `sha256` check, the metaschema `sha256` check, and the self-test of the metaschema check
+   (`npm run metaschema:self-test`).
 6. The canonical JSON self-test.
 7. The YAML reader self-test. `scripts/yaml-reader.ts` is the reference reader that the corpus check uses for YAML
    inputs.
 8. The corpus check (see [corpus/1.2.3/README.md](corpus/1.2.3/README.md)).
-9. The binding link check and its self-test, `npm run binding-links:check`. It fails when a tracked file outside
-   `openspec/changes/` links an individual issue or pull request in a binding repository. The binding repositories are
-   the repositories in [Known implementations](#known-implementations) and each `oscal-bindings-*` repository other
-   than this store.
-10. The names generator self-test, and `npm run names:check`: it validates each manifest file and fails when
+9. The archive self-test, `npm run archive:self-test`. It builds the archive from `HEAD` and checks that it holds each
+   file of `metaschema/<release>/`, `openspec/requirements.json`, `openspec/traceability.schema.json`, and the other
+   paths of `CONTENTS`.
+10. The binding link check and its self-test, `npm run binding-links:check`. It fails when a tracked file outside
+    `openspec/changes/` links an individual issue or pull request in a binding repository. The binding repositories are
+    the repositories in [Known implementations](#known-implementations) and each `oscal-bindings-*` repository other
+    than this store.
+11. The names generator self-test, and `npm run names:check`: it validates each manifest file and fails when
     `names.json` differs from the generator output.
-11. The release checks and their self-test, `npm run releases:check`. A released name that changes needs a breaking
-    `VERSION` increment, and a released `schemas/<release>/` file must not change. These checks read git tags and
-    history, so they fail in a shallow clone or a clone without tags. They also list each name change against the
-    base ref (`SPEC_IDS_BASE`, default `HEAD`), and CI writes that list to the job summary.
-12. `openspec validate --all --strict`.
+12. The release checks and their self-test, `npm run releases:check`. A released name that changes needs a breaking
+    `VERSION` increment, and a released `schemas/<release>/` file must not change. `VERSION` must also meet the step
+    rule in [Version](#version). These checks read git tags and history, so they fail in a shallow clone or a clone
+    without tags. They also list each name change against the base ref (`SPEC_IDS_BASE`, default `HEAD`), and CI
+    writes that list to the job summary.
+13. The scenario coverage checks, `npm run coverage:check`, and their self-tests. `npm run coverage:check` fails when
+    `openspec/coverage.json` differs from the generator output, or when a scenario has no corpus case, no self-test, and
+    no entry in `openspec/scenario-checks.yaml`. `npm run coverage:faults` runs the corpus against faulty evaluators and
+    lists the cases that detect each fault. A fault that no case detects fails the run. See
+    [CONTRIBUTING.md](CONTRIBUTING.md#change-a-requirement).
+14. `openspec validate --all --strict`.
 
 To change a canonical name, edit `manifest/<release>/overrides.json`, run `npm run names:write`, and commit both
 files.
@@ -132,8 +147,25 @@ files.
 To add, rename, or remove a requirement in the main specs, run `npm run requirements:write`, and commit the index with
 the specs.
 
-`VERSION` holds the spec artifact version: a Semantic Version with the OSCAL release as build metadata, for example
-`0.1.0+oscal.1.2.3`.
+### Version
+
+`VERSION` holds the spec artifact version. The version is `MAJOR.MINOR.PATCH+oscal.<release>`, for example
+`0.1.0+oscal.1.2.3`. It follows [Semantic Versioning 2.0.0][VER-003], has no pre-release label, and holds the OSCAL
+release as [build metadata][VER-004].
+
+1. A reviewer decides if a change is a break, an addition or a fix ([VER-003]). Semantic Versioning 2.0.0 gives the
+   increment for each kind.
+2. A change that needs an increment sets `VERSION` to the version of the next release. Do this also when no release
+   follows at once. Changes between two releases share one increment.
+3. `VERSION` must be the latest release, or one patch, minor or major step above it ([VER-008]). The latest release is
+   the release tag on `main` with the highest precedence, for all OSCAL releases. `npm run releases:check` fails
+   when `VERSION` is not one of these versions. It cannot find an increment that is too small, so the reviewer
+   checks that too.
+4. For the steps after the merge, see [Release](#release).
+
+[VER-003]: openspec/specs/schema-versioning/spec.md#requirement-ver-003-the-shared-spec-artifact-uses-semantic-versioning-for-its-own-compatibility
+[VER-004]: openspec/specs/schema-versioning/spec.md#requirement-ver-004-the-oscal-release-is-recorded-as-semantic-versioning-build-metadata
+[VER-008]: openspec/specs/schema-versioning/spec.md#requirement-ver-008-the-version-is-the-latest-release-or-one-step-above-it
 
 ## Threat model
 
@@ -151,9 +183,9 @@ Open the `.tc.json` file there with the Threat Composer VS Code extension or web
 
 ## Release
 
-1. Set the new version in `VERSION`, and merge the pull request.
+1. Merge the pull request that sets the new version in `VERSION`. See [Version](#version).
 2. Push the tag `v<VERSION>` on that commit of `main`, for example `v0.1.0+oscal.1.2.3`.
-3. CI runs `npm run check`, builds the archive with `npm run archive`, and attaches the archive and `SHA256SUMS` to a
+3. CI runs `npm run check:parallel`, builds the archive with `npm run archive`, and attaches the archive and `SHA256SUMS` to a
    draft GitHub release. CI fails when the tag is not on `main` or does not match `VERSION`.
 4. Review the draft and publish it.
 5. Each binding that calls `pin-move-check.yml` gets its pin-move issue on its next scheduled run. Open the issue by

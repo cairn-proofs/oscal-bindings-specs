@@ -15,10 +15,21 @@ When a commit adds, renames, or removes a requirement in the main specs, do thes
 
 `npm run check` fails when the index differs from the main specs ([SRF-006]).
 
+When a commit adds a scenario to the main specs, the scenario needs one of these:
+
+1. A corpus case that cites the scenario identifier.
+2. A self-test in `scripts/` with a name that starts with the scenario identifier.
+3. A `by-design` reason in [openspec/scenario-checks.yaml](openspec/scenario-checks.yaml). Use it only when no store
+   script can check the scenario.
+
+Then run `npm run coverage:write`, and commit `openspec/coverage.json` with the specs. Do not add a `gap` entry. The
+`gap` list can get shorter, but not longer. `npm run coverage:check` fails for a scenario that has none of these
+methods.
+
 One pull request carries a change from proposal to archive:
 
-1. Sync the delta specs into the main specs. When the change needs a version increment, set `VERSION` to the version of
-   the next release. Do this also when no release follows at once.
+1. Sync the delta specs into the main specs. When the change needs a version increment, set `VERSION` as
+   [README.md, Version](README.md#version) states.
 2. Archive the change in the same pull request. Steps that can run only after the merge, such as the release tag and
    follow-up issues in binding repos, go in the `## Workflow follow-up` section of `tasks.md`, not in tracked tasks.
 3. After the merge, tag the release on `main`. Record the archive `sha256` in the release notes.

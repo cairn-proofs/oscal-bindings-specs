@@ -7,7 +7,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { Ajv, type ValidateFunction } from "ajv";
-import addFormatsModule from "ajv-formats";
+import { addDatatypeFormats } from "./datatype-rules.js";
 import { GenerationError } from "./constraints-regex.js";
 import type { Def, Model } from "./metaschema.js";
 import { allNodes, loadDoc, loadElement, type MNode } from "./metapath.js";
@@ -197,10 +197,9 @@ function universe(model: Model, holdsFlag: (parent: Def, name: string) => boolea
 }
 
 export function schemaValidator(schemaFile: string): ValidateFunction {
-  const addFormats = addFormatsModule as unknown as (ajv: Ajv) => Ajv;
   const schema = JSON.parse(fs.readFileSync(schemaFile, "utf8")) as { $id: string };
   const ajv = new Ajv({ allErrors: false, strict: false });
-  addFormats(ajv);
+  addDatatypeFormats(ajv);
   ajv.addSchema(schema);
   return ajv.getSchema(schema.$id) as ValidateFunction;
 }

@@ -11,8 +11,10 @@
  * 6. A typed-parse, parse-file, assessment-period, or validate-element case has the precondition its category needs.
  * 7. A yaml-round-trip input reads with the reference YAML reader (scripts/yaml-reader.ts), and the canonical form of
  *    its JSON text is its expected file. A yaml-round-trip case that copies a source names the expected file of a JSON
- *    round-trip case, and --write does not write that file.
- * 8. The reference YAML reader rejects a yaml-parse input, and the notes of the case name the fault code.
+ *    round-trip case, and --write does not write that file. Each key of `expected-absent-keys` is absent from the input.
+ * 8. The reference YAML reader rejects a yaml-parse input, and the notes of the case name the fault code. A
+ *    yaml-parse-file case is checked as a parse-file case is (check 6), except that its category is not-found only. A
+ *    yaml-parse-typed case is checked as a parse-typed case is, with the reference YAML reader reading its input.
  * 9. Each cited requirement or scenario identifier names a heading in the specs.
  * 10. No case has a `known-defects` field, and the index has no `defect-twins` field. Each binding keeps its own
  *     expected failures (VER-006).
@@ -22,7 +24,7 @@
  * 12. An assessment-period case has either `expected-category` or `expected-period`, not both and not neither. With
  *     `expected-category`, the input is not an Assessment Plan or Assessment Results. With `expected-period`, the input
  *     is a valid Assessment Plan or Assessment Results, and the canonical form of each bound that FAC-005 to FAC-007
- *     compute from it equals the value of the field.
+ *     compute from it equals the value of the field. A bound that is empty is `null` in the field.
  * 13. The list of element-type names (ELV-002) is the kebab-case form of the `name` of each type in the naming
  *     manifest, in code-point order. No two types give the same name. An element-types case has no input, and its
  *     expected file is the canonical form of the list. A validate-element case with `expected-valid` names an element
@@ -43,8 +45,10 @@
  *     Only a build-resource case has `expected-uuid`.
  * 15. The BMB-004 namespace is the UUID version 5 of its URL in the URL namespace, the text of BMB-004 in the main spec
  *     contains the namespace, and docs/back-matter-keys.md contains the URL and the namespace.
- * 16. A facade case has an `input-form` that is absent, `bytes`, or `path`, and only a facade case has `path`. It has
- *     exactly one of `expected` and `expected-category`. With `expected`, the input is valid against the schema, its only
+ * 16. The `input-form` of a case is absent, `bytes`, or `path`. A round-trip, yaml-round-trip, or facade case can have
+ *     `bytes` or `path`. A parse or yaml-parse case can have `bytes`. A case of any other operation has no `input-form`
+ *     (README, Input forms). A facade case has exactly one of `expected` and `expected-category`. With `expected`, the
+ *     input is valid against the schema, its only
  *     root key is `document-type`, `expected` is the expected file of a round-trip case, and `expected` is the canonical
  *     form of the input, so the body, the metadata, the OSCAL version, and the identifier that the facade reads come
  *     from a known document. With `expected-category`, the category is not-found, the form is `path`, and the input
@@ -58,21 +62,19 @@
  *
  *   npm run corpus:check           check the corpus
  *   npm run corpus:write           regenerate each expected file, then check
- *   npm run corpus:self-test       run the rule scenarios of check 17
+ *   npm run corpus:self-test       run the self-tests of the rules
  */
 import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 
 import { Ajv, type ValidateFunction } from "ajv";
-import addFormatsModule from "ajv-formats";
 
 import { canonicalize, normalizeDatetime } from "./canonical-json.js";
+import { addDatatypeFormats } from "./datatype-rules.js";
 import { CorpusConstraints, type EntryFailure } from "./corpus-constraints.js";
 import type { Entry } from "./constraints-lib.js";
 import { checkSchemaForReader, readYaml } from "./yaml-reader.js";
-
-const addFormats = addFormatsModule as unknown as (ajv: Ajv) => Ajv;
 
 const RELEASE = fs.readFileSync("VERSION", "utf8").trim().split("+oscal.")[1];
 const ROOT = `corpus/${RELEASE}`;
@@ -96,6 +98,8 @@ const OPERATIONS = [
   "validate-element",
   "yaml-round-trip",
   "yaml-parse",
+  "yaml-parse-file",
+  "yaml-parse-typed",
   "element-types",
   "build-resource",
   "build-hash",
@@ -108,6 +112,21 @@ const ARGUMENT_FIELDS: Record<string, string[]> = {
   "build-rlink": ["href", "media-type", "hashes"],
   "build-resource": ["key", "title", "identifier", "document-ids", "rlinks"],
 };
+/**
+ * The values of `input-form` that a case of each operation can have (README, Input forms). A case of an operation that
+ * is not a key has no `input-form`. An operation whose name ends with `-file` always gives the path to the binding.
+ */
+const INPUT_FORMS: Record<string, string[]> = {
+  "round-trip": ["bytes", "path"],
+  parse: ["bytes"],
+  "yaml-round-trip": ["bytes", "path"],
+  "yaml-parse": ["bytes"],
+  facade: ["bytes", "path"],
+};
+/** True when a case of `operation` can have the `input-form` value `form`. Each operation can have no form. */
+export function inputFormAllowed(operation: string, form: string | undefined): boolean {
+  return form === undefined || (Object.hasOwn(INPUT_FORMS, operation) && INPUT_FORMS[operation].includes(form));
+}
 interface Expectations {
   /** CNS-020: the failures equal the `expected-constraints` of the case, and each failed entry counts as covered. */
   expectFailures: (c: Case, failures: EntryFailure[]) => void;
@@ -130,7 +149,7 @@ function expectations(fail: (id: string, message: string) => void, covered: Set<
 const TYPE_OF: Record<string, string> = { "build-hash": "hash", "build-rlink": "back-matter-resource-rlink", "build-resource": "back-matter-resource" };
 const ID = /^[A-Z]{2,5}-\d{3}(?:\.\d{2})?$/;
 
-interface Case {
+export interface Case {
   id: string;
   operation: string;
   input?: string;
@@ -142,7 +161,8 @@ interface Case {
   "expected-valid"?: boolean;
   "expected-min-failures"?: number;
   "expected-max-failures"?: number;
-  "expected-period"?: { start: string; end: string };
+  "expected-period"?: { start: string | null; end: string | null };
+  "expected-absent-keys"?: string[];
   arguments?: {
     key?: string;
     title?: string;
@@ -252,6 +272,129 @@ function assessmentPeriod(doc: Record<string, unknown>): { start?: string; end?:
   };
   return { start: pick(starts, -1), end: pick(ends, 1) };
 }
+/**
+ * A message for each bound of `expected` that differs from the bound that FAC-005 to FAC-007 compute. An empty bound is
+ * `null` in `expected-period` and `undefined` in the computed period.
+ */
+export function periodMismatches(
+  expected: { start: string | null; end: string | null },
+  computed: { start?: string; end?: string },
+): string[] {
+  const messages: string[] = [];
+  for (const bound of ["start", "end"] as const) {
+    const value = computed[bound];
+    if ((value === undefined ? null : normalizeDatetime(value)) !== expected[bound])
+      messages.push(`expected-period ${bound} is ${expected[bound]}, but FAC-005 to FAC-007 give ${value ?? null}`);
+  }
+  return messages;
+}
+/**
+ * A message when `documentType` is not an OSCAL type, or when the input has that root key. Undefined when the input is a
+ * different document type from `documentType`, which is the mismatch that a typed-parse case needs.
+ */
+export function typeMismatch(documentType: string | undefined, doc: object): string | undefined {
+  const type = documentType ?? "";
+  if (!DOCUMENT_TYPES.includes(type)) return "document-type is not an OSCAL type";
+  if (Object.hasOwn(doc, type)) return "input is the requested document type";
+  return undefined;
+}
+/**
+ * A message when the input of a parse-file or yaml-parse-file case cannot test `category`, else undefined. A parse-file
+ * case has the category not-found or read-error. A yaml-parse-file case has not-found only (README, operation `yaml-parse-file`).
+ */
+export function parseFileProblem(operation: string, category: string | undefined, exists: boolean, isDirectory: boolean, input: string): string | undefined {
+  if (category === "not-found") return exists ? `${input} exists, so it cannot test not-found` : undefined;
+  if (category === "read-error" && operation === "parse-file") return isDirectory ? undefined : `${input} is not a directory, so it cannot test read-error`;
+  return `a ${operation} case has the category ${operation === "parse-file" ? "not-found or read-error" : "not-found"}`;
+}
+/** The keys of `keys` that occur as a mapping key at any depth of `value`. */
+export function keysPresent(value: unknown, keys: string[]): string[] {
+  const found = new Set<string>();
+  const walk = (node: unknown): void => {
+    if (Array.isArray(node)) node.forEach(walk);
+    else if (node !== null && typeof node === "object")
+      for (const [key, child] of Object.entries(node)) {
+        if (keys.includes(key)) found.add(key);
+        walk(child);
+      }
+  };
+  walk(value);
+  return [...found];
+}
+/** A document that the corpus checks against the constraint manifest (CNS-020), and the failures that its case expects. */
+export interface DocumentInput {
+  document: unknown;
+  /** The `id` values of the expected failures, with each repeat. Empty for a case that expects a valid document. */
+  expected: string[];
+}
+
+/**
+ * The document of a case that the corpus checks against the constraint manifest, with the expected failures. The cases
+ * are the round-trip, parse, parse-typed, facade, assessment-period, yaml-round-trip, and yaml-parse-typed cases whose
+ * input conforms to the schema. Undefined for any other case, and for an input that cannot be read. `main()` and scripts/coverage-faults.ts
+ * both select the cases here, so they select the same cases.
+ */
+export function documentInput(c: Case, validateDocument: ValidateFunction): DocumentInput | undefined {
+  if (c.input === undefined) return undefined;
+  const file = path.join(ROOT, c.input);
+  try {
+    if (!fs.existsSync(file) || !fs.statSync(file).isFile()) return undefined;
+    switch (c.operation) {
+      case "round-trip":
+      case "parse-typed": {
+        const document: unknown = JSON.parse(fs.readFileSync(file, "utf8"));
+        return validateDocument(document) ? { document, expected: [] } : undefined;
+      }
+      case "facade":
+      case "assessment-period": {
+        if (c.operation === "facade" ? c["expected-category"] !== undefined : c["expected-period"] === undefined) return undefined;
+        const document: unknown = JSON.parse(fs.readFileSync(file, "utf8"));
+        return validateDocument(document) ? { document, expected: [] } : undefined;
+      }
+      case "parse": {
+        const document: unknown = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(fs.readFileSync(file)));
+        return validateDocument(document) ? { document, expected: c["expected-constraints"] ?? [] } : undefined;
+      }
+      case "yaml-round-trip":
+      case "yaml-parse-typed": {
+        const result = readYaml(fs.readFileSync(file), validateDocument);
+        return result.ok ? { document: result.value, expected: [] } : undefined;
+      }
+      default:
+        return undefined;
+    }
+  } catch {
+    return undefined;
+  }
+}
+
+/** Each case of `cases` that `documentInput` selects, with its input. */
+export function* documentCases(cases: Case[], validateDocument: ValidateFunction): Generator<{ id: string; input: DocumentInput }> {
+  for (const c of cases) {
+    const input = documentInput(c, validateDocument);
+    if (input !== undefined) yield { id: c.id, input };
+  }
+}
+
+/** The complete schema, and a validator for a document. */
+export function loadSchema() {
+  const schema = JSON.parse(fs.readFileSync(SCHEMA, "utf8")) as {
+    $id: string;
+    definitions: Record<string, unknown>;
+    oneOf: { required?: string[] }[];
+  };
+  checkSchemaForReader(schema);
+  const ajv = new Ajv({ allErrors: true, strict: false });
+  addDatatypeFormats(ajv);
+  ajv.addSchema(schema);
+  return { schema, ajv, validateDocument: ajv.getSchema(schema.$id) as ValidateFunction };
+}
+
+/** The cases of the case index of the release. */
+export function readCases(): Case[] {
+  return (JSON.parse(fs.readFileSync(`${ROOT}/cases.json`, "utf8")) as { cases: Case[] }).cases;
+}
+
 /** The requirement and scenario identifiers on the headings of every spec under openspec/. */
 function specIdentifiers(): Set<string> {
   const ids = new Set<string>();
@@ -377,6 +520,20 @@ function compareElement(c: Case, element: unknown, expected: unknown, fail: (id:
     fail(c.id, `expected-element is not the element that the arguments give: ${JSON.stringify(element)}`);
 }
 
+/** The failure for binding-specific data in the corpus index (VER-006), or undefined. */
+export function indexBindingData(index: object): string | undefined {
+  return Object.hasOwn(index, "defect-twins")
+    ? "the index has a defect-twins field. Each binding keeps its own expected failures (VER-006)."
+    : undefined;
+}
+
+/** The failure for binding-specific data in a corpus case (VER-006), or undefined. */
+export function caseBindingData(c: object): string | undefined {
+  return Object.hasOwn(c, "known-defects")
+    ? "the case has a known-defects field. Each binding keeps its own expected failures (VER-006)."
+    : undefined;
+}
+
 function main(write: boolean): number {
   const failures: string[] = [];
   const fail = (id: string, message: string) => failures.push(`[corpus] ${id}: ${message}`);
@@ -385,16 +542,7 @@ function main(write: boolean): number {
   const { expectFailures, expectNone } = expectations(fail, coveredEntries);
   const checkBuilder = checkBuilderFactory(constraints, { expectFailures, expectNone }, fail);
 
-  const schema = JSON.parse(fs.readFileSync(SCHEMA, "utf8")) as {
-    $id: string;
-    definitions: Record<string, unknown>;
-    oneOf: { required?: string[] }[];
-  };
-  checkSchemaForReader(schema);
-  const ajv = new Ajv({ allErrors: true, strict: false });
-  addFormats(ajv);
-  ajv.addSchema(schema);
-  const validateDocument = ajv.getSchema(schema.$id) as ValidateFunction;
+  const { schema, ajv, validateDocument } = loadSchema();
   // The root keys of PRS-013: each required key of a root `oneOf` branch, other than `$schema`, selects that branch.
   const branchOfRootKey = new Map<string, ValidateFunction>();
   schema.oneOf.forEach((branch, i) => {
@@ -432,8 +580,8 @@ function main(write: boolean): number {
     cases: Case[];
   };
   if (index["oscal-release"] !== RELEASE) fail("cases.json", `oscal-release is not ${RELEASE}`);
-  if (Object.hasOwn(index, "defect-twins"))
-    fail("cases.json", "the index has a defect-twins field. Each binding keeps its own expected failures (VER-006).");
+  const indexData = indexBindingData(index);
+  if (indexData !== undefined) fail("cases.json", indexData);
   // The namespace of BMB-004 (check 15).
   if (uuidV5(URL_NAMESPACE, KEY_NAMESPACE_URL) !== KEY_NAMESPACE)
     fail("BMB-004", `the namespace ${KEY_NAMESPACE} is not the UUID version 5 of ${KEY_NAMESPACE_URL}`);
@@ -458,8 +606,8 @@ function main(write: boolean): number {
       if (!ID.test(req)) fail(c.id, `"${req}" is not a requirement or scenario identifier`);
       else if (!ids.has(req)) fail(c.id, `${req} names no heading in the specs`);
     }
-    if (Object.hasOwn(c, "known-defects"))
-      fail(c.id, "the case has a known-defects field. Each binding keeps its own expected failures (VER-006).");
+    const caseData = caseBindingData(c);
+    if (caseData !== undefined) fail(c.id, caseData);
     const max = c["expected-max-failures"];
     if (max !== undefined) {
       const min = c["expected-min-failures"];
@@ -512,7 +660,7 @@ function main(write: boolean): number {
       continue;
     }
     const inputPath = path.join(ROOT, c.input);
-    if (c.operation !== "parse-file" && !(c.operation === "facade" && category !== undefined)) {
+    if (c.operation !== "parse-file" && c.operation !== "yaml-parse-file" && !(c.operation === "facade" && category !== undefined)) {
       used.add(c.input);
       if (!fs.existsSync(inputPath)) {
         fail(c.id, `input ${c.input} does not exist`);
@@ -520,16 +668,18 @@ function main(write: boolean): number {
       }
     }
 
+    if (c["expected-absent-keys"] !== undefined && c.operation !== "yaml-round-trip")
+      fail(c.id, `a ${c.operation} case has no expected-absent-keys`);
     const form = c["input-form"];
-    if (form !== undefined && !(form === "bytes" || (form === "path" && c.operation === "facade")))
-      fail(c.id, `input-form "${form}" is not valid for a ${c.operation} case`);
+    if (!inputFormAllowed(c.operation, form)) fail(c.id, `input-form "${form}" is not valid for a ${c.operation} case`);
 
     switch (c.operation) {
       case "round-trip": {
         const bytes = fs.readFileSync(inputPath);
         const doc: unknown = JSON.parse(bytes.toString("utf8"));
-        if (!validateDocument(doc)) fail(c.id, `input is not valid: ${ajv.errorsText(validateDocument.errors)}`);
-        else expectNone(c, constraints.ofDocument(doc));
+        const input = documentInput(c, validateDocument);
+        if (!input) fail(c.id, `input is not valid: ${ajv.errorsText(validateDocument.errors)}`);
+        else expectNone(c, constraints.ofDocument(input.document));
         if (!c["document-type"] || !Object.hasOwn(doc as object, c["document-type"]))
           fail(c.id, `input root is not document-type "${c["document-type"]}"`);
         if (c.source && sha256(bytes) !== c.source.sha256) fail(c.id, "input sha256 does not match the source sha256");
@@ -563,9 +713,10 @@ function main(write: boolean): number {
         } catch {
           break;
         }
-        if (validateDocument(doc)) {
+        const parsed = documentInput(c, validateDocument);
+        if (parsed) {
           if (c["expected-constraints"] === undefined) fail(c.id, "input is valid against the schema and the case has no expected-constraints, so parsing it is not an error");
-          else expectFailures(c, constraints.ofDocument(doc));
+          else expectFailures(c, constraints.ofDocument(parsed.document));
           break;
         }
         if (c["expected-constraints"] !== undefined) fail(c.id, "the input does not conform to the schema, so the case has no expected-constraints");
@@ -583,20 +734,20 @@ function main(write: boolean): number {
       }
       case "parse-typed": {
         const doc = JSON.parse(fs.readFileSync(inputPath, "utf8")) as object;
-        if (!validateDocument(doc)) fail(c.id, "input is not valid, so the case would not isolate the type check");
-        else expectNone(c, constraints.ofDocument(doc));
-        if (!DOCUMENT_TYPES.includes(c["document-type"] ?? "")) fail(c.id, "document-type is not an OSCAL type");
-        else if (Object.hasOwn(doc, c["document-type"] ?? "")) fail(c.id, "input is the requested document type");
+        const typed = documentInput(c, validateDocument);
+        if (!typed) fail(c.id, "input is not valid, so the case would not isolate the type check");
+        else expectNone(c, constraints.ofDocument(typed.document));
+        const mismatch = typeMismatch(c["document-type"], doc);
+        if (mismatch) fail(c.id, mismatch);
         break;
       }
       case "parse-file":
-        if (category === "not-found") {
-          if (fs.existsSync(inputPath)) fail(c.id, `${c.input} exists, so it cannot test not-found`);
-        } else if (category === "read-error") {
-          if (!fs.existsSync(inputPath) || !fs.statSync(inputPath).isDirectory())
-            fail(c.id, `${c.input} is not a directory, so it cannot test read-error`);
-        } else fail(c.id, "a parse-file case has the category not-found or read-error");
+      case "yaml-parse-file": {
+        const exists = fs.existsSync(inputPath);
+        const problem = parseFileProblem(c.operation, category, exists, exists && fs.statSync(inputPath).isDirectory(), c.input);
+        if (problem) fail(c.id, problem);
         break;
+      }
       case "facade": {
         if ((category === undefined) === (c.expected === undefined)) {
           fail(c.id, "a facade case needs exactly one of expected and expected-category");
@@ -612,8 +763,9 @@ function main(write: boolean): number {
         used.add(expectedFile);
         const text = fs.readFileSync(inputPath, "utf8");
         const doc: unknown = JSON.parse(text);
-        if (!validateDocument(doc)) fail(c.id, `input is not valid: ${ajv.errorsText(validateDocument.errors)}`);
-        else expectNone(c, constraints.ofDocument(doc));
+        const facade = documentInput(c, validateDocument);
+        if (!facade) fail(c.id, `input is not valid: ${ajv.errorsText(validateDocument.errors)}`);
+        else expectNone(c, constraints.ofDocument(facade.document));
         const rootKeys = doc !== null && typeof doc === "object" ? Object.keys(doc) : [];
         if (rootKeys.length !== 1 || rootKeys[0] !== c["document-type"])
           fail(c.id, `the root keys of the input are not only document-type "${c["document-type"]}"`);
@@ -635,18 +787,14 @@ function main(write: boolean): number {
           if (supported) fail(c.id, "input supports the assessment period, so it cannot test access-error");
           break;
         }
-        if (!validateDocument(doc)) fail(c.id, `input is not valid: ${ajv.errorsText(validateDocument.errors)}`);
-        else expectNone(c, constraints.ofDocument(doc));
+        const period = documentInput(c, validateDocument);
+        if (!period) fail(c.id, `input is not valid: ${ajv.errorsText(validateDocument.errors)}`);
+        else expectNone(c, constraints.ofDocument(period.document));
         if (!supported) {
           fail(c.id, "input is not an Assessment Plan or Assessment Results, so it has no assessment period");
           break;
         }
-        const period = assessmentPeriod(doc);
-        for (const bound of ["start", "end"] as const) {
-          const computed = period[bound];
-          if (computed === undefined || normalizeDatetime(computed) !== expectedPeriod[bound])
-            fail(c.id, `expected-period ${bound} is ${expectedPeriod[bound]}, but FAC-005 to FAC-007 give ${computed}`);
-        }
+        for (const message of periodMismatches(expectedPeriod, assessmentPeriod(doc))) fail(c.id, message);
         break;
       }
       case "validate-element": {
@@ -684,6 +832,12 @@ function main(write: boolean): number {
         expectNone(c, constraints.ofDocument(result.value));
         if (!c["document-type"] || !Object.hasOwn(result.value as object, c["document-type"]))
           fail(c.id, `input root is not document-type "${c["document-type"]}"`);
+        const absent = c["expected-absent-keys"];
+        if (absent !== undefined) {
+          const present = keysPresent(result.value, absent);
+          if (absent.length === 0) fail(c.id, "expected-absent-keys is empty");
+          if (present.length > 0) fail(c.id, `the input holds ${present.join(", ")}, so the keys are not absent fields`);
+        }
         if (c.source && sha256(bytes) !== c.source.sha256) fail(c.id, "input sha256 does not match the source sha256");
         if (!c.expected) {
           fail(c.id, "a yaml-round-trip case needs an expected file");
@@ -701,6 +855,17 @@ function main(write: boolean): number {
         }
         if (!fs.existsSync(expectedPath) || fs.readFileSync(expectedPath, "utf8") !== canonical)
           fail(c.id, `${c.expected} is not the canonical form of the YAML input`);
+        break;
+      }
+      case "yaml-parse-typed": {
+        const result = readYaml(fs.readFileSync(inputPath), validateDocument);
+        if (!result.ok) {
+          fail(c.id, `the YAML reader rejects the input (${result.fault}), so the case would not isolate the type check: ${result.detail}`);
+          break;
+        }
+        expectNone(c, constraints.ofDocument(result.value));
+        const mismatch = typeMismatch(c["document-type"], result.value as object);
+        if (mismatch) fail(c.id, mismatch);
         break;
       }
       case "yaml-parse": {
@@ -754,7 +919,13 @@ function selfTest(): number {
     return messages.length;
   };
   const cases: Array<[string, () => boolean | string]> = [
+    ["input-form: a round-trip, yaml-round-trip, or facade case can have bytes or path", () => ["round-trip", "yaml-round-trip", "facade"].every((o) => inputFormAllowed(o, undefined) && inputFormAllowed(o, "bytes") && inputFormAllowed(o, "path"))],
+    ["input-form: a parse or yaml-parse case can have bytes, and cannot have path", () => ["parse", "yaml-parse"].every((o) => inputFormAllowed(o, undefined) && inputFormAllowed(o, "bytes") && !inputFormAllowed(o, "path"))],
+    ["input-form: a case of any other operation has no form", () => ["parse-typed", "parse-file", "yaml-parse-typed", "yaml-parse-file", "assessment-period", "validate-element", "element-types", "build-hash", "toString"].every((o) => inputFormAllowed(o, undefined) && !inputFormAllowed(o, "bytes") && !inputFormAllowed(o, "path"))],
+    ["input-form: a value that is not bytes or path is not valid", () => !inputFormAllowed("round-trip", "text") && !inputFormAllowed("facade", "")],
     ["a document with an unknown property name fails two closed entries, each with its id", () => JSON.stringify(bad.map((f) => f.id).sort()) === '["oscal-control-prop-name","oscal-metadata-prop-name-values"]' || JSON.stringify(bad)],
+    ["VER-006.01: a case with a known-defects field fails the check", () => caseBindingData({ id: "t", "known-defects": ["x"] }) !== undefined && caseBindingData({ id: "t" }) === undefined],
+    ["VER-006.01: an index with a defect-twins field fails the check", () => indexBindingData({ "defect-twins": [] }) !== undefined && indexBindingData({ cases: [] }) === undefined],
     ["a valid document fails no entry", () => constraints.ofDocument(catalog([{ name: "label", value: "1" }])).length === 0],
     ["CNS-020: the listed identifiers equal the failures", () => constraintMismatch(["oscal-metadata-prop-name-values", "oscal-control-prop-name"], bad) === undefined],
     ["CNS-020.01: a reportable entry without a case fails the check, one message for each entry", () => uncoveredEntries(constraints.entries, new Set()).length === reportable.length && uncoveredEntries(constraints.entries, new Set(reportable)).length === 0 && uncoveredEntries(constraints.entries, new Set(reportable.slice(1))).length === 1],
@@ -765,7 +936,36 @@ function selfTest(): number {
     ["CNS-020: a case with failures that lists none fails the check", () => constraintMismatch(undefined, bad) !== undefined],
     ["CNS-020.02: a valid input that fails an entry fails the check", () => run(expectNone, {}, bad) === 1 && run(expectNone, {}, []) === 0],
     ["CNS-020: a listed failure that does not occur fails the check", () => run(expectFailures, { "expected-constraints": ["oscal-control-prop-name"] }, []) === 1],
-    ["CNS-018: a hash element with a short value fails the entry of its algorithm", () => hashFailures.map((f) => f.id).join() === "oscal-check-hash-length-SHA2-3-256" || JSON.stringify(hashFailures)],
+    ["CNS-018.02: a hash element with a short value fails the entry of its algorithm", () => hashFailures.map((f) => f.id).join() === "oscal-check-hash-length-SHA2-3-256" || JSON.stringify(hashFailures)],
+    ["FAC-005: an Assessment Plan with only at-frequency timing has empty bounds", () => {
+      const plan = { "assessment-plan": { tasks: [{ timing: { "at-frequency": { period: 1, unit: "days" } }, tasks: [{ timing: { "at-frequency": { period: 2, unit: "days" } } }] }] } };
+      const period = assessmentPeriod(plan);
+      return period.start === undefined && period.end === undefined;
+    }],
+    ["FAC-005: a nested within-date-range and an on-date give the earliest start and the latest end", () => {
+      const plan = { "assessment-plan": { tasks: [{ timing: { "on-date": { date: "2026-01-15T08:00:00Z" } } }, { timing: { "within-date-range": { start: "2026-02-01T00:00:00Z", end: "2026-02-28T00:00:00Z" } }, tasks: [{ timing: { "within-date-range": { start: "2026-03-01T00:00:00Z", end: "2026-03-31T23:59:59Z" } } }] }] } };
+      const period = assessmentPeriod(plan);
+      return period.start === "2026-01-15T08:00:00Z" && period.end === "2026-03-31T23:59:59Z";
+    }],
+    ["FAC-005: a null bound in expected-period matches an empty bound only", () =>
+      periodMismatches({ start: null, end: null }, {}).length === 0 &&
+      periodMismatches({ start: null, end: null }, { start: "2026-01-01T00:00:00Z", end: "2026-01-01T00:00:00Z" }).length === 2 &&
+      periodMismatches({ start: "2026-01-01T00:00:00Z", end: "2026-01-01T00:00:00Z" }, {}).length === 2 &&
+      periodMismatches({ start: "2026-01-01T00:00:00Z", end: null }, { start: "2026-01-01T00:00:00+00:00" }).length === 0],
+    ["YML-006: a yaml-round-trip case and a facade case can have input-form path, and a parse case cannot", () =>
+      inputFormAllowed("yaml-round-trip", "path") && inputFormAllowed("facade", "path") && !inputFormAllowed("parse", "path") && !inputFormAllowed("yaml-parse", "path") &&
+      inputFormAllowed("yaml-parse", "bytes") && inputFormAllowed("parse", undefined) && !inputFormAllowed("parse", "text")],
+    ["YML-006: a yaml-parse-file case and a yaml-parse-typed case have no input-form", () =>
+      !inputFormAllowed("yaml-parse-file", "bytes") && !inputFormAllowed("yaml-parse-file", "path") && !inputFormAllowed("yaml-parse-typed", "bytes") &&
+      inputFormAllowed("yaml-parse-file", undefined) && inputFormAllowed("yaml-parse-typed", undefined) && !inputFormAllowed("parse-typed", "bytes")],
+    ["YML-006.02: a yaml-parse-file case has the category not-found only, and a parse-file case can have read-error", () =>
+      parseFileProblem("yaml-parse-file", "not-found", false, false, "x") === undefined && parseFileProblem("yaml-parse-file", "not-found", true, false, "x") !== undefined &&
+      parseFileProblem("yaml-parse-file", "read-error", true, true, "x") !== undefined && parseFileProblem("parse-file", "read-error", true, true, "x") === undefined &&
+      parseFileProblem("parse-file", "read-error", true, false, "x") !== undefined && parseFileProblem("parse-file", undefined, false, false, "x") !== undefined],
+    ["YML-008.03: expected-absent-keys finds a key at any depth", () =>
+      keysPresent({ a: { b: [{ c: 1 }] } }, ["c", "z"]).join() === "c" && keysPresent({ a: 1 }, ["b"]).length === 0 && keysPresent({ a: null }, ["a"]).join() === "a"],
+    ["YML-007: a typed parse case needs an OSCAL type that is not the root key of the input", () =>
+      typeMismatch("catalog", { profile: {} }) === undefined && typeMismatch("catalog", { catalog: {} }) !== undefined && typeMismatch("book", { profile: {} }) !== undefined && typeMismatch(undefined, { profile: {} }) !== undefined],
     ["CNS-018: an element type without a definition gives no failure", () => constraints.ofElement("no-such-type", {}).length === 0],
   ];
   let failed = 0;

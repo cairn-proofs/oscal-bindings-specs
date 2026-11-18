@@ -14,8 +14,9 @@ import { check } from "iregexp-check";
 import { checkFailures, checkQueries, unitsOf } from "./constraints-check.js";
 import { corpusDocuments, elementsOf, generatedDocuments } from "./constraints-docs.js";
 import { Generator, serializeManifest, type ConstraintManifest, type Entry } from "./constraints-lib.js";
+import { evaluateManifest } from "./constraints-manifest.js";
 import { GenerationError, toIRegexp, datatypeIRegexp } from "./constraints-regex.js";
-import { compile, run } from "./jsonpath.js";
+import { compile, run, runOnce } from "./jsonpath.js";
 import { allNodes, loadDoc } from "./metapath.js";
 import type { Constraint } from "./metaschema.js";
 import { storeReleases } from "./names-lib.js";
@@ -59,6 +60,15 @@ export function checkManifest(schema: object, data: unknown): string[] {
         failures.push(`${at}: the query ${q} is not accepted: ${(error as Error).message}`);
       }
     }
+    // CNS-024: a target query runs on an array that holds only the context node, and selects only the context node or
+    // nodes in it. On an array, only a query with no segment (`$`) selects the array itself.
+    for (const q of e.target) {
+      try {
+        if (compile(q).segments.length === 0) failures.push(`${at}: the target query ${q} selects the array that holds the context node`);
+      } catch {
+        // The loop above reports a query that is not accepted.
+      }
+    }
     for (const p of patternsOf(e)) if (!check(p)) failures.push(`${at}: the pattern ${p} is not an I-Regexp`);
   }
   return failures;
@@ -74,6 +84,13 @@ function checkAgainstReference(gen: Generator, entries: Entry[]): string[] {
   const units = unitsOf(docs, elementsOf(docs, gen.targets().values(), gen.model));
   const { selected } = gen.select();
   return [...checkQueries(selected, entries, units), ...checkFailures(selected, entries, units)];
+}
+
+/** CNS-004: the problems of a committed manifest file, given the text that the generation gives. */
+export function checkCommitted(schema: object, file: string, committed: string | undefined, output: string): string[] {
+  const problems = committed === undefined ? [`${file} does not exist`] : checkManifest(schema, JSON.parse(committed));
+  if (committed !== undefined && committed !== output) problems.push(`${file} differs from the generator output. Run npm run constraints:write.`);
+  return problems;
 }
 
 function main(mode: "write" | "check"): number {
@@ -98,8 +115,7 @@ function main(mode: "write" | "check"): number {
       continue;
     }
     const committed = fs.existsSync(file) ? fs.readFileSync(file, "utf8") : undefined;
-    const problems = committed === undefined ? [`${file} does not exist`] : checkManifest(schema, JSON.parse(committed));
-    if (committed !== undefined && committed !== output) problems.push(`${file} differs from the generator output. Run npm run constraints:write.`);
+    const problems = checkCommitted(schema, file, committed, output);
     if (problems.length === 0) problems.push(...checkAgainstReference(generator, entries));
     for (const p of problems) console.error(`${release}: ${p}`);
     if (problems.length) failed++;
@@ -153,6 +169,18 @@ function selfTest(): number {
     checkManifest(schema, edited((m) => delete (m.entries[0] as Partial<Entry>).kind)).length > 0 &&
     checkManifest(schema, edited((m) => m.entries.push({ ...m.entries[0], bogus: 1 } as Entry))).length > 0 &&
     checkManifest(schema, edited((m) => (m.format = 2))).length > 0);
+  const committedText = fs.readFileSync(fileOf("1.2.3"), "utf8");
+  const generated1 = serializeManifest(manifest);
+  test("CNS-004.01: the committed manifest is the result of the generation, so the check passes", () =>
+    checkCommitted(schema, fileOf("1.2.3"), committedText, generated1).length === 0 || JSON.stringify(checkCommitted(schema, fileOf("1.2.3"), committedText, generated1).slice(0, 3)));
+  test("CNS-004.01: a manifest that a person edits by hand differs from the generation and fails the check", () => {
+    const edit = committedText.replace('"reportable": true', '"reportable": false');
+    const problems = checkCommitted(schema, fileOf("1.2.3"), edit, generated1);
+    return (edit !== committedText && problems.length === 1 && problems[0].includes("differs from the generator output")) || JSON.stringify(problems);
+  });
+  test("CNS-004.01: an edit that changes only the layout of the file fails the check", () =>
+    checkCommitted(schema, fileOf("1.2.3"), `${committedText}\n`, generated1).some((p) => p.includes("differs from the generator output")));
+  test("CNS-004.01: a manifest file that does not exist fails the check", () => checkCommitted(schema, fileOf("1.2.3"), undefined, generated1).some((p) => p.includes("does not exist")));
   test("CNS-006: a pattern that is not an I-Regexp fails the check", () => checkManifest(schema, edited((m) => (m.entries.find((e) => e.id === "oscal-check-hash-length-SHA2-3-256")!.pattern = "\\d+"))).length > 0);
   test("CNS-006: every query compiles and every pattern is an I-Regexp", () => checkManifest(schema, manifest).length === 0);
   test("CNS-005.01: the manifest holds no entry of the level WARNING", () => entries.every((e) => e.level === "ERROR" || e.level === "CRITICAL"));
@@ -226,7 +254,68 @@ function selfTest(): number {
     const e = byId("oscal-assessment-part-values")[0];
     return e.definition === "flag:name" && e.context.document.length > 0 && e.context.document.every((q) => q.endsWith("['name']"));
   });
-  test("CNS-007: the element types of kind document hold context nodes", () => one("oscal-catalog-parts").context.elements["catalog-document"] !== undefined);
+  test("CNS-024: a target query that selects the array that holds the context node fails the check", () => {
+    const withTarget = (q: string) => edited((m) => (m.entries[0].target = [q]));
+    const bad = checkManifest(schema, withTarget("$"));
+    return (bad.length === 1 && bad[0].includes("selects the array that holds the context node") && checkManifest(schema, withTarget("$[0]")).length === 0) || JSON.stringify(bad);
+  });
+  // runOnce is a speed-up of the constraint checks. It must give what run gives, for its own data only.
+  test("runOnce gives the hits of run, and the same array for a repeated query", () => {
+    const data = { a: [{ n: 1 }, { n: 2 }], b: { n: 3 } };
+    const once = runOnce(data);
+    return (
+      JSON.stringify(once("$..n")) === JSON.stringify(run("$..n", data)) &&
+      once("$..n") === once("$..n") &&
+      JSON.stringify(once("$.a[0]")) === JSON.stringify(run("$.a[0]", data))
+    );
+  });
+  test("runOnce keeps the results of different data apart", () => {
+    const first = runOnce({ n: 1 });
+    const second = runOnce({ n: 2 });
+    return (first("$.n")[0]?.value === 1 && second("$.n")[0]?.value === 2) || JSON.stringify([first("$.n"), second("$.n")]);
+  });
+  // CNS-006.01: the nodes of several queries of one entry are one set, with each node once.
+  const synthetic = (fields: Partial<Entry>): Entry => ({
+    id: "synthetic",
+    kind: "has-cardinality",
+    level: "ERROR",
+    reportable: true,
+    module: "m",
+    definition: "assembly:location",
+    context: { document: ["$..['locations'][*]"], elements: {} },
+    target: ["$[0]['title']"],
+    ...fields,
+  });
+  const locations = (...items: object[]) => ({ catalog: { metadata: { locations: items } } });
+  test("CNS-006.01: two target queries that select the same node count the node once", () => {
+    const entry = synthetic({ "max-occurs": 1, target: ["$[0]['title']", "$[0]['title']", "$[0]['address']"] });
+    const one = evaluateManifest([entry], locations({ uuid: "u", title: "t" }), { document: true });
+    const two = evaluateManifest([entry], locations({ uuid: "u", title: "t", address: {} }), { document: true });
+    return (one.length === 0 && two.length === 1) || JSON.stringify([one, two]);
+  });
+  test("CNS-006.01: two queries of a key field that select the same node give one value", () => {
+    const entry = synthetic({ kind: "is-unique", target: ["$[0]"], "key-fields": [{ target: ["$[0]['uuid']", "$[0]['uuid']"] }] });
+    const r = evaluateManifest([entry], locations({ uuid: "u" }), { document: true });
+    return r.length === 0 || JSON.stringify(r);
+  });
+
+  // CNS-023.01: the element queries of mapping-collection-mappings are those of mapping, and a list is checked item by item.
+  test("CNS-023.01: the element context queries of mapping-collection-mappings are those of mapping", () => {
+    const withQueries = entries.filter((e) => e.context.elements["mapping"] !== undefined || e.context.elements["mapping-collection-mappings"] !== undefined);
+    return (
+      (withQueries.length > 0 && withQueries.every((e) => JSON.stringify(e.context.elements["mapping"]) === JSON.stringify(e.context.elements["mapping-collection-mappings"]))) ||
+      "an entry has other queries for the single-or-many type than for its item type"
+    );
+  });
+  test("CNS-023.01: the queries apply to each of the two mappings of a list, on an array that holds only the mapping", () => {
+    const list = [{ uuid: "a" }, { uuid: "b", props: [{ name: "bogus", value: "v" }] }];
+    const form = { element: "mapping-collection-mappings" };
+    const perItem = list.map((item) => evaluateManifest(entries, [item], form).map((f) => `${f.id} ${f.location}`));
+    return (
+      JSON.stringify(perItem) === JSON.stringify([[], ["oscal-metadata-prop-name-values $[0]['props'][0]['name']"]]) || JSON.stringify(perItem)
+    );
+  });
+  test("CNS-007: the element types of kind document hold context nodes",() => one("oscal-catalog-parts").context.elements["catalog-document"] !== undefined);
 
   // CNS-019, CNS-022: the checks against the reference evaluator
   const schemaFile = "schemas/1.2.3/oscal_complete_schema.json";
