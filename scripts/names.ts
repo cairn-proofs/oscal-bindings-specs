@@ -362,6 +362,38 @@ function selfTest(): number {
     const holds = (site: string) => r.manifest?.types.some((t) => t.sites.some((p) => p === site || p.startsWith(`${site}/`)));
     return (r.manifest !== undefined && holds(D(hash)) === true && holds(D(constrained)) === false && holds(D(wrapped)) === false) || JSON.stringify(r.failures);
   });
+  const sameJson = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b);
+  test("NAM-010.01 document entry records its body field", () => {
+    const e = entryNamed(run(schemaOf({ "oscal-complete-oscal-catalog:system-security-plan": obj({}) }, ["system-security-plan"])), "SystemSecurityPlanDocument");
+    const real = committedEntry("SystemSecurityPlanDocument");
+    return (e?.kind === "document" && e["body-field"] === "system-security-plan" && real?.kind === "document" && real["body-field"] === "system-security-plan") || JSON.stringify([e, real]);
+  });
+  test("NAM-010.02 union entry records each branch", () => {
+    const groupSchema = schemaOf({
+      [group]: { type: "object", anyOf: [{ properties: { title: str, groups: list(ref(group)) } }, { properties: { title: str, controls: list(str) } }] },
+    });
+    const branches = (e: Manifest["types"][number] | undefined, prefix: string) =>
+      sameJson(
+        [...(e?.variants ?? [])].sort((a, b) => a.property.localeCompare(b.property)).map((v) => ({ property: v.property, type: v.type })),
+        [
+          { property: "controls", type: `${prefix}WithControls` },
+          { property: "groups", type: `${prefix}WithGroups` },
+        ],
+      );
+    const e = entryNamed(run(groupSchema), "Group");
+    const real = committedEntry("CatalogGroup");
+    return (e?.kind === "union" && real?.kind === "union" && branches(e, "Group") && branches(real, "CatalogGroup")) || JSON.stringify([e, real]);
+  });
+  test("NAM-010.03 enum entry records whether it is open", () => {
+    const e = entryNamed(run(schemaOf({ [hash]: obj({ algorithm: openEnum("SHA-256") }) })), "HashAlgorithm");
+    const real = committedEntry("HashAlgorithm");
+    return (e?.kind === "enum" && e.closed === false && real?.kind === "enum" && real.closed === false) || JSON.stringify([e, real]);
+  });
+  test("NAM-010.04 single-or-many entry records its item type", () => {
+    const e = entryNamed(run(schemaOf({ [mapping]: obj({ uuid: str }), [mc]: obj({ mappings: { anyOf: [ref(mapping), { type: "array", minItems: 1, items: ref(mapping) }] } }) })), "MappingCollectionMappings");
+    const real = committedEntry("MappingCollectionMappings");
+    return (e?.kind === "single-or-many" && e.item === "Mapping" && real?.kind === "single-or-many" && real.item === "Mapping") || JSON.stringify([e, real]);
+  });
   test("empty object definition is an object type", () => entryNamed(run(schemaOf({ "oscal-complete-oscal-control-common:include-all": obj({}) })), "IncludeAll")?.kind === "object");
   test("scalar definition has no entry", () => entryNamed(run(schemaOf({ "oscal-complete-oscal-metadata:remarks": str })), "Remarks") === undefined);
   test("lists of references need no singular name", () => run(schemaOf({ [hash]: obj({ links: list(ref(hash)) }) })).manifest !== undefined);

@@ -1687,23 +1687,43 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 98,
-      "id": "NAM-010.01"
+      "id": "NAM-010.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-010.01 document entry records its body field"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
-      "gap": 98,
-      "id": "NAM-010.02"
+      "id": "NAM-010.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-010.02 union entry records each branch"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
-      "gap": 98,
-      "id": "NAM-010.03"
+      "id": "NAM-010.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-010.03 enum entry records whether it is open"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
-      "gap": 98,
-      "id": "NAM-010.04"
+      "id": "NAM-010.04",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-010.04 single-or-many entry records its item type"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
