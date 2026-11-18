@@ -964,14 +964,16 @@
     {
       "capability": "error-model",
       "corpus": [
-        "parse-typed/wrong-document-type"
+        "parse-typed/wrong-document-type",
+        "yaml-parse-typed/wrong-document-type"
       ],
       "id": "ERR-005.01"
     },
     {
       "capability": "error-model",
       "corpus": [
-        "parse-file/missing-file"
+        "parse-file/missing-file",
+        "yaml-parse-file/missing-file"
       ],
       "id": "ERR-006.01"
     },
@@ -1122,17 +1124,23 @@
     },
     {
       "capability": "document-facade",
-      "gap": 82,
+      "corpus": [
+        "assessment-period/timing-kinds"
+      ],
       "id": "FAC-005.01"
     },
     {
       "capability": "document-facade",
-      "gap": 82,
+      "corpus": [
+        "assessment-period/at-frequency-only"
+      ],
       "id": "FAC-005.02"
     },
     {
       "capability": "document-facade",
-      "gap": 82,
+      "corpus": [
+        "assessment-period/on-date"
+      ],
       "id": "FAC-005.03"
     },
     {
@@ -2145,7 +2153,8 @@
     {
       "capability": "document-parsing",
       "corpus": [
-        "parse-typed/wrong-document-type"
+        "parse-typed/wrong-document-type",
+        "yaml-parse-typed/wrong-document-type"
       ],
       "id": "PRS-003.02"
     },
@@ -3255,7 +3264,9 @@
     },
     {
       "capability": "yaml-documents",
-      "gap": 118,
+      "corpus": [
+        "yaml-round-trip/catalog-bytes"
+      ],
       "id": "YML-005.01"
     },
     {
@@ -3304,17 +3315,29 @@
     },
     {
       "capability": "yaml-documents",
-      "gap": 119,
+      "corpus": [
+        "yaml-round-trip/profile-path"
+      ],
       "id": "YML-006.01"
     },
     {
       "capability": "yaml-documents",
-      "gap": 119,
-      "id": "YML-006.02"
+      "corpus": [
+        "yaml-parse-file/missing-file"
+      ],
+      "id": "YML-006.02",
+      "self-test": [
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "YML-006.02: a yaml-parse-file case has the category not-found only, and a parse-file case can have read-error"
+        }
+      ]
     },
     {
       "capability": "yaml-documents",
-      "gap": 120,
+      "corpus": [
+        "yaml-parse-typed/wrong-document-type"
+      ],
       "id": "YML-007.01"
     },
     {
@@ -3347,8 +3370,16 @@
     },
     {
       "capability": "yaml-documents",
-      "gap": 121,
-      "id": "YML-008.03"
+      "corpus": [
+        "yaml-round-trip/minimal-catalog"
+      ],
+      "id": "YML-008.03",
+      "self-test": [
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "YML-008.03: expected-absent-keys finds a key at any depth"
+        }
+      ]
     },
     {
       "capability": "yaml-documents",

@@ -364,6 +364,30 @@
       "notes": "Both bounds come from the second result. A binding that keeps six fraction digits sees equal instants."
     },
     {
+      "id": "assessment-period/timing-kinds",
+      "operation": "assessment-period",
+      "input": "documents/valid/assessment-plan-timing-kinds.json",
+      "expected-period": { "start": "2026-01-15T08:00:00Z", "end": "2026-03-31T23:59:59Z" },
+      "requirements": ["FAC-005.01"],
+      "notes": "The tasks are not in date order. The start comes from an on-date of the second task, so a binding that takes the first start in document order gives 2026-02-01T00:00:00Z. The end comes from a within-date-range of a nested task in the first task, so a binding that takes the last end in document order gives the on-date 2026-01-15T08:00:00Z, and a binding that skips nested tasks gives 2026-02-28T00:00:00Z. The at-frequency timing of the third task gives no datetime. The input is synthetic."
+    },
+    {
+      "id": "assessment-period/at-frequency-only",
+      "operation": "assessment-period",
+      "input": "documents/valid/assessment-plan-at-frequency.json",
+      "expected-period": { "start": null, "end": null },
+      "requirements": ["FAC-005.02"],
+      "notes": "A task and its nested task have only at-frequency timing, so both bounds are empty. The value null stands for an empty bound. The input is synthetic."
+    },
+    {
+      "id": "assessment-period/on-date",
+      "operation": "assessment-period",
+      "input": "documents/valid/assessment-plan-on-date.json",
+      "expected-period": { "start": "2026-05-04T10:30:00-04:00", "end": "2026-05-04T10:30:00-04:00" },
+      "requirements": ["FAC-005.03"],
+      "notes": "The only task has an on-date, which is both the start and the end. The offset stays as written. The input is synthetic."
+    },
+    {
       "id": "facade/catalog",
       "operation": "facade",
       "input": "documents/valid/catalog.json",
@@ -666,12 +690,44 @@
       }
     },
     {
+      "id": "yaml-round-trip/catalog-bytes",
+      "operation": "yaml-round-trip",
+      "input": "documents/valid/catalog.yaml",
+      "input-form": "bytes",
+      "document-type": "catalog",
+      "expected": "expected/catalog.json",
+      "requirements": ["YML-005.01"],
+      "notes": "The YAML parse operation gets the raw bytes of the input, not text. The input is the same file as the input of yaml-round-trip/catalog.",
+      "source": {
+        "repository": "https://github.com/usnistgov/oscal-content",
+        "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
+        "path": "examples/catalog/yaml/basic_catalog.yaml",
+        "sha256": "a0c8f5449852931e0f68b151a684d2e08cb9c0249702052896a33101b99ae797"
+      }
+    },
+    {
       "id": "yaml-round-trip/profile",
       "operation": "yaml-round-trip",
       "input": "documents/valid/profile.yaml",
       "document-type": "profile",
       "expected": "expected/profile.json",
       "requirements": ["YML-005.02", "YML-008.01"],
+      "source": {
+        "repository": "https://github.com/usnistgov/oscal-content",
+        "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
+        "path": "examples/profile/yaml/basic_profile.yaml",
+        "sha256": "f6611d2cbcd210f7fd8ab5df95682ca4fe7be1d418c5cb70352693eca8e1af84"
+      }
+    },
+    {
+      "id": "yaml-round-trip/profile-path",
+      "operation": "yaml-round-trip",
+      "input": "documents/valid/profile.yaml",
+      "input-form": "path",
+      "document-type": "profile",
+      "expected": "expected/profile.json",
+      "requirements": ["YML-006.01"],
+      "notes": "The YAML parse-from-file operation gets the path of the input. The input is the same file as the input of yaml-round-trip/profile.",
       "source": {
         "repository": "https://github.com/usnistgov/oscal-content",
         "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
@@ -768,6 +824,16 @@
       "notes": "The quoted \"443\" and the plain 443.0 at port-range locations are the number 443. The alias *port at a property value is the string \"443\". The metadata version \"1.0\" stays a string after serialization."
     },
     {
+      "id": "yaml-round-trip/minimal-catalog",
+      "operation": "yaml-round-trip",
+      "input": "documents/valid/minimal-catalog.yaml",
+      "document-type": "catalog",
+      "expected": "expected/minimal-catalog.json",
+      "expected-absent-keys": ["groups", "controls", "back-matter", "parties", "roles", "locations", "responsible-parties", "props", "links", "remarks"],
+      "requirements": ["YML-008.03"],
+      "notes": "The catalog has only its required fields, so every optional field is absent. A serializer that writes an absent field as null gives the string \"null\" at a string location and a parse error at any other location (YML-004.04), so the second parse of the round trip fails. A serializer that writes an absent field as an empty value passes the round trip, so the runner also reads the serialized YAML as generic YAML and checks that none of the keys in expected-absent-keys occurs. The input is the YAML form of documents/valid/minimal-catalog.json."
+    },
+    {
       "id": "yaml-round-trip/boolean-scalar",
       "operation": "yaml-round-trip",
       "input": "documents/valid/boolean-scalar.yaml",
@@ -775,6 +841,22 @@
       "expected": "expected/boolean-scalar.json",
       "requirements": ["YML-004", "YML-008.01"],
       "notes": "The plain scalar true at the as-is location is the boolean true."
+    },
+    {
+      "id": "yaml-parse-file/missing-file",
+      "operation": "yaml-parse-file",
+      "input": "documents/does-not-exist.yaml",
+      "expected-category": "not-found",
+      "requirements": ["YML-006.02", "ERR-006.01"]
+    },
+    {
+      "id": "yaml-parse-typed/wrong-document-type",
+      "operation": "yaml-parse-typed",
+      "input": "documents/valid/profile.yaml",
+      "document-type": "catalog",
+      "expected-category": "document-type-mismatch",
+      "requirements": ["YML-007.01", "PRS-003.02", "ERR-005.01"],
+      "notes": "The input is a valid Profile in YAML, and the typed parser is for a Catalog. The input is the same file as the input of yaml-round-trip/profile."
     },
     {
       "id": "yaml-parse/syntax-error",

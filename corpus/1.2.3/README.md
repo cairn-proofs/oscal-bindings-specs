@@ -37,7 +37,9 @@ Each case has these fields:
       only a documented limit of a binding reaches it.
    3. `expected-valid`: `true` or `false`, for element validation.
    4. `expected-period`: an object with the keys `start` and `end`, for an assessment period. Each value is a datetime
-      in the canonical form of [Canonical JSON for conformance comparison](../../docs/canonical-json.md#datetimes).
+      in the canonical form of [Canonical JSON for conformance comparison](../../docs/canonical-json.md#datetimes), or
+      `null` for an empty bound. A bound is empty when the facade returns no datetime for it. Both keys are always
+      present.
    5. `expected-uuid`: the identifier that the resource builder derives from the key, in lowercase, for a
       `build-resource` case.
    6. `expected-element`: the JSON of the element that a builder returns. The canonical form of the JSON of the result
@@ -77,6 +79,9 @@ Each case has these fields:
    7. `source`: the repository, commit, path, and `sha256` of a document copied from another repository.
    8. `notes`: an explanation for people. For a `yaml-parse` case, the notes name the fault code of the reference
       YAML reader in backticks, for example `` `grammar` ``.
+   9. `expected-absent-keys`: for a `yaml-round-trip` case, the keys that the serialized YAML must not hold at any
+      depth ([YML-008](../../openspec/specs/yaml-documents/spec.md#requirement-yml-008-serialize-an-oscal-document-to-yaml)).
+      Each key is absent from the input, so a serializer that writes it has written an absent field.
 
 ## Operations
 
@@ -131,7 +136,10 @@ what each form means for them.
 5. `assessment-period`: wrap the parsed input in the document facade and request the assessment period. The facade
    must report `expected-category`, or return the start and the end of `expected-period`. The runner normalizes each
    bound that the facade returns as [Canonical JSON for conformance comparison](../../docs/canonical-json.md#datetimes)
-   states, and then compares it with the value in `expected-period`.
+   states, and then compares it with the value in `expected-period`. An empty bound that the facade returns matches
+   `null`. The runner does not normalize an empty bound. A datetime does not match `null`, and an empty bound does not
+   match a datetime. The binding chooses how the facade returns an empty bound, for example as a null value or an
+   absent optional value. A string with no characters is not an empty bound.
 6. `validate-element`: validate the input against `element-type`. The result must be `expected-valid`, or the
    operation must report `expected-category`. With `expected-constraints`, the `id` values of the
    constraint failures in the result must equal the list, with each repeat, unless the result
@@ -141,19 +149,34 @@ what each form means for them.
    canonical form of the output must be the same bytes as `expected`. Then serialize the parsed document to YAML,
    parse that output with the YAML parse operation, and serialize the result to JSON. Its canonical form must also be
    the same bytes as `expected`.
+   With `input-form` `bytes`, the runner gives the YAML parse operation the raw bytes of the input, not text. With
+   `input-form` `path`, the runner gives the YAML parse-from-file operation the path of the input. The second parse
+   uses the same form as the first: with `bytes`, the runner gives the parse operation the UTF-8 bytes of the
+   serialized YAML, and with `path`, the runner writes the serialized YAML to a file and gives the parse-from-file
+   operation the path of that file. With no `input-form`, the second parse gets the serialized YAML as text.
+   With `expected-absent-keys`, the runner also reads the serialized YAML as generic YAML, with no schema, and no
+   mapping at any depth may have a key in the list. The runner can use any YAML reader for this check. The reader
+   does not need to be part of the binding.
 8. `yaml-parse`: parse the YAML input with the YAML parse operation. The parser must report `expected-category`.
-9. `element-types`: request the supported element types. The result must equal the list in `expected`, item by item
+9. `yaml-parse-file`: the YAML form of `parse-file`. Parse the YAML file at the input path with the YAML
+   parse-from-file operation. The parser must report `expected-category` and name the path. The only category of a
+   case is not-found, and the path does not exist, because
+   [YML-006](../../openspec/specs/yaml-documents/spec.md#requirement-yml-006-parse-an-oscal-document-from-a-yaml-file-path) names no other category. The
+   case has no `input-form`.
+10. `yaml-parse-typed`: the YAML form of `parse-typed`. Parse the YAML input with the typed YAML parser of
+    `document-type`. The parser must report `expected-category`. The case has no `input-form`.
+11. `element-types`: request the supported element types. The result must equal the list in `expected`, item by item
    and in the same order.
-10. `build-resource`: build a resource with `arguments`. Then compare the `uuid` of the resource with `expected-uuid`,
+12. `build-resource`: build a resource with `arguments`. Then compare the `uuid` of the resource with `expected-uuid`,
     compare the resource with `expected-element`, or check that the builder reports `expected-category`. When the
     arguments have no `key` and no `identifier`, the builder generates the identifier. `expected-element` then has no
     `uuid`. The runner checks that the `uuid` of the result matches the UUID datatype of the schema, removes `uuid`
     from the result, and compares the rest with `expected-element`.
-11. `build-hash`: build a hash with `arguments`. Compare the hash with `expected-element`, or check that the builder
+13. `build-hash`: build a hash with `arguments`. Compare the hash with `expected-element`, or check that the builder
     reports `expected-category`. A hash with no `algorithm` has the algorithm SHA-256.
-12. `build-rlink`: build an rlink with `arguments`. Compare the rlink with `expected-element`, or check that the builder
+14. `build-rlink`: build an rlink with `arguments`. Compare the rlink with `expected-element`, or check that the builder
     reports `expected-category`. An omitted `media-type` or `hashes` is absent from the result.
-13. `facade`: build the document facade from the input, as `input-form` states:
+15. `facade`: build the document facade from the input, as `input-form` states:
     1. `input-form` is absent: parse the input with the generic parser, and wrap the result in the facade.
     2. `input-form` is `bytes`: build the facade from the raw bytes of the input.
     3. `input-form` is `path`: build the facade from the input path.
@@ -183,8 +206,12 @@ read-error is not in the parse-error category.
 For each `round-trip` input, the non-raising validity check must return true. The check does not apply to a
 `yaml-round-trip` input.
 
-A binding that offers no YAML skips each operation whose name starts with `yaml-`. The yaml-documents capability
-makes YAML optional.
+An operation whose name starts with `yaml-` is the YAML form of the operation with the rest of the name. It uses the
+YAML operations of the binding in place of the JSON operations, and its entry in the operation list states each
+step. A binding that offers no YAML skips each operation whose name starts with `yaml-`. The yaml-documents capability makes YAML optional. A binding that offers YAML and no
+typed YAML parser also skips `yaml-parse-typed`, because
+[YML-007](../../openspec/specs/yaml-documents/spec.md#requirement-yml-007-a-typed-yaml-parser-behaves-as-a-typed-json-parser) makes the typed YAML parsers
+optional.
 
 ## How the corpus is checked
 

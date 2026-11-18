@@ -1,0 +1,68 @@
+{
+  "assessment-plan": {
+    "uuid": "5c1d0003-0000-4000-8000-000000000001",
+    "metadata": {
+      "title": "Timing kinds",
+      "last-modified": "2026-03-01T00:00:00Z",
+      "version": "1.0",
+      "oscal-version": "1.2.3"
+    },
+    "import-ssp": {
+      "href": "ssp.json"
+    },
+    "reviewed-controls": {
+      "control-selections": [
+        {
+          "include-all": {}
+        }
+      ]
+    },
+    "tasks": [
+      {
+        "uuid": "5c1d0003-0000-4000-8000-000000000012",
+        "type": "action",
+        "title": "Range task",
+        "timing": {
+          "within-date-range": {
+            "start": "2026-02-01T00:00:00Z",
+            "end": "2026-02-28T00:00:00Z"
+          }
+        },
+        "tasks": [
+          {
+            "uuid": "5c1d0003-0000-4000-8000-000000000013",
+            "type": "action",
+            "title": "Nested range task",
+            "timing": {
+              "within-date-range": {
+                "start": "2026-03-01T00:00:00Z",
+                "end": "2026-03-31T23:59:59Z"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "uuid": "5c1d0003-0000-4000-8000-000000000011",
+        "type": "action",
+        "title": "On-date task",
+        "timing": {
+          "on-date": {
+            "date": "2026-01-15T08:00:00Z"
+          }
+        }
+      },
+      {
+        "uuid": "5c1d0003-0000-4000-8000-000000000014",
+        "type": "action",
+        "title": "Frequency task",
+        "timing": {
+          "at-frequency": {
+            "period": 1,
+            "unit": "months"
+          }
+        }
+      }
+    ]
+  }
+}
