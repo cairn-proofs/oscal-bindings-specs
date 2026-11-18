@@ -147,6 +147,11 @@
       "title": "The location of a node says when two selections are the same node"
     },
     {
+      "id": "CNS-025",
+      "capability": "constraint-validation",
+      "title": "An allowed-values entry compares values character for character"
+    },
+    {
       "id": "ELV-001",
       "capability": "element-validation",
       "title": "Validate a standalone element against a named type"

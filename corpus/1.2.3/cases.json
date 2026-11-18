@@ -273,6 +273,15 @@
       "notes": "Control ac-2.1.1 is in control ac-2.1, which is in control ac-2, and has a part with the name bogus. The target query of oscal-control-statement-part-name selects that part from each of the three ancestor controls, and the entry still gives one failure. Every control has a statement part, so the entry oscal-catalog-control-require-statement-when-appropriate does not fail. The input is adapted and trimmed from AC-2 and AC-2(1) of the SP 800-53 rev5 catalog in usnistgov/oscal-content at commit 78650f02ad9321bb7b817846f8fbd4f2bcd620de. SP 800-53 has no third level, so control ac-2.1.1 is synthetic."
     },
     {
+      "id": "parse/allowed-value-case",
+      "operation": "parse",
+      "input": "documents/invalid/allowed-value-case.json",
+      "expected-category": "parse-error",
+      "expected-constraints": ["oscal-activity-type-values"],
+      "requirements": ["PRS-015.01", "CNS-025.01"],
+      "notes": "The entry oscal-activity-type-values is closed and lists the values INTERVIEW, EXAMINE and TEST. The method prop of the activity has the value test. This value differs from the listed value TEST only in case, and the entry gives one failure. The input is a copy of documents/invalid/constraints/oscal-activity-type-values.json with the value test in place of zz-invalid."
+    },
+    {
       "id": "parse-typed/wrong-document-type",
       "operation": "parse-typed",
       "input": "documents/valid/profile.json",
