@@ -723,6 +723,14 @@
       "id": "CNS-023.01"
     },
     {
+      "capability": "constraint-validation",
+      "corpus": [
+        "parse/nested-control-part-name",
+        "parse/nested-control-part-name-three-levels"
+      ],
+      "id": "CNS-024.01"
+    },
+    {
       "capability": "element-validation",
       "corpus": [
         "element/back-matter-valid",

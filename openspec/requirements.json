@@ -142,6 +142,11 @@
       "title": "The element queries of a single-or-many type are those of its item type"
     },
     {
+      "id": "CNS-024",
+      "capability": "constraint-validation",
+      "title": "The location of a node says when two selections are the same node"
+    },
+    {
       "id": "ELV-001",
       "capability": "element-validation",
       "title": "Validate a standalone element against a named type"

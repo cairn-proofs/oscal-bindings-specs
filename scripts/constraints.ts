@@ -59,6 +59,15 @@ export function checkManifest(schema: object, data: unknown): string[] {
         failures.push(`${at}: the query ${q} is not accepted: ${(error as Error).message}`);
       }
     }
+    // CNS-024: a target query runs on an array that holds only the context node, and selects only the context node or
+    // nodes in it. On an array, only a query with no segment (`$`) selects the array itself.
+    for (const q of e.target) {
+      try {
+        if (compile(q).segments.length === 0) failures.push(`${at}: the target query ${q} selects the array that holds the context node`);
+      } catch {
+        // The loop above reports a query that is not accepted.
+      }
+    }
     for (const p of patternsOf(e)) if (!check(p)) failures.push(`${at}: the pattern ${p} is not an I-Regexp`);
   }
   return failures;
@@ -225,6 +234,11 @@ function selfTest(): number {
   test("CNS-007: the entries on a flag select the flag of each definition that has it", () => {
     const e = byId("oscal-assessment-part-values")[0];
     return e.definition === "flag:name" && e.context.document.length > 0 && e.context.document.every((q) => q.endsWith("['name']"));
+  });
+  test("CNS-024: a target query that selects the array that holds the context node fails the check", () => {
+    const withTarget = (q: string) => edited((m) => (m.entries[0].target = [q]));
+    const bad = checkManifest(schema, withTarget("$"));
+    return (bad.length === 1 && bad[0].includes("selects the array that holds the context node") && checkManifest(schema, withTarget("$[0]")).length === 0) || JSON.stringify(bad);
   });
   test("CNS-007: the element types of kind document hold context nodes", () => one("oscal-catalog-parts").context.elements["catalog-document"] !== undefined);
 
