@@ -8,7 +8,7 @@
       "input": "documents/valid/catalog.json",
       "document-type": "catalog",
       "expected": "expected/catalog.json",
-      "requirements": ["PRS-001.01", "PRS-003.01", "SER-004.01"],
+      "requirements": ["PRS-001.01", "PRS-003.01", "SER-004.01", "CNS-017.02"],
       "source": {
         "repository": "https://github.com/usnistgov/oscal-content",
         "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
@@ -50,7 +50,7 @@
       "input": "documents/valid/system-security-plan.json",
       "document-type": "system-security-plan",
       "expected": "expected/system-security-plan.json",
-      "requirements": ["PRS-001.01", "SER-004.01"],
+      "requirements": ["PRS-001.01", "SER-004.01", "CNS-017.02"],
       "source": {
         "repository": "https://github.com/usnistgov/oscal-content",
         "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
@@ -287,7 +287,7 @@
       "input": "documents/invalid/allowed-value-case.json",
       "expected-category": "parse-error",
       "expected-constraints": ["oscal-activity-type-values"],
-      "requirements": ["PRS-015.01", "CNS-025.01"],
+      "requirements": ["PRS-015.01", "CNS-017.01", "CNS-025.01"],
       "notes": "The entry oscal-activity-type-values is closed and lists the values INTERVIEW, EXAMINE and TEST. The method prop of the activity has the value test. This value differs from the listed value TEST only in case, and the entry gives one failure. The input is a copy of documents/invalid/constraints/oscal-activity-type-values.json with the value test in place of zz-invalid."
     },
     {

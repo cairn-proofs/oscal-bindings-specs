@@ -194,6 +194,18 @@ function selfTest(): number {
   // Task 2.3: naming rules.
   const param = "oscal-complete-oscal-control-common:parameter";
   test("MDL-015.01 local name maps to PascalCase", () => nameAt(run(schemaOf({ [param]: obj({ id: str }) })), D(param)) === "Parameter");
+  test("MDL-014.01 local name of a definition", () => {
+    // The local name is the key after the colon. An inline object takes the canonical name of this parent plus its own key.
+    const hashKey = "oscal-complete-oscal-metadata:hash";
+    const r = run(schemaOf({ [hashKey]: obj({ extra: obj({ value: str }) }) }));
+    return nameAt(r, D(hashKey)) === "Hash" && nameAt(r, `${D(hashKey)}/properties/extra`) === "HashExtra";
+  });
+  test("MDL-014.02 local name of a list item", () => {
+    const obsKey = "oscal-complete-oscal-assessment-common:observation";
+    const items = `${D(obsKey)}/properties/methods/items`;
+    const r = run(schemaOf({ [obsKey]: obj({ methods: list(obj({ step: str })) }) }), { "local-names": { [items]: "method" } });
+    return nameAt(r, items) === "ObservationMethod" && entryNamed(r, "ObservationMethods") === undefined;
+  });
   test("MDL-001.02 schema reorder does not change names", () => {
     const a = run(schemaOf({ "oscal-complete-oscal-catalog:profile": obj({}) }, ["catalog", "profile"]));
     const b = run(schemaOf({ "oscal-complete-oscal-catalog:profile": obj({}) }, ["profile", "catalog"]));
@@ -210,6 +222,17 @@ function selfTest(): number {
     return e?.kind === "document" && e["body-field"] === "system-security-plan";
   });
   test("MDL-002.02 schema directive field is excluded", () => entryNamed(run(schemaOf({})), "CatalogDocument")?.["body-field"] === "catalog");
+  test("MDL-002.03 the eight wrapper names", () => {
+    const names = ["CatalogDocument", "ProfileDocument", "ComponentDefinitionDocument", "SystemSecurityPlanDocument", "AssessmentPlanDocument", "AssessmentResultsDocument", "PlanOfActionAndMilestonesDocument", "MappingCollectionDocument"];
+    const release = runReleases().find((r) => r.release === "1.2.3");
+    if (release?.output === undefined) return JSON.stringify(release?.failures);
+    const documents = (JSON.parse(release.output) as Manifest).types.filter((t) => t.kind === "document").map((t) => t.name);
+    return JSON.stringify([...documents].sort()) === JSON.stringify([...names].sort()) || JSON.stringify(documents);
+  });
+  test("MDL-016.01 root schema name", () => {
+    const e = entryNamed(run(schemaOf({})), "OscalDocument");
+    return e?.kind === "document-union" && e.sites[0] === "#";
+  });
   test("document union lists the wrappers", () =>
     JSON.stringify(entryNamed(run(schemaOf({ "oscal-complete-oscal-catalog:profile": obj({}) }, ["profile", "catalog"])), "OscalDocument")?.members) ===
     '["CatalogDocument","ProfileDocument"]');
@@ -218,6 +241,17 @@ function selfTest(): number {
   test("MDL-005.01 colliding short names get module-prefixed names", () => {
     const r = run(schemaOf({ [cdci]: obj({ a: str }), [sspci]: obj({ b: str }) }));
     return nameAt(r, D(cdci)) === "ComponentDefinitionControlImplementation" && nameAt(r, D(sspci)) === "SspControlImplementation";
+  });
+  test("MDL-020.01 clashing definitions are not merged", () => {
+    // The two definitions have the same structure, because equal structure alone MUST NOT merge two places (MDL-013).
+    const r = run(schemaOf({ [cdci]: obj({ a: str }), [sspci]: obj({ a: str }) }));
+    const a = entryNamed(r, "ComponentDefinitionControlImplementation");
+    const b = entryNamed(r, "SspControlImplementation");
+    return a?.sites.length === 1 && b?.sites.length === 1 && a.sites[0] === D(cdci) && b.sites[0] === D(sspci);
+  });
+  test("MDL-013.02 same local name with different structure is not deduplicated", () => {
+    const r = run(schemaOf({ [cdci]: obj({ a: str }), [sspci]: obj({ a: obj({ x: str }) }) }));
+    return r.manifest !== undefined && r.manifest.types.filter((t) => t.name.endsWith("ControlImplementation")).length === 2 && r.manifest.types.every((t) => t.sites.length === 1 || t.kind === "document-union");
   });
   const sspStatus = "oscal-complete-oscal-ssp:status";
   const sysComp = "oscal-complete-oscal-implementation-common:system-component";
@@ -321,7 +355,7 @@ function selfTest(): number {
     const r = run(statusSchema);
     return ["StatusState", "SystemComponentStatusState", "FindingTargetStatusState"].every((n) => entryNamed(r, n)?.sites.length === 1);
   });
-  test("list item enum uses the singular name", () => {
+  test("MDL-018.05 enum in a list property uses the singular name", () => {
     const obs = "oscal-complete-oscal-assessment-common:observation";
     const items = `${D(obs)}/properties/methods/items`;
     return nameAt(run(schemaOf({ [obs]: obj({ methods: list(openEnum("TEST")) }) }), { "local-names": { [items]: "method" } }), `${items}/anyOf/1`) === "ObservationMethod";
@@ -407,8 +441,23 @@ function selfTest(): number {
     const keys = ["kind", "name", "sites"];
     return (sameJson(members(e), keys) && sameJson(members(real), keys) && !JSON.stringify([e, real]).includes("algorithm")) || JSON.stringify([e, real]);
   });
+  test("MDL-017.01 override name replaces a rule-derived name", () => {
+    const s = schemaOf({ [risk]: obj({ "risk-log": obj({ start: str }) }) });
+    return nameAt(run(s), riskLog) === "RiskRiskLog" && nameAt(run(s, { names: { [riskLog]: "RiskLog" } }), riskLog) === "RiskLog";
+  });
   test("empty object definition is an object type", () => entryNamed(run(schemaOf({ "oscal-complete-oscal-control-common:include-all": obj({}) })), "IncludeAll")?.kind === "object");
   test("scalar definition has no entry", () => entryNamed(run(schemaOf({ "oscal-complete-oscal-metadata:remarks": str })), "Remarks") === undefined);
+  test("MDL-003.01 scalar wrapper has no object entry", () => {
+    const uuidKey = "oscal-complete-oscal-metadata:uuid";
+    const r = run(schemaOf({ [uuidKey]: { type: "string", pattern: "^[0-9A-Fa-f]{8}$" } }));
+    return r.manifest !== undefined && entryNamed(r, "Uuid") === undefined && nameAt(r, D(uuidKey)) === undefined;
+  });
+  test("MDL-003.02 preserved wrappers stay wrappers", () => {
+    const m = "oscal-complete-oscal-mapping:mapping-collection";
+    const mp = "oscal-complete-oscal-mapping-common:mapping";
+    const r = run(schemaOf({ [mp]: obj({ uuid: str }), [m]: obj({ mappings: { anyOf: [ref(mp), { type: "array", minItems: 1, items: ref(mp) }] } }) }));
+    return entryNamed(r, "OscalDocument")?.kind === "document-union" && entryNamed(r, "MappingCollectionMappings")?.kind === "single-or-many";
+  });
   test("lists of references need no singular name", () => run(schemaOf({ [hash]: obj({ links: list(ref(hash)) }) })).manifest !== undefined);
 
   // The committed manifest of OSCAL 1.2.3, for the scenarios that name an entry of it.
@@ -449,7 +498,23 @@ function selfTest(): number {
     const r = run(twoMethods);
     return entryNamed(r, "MappingMethod")?.sites.length === 1 && entryNamed(r, "MappingProvenanceMethod")?.sites.length === 1;
   });
-  test("explicit merge produces one type", () => {
+  test("MDL-013.01 a shared type used by many document types yields one canonical type", () => {
+    const metadata = "oscal-complete-oscal-metadata:metadata";
+    const r = run(
+      schemaOf(
+        {
+          [metadata]: obj({ title: str }),
+          "oscal-complete-oscal-catalog:catalog": obj({ metadata: ref(metadata) }),
+          "oscal-complete-oscal-catalog:profile": obj({ metadata: ref(metadata) }),
+          "oscal-complete-oscal-catalog:system-security-plan": obj({ metadata: ref(metadata) }),
+        },
+        ["catalog", "profile", "system-security-plan"],
+      ),
+    );
+    const metadataTypes = r.manifest?.types.filter((t) => t.name.includes("Metadata")) ?? [];
+    return (metadataTypes.length === 1 && metadataTypes[0].name === "Metadata" && metadataTypes[0].sites.length === 1) || JSON.stringify(r.failures);
+  });
+  test("MDL-019.01 identical places merge into one type that records both places", () => {
     const sites = [`${D(mapping)}/properties/method/allOf/1`, `${D(mp)}/properties/method/allOf/1`];
     const e = entryNamed(run(twoMethods, { merges: [sites] }), "MappingMethod");
     return e?.sites.length === 2 && entryNamed(run(twoMethods, { merges: [sites] }), "MappingProvenanceMethod") === undefined;
@@ -488,6 +553,15 @@ function selfTest(): number {
   });
   test("MDL-021.01 missing singular name aborts and names the list", () =>
     failsWith(run(schemaOf({ [poam]: obj({ origins: list(obj({ actor: str })) }) })), `the list ${D(poam)}/properties/origins needs`));
+  test("MDL-021.04 each missing singular name is reported", () => {
+    const other = "oscal-complete-oscal-assessment-common:finding";
+    const r = run(schemaOf({ [poam]: obj({ origins: list(obj({ actor: str })) }), [other]: obj({ targets: list(obj({ id: str })) }) }));
+    const missing = r.failures.filter((f) => f.startsWith("[missing-singular]"));
+    return (
+      (r.manifest === undefined && missing.length === 2 && missing.some((f) => f.includes(`${D(poam)}/properties/origins`)) && missing.some((f) => f.includes(`${D(other)}/properties/targets`))) ||
+      JSON.stringify(r.failures)
+    );
+  });
   test("MDL-021.02 branch without a distinguishing property aborts", () =>
     failsWith(run(schemaOf({ [group]: { type: "object", anyOf: [{ properties: { title: str } }, { properties: { title: str } }] } })), `${D(group)}/anyOf/0`));
   test("MDL-021.03 merge of different structures aborts and names both", () => {
