@@ -7,9 +7,10 @@
  *
  *   npm run names:write        regenerate each names.json
  *   npm run names:check        validate each file, regenerate in memory, and compare with the committed names.json
- *   npm run names:self-test    run the rule scenarios on small schemas in memory
+ *   npm run names:self-test    run the rule scenarios on small schemas in memory, and on small stores in a temporary directory
  */
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import {
   derive,
@@ -83,6 +84,18 @@ export function runReleases(root = "."): ReleaseRun[] {
   return runs;
 }
 
+/** The problems of the committed names.json of a release: it does not validate, or it differs from the generated text. */
+export function committedProblems(root: string, release: string, output: string): string[] {
+  const file = path.join(root, "manifest", release, "names.json");
+  const committed = fs.existsSync(file) ? fs.readFileSync(file, "utf8") : undefined;
+  const schemaBytes = fs.readFileSync(path.join(root, "schemas", release, SCHEMA_FILE));
+  const problems = committed === undefined ? [`${file} does not exist`] : validateManifest(JSON.parse(committed), schemaBytes, release);
+  if (committed !== undefined && committed !== output) {
+    problems.push(`${file} differs from the generator output. Edit overrides.json and run npm run names:write.`);
+  }
+  return problems;
+}
+
 function main(mode: "write" | "check"): number {
   const runs = runReleases();
   let failed = 0;
@@ -100,12 +113,7 @@ function main(mode: "write" | "check"): number {
       console.log(`${run.release}: wrote ${file} (${(JSON.parse(run.output) as Manifest).types.length} types)`);
       continue;
     }
-    const committed = fs.existsSync(file) ? fs.readFileSync(file, "utf8") : undefined;
-    const schemaBytes = fs.readFileSync(path.join("schemas", run.release, SCHEMA_FILE));
-    const problems = committed === undefined ? [`${file} does not exist`] : validateManifest(JSON.parse(committed), schemaBytes, run.release);
-    if (committed !== undefined && committed !== run.output) {
-      problems.push(`${file} differs from the generator output. Edit overrides.json and run npm run names:write.`);
-    }
+    const problems = committedProblems(".", run.release, run.output);
     for (const p of problems) console.error(`${run.release}: ${p}`);
     if (problems.length) failed++;
     else console.log(`${run.release}: ${file} matches the generator output`);
@@ -458,6 +466,45 @@ function selfTest(): number {
   });
   test("NAM-007 override name changes a pinned name", () =>
     nameAt(run(schemaOf({ [hash]: obj({}) }), { names: { [D(hash)]: "Digest" } }, prev([{ name: "Hash", kind: "object", sites: [D(hash)] }])), D(hash)) === "Digest");
+
+  // A store on disk in a temporary directory, for the scenarios of the checks that read the store. Each release holds
+  // the generated manifest, and `tamper` can change the committed copy of a release.
+  const withStore = <T>(releases: string[], schema: string, tamper: (release: string, manifest: Manifest) => Manifest, fn: (root: string) => T): T => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "names-store-"));
+    try {
+      let previous: Manifest | undefined;
+      for (const release of releases) {
+        fs.mkdirSync(path.join(root, "schemas", release), { recursive: true });
+        fs.mkdirSync(path.join(root, "manifest", release), { recursive: true });
+        fs.writeFileSync(path.join(root, "schemas", release, SCHEMA_FILE), schema);
+        fs.writeFileSync(path.join(root, "manifest", release, "overrides.json"), JSON.stringify(emptyOverrides(release)));
+        const manifest = derive({ release, schemaFile: SCHEMA_FILE, schemaBytes: schema, overrides: emptyOverrides(release), previous }).manifest;
+        if (manifest === undefined) throw new Error("the test schema gives no manifest");
+        fs.writeFileSync(path.join(root, "manifest", release, "names.json"), serialize(tamper(release, structuredClone(manifest)) as unknown as Json));
+        previous = manifest;
+      }
+      return fn(root);
+    } finally {
+      fs.rmSync(root, { recursive: true, force: true });
+    }
+  };
+  const storeSchema = schemaOf({ [hash]: obj({ algorithm: openEnum("SHA-256") }), [sspStatus]: obj({}) });
+  const renameHash = (m: Manifest): Manifest => {
+    m.types.find((t) => t.name === "Hash")!.name = "Digest";
+    return m;
+  };
+  const problemsOf = (root: string, release: string) => committedProblems(root, release, runReleases(root).find((r) => r.release === release)!.output!);
+  test("NAM-006.01 hand edit of the manifest fails the check", () => {
+    const edited = withStore(["1.2.3"], storeSchema, (_r, m) => renameHash(m), (root) => problemsOf(root, "1.2.3"));
+    const clean = withStore(["1.2.3"], storeSchema, (_r, m) => m, (root) => problemsOf(root, "1.2.3"));
+    return (clean.length === 0 && edited.length === 1 && edited[0].includes("differs from the generator output")) || JSON.stringify([clean, edited]);
+  });
+  test("NAM-006.03 edit of a previous release manifest fails the check", () => {
+    const problems = withStore(["1.2.2", "1.2.3"], storeSchema, (r, m) => (r === "1.2.2" ? renameHash(m) : m), (root) => ({
+      previous: problemsOf(root, "1.2.2"),
+    }));
+    return (problems.previous.length === 1 && problems.previous[0].includes("1.2.2") && problems.previous[0].includes("differs from the generator output")) || JSON.stringify(problems);
+  });
 
   // Task 2.7: writer.
   test("NAM-006.02 generation is reproducible", () => {

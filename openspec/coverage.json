@@ -1559,8 +1559,13 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 96,
-      "id": "NAM-006.01"
+      "id": "NAM-006.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-006.01 hand edit of the manifest fails the check"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
@@ -1574,8 +1579,13 @@
     },
     {
       "capability": "naming-manifest",
-      "gap": 96,
-      "id": "NAM-006.03"
+      "id": "NAM-006.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "NAM-006.03 edit of a previous release manifest fails the check"
+        }
+      ]
     },
     {
       "capability": "naming-manifest",
