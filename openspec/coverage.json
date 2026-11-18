@@ -899,12 +899,17 @@
     },
     {
       "capability": "error-model",
-      "gap": 77,
+      "corpus": [
+        "round-trip/catalog",
+        "round-trip/minimal-catalog"
+      ],
       "id": "ERR-002.01"
     },
     {
       "capability": "error-model",
-      "gap": 77,
+      "corpus": [
+        "parse/not-json"
+      ],
       "id": "ERR-002.02"
     },
     {
@@ -944,12 +949,16 @@
     },
     {
       "capability": "error-model",
-      "gap": 78,
+      "corpus": [
+        "parse/invalid-utf8"
+      ],
       "id": "ERR-004.04"
     },
     {
       "capability": "error-model",
-      "gap": 78,
+      "corpus": [
+        "parse/allowed-value-case"
+      ],
       "id": "ERR-004.05"
     },
     {
@@ -968,7 +977,9 @@
     },
     {
       "capability": "error-model",
-      "gap": 79,
+      "corpus": [
+        "parse-file/missing-file"
+      ],
       "id": "ERR-006.02"
     },
     {
@@ -987,12 +998,16 @@
     },
     {
       "capability": "error-model",
-      "gap": 80,
+      "corpus": [
+        "parse-typed/wrong-document-type"
+      ],
       "id": "ERR-009.01"
     },
     {
       "capability": "error-model",
-      "gap": 80,
+      "corpus": [
+        "parse/not-json"
+      ],
       "id": "ERR-009.02"
     },
     {
@@ -1029,7 +1044,9 @@
     },
     {
       "capability": "error-model",
-      "gap": 81,
+      "corpus": [
+        "parse-file/directory"
+      ],
       "id": "ERR-012.03"
     },
     {
@@ -2092,7 +2109,9 @@
     },
     {
       "capability": "document-parsing",
-      "gap": 107,
+      "corpus": [
+        "round-trip/catalog-bytes"
+      ],
       "id": "PRS-001.02"
     },
     {
@@ -2104,7 +2123,9 @@
     },
     {
       "capability": "document-parsing",
-      "gap": 108,
+      "corpus": [
+        "round-trip/catalog-path"
+      ],
       "id": "PRS-002.01"
     },
     {
@@ -2144,7 +2165,9 @@
     },
     {
       "capability": "document-parsing",
-      "gap": 109,
+      "corpus": [
+        "round-trip/component-definition"
+      ],
       "id": "PRS-005.01"
     },
     {
@@ -2532,12 +2555,16 @@
     },
     {
       "capability": "document-parsing",
-      "gap": 110,
+      "corpus": [
+        "parse/allowed-value-case"
+      ],
       "id": "PRS-015.03"
     },
     {
       "capability": "serialization",
-      "gap": 111,
+      "corpus": [
+        "round-trip/component-definition"
+      ],
       "id": "SER-001.01"
     },
     {
@@ -2553,8 +2580,8 @@
       "id": "SER-002.01"
     },
     {
+      "by-design": "The corpus runs one serialization path, which SER-002.01 checks. A binding chooses its other paths, which no store script can observe.",
       "capability": "serialization",
-      "gap": 112,
       "id": "SER-002.02"
     },
     {
@@ -2573,6 +2600,7 @@
         "round-trip/assessment-plan",
         "round-trip/assessment-results",
         "round-trip/catalog",
+        "round-trip/catalog-bytes",
         "round-trip/component-definition",
         "round-trip/mapping-collection",
         "round-trip/minimal-catalog",
@@ -2584,13 +2612,31 @@
     },
     {
       "capability": "serialization",
-      "gap": 113,
-      "id": "SER-004.02"
+      "id": "SER-004.02",
+      "self-test": [
+        {
+          "script": "scripts/check-canonical-json.ts",
+          "test": "SER-004.02: a different array order gives another canonical form"
+        },
+        {
+          "script": "scripts/check-canonical-json.ts",
+          "test": "SER-004.02: a different key order gives the same canonical form"
+        }
+      ]
     },
     {
       "capability": "serialization",
-      "gap": 113,
-      "id": "SER-004.03"
+      "id": "SER-004.03",
+      "self-test": [
+        {
+          "script": "scripts/check-canonical-json.ts",
+          "test": "SER-004.03: different whitespace gives the same canonical form"
+        },
+        {
+          "script": "scripts/check-canonical-json.ts",
+          "test": "SER-004.03: whitespace inside a string value is kept"
+        }
+      ]
     },
     {
       "capability": "serialization",

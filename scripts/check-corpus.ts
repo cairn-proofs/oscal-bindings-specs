@@ -43,8 +43,10 @@
  *     Only a build-resource case has `expected-uuid`.
  * 15. The BMB-004 namespace is the UUID version 5 of its URL in the URL namespace, the text of BMB-004 in the main spec
  *     contains the namespace, and docs/back-matter-keys.md contains the URL and the namespace.
- * 16. A facade case has an `input-form` that is absent, `bytes`, or `path`, and only a facade case has `path`. It has
- *     exactly one of `expected` and `expected-category`. With `expected`, the input is valid against the schema, its only
+ * 16. The `input-form` of a case is absent, `bytes`, or `path`. A round-trip, yaml-round-trip, or facade case can have
+ *     `bytes` or `path`. A parse or yaml-parse case can have `bytes`. A case of any other operation has no `input-form`
+ *     (README, Input forms). A facade case has exactly one of `expected` and `expected-category`. With `expected`, the
+ *     input is valid against the schema, its only
  *     root key is `document-type`, `expected` is the expected file of a round-trip case, and `expected` is the canonical
  *     form of the input, so the body, the metadata, the OSCAL version, and the identifier that the facade reads come
  *     from a known document. With `expected-category`, the category is not-found, the form is `path`, and the input
@@ -58,7 +60,7 @@
  *
  *   npm run corpus:check           check the corpus
  *   npm run corpus:write           regenerate each expected file, then check
- *   npm run corpus:self-test       run the rule scenarios of check 17
+ *   npm run corpus:self-test       run the self-tests of the rules
  */
 import { createHash } from "node:crypto";
 import fs from "node:fs";
@@ -108,6 +110,21 @@ const ARGUMENT_FIELDS: Record<string, string[]> = {
   "build-rlink": ["href", "media-type", "hashes"],
   "build-resource": ["key", "title", "identifier", "document-ids", "rlinks"],
 };
+/**
+ * The values of `input-form` that a case of each operation can have (README, Input forms). A case of an operation that
+ * is not a key has no `input-form`. An operation whose name ends with `-file` always gives the path to the binding.
+ */
+const INPUT_FORMS: Record<string, string[]> = {
+  "round-trip": ["bytes", "path"],
+  parse: ["bytes"],
+  "yaml-round-trip": ["bytes", "path"],
+  "yaml-parse": ["bytes"],
+  facade: ["bytes", "path"],
+};
+/** True when a case of `operation` can have the `input-form` value `form`. Each operation can have no form. */
+export function inputFormAllowed(operation: string, form: string | undefined): boolean {
+  return form === undefined || (Object.hasOwn(INPUT_FORMS, operation) && INPUT_FORMS[operation].includes(form));
+}
 interface Expectations {
   /** CNS-020: the failures equal the `expected-constraints` of the case, and each failed entry counts as covered. */
   expectFailures: (c: Case, failures: EntryFailure[]) => void;
@@ -599,8 +616,7 @@ function main(write: boolean): number {
     }
 
     const form = c["input-form"];
-    if (form !== undefined && !(form === "bytes" || (form === "path" && c.operation === "facade")))
-      fail(c.id, `input-form "${form}" is not valid for a ${c.operation} case`);
+    if (!inputFormAllowed(c.operation, form)) fail(c.id, `input-form "${form}" is not valid for a ${c.operation} case`);
 
     switch (c.operation) {
       case "round-trip": {
@@ -837,6 +853,10 @@ function selfTest(): number {
     return messages.length;
   };
   const cases: Array<[string, () => boolean | string]> = [
+    ["input-form: a round-trip, yaml-round-trip, or facade case can have bytes or path", () => ["round-trip", "yaml-round-trip", "facade"].every((o) => inputFormAllowed(o, undefined) && inputFormAllowed(o, "bytes") && inputFormAllowed(o, "path"))],
+    ["input-form: a parse or yaml-parse case can have bytes, and cannot have path", () => ["parse", "yaml-parse"].every((o) => inputFormAllowed(o, undefined) && inputFormAllowed(o, "bytes") && !inputFormAllowed(o, "path"))],
+    ["input-form: a case of any other operation has no form", () => ["parse-typed", "parse-file", "yaml-parse-typed", "yaml-parse-file", "assessment-period", "validate-element", "element-types", "build-hash", "toString"].every((o) => inputFormAllowed(o, undefined) && !inputFormAllowed(o, "bytes") && !inputFormAllowed(o, "path"))],
+    ["input-form: a value that is not bytes or path is not valid", () => !inputFormAllowed("round-trip", "text") && !inputFormAllowed("facade", "")],
     ["a document with an unknown property name fails two closed entries, each with its id", () => JSON.stringify(bad.map((f) => f.id).sort()) === '["oscal-control-prop-name","oscal-metadata-prop-name-values"]' || JSON.stringify(bad)],
     ["VER-006.01: a case with a known-defects field fails the check", () => caseBindingData({ id: "t", "known-defects": ["x"] }) !== undefined && caseBindingData({ id: "t" }) === undefined],
     ["VER-006.01: an index with a defect-twins field fails the check", () => indexBindingData({ "defect-twins": [] }) !== undefined && indexBindingData({ cases: [] }) === undefined],
