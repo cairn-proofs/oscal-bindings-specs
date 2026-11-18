@@ -60,6 +60,7 @@ function selfTest(): number {
     const files = listing(archive, name);
     const cases: Array<[string, boolean]> = [
       ["SRF-006.04 the spec artifact holds the requirement index", files.includes("openspec/requirements.json")],
+      ["SRF-007.03 the spec artifact holds the traceability JSON Schema", files.includes("openspec/traceability.schema.json")],
     ];
     for (const [test, ok] of cases) {
       if (!ok) failed++;
