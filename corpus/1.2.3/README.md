@@ -37,7 +37,8 @@ Each case has these fields:
       only a documented limit of a binding reaches it.
    3. `expected-valid`: `true` or `false`, for element validation.
    4. `expected-period`: an object with the keys `start` and `end`, for an assessment period. Each value is a datetime
-      in the canonical form of [Canonical JSON for conformance comparison](../../docs/canonical-json.md#datetimes).
+      in the canonical form of [Canonical JSON for conformance comparison](../../docs/canonical-json.md#datetimes), or
+      `null` for an empty bound.
    5. `expected-uuid`: the identifier that the resource builder derives from the key, in lowercase, for a
       `build-resource` case.
    6. `expected-element`: the JSON of the element that a builder returns. The canonical form of the JSON of the result
@@ -96,7 +97,8 @@ Each case has these fields:
 5. `assessment-period`: wrap the parsed input in the document facade and request the assessment period. The facade
    must report `expected-category`, or return the start and the end of `expected-period`. The runner normalizes each
    bound that the facade returns as [Canonical JSON for conformance comparison](../../docs/canonical-json.md#datetimes)
-   states, and then compares it with the value in `expected-period`.
+   states, and then compares it with the value in `expected-period`. An empty bound that the facade returns matches
+   `null`.
 6. `validate-element`: validate the input against `element-type`. The result must be `expected-valid`, or the
    operation must report `expected-category`. With `expected-constraints`, the `id` values of the
    constraint failures in the result must equal the list, with each repeat, unless the result

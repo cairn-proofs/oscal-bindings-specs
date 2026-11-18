@@ -1,0 +1,47 @@
+{
+  "assessment-plan": {
+    "uuid": "5c1d0004-0000-4000-8000-000000000001",
+    "metadata": {
+      "title": "At frequency only",
+      "last-modified": "2026-03-01T00:00:00Z",
+      "version": "1.0",
+      "oscal-version": "1.2.3"
+    },
+    "import-ssp": {
+      "href": "ssp.json"
+    },
+    "reviewed-controls": {
+      "control-selections": [
+        {
+          "include-all": {}
+        }
+      ]
+    },
+    "tasks": [
+      {
+        "uuid": "5c1d0004-0000-4000-8000-000000000011",
+        "type": "action",
+        "title": "Frequency task",
+        "timing": {
+          "at-frequency": {
+            "period": 1,
+            "unit": "days"
+          }
+        },
+        "tasks": [
+          {
+            "uuid": "5c1d0004-0000-4000-8000-000000000012",
+            "type": "action",
+            "title": "Nested frequency task",
+            "timing": {
+              "at-frequency": {
+                "period": 2,
+                "unit": "months"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

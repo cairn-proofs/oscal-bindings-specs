@@ -1019,17 +1019,23 @@
     },
     {
       "capability": "document-facade",
-      "gap": 82,
+      "corpus": [
+        "assessment-period/timing-kinds"
+      ],
       "id": "FAC-005.01"
     },
     {
       "capability": "document-facade",
-      "gap": 82,
+      "corpus": [
+        "assessment-period/at-frequency-only"
+      ],
       "id": "FAC-005.02"
     },
     {
       "capability": "document-facade",
-      "gap": 82,
+      "corpus": [
+        "assessment-period/on-date"
+      ],
       "id": "FAC-005.03"
     },
     {

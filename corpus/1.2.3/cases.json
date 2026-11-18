@@ -335,6 +335,30 @@
       "notes": "Both bounds come from the second result. A binding that keeps six fraction digits sees equal instants."
     },
     {
+      "id": "assessment-period/timing-kinds",
+      "operation": "assessment-period",
+      "input": "documents/valid/assessment-plan-timing-kinds.json",
+      "expected-period": { "start": "2026-01-15T08:00:00Z", "end": "2026-03-31T23:59:59Z" },
+      "requirements": ["FAC-005.01"],
+      "notes": "The start comes from an on-date of a task. The end comes from a within-date-range of a nested task, so a binding that skips nested tasks gives the end 2026-02-28T00:00:00Z. The at-frequency timing of the third task gives no datetime. The input is synthetic."
+    },
+    {
+      "id": "assessment-period/at-frequency-only",
+      "operation": "assessment-period",
+      "input": "documents/valid/assessment-plan-at-frequency.json",
+      "expected-period": { "start": null, "end": null },
+      "requirements": ["FAC-005.02"],
+      "notes": "A task and its nested task have only at-frequency timing, so both bounds are empty. The value null stands for an empty bound. The input is synthetic."
+    },
+    {
+      "id": "assessment-period/on-date",
+      "operation": "assessment-period",
+      "input": "documents/valid/assessment-plan-on-date.json",
+      "expected-period": { "start": "2026-05-04T10:30:00-04:00", "end": "2026-05-04T10:30:00-04:00" },
+      "requirements": ["FAC-005.03"],
+      "notes": "The only task has an on-date, which is both the start and the end. The offset stays as written. The input is synthetic."
+    },
+    {
       "id": "facade/catalog",
       "operation": "facade",
       "input": "documents/valid/catalog.json",

@@ -22,7 +22,7 @@
  * 12. An assessment-period case has either `expected-category` or `expected-period`, not both and not neither. With
  *     `expected-category`, the input is not an Assessment Plan or Assessment Results. With `expected-period`, the input
  *     is a valid Assessment Plan or Assessment Results, and the canonical form of each bound that FAC-005 to FAC-007
- *     compute from it equals the value of the field.
+ *     compute from it equals the value of the field. A bound that is empty is `null` in the field.
  * 13. The list of element-type names (ELV-002) is the kebab-case form of the `name` of each type in the naming
  *     manifest, in code-point order. No two types give the same name. An element-types case has no input, and its
  *     expected file is the canonical form of the list. A validate-element case with `expected-valid` names an element
@@ -58,7 +58,7 @@
  *
  *   npm run corpus:check           check the corpus
  *   npm run corpus:write           regenerate each expected file, then check
- *   npm run corpus:self-test       run the rule scenarios of check 17
+ *   npm run corpus:self-test       run the rule scenarios of checks 12 and 17
  */
 import { createHash } from "node:crypto";
 import fs from "node:fs";
@@ -142,7 +142,7 @@ export interface Case {
   "expected-valid"?: boolean;
   "expected-min-failures"?: number;
   "expected-max-failures"?: number;
-  "expected-period"?: { start: string; end: string };
+  "expected-period"?: { start: string | null; end: string | null };
   arguments?: {
     key?: string;
     title?: string;
@@ -251,6 +251,22 @@ function assessmentPeriod(doc: Record<string, unknown>): { start?: string; end?:
     return best;
   };
   return { start: pick(starts, -1), end: pick(ends, 1) };
+}
+/**
+ * A message for each bound of `expected` that differs from the bound that FAC-005 to FAC-007 compute. An empty bound is
+ * `null` in `expected-period` and `undefined` in the computed period.
+ */
+export function periodMismatches(
+  expected: { start: string | null; end: string | null },
+  computed: { start?: string; end?: string },
+): string[] {
+  const messages: string[] = [];
+  for (const bound of ["start", "end"] as const) {
+    const value = computed[bound];
+    if ((value === undefined ? null : normalizeDatetime(value)) !== expected[bound])
+      messages.push(`expected-period ${bound} is ${expected[bound]}, but FAC-005 to FAC-007 give ${value ?? null}`);
+  }
+  return messages;
 }
 /** A document that the corpus checks against the constraint manifest (CNS-020), and the failures that its case expects. */
 export interface DocumentInput {
@@ -710,12 +726,7 @@ function main(write: boolean): number {
           fail(c.id, "input is not an Assessment Plan or Assessment Results, so it has no assessment period");
           break;
         }
-        const computedPeriod = assessmentPeriod(doc);
-        for (const bound of ["start", "end"] as const) {
-          const computed = computedPeriod[bound];
-          if (computed === undefined || normalizeDatetime(computed) !== expectedPeriod[bound])
-            fail(c.id, `expected-period ${bound} is ${expectedPeriod[bound]}, but FAC-005 to FAC-007 give ${computed}`);
-        }
+        for (const message of periodMismatches(expectedPeriod, assessmentPeriod(doc))) fail(c.id, message);
         break;
       }
       case "validate-element": {
@@ -835,6 +846,21 @@ function selfTest(): number {
     ["CNS-020.02: a valid input that fails an entry fails the check", () => run(expectNone, {}, bad) === 1 && run(expectNone, {}, []) === 0],
     ["CNS-020: a listed failure that does not occur fails the check", () => run(expectFailures, { "expected-constraints": ["oscal-control-prop-name"] }, []) === 1],
     ["CNS-018.02: a hash element with a short value fails the entry of its algorithm", () => hashFailures.map((f) => f.id).join() === "oscal-check-hash-length-SHA2-3-256" || JSON.stringify(hashFailures)],
+    ["FAC-005: an Assessment Plan with only at-frequency timing has empty bounds", () => {
+      const plan = { "assessment-plan": { tasks: [{ timing: { "at-frequency": { period: 1, unit: "days" } }, tasks: [{ timing: { "at-frequency": { period: 2, unit: "days" } } }] }] } };
+      const period = assessmentPeriod(plan);
+      return period.start === undefined && period.end === undefined;
+    }],
+    ["FAC-005: a nested within-date-range and an on-date give the earliest start and the latest end", () => {
+      const plan = { "assessment-plan": { tasks: [{ timing: { "on-date": { date: "2026-01-15T08:00:00Z" } } }, { timing: { "within-date-range": { start: "2026-02-01T00:00:00Z", end: "2026-02-28T00:00:00Z" } }, tasks: [{ timing: { "within-date-range": { start: "2026-03-01T00:00:00Z", end: "2026-03-31T23:59:59Z" } } }] }] } };
+      const period = assessmentPeriod(plan);
+      return period.start === "2026-01-15T08:00:00Z" && period.end === "2026-03-31T23:59:59Z";
+    }],
+    ["FAC-005: a null bound in expected-period matches an empty bound only", () =>
+      periodMismatches({ start: null, end: null }, {}).length === 0 &&
+      periodMismatches({ start: null, end: null }, { start: "2026-01-01T00:00:00Z", end: "2026-01-01T00:00:00Z" }).length === 2 &&
+      periodMismatches({ start: "2026-01-01T00:00:00Z", end: "2026-01-01T00:00:00Z" }, {}).length === 2 &&
+      periodMismatches({ start: "2026-01-01T00:00:00Z", end: null }, { start: "2026-01-01T00:00:00+00:00" }).length === 0],
     ["CNS-018: an element type without a definition gives no failure", () => constraints.ofElement("no-such-type", {}).length === 0],
   ];
   let failed = 0;
