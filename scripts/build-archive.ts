@@ -73,6 +73,8 @@ function selfTest(): number {
   });
   test("CNS-001.02: the archive of a list without metaschema holds no metaschema file", () =>
     archivePaths("HEAD", CONTENTS.filter((c) => c !== "metaschema")).every((p) => !p.startsWith("metaschema/")) && inArchive.some((p) => p.startsWith("metaschema/")));
+  test("SRF-006.04 the spec artifact holds the requirement index", () => inArchive.includes("openspec/requirements.json"));
+  test("SRF-007.03 the spec artifact holds the traceability JSON Schema", () => inArchive.includes("openspec/traceability.schema.json"));
   test("the archive holds VERSION, LICENSE, the specs, the schemas, the manifest and the corpus", () =>
     ["VERSION", "LICENSE"].every((f) => inArchive.includes(f)) && ["openspec/specs/", "schemas/", "manifest/", "corpus/"].every((d) => inArchive.some((p) => p.startsWith(d))));
   let failed = 0;

@@ -100,9 +100,9 @@ function selfTest(): number {
   const run = (extra: File[], text = readme) => checkFiles([{ path: README, text }, ...extra]);
   const doc = (text: string, path = "docs/note.md"): File[] => [{ path, text }];
   const cases: Array<[string, string[], string | null]> = [
-    ["repository and tracker links pass", run([]), null],
-    ["issue URL fails", run(doc(`https://github.com/${PY}/issues/6`)), "docs/note.md:1"],
-    ["pull URL fails", run(doc(`x github.com/${PY}/pull/12 y`)), "/pull/12"],
+    ["VER-006.03 repository and tracker links pass", run([]), null],
+    ["VER-006.02 issue URL fails", run(doc(`https://github.com/${PY}/issues/6`)), "docs/note.md:1"],
+    ["VER-006.02 pull URL fails", run(doc(`x github.com/${PY}/pull/12 y`)), "/pull/12"],
     ["reference fails", run(doc(`See ${PY}#33.`)), "oscal-bindings-python#33"],
     ["match ignores case", run(doc(`GitHub.com/${PY.toUpperCase()}/issues/6`)), "links an individual"],
     ["line number is reported", run(doc(`one\ntwo ${PY}#6`)), "docs/note.md:2"],

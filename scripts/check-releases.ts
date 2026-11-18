@@ -331,6 +331,12 @@ function selfTest(): number {
     const r = check(fakeGit({ tags: { "v0.2.0+oscal.1.2.3": tagged } }), { [N]: m([["Hash", "#/definitions/h"], ["Status", "#/definitions/s"], ["New", "#/definitions/n"]]), [S]: "{}" }, "0.2.1+oscal.1.2.3");
     return r.failures.length === 0 || JSON.stringify(r);
   });
+  test("VER-004.04 build metadata does not change precedence", () => {
+    const a = parseVersion("2.4.1+oscal.1.2.3")!;
+    const b = parseVersion("2.4.1+oscal.1.2.4")!;
+    const c = parseVersion("2.4.2+oscal.1.2.3")!;
+    return (precedence(a, b) === 0 && precedence(b, a) === 0 && precedence(a, c) < 0) || [precedence(a, b), precedence(a, c)].join();
+  });
   const step = (version: string, tags: Record<string, { main?: boolean; files: Record<string, string> }> = { "v0.8.0+oscal.1.2.3": tagged }) =>
     check(fakeGit({ tags }), { [N]: released, [S]: "{}" }, version);
   const stepFails = (r: Report) => r.failures.filter((f) => f.startsWith("[version-step]"));

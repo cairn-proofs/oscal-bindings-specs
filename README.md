@@ -115,20 +115,26 @@ operation.
 7. The YAML reader self-test. `scripts/yaml-reader.ts` is the reference reader that the corpus check uses for YAML
    inputs.
 8. The corpus check (see [corpus/1.2.3/README.md](corpus/1.2.3/README.md)).
-9. The binding link check and its self-test, `npm run binding-links:check`. It fails when a tracked file outside
-   `openspec/changes/` links an individual issue or pull request in a binding repository. The binding repositories are
-   the repositories in [Known implementations](#known-implementations) and each `oscal-bindings-*` repository other
-   than this store.
-10. The names generator self-test, and `npm run names:check`: it validates each manifest file and fails when
+9. The archive self-test, `npm run archive:self-test`. It builds the archive from `HEAD` and checks that it holds
+   `openspec/requirements.json` and `openspec/traceability.schema.json`.
+10. The binding link check and its self-test, `npm run binding-links:check`. It fails when a tracked file outside
+    `openspec/changes/` links an individual issue or pull request in a binding repository. The binding repositories are
+    the repositories in [Known implementations](#known-implementations) and each `oscal-bindings-*` repository other
+    than this store.
+11. The names generator self-test, and `npm run names:check`: it validates each manifest file and fails when
     `names.json` differs from the generator output.
-11. The release checks and their self-test, `npm run releases:check`. A released name that changes needs a breaking
+12. The release checks and their self-test, `npm run releases:check`. A released name that changes needs a breaking
     `VERSION` increment, and a released `schemas/<release>/` file must not change. `VERSION` must also meet the step
     rule in [Version](#version). These checks read git tags and history, so they fail in a shallow clone or a clone
     without tags. They also list each name change against the base ref (`SPEC_IDS_BASE`, default `HEAD`), and CI
     writes that list to the job summary.
-12. The archive self-test, `npm run archive:self-test`: it checks that the archive that `npm run archive` builds from
+13. The scenario coverage checks, `npm run coverage:check`, and their self-tests. `npm run coverage:check` fails when
+    `openspec/coverage.json` differs from the generator output, or when a scenario has no corpus case, no self-test, and
+    no entry in `openspec/scenario-checks.yaml`. `npm run coverage:faults` runs the corpus against faulty evaluators and
+    lists the cases that detect each fault. See [CONTRIBUTING.md](CONTRIBUTING.md#change-a-requirement).
+14. The archive self-test, `npm run archive:self-test`: it checks that the archive that `npm run archive` builds from
     `HEAD` holds each file of `metaschema/<release>/` and the other paths of `CONTENTS`.
-13. `openspec validate --all --strict`.
+15. `openspec validate --all --strict`.
 
 To change a canonical name, edit `manifest/<release>/overrides.json`, run `npm run names:write`, and commit both
 files.
