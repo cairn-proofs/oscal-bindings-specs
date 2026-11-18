@@ -35,3 +35,21 @@ export function run(query: string, data: unknown): Hit[] {
   }
   return out;
 }
+
+/**
+ * A function that gives the same result as `run(query, data)`, and runs each query once. The caller must not change
+ * `data` while it uses the function. The constraint checks run the same few hundred queries for each of the many
+ * entries that share them, and a query with `..` visits each node of the document. The returned array is shared, so a
+ * caller must not change it.
+ */
+export function runOnce(data: unknown): (query: string) => readonly Hit[] {
+  const results = new Map<string, Hit[]>();
+  return (query) => {
+    let hits = results.get(query);
+    if (hits === undefined) {
+      hits = run(query, data);
+      results.set(query, hits);
+    }
+    return hits;
+  };
+}

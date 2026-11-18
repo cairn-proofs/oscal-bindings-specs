@@ -10,7 +10,7 @@ import { evaluate } from "./constraint-reference.js";
 import type { CheckDocument, ElementSample } from "./constraints-docs.js";
 import type { Entry } from "./constraints-lib.js";
 import { evaluateManifest, type Form } from "./constraints-manifest.js";
-import { run, type Hit } from "./jsonpath.js";
+import { run, runOnce, type Hit } from "./jsonpath.js";
 import type { Constraint } from "./metaschema.js";
 import { atomize, ebv, evalMp, localPart, MetapathError, parseMetapath, selectNodes, type Expr, type MNode } from "./metapath.js";
 
@@ -58,6 +58,8 @@ export function checkQueries(constraints: Constraint[], entries: Entry[], units:
     if (!e) parsed.set(s, (e = parseMetapath(s)));
     return e;
   };
+  // Many entries share their context queries, so each query runs once for each unit.
+  const runOnUnit = new Map<Unit, (query: string) => readonly Hit[]>(units.map((u) => [u, runOnce(u.data)]));
   for (const [i, e] of entries.entries()) {
     const c = constraints[i];
     const at = label(e, i);
@@ -73,7 +75,7 @@ export function checkQueries(constraints: Constraint[], entries: Entry[], units:
         if (c.kind !== "allowed-values" && refContexts.length) report.add(`${at}: no context queries for ${JSON.stringify(u.form)}, and the element holds context nodes`, u.name);
         continue;
       }
-      const contexts = dedupe(queries.flatMap((q) => run(q, u.data)));
+      const contexts = dedupe(queries.flatMap((q) => runOnUnit.get(u)!(q)));
       const have = new Set(contexts.map((h) => h.path));
       const want = new Set(refContexts.map((n) => n.path));
       for (const p of have) if (!want.has(p)) report.add(`${at}: the context queries select a node that is no context node`, `${u.name} ${p}`);

@@ -55,7 +55,7 @@ export const FAULTS: Fault[] = [
     id: "descendant-as-child",
     breaks: "CNS-006",
     patches: [
-      { find: "flatMap((q) => run(q, data))", replace: 'flatMap((q) => run(q.replaceAll("..[", "[").replaceAll("..", "."), data))' },
+      { find: "flatMap((q) => runOnData(q))", replace: 'flatMap((q) => runOnData(q.replaceAll("..[", "[").replaceAll("..", ".")))' },
       { find: "e.target.flatMap((q) => run(q, [ctx.value])", replace: 'e.target.flatMap((q) => run(q.replaceAll("..[", "[").replaceAll("..", "."), [ctx.value])' },
       { find: "kf.target.flatMap((q) => run(q, [t.value]))", replace: 'kf.target.flatMap((q) => run(q.replaceAll("..[", "[").replaceAll("..", "."), [t.value]))' },
     ],
