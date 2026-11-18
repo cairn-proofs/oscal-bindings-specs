@@ -137,7 +137,8 @@ wall time of a parallel run.
 13. The scenario coverage checks, `npm run coverage:check`, and their self-tests. `npm run coverage:check` fails when
     `openspec/coverage.json` differs from the generator output, or when a scenario has no corpus case, no self-test, and
     no entry in `openspec/scenario-checks.yaml`. `npm run coverage:faults` runs the corpus against faulty evaluators and
-    lists the cases that detect each fault. See [CONTRIBUTING.md](CONTRIBUTING.md#change-a-requirement).
+    lists the cases that detect each fault. A fault that no case detects fails the run. See
+    [CONTRIBUTING.md](CONTRIBUTING.md#change-a-requirement).
 14. `openspec validate --all --strict`.
 
 To change a canonical name, edit `manifest/<release>/overrides.json`, run `npm run names:write`, and commit both
