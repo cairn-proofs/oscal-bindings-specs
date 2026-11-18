@@ -235,7 +235,8 @@ function selfTest(): number {
     return nameAt(r, D(cdci)) === "ComponentDefinitionControlImplementation" && nameAt(r, D(sspci)) === "SspControlImplementation";
   });
   test("MDL-020.01 clashing definitions are not merged", () => {
-    const r = run(schemaOf({ [cdci]: obj({ a: str }), [sspci]: obj({ b: str }) }));
+    // The two definitions have the same structure, because equal structure alone MUST NOT merge two places (MDL-013).
+    const r = run(schemaOf({ [cdci]: obj({ a: str }), [sspci]: obj({ a: str }) }));
     const a = entryNamed(r, "ComponentDefinitionControlImplementation");
     const b = entryNamed(r, "SspControlImplementation");
     return a?.sites.length === 1 && b?.sites.length === 1 && a.sites[0] === D(cdci) && b.sites[0] === D(sspci);
