@@ -115,13 +115,39 @@
     },
     {
       "capability": "constraint-validation",
-      "gap": 70,
-      "id": "CNS-001.01"
+      "id": "CNS-001.01",
+      "self-test": [
+        {
+          "script": "scripts/check-metaschema-digests.ts",
+          "test": "CNS-001.01: a changed byte in a module fails the digest check"
+        },
+        {
+          "script": "scripts/check-metaschema-digests.ts",
+          "test": "CNS-001.01: a changed byte in metaschema-datatypes.xsd fails the digest check"
+        },
+        {
+          "script": "scripts/check-metaschema-digests.ts",
+          "test": "CNS-001.01: a missing module fails the digest check"
+        },
+        {
+          "script": "scripts/check-metaschema-digests.ts",
+          "test": "CNS-001.01: the unchanged files pass the digest check"
+        }
+      ]
     },
     {
       "capability": "constraint-validation",
-      "gap": 70,
-      "id": "CNS-001.02"
+      "id": "CNS-001.02",
+      "self-test": [
+        {
+          "script": "scripts/build-archive.ts",
+          "test": "CNS-001.02: the archive holds each file of metaschema/<release>/, with each module, the datatypes file and SHA256SUMS"
+        },
+        {
+          "script": "scripts/build-archive.ts",
+          "test": "CNS-001.02: the archive of a list without metaschema holds no metaschema file"
+        }
+      ]
     },
     {
       "capability": "constraint-validation",
