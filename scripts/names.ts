@@ -202,6 +202,13 @@ function selfTest(): number {
     return e?.kind === "document" && e["body-field"] === "system-security-plan";
   });
   test("MDL-002.02 schema directive field is excluded", () => entryNamed(run(schemaOf({})), "CatalogDocument")?.["body-field"] === "catalog");
+  test("MDL-002.03 the eight wrapper names", () => {
+    const names = ["CatalogDocument", "ProfileDocument", "ComponentDefinitionDocument", "SystemSecurityPlanDocument", "AssessmentPlanDocument", "AssessmentResultsDocument", "PlanOfActionAndMilestonesDocument", "MappingCollectionDocument"];
+    const release = runReleases().find((r) => r.release === "1.2.3");
+    if (release?.output === undefined) return JSON.stringify(release?.failures);
+    const documents = (JSON.parse(release.output) as Manifest).types.filter((t) => t.kind === "document").map((t) => t.name);
+    return JSON.stringify([...documents].sort()) === JSON.stringify([...names].sort()) || JSON.stringify(documents);
+  });
   test("document union lists the wrappers", () =>
     JSON.stringify(entryNamed(run(schemaOf({ "oscal-complete-oscal-catalog:profile": obj({}) }, ["profile", "catalog"])), "OscalDocument")?.members) ===
     '["CatalogDocument","ProfileDocument"]');

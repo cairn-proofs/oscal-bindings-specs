@@ -1092,8 +1092,13 @@
     },
     {
       "capability": "model-derivation",
-      "gap": 83,
-      "id": "MDL-002.03"
+      "id": "MDL-002.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "MDL-002.03 the eight wrapper names"
+        }
+      ]
     },
     {
       "capability": "model-derivation",
