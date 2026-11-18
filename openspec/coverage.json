@@ -687,12 +687,17 @@
     },
     {
       "capability": "constraint-validation",
-      "gap": 75,
+      "corpus": [
+        "parse/allowed-value-case"
+      ],
       "id": "CNS-017.01"
     },
     {
       "capability": "constraint-validation",
-      "gap": 75,
+      "corpus": [
+        "round-trip/catalog",
+        "round-trip/system-security-plan"
+      ],
       "id": "CNS-017.02"
     },
     {
