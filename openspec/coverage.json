@@ -2309,7 +2309,9 @@
     },
     {
       "capability": "serialization",
-      "gap": 111,
+      "corpus": [
+        "round-trip/component-definition"
+      ],
       "id": "SER-001.01"
     },
     {

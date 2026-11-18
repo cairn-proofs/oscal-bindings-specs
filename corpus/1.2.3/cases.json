@@ -36,7 +36,7 @@
       "input": "documents/valid/component-definition.json",
       "document-type": "component-definition",
       "expected": "expected/component-definition.json",
-      "requirements": ["PRS-001.01", "SER-004.01", "PRS-005.01"],
+      "requirements": ["PRS-001.01", "SER-004.01", "PRS-005.01", "SER-001.01"],
       "source": {
         "repository": "https://github.com/usnistgov/oscal-content",
         "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
