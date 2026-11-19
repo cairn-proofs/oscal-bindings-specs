@@ -50,6 +50,10 @@ by-design:
   SRF-004.02: The rule applies to the process of a binding repository, which no store script can observe.
   SRF-005.01: The rule applies to the process of a binding repository, which no store script can observe.
   SRF-005.02: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-009.01: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-009.02: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-009.03: The rule applies to the process of a binding repository, which no store script can observe.
+  SRF-009.04: The rule applies to the process of a binding repository, which no store script can observe.
   VER-001.01: The rule applies to the process of a binding repository, which no store script can observe.
   VER-001.02: The rule applies to the process of a binding repository, which no store script can observe.
   VER-002.01: The rule applies to the process of a binding repository, which no store script can observe.

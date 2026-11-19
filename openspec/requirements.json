@@ -642,6 +642,16 @@
       "title": "The store publishes a JSON Schema for the traceability record"
     },
     {
+      "id": "SRF-008",
+      "capability": "binding-surface",
+      "title": "The store publishes a README sticker for bindings"
+    },
+    {
+      "id": "SRF-009",
+      "capability": "binding-surface",
+      "title": "A binding shows the sticker only when it meets the sticker conditions"
+    },
+    {
       "id": "VER-001",
       "capability": "schema-versioning",
       "title": "Bindings are namespaced by OSCAL major version"
