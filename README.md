@@ -58,7 +58,8 @@ it (see [Verify a release](#verify-a-release)).
    [manifest/1.2.3/README.md](manifest/1.2.3/README.md)).
 5. `corpus/<release>/`: the conformance corpus.
 6. `docs/`: shared documents that the specs cite, such as
-   [canonical JSON for conformance comparison](docs/canonical-json.md).
+   [canonical JSON for conformance comparison](docs/canonical-json.md). It also holds the
+   [README sticker for bindings](docs/sticker.md).
 7. `scripts/`: the store tooling.
 
 ## Use the store

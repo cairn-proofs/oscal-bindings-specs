@@ -2963,6 +2963,46 @@
       ]
     },
     {
+      "capability": "binding-surface",
+      "id": "SRF-008.01",
+      "self-test": [
+        {
+          "script": "scripts/build-archive.ts",
+          "test": "SRF-008.01 the spec artifact holds the sticker file"
+        }
+      ]
+    },
+    {
+      "capability": "binding-surface",
+      "id": "SRF-008.02",
+      "self-test": [
+        {
+          "script": "scripts/build-archive.ts",
+          "test": "SRF-008.02 the sticker file holds the version badge and the status badge"
+        }
+      ]
+    },
+    {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "binding-surface",
+      "id": "SRF-009.01"
+    },
+    {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "binding-surface",
+      "id": "SRF-009.02"
+    },
+    {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "binding-surface",
+      "id": "SRF-009.03"
+    },
+    {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "binding-surface",
+      "id": "SRF-009.04"
+    },
+    {
       "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
       "capability": "schema-versioning",
       "id": "VER-001.01"
