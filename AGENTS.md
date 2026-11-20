@@ -108,7 +108,7 @@ The release steps are in [README.md, Release](README.md#release).
 | `metaschema/<release>/` | NIST Metaschema modules and the datatypes XSD, byte-for-byte | Never |
 | `docs/` | Rule documents that specs cite, shipped in the archive | Yes |
 | `templates/binding/bin/check-binding.mjs`, `templates/binding/openspec/config.yaml`, `templates/binding/README.md` | The binding checker, the binding config and its README | No. Run `npm run templates:write`. |
-| `templates/binding/openspec/spec-ids.yaml`, `openspec/traceability.json`, `hooks/pre-commit`, `AGENTS.md` | The empty ledger, the empty record, the hook and the agent guide of a binding | Yes. A change to the boundary or to the rules of a binding changes the agent guide too. |
+| `templates/binding/openspec/spec-ids.yaml`, `openspec/traceability.json`, `hooks/pre-commit`, `AGENTS.md`, `bin/install.sh` | The empty ledger, the empty record, the hook, the agent guide and the install script of a binding | Yes. A change to the boundary or to the rules of a binding changes the agent guide too. |
 
 The directories group files by the kind of content, not by the source repository. Each `SOURCE.md` records the
 source of each file ([README.md, Layout](README.md)).

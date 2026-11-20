@@ -4,8 +4,9 @@
 # It verifies the pinned spec artifact by its sha256, extracts it to a temporary directory, and runs the binding
 # checker of that artifact and `openspec validate --all --strict` on the staged files. It stops at the first failure.
 #
-# Set the three variables below when you install the hook, and set the first two again on each pin move. A path that
-# is not absolute is relative to the root of the repository. Each variable also reads an environment variable.
+# Set the variables below when you install the hook, and set ARCHIVE and ARCHIVE_SHA256 again on each pin move. A
+# path that is not absolute is relative to the root of the repository. Each variable also reads an environment
+# variable.
 ARCHIVE="${OSCAL_SPECS_ARCHIVE:-}"                              # the pinned spec artifact, a .tar.gz file
 ARCHIVE_SHA256="${OSCAL_SPECS_SHA256:-}"                        # the pinned sha256 of that file
 RECORD="${OSCAL_SPECS_RECORD:-openspec/traceability.json}"      # the traceability record of the binding

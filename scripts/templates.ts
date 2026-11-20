@@ -160,20 +160,30 @@ spec artifact of the OSCAL bindings spec store that the binding pins (openspec/s
    the checker of the archive and \`openspec validate --all --strict\` on the staged files.
 6. \`AGENTS.md\`: the agent guide of a binding. It states how the binding relates to the store, and where each kind
    of change goes.
+7. \`bin/install.sh\`: installs these files in a binding repository.
 
 ## Install
 
-1. Keep the pinned spec artifact, the \`.tar.gz\` file, at a path in the binding repository.
-2. Copy \`openspec/config.yaml\`, \`openspec/spec-ids.yaml\` and \`openspec/traceability.json\` into \`openspec/\` of
-   the binding. Keep a record that the binding has already. Add the prefixes of the binding to the ledger. A prefix
-   of the store is not allowed (SRF-010).
-3. Copy \`hooks/pre-commit\` into the binding, and set the three variables at its top: the path of the archive, its
-   sha256, and the path of the record. Install it with \`git config core.hooksPath <dir>\`, or copy it into
-   \`.git/hooks/pre-commit\`. Keep its executable bit.
-4. Copy \`AGENTS.md\` into the root of the binding, and add the facts of the binding to its section "Binding notes".
+Keep the pinned spec artifact, the \`.tar.gz\` file, at a path in the binding repository. Extract
+\`templates/binding/bin/install.sh\` from it, and run the script in the root directory of the binding, at the first
+install and on each pin move:
 
-On each pin move, set the archive path and the sha256 in the hook again. Copy \`openspec/config.yaml\` again, and add
-the entries of the binding again. Copy \`AGENTS.md\` again, and keep its section "Binding notes".
+\`\`\`sh
+sh install.sh --archive <spec artifact .tar.gz> --sha256 <hex> [--record <path>] [--hooks-dir <dir>]
+\`\`\`
+
+1. It verifies the archive by its sha256. On another hash, it fails and changes no file.
+2. It writes \`openspec/config.yaml\`, and \`<hooks-dir>/pre-commit\` with the archive path, the sha256 and the record
+   path. The default hooks directory is \`.githooks\`.
+3. It writes \`openspec/spec-ids.yaml\` and the record only when they do not exist. The default record is
+   \`openspec/traceability.json\`.
+4. It writes \`AGENTS.md\` from the template, and keeps its section "Binding notes". The text of an \`AGENTS.md\`
+   without that section goes into the section.
+5. It sets \`core.hooksPath\` to the hooks directory when \`core.hooksPath\` is not set.
+
+After the first install, add the prefixes of the binding to the ledger. A prefix of the store is not allowed
+(SRF-010). Add the facts of the binding to the section "Binding notes" of \`AGENTS.md\`. On each pin move, add the
+entries of the binding to \`openspec/config.yaml\` again.
 
 ## Run the checker
 
@@ -402,6 +412,71 @@ async function selfTest(): Promise<number> {
         }),
       );
       return (r.status === 1 && r.stderr.includes("[record-duplicate]")) || `exit ${r.status}: ${r.stderr}`;
+    });
+
+    console.log("\n## install script");
+    // An archive with the store files that the installer and the checker read, from the working tree.
+    const stage = path.join(tmp, "stage");
+    const storeTop = path.join(stage, "store");
+    for (const p of [LEDGER, "openspec/specs", "openspec/requirements.json", "openspec/traceability.schema.json", DIR]) {
+      fs.cpSync(path.join(root, p), path.join(storeTop, p), { recursive: true });
+    }
+    for (const [file, text] of files) fs.writeFileSync(path.join(storeTop, file), text);
+    const pack = (name: string) => {
+      const file = path.join(tmp, name);
+      execFileSync("tar", ["-czf", file, "-C", stage, "store"]);
+      return { file, sha: execFileSync("sha256sum", [file], { encoding: "utf8" }).split(" ")[0] };
+    };
+    const first = pack("first.tar.gz");
+    const install = (dir: string, archive: { file: string; sha: string }) =>
+      spawnSync("sh", [path.join(root, DIR, "bin/install.sh"), "--archive", archive.file, "--sha256", archive.sha], {
+        cwd: dir,
+        encoding: "utf8",
+        env: fixtureEnv,
+      });
+    const repo = (name: string) => {
+      const dir = path.join(tmp, name);
+      fs.mkdirSync(dir);
+      execFileSync("git", ["init", "-q", dir]);
+      return dir;
+    };
+    const installed = ["openspec/config.yaml", "openspec/spec-ids.yaml", "openspec/traceability.json", "AGENTS.md", ".githooks/pre-commit"];
+    await test("install: a first install writes each template file and activates the hook", () => {
+      const dir = repo("install-first");
+      const r = install(dir, first);
+      const missing = installed.filter((f) => !fs.existsSync(path.join(dir, f)));
+      const hooksPath = execFileSync("git", ["config", "--get", "core.hooksPath"], { cwd: dir, encoding: "utf8" }).trim();
+      const checker = spawnSync("node", [path.join(bin, "check-binding.mjs"), "--store", root], { cwd: dir, encoding: "utf8", env: fixtureEnv });
+      return (
+        (r.status === 0 && missing.length === 0 && hooksPath === ".githooks" &&
+          fs.readFileSync(path.join(dir, ".githooks/pre-commit"), "utf8").includes(first.sha) && checker.status === 0) ||
+        `exit ${r.status}, missing ${missing.join(", ")}, hooksPath ${hooksPath}, checker ${checker.status}: ${r.stderr}${checker.stderr}`
+      );
+    });
+    await test("install: another hash fails and changes no file", () => {
+      const dir = repo("install-hash");
+      const r = install(dir, { file: first.file, sha: "0".repeat(64) });
+      const written = fs.readdirSync(dir).filter((f) => f !== ".git");
+      return (r.status === 1 && written.length === 0) || `exit ${r.status}, wrote ${written.join(", ")}`;
+    });
+    await test("install: a pin move keeps the ledger, the record and the binding notes, and pins the new hash", () => {
+      const dir = repo("install-move");
+      install(dir, first);
+      const ledger = "prefixes:\n  PYB:\n    capability: python-api\n    next: 1\nretired: []\n";
+      const record = '{ "format": 1, "operations": [{ "name": "parse_oscal", "requirements": ["PRS-001"] }] }\n';
+      fs.writeFileSync(path.join(dir, "openspec/spec-ids.yaml"), ledger);
+      fs.writeFileSync(path.join(dir, "openspec/traceability.json"), record);
+      fs.appendFileSync(path.join(dir, "AGENTS.md"), "1. Language: Python.\n");
+      fs.writeFileSync(path.join(storeTop, "NEW"), "a new release\n");
+      const next = pack("next.tar.gz");
+      const r = install(dir, next);
+      const read = (f: string) => fs.readFileSync(path.join(dir, f), "utf8");
+      return (
+        (r.status === 0 && read("openspec/spec-ids.yaml") === ledger && read("openspec/traceability.json") === record &&
+          read("AGENTS.md").endsWith("## Binding notes\n\n<!-- Facts of this binding that an agent needs: its language, its pin location, its commands. Keep this section on\n     each pin move. -->\n1. Language: Python.\n") &&
+          read(".githooks/pre-commit").includes(next.sha) && !read(".githooks/pre-commit").includes(first.sha)) ||
+        `exit ${r.status}: ${r.stderr}`
+      );
     });
 
     console.log("\n## pre-commit hook");

@@ -16,20 +16,30 @@ spec artifact of the OSCAL bindings spec store that the binding pins (openspec/s
    the checker of the archive and `openspec validate --all --strict` on the staged files.
 6. `AGENTS.md`: the agent guide of a binding. It states how the binding relates to the store, and where each kind
    of change goes.
+7. `bin/install.sh`: installs these files in a binding repository.
 
 ## Install
 
-1. Keep the pinned spec artifact, the `.tar.gz` file, at a path in the binding repository.
-2. Copy `openspec/config.yaml`, `openspec/spec-ids.yaml` and `openspec/traceability.json` into `openspec/` of
-   the binding. Keep a record that the binding has already. Add the prefixes of the binding to the ledger. A prefix
-   of the store is not allowed (SRF-010).
-3. Copy `hooks/pre-commit` into the binding, and set the three variables at its top: the path of the archive, its
-   sha256, and the path of the record. Install it with `git config core.hooksPath <dir>`, or copy it into
-   `.git/hooks/pre-commit`. Keep its executable bit.
-4. Copy `AGENTS.md` into the root of the binding, and add the facts of the binding to its section "Binding notes".
+Keep the pinned spec artifact, the `.tar.gz` file, at a path in the binding repository. Extract
+`templates/binding/bin/install.sh` from it, and run the script in the root directory of the binding, at the first
+install and on each pin move:
 
-On each pin move, set the archive path and the sha256 in the hook again. Copy `openspec/config.yaml` again, and add
-the entries of the binding again. Copy `AGENTS.md` again, and keep its section "Binding notes".
+```sh
+sh install.sh --archive <spec artifact .tar.gz> --sha256 <hex> [--record <path>] [--hooks-dir <dir>]
+```
+
+1. It verifies the archive by its sha256. On another hash, it fails and changes no file.
+2. It writes `openspec/config.yaml`, and `<hooks-dir>/pre-commit` with the archive path, the sha256 and the record
+   path. The default hooks directory is `.githooks`.
+3. It writes `openspec/spec-ids.yaml` and the record only when they do not exist. The default record is
+   `openspec/traceability.json`.
+4. It writes `AGENTS.md` from the template, and keeps its section "Binding notes". The text of an `AGENTS.md`
+   without that section goes into the section.
+5. It sets `core.hooksPath` to the hooks directory when `core.hooksPath` is not set.
+
+After the first install, add the prefixes of the binding to the ledger. A prefix of the store is not allowed
+(SRF-010). Add the facts of the binding to the section "Binding notes" of `AGENTS.md`. On each pin move, add the
+entries of the binding to `openspec/config.yaml` again.
 
 ## Run the checker
 

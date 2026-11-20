@@ -81,10 +81,10 @@ function selfTest(): number {
     const sticker = fs.readFileSync("docs/sticker.md", "utf8");
     return sticker.includes("https://img.shields.io/badge/dynamic/json?") && sticker.includes("https://img.shields.io/github/actions/workflow/status/");
   });
-  test("SRF-011.01 the archive holds the seven files of templates/binding/", () => {
-    const files = ["AGENTS.md", "README.md", "bin/check-binding.mjs", "hooks/pre-commit", "openspec/config.yaml", "openspec/spec-ids.yaml", "openspec/traceability.json"];
-    const lacking = files.map((f) => `templates/binding/${f}`).filter((f) => !inArchive.includes(f));
-    return lacking.length === 0 || `the archive lacks ${lacking.join(", ")}. Commit the templates before the self-test, because it reads HEAD.`;
+  test("SRF-011.01 the archive holds each file of templates/binding/", () => {
+    const files = git("ls-files", "templates/binding").split("\n").filter((f) => f.length > 0);
+    const lacking = files.filter((f) => !inArchive.includes(f));
+    return (files.length > 0 && lacking.length === 0) || `the archive lacks ${lacking.join(", ") || "templates/binding/"}. Commit the templates before the self-test, because it reads HEAD.`;
   });
   test("the archive holds VERSION, LICENSE, the specs, the schemas, the manifest and the corpus", () =>
     ["VERSION", "LICENSE"].every((f) => inArchive.includes(f)) && ["openspec/specs/", "schemas/", "manifest/", "corpus/"].every((d) => inArchive.some((p) => p.startsWith(d))));

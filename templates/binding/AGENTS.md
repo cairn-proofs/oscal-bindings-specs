@@ -47,9 +47,9 @@ artifact.
    meet. Do not work around the contract in this binding.
 3. A binding-local operation that another binding also needs goes to the store issue tracker for promotion. When a
    pinned release defines it, follow [SRF-005].
-4. A pin move changes the pin of this binding, applies the requirements of the new release, and copies the new
-   templates: `openspec/config.yaml` and this file. Then it sets the archive path and the sha256 in the pre-commit
-   hook.
+4. A pin move changes the pin of this binding, applies the requirements of the new release, and runs
+   `templates/binding/bin/install.sh` of the new spec artifact with its archive path and its sha256. The script
+   updates `openspec/config.yaml`, this file above this section, and the pre-commit hook.
 
 ## Checks before each commit
 

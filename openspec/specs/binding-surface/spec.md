@@ -195,6 +195,7 @@ The record SHALL conform to it. The spec artifact SHALL hold it. The JSON Schema
 
 - **WHEN** the store builds the spec artifact
 - **THEN** the archive holds `openspec/traceability.schema.json`
+
 ### Requirement: SRF-008 The store publishes a README sticker for bindings
 The store SHALL publish `docs/sticker.md`. The file holds the Markdown of a sticker for the README of a
 binding. The sticker has two badges. The first badge shows the `version` member of the file
@@ -206,6 +207,7 @@ binding. The spec artifact SHALL hold the file.
 #### Scenario: SRF-008.02 Sticker file holds both badges
 - **WHEN** a reader opens `docs/sticker.md`
 - **THEN** the file holds the Markdown of the version badge and the Markdown of the status badge
+
 ### Requirement: SRF-009 A binding shows the sticker only when it meets the sticker conditions
 A binding that shows the sticker of [SRF-008] MUST meet all of these conditions:
 1. The binding keeps a file `spec-pin.json` at the root of its repository. The `version` member of the file
@@ -229,21 +231,18 @@ A binding that shows the sticker of [SRF-008] MUST meet all of these conditions:
 
 ### Requirement: SRF-011 The spec artifact holds the binding templates
 
-The spec artifact SHALL hold `templates/binding/`, with:
+The spec artifact SHALL hold `templates/binding/`: the files that a binding copies to check its specs and its record
+before each commit. They include:
 
-1. The template config: a `config.yaml` for a binding.
-2. An empty identifier ledger.
-3. The binding checker: one file that needs only Node.js 22 or later and git.
-4. A POSIX shell pre-commit hook. It checks the archive hash, then runs the checker and
-   `openspec validate --all --strict` on the staged files.
-5. An empty traceability record.
-6. An agent guide, `AGENTS.md`, that cites only live or retired store identifiers.
+1. The binding checker.
+2. A POSIX shell pre-commit hook that runs the binding checker and `openspec validate --all --strict`.
+3. The template config: a `config.yaml` for a binding.
+4. An agent guide, `AGENTS.md`.
 
 #### Scenario: SRF-011.01 Spec artifact holds the templates
 
 - **WHEN** the store builds the spec artifact
-- **THEN** the archive holds `templates/binding/` with the config, the ledger, the binding checker, the hook, the
-  record and the agent guide
+- **THEN** the archive holds `templates/binding/`
 
 #### Scenario: SRF-011.02 Stale binding checker fails the store checks
 
@@ -252,14 +251,14 @@ The spec artifact SHALL hold `templates/binding/`, with:
 
 #### Scenario: SRF-011.03 Binding checker needs no installed package
 
-- **WHEN** a binding runs the binding checker with Node.js and git in a repository that has no `node_modules`
-  directory
+- **WHEN** a binding runs the binding checker with Node.js 22 or later and git, in a repository that has no
+  `node_modules` directory
 - **THEN** the checker runs and reports its result
 
 #### Scenario: SRF-011.04 Archive with another hash fails the hook
 
 - **WHEN** the archive file differs from the hash that the hook pins
-- **THEN** the hook fails before it runs the checker
+- **THEN** the hook fails before it runs the binding checker, and checks no staged file
 
 #### Scenario: SRF-011.05 Agent guide cites an unknown store identifier
 

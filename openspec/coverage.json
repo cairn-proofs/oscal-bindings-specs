@@ -3067,7 +3067,7 @@
       "self-test": [
         {
           "script": "scripts/build-archive.ts",
-          "test": "SRF-011.01 the archive holds the seven files of templates/binding/"
+          "test": "SRF-011.01 the archive holds each file of templates/binding/"
         }
       ]
     },
