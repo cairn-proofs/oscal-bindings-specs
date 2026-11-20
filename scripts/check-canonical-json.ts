@@ -38,6 +38,7 @@ const cases: Array<[string, () => string, string]> = [
 
 const throws: Array<[string, string]> = [
   ["duplicate key", '{"a":1,"a":2}'],
+  ["escaped duplicate key", '{"a":1,"\\u0061":2}'],
   ["nested duplicate key", '{"a":{"b":1,"c":{"d":1,"d":2}}}'],
   ["not JSON", '{"a":'],
 ];

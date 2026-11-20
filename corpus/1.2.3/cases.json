@@ -206,6 +206,22 @@
       "requirements": ["PRS-001.03", "ERR-004.04"]
     },
     {
+      "id": "parse/duplicate-key",
+      "operation": "parse",
+      "input": "documents/invalid/duplicate-key.json",
+      "expected-category": "parse-error",
+      "requirements": ["PRS-020.01", "PRS-020.03", "ERR-004.06"],
+      "notes": "The metadata holds the key title two times."
+    },
+    {
+      "id": "parse/duplicate-key-escaped",
+      "operation": "parse",
+      "input": "documents/invalid/duplicate-key-escaped.json",
+      "expected-category": "parse-error",
+      "requirements": ["PRS-020.02", "ERR-004.06"],
+      "notes": "The metadata holds the key title, and the same key written as \\u0074itle."
+    },
+    {
       "id": "parse/unknown-root",
       "operation": "parse",
       "input": "documents/invalid/unknown-root.json",

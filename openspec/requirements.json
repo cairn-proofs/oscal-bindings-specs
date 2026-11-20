@@ -582,6 +582,11 @@
       "title": "A date-time value matches the grammar of RFC 3339"
     },
     {
+      "id": "PRS-020",
+      "capability": "document-parsing",
+      "title": "A JSON object has no two members with the same key"
+    },
+    {
       "id": "SER-001",
       "capability": "serialization",
       "title": "Serialization emits OSCAL property keys"
