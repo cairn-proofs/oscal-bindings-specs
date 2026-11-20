@@ -24,10 +24,12 @@ This repository is an OpenSpec store. It holds the language-neutral contract for
 2. The vendored NIST OSCAL JSON Schema, in `schemas/<release>/`.
 3. The naming manifest, in `manifest/<release>/`.
 4. The conformance corpus, in `corpus/<release>/`.
+5. The binding templates, in `templates/binding/`: an OpenSpec config, a ledger, a traceability record, a pre-commit
+   hook, and a generated binding checker that each binding runs ([SRF-009]).
 
 The store holds no runtime code and no binding. The TypeScript in `scripts/` is store tooling only. It checks and
-generates contract files, and it is not part of the release archive. Do not add an implementation of an operation
-here.
+generates contract files, and it is not part of the release archive. The binding checker in the archive is a bundle
+that `npm run templates:write` builds from `scripts/`. Do not add an implementation of an operation here.
 
 ## Who consumes the store
 
@@ -104,6 +106,8 @@ The release steps are in [README.md, Release](README.md#release).
 | `schemas/<release>/` | NIST schema files, byte-for-byte | Never |
 | `metaschema/<release>/` | NIST Metaschema modules and the datatypes XSD, byte-for-byte | Never |
 | `docs/` | Rule documents that specs cite, shipped in the archive | Yes |
+| `templates/binding/bin/check-binding.mjs`, `templates/binding/openspec/config.yaml`, `templates/binding/README.md` | The binding checker, the binding config and its README | No. Run `npm run templates:write`. |
+| `templates/binding/openspec/spec-ids.yaml`, `openspec/traceability.json`, `hooks/pre-commit` | The empty ledger, the empty record and the hook of a binding | Yes |
 
 The directories group files by the kind of content, not by the source repository. Each `SOURCE.md` records the
 source of each file ([README.md, Layout](README.md)).
@@ -118,9 +122,13 @@ These rules are not obvious from the code:
 4. `scripts/verify-release.sh` reads `CONTENTS` in `build-archive.ts` as text. Keep `CONTENTS` a literal array of
    double-quoted strings that ends with `];`.
 5. Most scripts have a `--self-test` mode. A rule change in a script needs a self-test case.
-6. CODEOWNERS requires code-owner review for the specs, corpus, docs, manifest, schemas, scripts, CI, pins, and
-   `VERSION`.
+6. CODEOWNERS requires code-owner review for the specs, corpus, docs, manifest, schemas, scripts, binding templates,
+   CI, pins, and `VERSION`.
+7. A change to `openspec/config.yaml`, or to the identifier checks in `scripts/`, needs `npm run templates:write` in the
+   same commit. `npm run templates:check` fails until then ([SRF-012]).
 
+[SRF-009]: openspec/specs/binding-surface/spec.md#requirement-srf-009-the-spec-artifact-holds-the-binding-templates
+[SRF-012]: openspec/specs/binding-surface/spec.md#requirement-srf-012-the-template-config-follows-the-store-config
 [VER-005]: openspec/specs/schema-versioning/spec.md#requirement-ver-005-spec-artifacts-are-distributed-pinned-and-hash-verified
 [VER-006]: openspec/specs/schema-versioning/spec.md#requirement-ver-006-dependencies-run-from-bindings-to-the-store-never-back
 [VER-007]: openspec/specs/schema-versioning/spec.md#requirement-ver-007-each-binding-keeps-its-own-expected-conformance-failures

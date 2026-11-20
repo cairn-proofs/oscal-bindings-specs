@@ -74,6 +74,11 @@ it (see [Verify a release](#verify-a-release)).
 
 A reference is planning context only. Builds and conformance runs use the tagged archive, pinned by its `sha256`.
 
+The archive holds `templates/binding/`: an OpenSpec config, an empty identifier ledger, an empty traceability record,
+the binding checker and a pre-commit hook. The hook verifies the pinned archive by its `sha256`, and runs the binding
+checker and `openspec validate --all --strict` on the staged files before each commit. So a binding finds a bad
+identifier, citation or record entry before it commits it. `templates/binding/README.md` gives the install steps.
+
 To get an issue when a newer release is published, a binding calls the reusable workflow
 [`pin-move-check.yml`](.github/workflows/pin-move-check.yml) on a schedule and passes the version that it pins. The
 workflow opens one issue, "Move the spec pin to v<version>", in the binding's tracker. It runs with the binding's own

@@ -8,8 +8,13 @@
  *
  * SPEC_IDS_BASE names the git ref whose scenario identifiers must not vanish (default HEAD). CI sets
  * it to the pull request's target branch.
+ *
+ * scripts/binding-check.ts imports checkSpecIds() and passes the specs of the pinned store, so that the same rules
+ * check the specs of a binding (openspec/specs/binding-surface, SRF-010).
  */
 import { execFileSync } from "node:child_process";
+import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 
 import {
@@ -27,6 +32,7 @@ import {
   CITATION,
   type Heading,
   isRetired,
+  type Ledger,
   LEDGER,
   parseLedger,
   parseSpec,
@@ -34,8 +40,32 @@ import {
   REQUIREMENT_ID,
 } from "./spec-ids.js";
 
-/** Runs every spec-ids check. `files` holds openspec/ and docs/; `base` the main specs at the base ref. */
-export function checkSpecIds(files: Files, base: Files | Error): string[] {
+/** The identifiers of a store, for a check of the specs of a binding. */
+export interface StoreSpecs {
+  ledger: Ledger;
+  /** Canonical identifiers of every requirement and scenario heading in the main specs of the store. */
+  live: Set<string>;
+}
+
+/** The ledger and the live identifiers of a store, from its openspec/spec-ids.yaml and openspec/specs/. */
+export function storeSpecs(files: Files, failures: string[]): StoreSpecs | undefined {
+  const ledgerFailures: string[] = [];
+  const ledger = parseLedger(files[LEDGER], ledgerFailures);
+  failures.push(...ledgerFailures.map((f) => f.replace(/^\[ledger\] /, "[store] ")));
+  if (!ledger) return undefined;
+  const live = new Set<string>();
+  for (const [file, text] of Object.entries(files)) {
+    if (!SPEC_PATH.test(file)) continue;
+    for (const heading of parseSpec(file, text).headings) if (heading.id) live.add(heading.id);
+  }
+  return { ledger, live };
+}
+
+/**
+ * Runs every spec-ids check. `files` holds openspec/ and docs/; `base` the main specs at the base ref. `store`, when
+ * present, holds the store of a binding: then `files` are the files of the binding.
+ */
+export function checkSpecIds(files: Files, base: Files | Error, store?: StoreSpecs): string[] {
   const failures: string[] = [];
 
   // Main specs only: openspec/specs/<capability>/spec.md (scope).
@@ -62,6 +92,16 @@ export function checkSpecIds(files: Files, base: Files | Error): string[] {
   }
 
   const ledger = parseLedger(files[LEDGER], failures);
+
+  // store-prefix: a prefix of a binding is never a prefix of its store (SRF-008).
+  if (ledger && store) {
+    for (const prefix of ledger.prefixes.keys()) {
+      if (store.ledger.prefixes.has(prefix)) {
+        failures.push(`[store-prefix] prefix ${prefix} of ${LEDGER} is a prefix of the store.`);
+      }
+    }
+  }
+
   if (ledger) {
     // prefix: one prefix per capability, one capability per prefix, and matching headings.
     const prefixOf = new Map<string, string[]>();
@@ -145,10 +185,17 @@ export function checkSpecIds(files: Files, base: Files | Error): string[] {
       const line = withoutCode(raw);
       for (const [, cited] of line.matchAll(CITATION)) {
         const key = canonical(cited)!;
+        const prefix = key.split("-")[0];
         // Only ledger prefixes make a citation. [CM-8] is a NIST control, not a spec identifier.
-        if (!ledger?.prefixes.has(key.split("-")[0])) continue;
-        if (!live.has(key) && !isRetired(ledger, key)) {
-          failures.push(`[citation] ${file}:${lineNo}: citation [${cited}] is neither live nor retired.`);
+        if (ledger?.prefixes.has(prefix)) {
+          if (!live.has(key) && !isRetired(ledger, key)) {
+            failures.push(`[citation] ${file}:${lineNo}: citation [${cited}] is neither live nor retired.`);
+          }
+        } else if (store?.ledger.prefixes.has(prefix)) {
+          // A citation with a store prefix resolves in the pinned store (SRF-010).
+          if (!store.live.has(key) && !isRetired(store.ledger, key)) {
+            failures.push(`[citation] ${file}:${lineNo}: citation [${cited}] is neither live nor retired in the store.`);
+          }
         }
       }
       for (const [, target] of line.matchAll(LINK)) {
@@ -196,11 +243,12 @@ export function checkSpecIds(files: Files, base: Files | Error): string[] {
   return failures;
 }
 
-/** The main specs at a git ref. */
-function readBase(root: string, ref: string): Files | Error {
+/** The main specs at a git ref. A repository with no commit has no base specs, so its first commit passes. */
+export function readBase(root: string, ref: string): Files | Error {
   const git = (...args: string[]) =>
     execFileSync("git", args, { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
   try {
+    if (ref === "HEAD" && git("rev-list", "-n", "1", "--all").trim() === "") return {};
     const files: Files = {};
     for (const file of git("ls-tree", "-r", "--name-only", ref, "--", "openspec/specs").split("\n")) {
       if (SPEC_PATH.test(file)) files[file] = git("show", `${ref}:${file}`);
@@ -465,17 +513,84 @@ function selfTest(): number {
     null,
   );
 
+  // Binding specs checked against a store (SRF-008, SRF-010). The store is this repository.
+  console.log("\n## spec-ids of a binding");
+  const store = storeSpecs(readRepository(process.cwd(), [LEDGER]), []);
+  if (!store) throw new Error("cannot read the store specs of this repository");
+  const API = "openspec/specs/python-api/spec.md";
+  const bindingLedger = (extra = "") =>
+    `prefixes:\n  PYB:\n    capability: python-api\n    next: 2\n${extra}retired: []\n`;
+  const bindingFixture = (): Files => ({
+    [LEDGER]: bindingLedger(),
+    [API]: spec("python-api", req("PYB-001", "Parse with a callback", ["PYB-001.01 Callback gets the result"])),
+  });
+  const bindingScenario = (
+    name: string,
+    mutate: (files: Files) => void,
+    expect: { rule: string; needle: string } | null,
+  ) => {
+    const files = bindingFixture();
+    mutate(files);
+    const out = checkSpecIds(files, {}, store);
+    const ok =
+      expect === null
+        ? out.length === 0
+        : out.some((line) => line.startsWith(`[${expect.rule}]`) && line.includes(expect.needle));
+    if (!ok) failed++;
+    console.log(`${ok ? "PASS" : "FAIL"}  ${name}${ok ? "" : `\n      ${JSON.stringify(out)}`}`);
+  };
+  const storePrefix = (files: Files) =>
+    (files[LEDGER] = bindingLedger("  PRS:\n    capability: python-parse\n    next: 1\n"));
+  bindingScenario("SRF-008.01 a binding ledger with the store prefix PRS fails", storePrefix, {
+    rule: "store-prefix",
+    needle: "prefix PRS",
+  });
+  bindingScenario("SRF-008.02 the binding prefix PYB, which the store does not hold, passes", () => {}, null);
+  bindingScenario("SRF-010.01 the binding checker fails and names the store prefix PRS", storePrefix, {
+    rule: "store-prefix",
+    needle: "prefix PRS of openspec/spec-ids.yaml is a prefix of the store",
+  });
+  bindingScenario(
+    "SRF-010.02 citations of the store identifiers PRS-001 and PRS-001.01 resolve",
+    (files) => (files[API] = files[API].replace("Text.", "Wraps [PRS-001] and meets [PRS-001.01].")),
+    null,
+  );
+  bindingScenario(
+    "SRF-010.03 a citation of the unknown store identifier PRS-999 fails",
+    (files) => (files[API] = files[API].replace("Text.", "Wraps [PRS-999].")),
+    { rule: "citation", needle: "citation [PRS-999] is neither live nor retired in the store" },
+  );
+  bindingScenario(
+    "SRF-010.04 a binding heading at or above next of its ledger fails",
+    (files) => (files[API] += req("PYB-002", "Too far", ["PYB-002.01 Example"])),
+    { rule: "next", needle: '"PYB-002 Too far"' },
+  );
+  {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "spec-ids-"));
+    try {
+      execFileSync("git", ["init", "-q", dir]);
+      const base = readBase(dir, "HEAD");
+      const ok = !(base instanceof Error) && Object.keys(base).length === 0 && checkSpecIds(bindingFixture(), base, store).length === 0;
+      if (!ok) failed++;
+      console.log(`${ok ? "PASS" : "FAIL"}  vanished-scenario: a repository with no commit has no base specs${ok ? "" : `\n      ${JSON.stringify(base)}`}`);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  }
+
   console.log(failed ? `\n${failed} FAILED` : "\nall spec-ids scenarios pass");
   return failed ? 1 : 0;
 }
 
-if (process.argv.includes("--self-test")) {
-  process.exit(selfTest());
-} else {
-  const root = process.cwd();
-  const ref = process.env.SPEC_IDS_BASE || "HEAD";
-  const failures = checkSpecIds(readRepository(root, [LEDGER]), readBase(root, ref));
-  for (const failure of failures) console.error(failure);
-  console.log(failures.length ? `\n${failures.length} spec identifier failure(s)` : "spec identifiers: ok");
-  process.exit(failures.length ? 1 : 0);
+if (process.argv[1] !== undefined && path.basename(process.argv[1]) === "check-spec-ids.ts") {
+  if (process.argv.includes("--self-test")) {
+    process.exit(selfTest());
+  } else {
+    const root = process.cwd();
+    const ref = process.env.SPEC_IDS_BASE || "HEAD";
+    const failures = checkSpecIds(readRepository(root, [LEDGER]), readBase(root, ref));
+    for (const failure of failures) console.error(failure);
+    console.log(failures.length ? `\n${failures.length} spec identifier failure(s)` : "spec identifiers: ok");
+    process.exit(failures.length ? 1 : 0);
+  }
 }

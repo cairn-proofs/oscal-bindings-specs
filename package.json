@@ -14,6 +14,7 @@
     "requirements:write": "tsx scripts/requirements.ts --write",
     "requirements:check": "tsx scripts/requirements.ts",
     "requirements:self-test": "tsx scripts/requirements.ts --self-test",
+    "traceability:self-test": "tsx scripts/traceability.ts --self-test",
     "schemas:verify": "cd schemas/1.2.3 && shasum -a 256 -c SHA256SUMS",
     "metaschema:verify": "cd metaschema/1.2.3 && shasum -a 256 -c SHA256SUMS",
     "metaschema:self-test": "tsx scripts/check-metaschema-digests.ts --self-test",
@@ -28,7 +29,7 @@
     "validate": "openspec validate --all --strict",
     "check:parallel": "tsx scripts/check-parallel.ts",
     "check:parallel:self-test": "tsx scripts/check-parallel.ts --self-test",
-    "check": "npm run typecheck && npm run spec-ids:self-test && npm run spec-ids && npm run requirements:self-test && npm run requirements:check && npm run version:self-test && npm run version:check && npm run schemas:verify && npm run metaschema:verify && npm run metaschema:self-test && npm run exclusions:self-test && npm run exclusions:check && npm run reference:self-test && npm run constraints:self-test && npm run constraints:check && npm run content:self-test && npm run canonical:self-test && npm run yaml-reader:self-test && npm run corpus:self-test && npm run corpus:cases:self-test && npm run corpus:check && npm run binding-links:self-test && npm run binding-links:check && npm run names:self-test && npm run names:check && npm run releases:self-test && npm run releases:check && npm run coverage:self-test && npm run coverage:check && npm run coverage:faults:self-test && npm run coverage:faults && npm run archive:self-test && npm run check:parallel:self-test && npm run validate",
+    "check": "npm run typecheck && npm run spec-ids:self-test && npm run spec-ids && npm run requirements:self-test && npm run requirements:check && npm run traceability:self-test && npm run version:self-test && npm run version:check && npm run schemas:verify && npm run metaschema:verify && npm run metaschema:self-test && npm run exclusions:self-test && npm run exclusions:check && npm run reference:self-test && npm run constraints:self-test && npm run constraints:check && npm run content:self-test && npm run canonical:self-test && npm run yaml-reader:self-test && npm run corpus:self-test && npm run corpus:cases:self-test && npm run corpus:check && npm run binding-links:self-test && npm run binding-links:check && npm run names:self-test && npm run names:check && npm run releases:self-test && npm run releases:check && npm run coverage:self-test && npm run coverage:check && npm run coverage:faults:self-test && npm run coverage:faults && npm run templates:self-test && npm run templates:check && npm run archive:self-test && npm run check:parallel:self-test && npm run validate",
     "names:write": "tsx scripts/names.ts --write",
     "names:check": "tsx scripts/names.ts",
     "names:self-test": "tsx scripts/names.ts --self-test",
@@ -51,7 +52,10 @@
     "coverage:faults": "tsx scripts/coverage-faults.ts",
     "coverage:faults:self-test": "tsx scripts/coverage-faults.ts --self-test",
     "archive": "tsx scripts/build-archive.ts",
-    "archive:self-test": "tsx scripts/build-archive.ts --self-test"
+    "archive:self-test": "tsx scripts/build-archive.ts --self-test",
+    "templates:write": "tsx scripts/templates.ts --write",
+    "templates:check": "tsx scripts/templates.ts",
+    "templates:self-test": "tsx scripts/templates.ts --self-test"
   },
   "dependencies": {
     "@xmldom/xmldom": "0.9.12",
@@ -64,6 +68,7 @@
   },
   "devDependencies": {
     "@types/node": "26.6.6",
+    "esbuild": "0.28.2",
     "tsx": "4.23.15",
     "typescript": "7.0.2"
   }

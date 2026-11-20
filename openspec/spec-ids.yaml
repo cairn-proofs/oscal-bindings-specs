@@ -34,7 +34,7 @@ prefixes:
     next: 6
   SRF:
     capability: binding-surface
-    next: 8
+    next: 13
   YML:
     capability: yaml-documents
     next: 12
