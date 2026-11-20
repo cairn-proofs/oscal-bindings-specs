@@ -25,7 +25,8 @@ This repository is an OpenSpec store. It holds the language-neutral contract for
 3. The naming manifest, in `manifest/<release>/`.
 4. The conformance corpus, in `corpus/<release>/`.
 5. The binding templates, in `templates/binding/`: an OpenSpec config, a ledger, a traceability record, a pre-commit
-   hook, and a generated binding checker that each binding runs ([SRF-009]).
+   hook, an agent guide, and a generated binding checker that each binding runs ([SRF-009]). The agent guide,
+   `templates/binding/AGENTS.md`, is the binding side of this file.
 
 The store holds no runtime code and no binding. The TypeScript in `scripts/` is store tooling only. It checks and
 generates contract files, and it is not part of the release archive. The binding checker in the archive is a bundle
@@ -107,7 +108,7 @@ The release steps are in [README.md, Release](README.md#release).
 | `metaschema/<release>/` | NIST Metaschema modules and the datatypes XSD, byte-for-byte | Never |
 | `docs/` | Rule documents that specs cite, shipped in the archive | Yes |
 | `templates/binding/bin/check-binding.mjs`, `templates/binding/openspec/config.yaml`, `templates/binding/README.md` | The binding checker, the binding config and its README | No. Run `npm run templates:write`. |
-| `templates/binding/openspec/spec-ids.yaml`, `openspec/traceability.json`, `hooks/pre-commit` | The empty ledger, the empty record and the hook of a binding | Yes |
+| `templates/binding/openspec/spec-ids.yaml`, `openspec/traceability.json`, `hooks/pre-commit`, `AGENTS.md` | The empty ledger, the empty record, the hook and the agent guide of a binding | Yes. A change to the boundary or to the rules of a binding changes the agent guide too. |
 
 The directories group files by the kind of content, not by the source repository. Each `SOURCE.md` records the
 source of each file ([README.md, Layout](README.md)).

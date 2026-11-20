@@ -14,6 +14,8 @@ spec artifact of the OSCAL bindings spec store that the binding pins (openspec/s
    needs no installed package.
 5. `hooks/pre-commit`: a POSIX shell git hook. It verifies the pinned archive by its sha256, extracts it, and runs
    the checker of the archive and `openspec validate --all --strict` on the staged files.
+6. `AGENTS.md`: the agent guide of a binding. It states how the binding relates to the store, and where each kind
+   of change goes.
 
 ## Install
 
@@ -24,9 +26,10 @@ spec artifact of the OSCAL bindings spec store that the binding pins (openspec/s
 3. Copy `hooks/pre-commit` into the binding, and set the three variables at its top: the path of the archive, its
    sha256, and the path of the record. Install it with `git config core.hooksPath <dir>`, or copy it into
    `.git/hooks/pre-commit`. Keep its executable bit.
+4. Copy `AGENTS.md` into the root of the binding, and add the facts of the binding to its section "Binding notes".
 
 On each pin move, set the archive path and the sha256 in the hook again. Copy `openspec/config.yaml` again, and add
-the entries of the binding again.
+the entries of the binding again. Copy `AGENTS.md` again, and keep its section "Binding notes".
 
 ## Run the checker
 

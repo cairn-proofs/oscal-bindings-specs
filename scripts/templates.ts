@@ -7,7 +7,8 @@
  *    and REFERENCE.
  * 3. `README.md`: the install steps, and the packages of the bundle with their licenses, from the esbuild metafile.
  *
- * The other files of templates/binding/ are hand-written.
+ * The other files of templates/binding/ are hand-written. The check also fails when the agent guide `AGENTS.md` cites
+ * a store identifier that is neither live nor retired (SRF-009.05).
  *
  *   npm run templates:write       regenerate the generated files
  *   npm run templates:check       generate in memory and compare with the committed files
@@ -21,11 +22,16 @@ import path from "node:path";
 import { build } from "esbuild";
 import YAML, { isScalar, visit } from "yaml";
 
+import { type StoreSpecs, storeSpecs } from "./check-spec-ids.js";
+import { canonical, CITATION, isRetired, LEDGER, render } from "./spec-ids.js";
+import { proseLines, readRepository, withoutCode } from "./spec-markdown.js";
+
 export const DIR = "templates/binding";
 export const BUNDLE = `${DIR}/bin/check-binding.mjs`;
 export const CONFIG = `${DIR}/openspec/config.yaml`;
 export const README = `${DIR}/README.md`;
 export const HOOK = `${DIR}/hooks/pre-commit`;
+export const GUIDE = `${DIR}/AGENTS.md`;
 const STORE_CONFIG = "openspec/config.yaml";
 const ENTRY = "scripts/binding-check.ts";
 
@@ -151,6 +157,8 @@ spec artifact of the OSCAL bindings spec store that the binding pins (openspec/s
    needs no installed package.
 5. \`hooks/pre-commit\`: a POSIX shell git hook. It verifies the pinned archive by its sha256, extracts it, and runs
    the checker of the archive and \`openspec validate --all --strict\` on the staged files.
+6. \`AGENTS.md\`: the agent guide of a binding. It states how the binding relates to the store, and where each kind
+   of change goes.
 
 ## Install
 
@@ -161,9 +169,10 @@ spec artifact of the OSCAL bindings spec store that the binding pins (openspec/s
 3. Copy \`hooks/pre-commit\` into the binding, and set the three variables at its top: the path of the archive, its
    sha256, and the path of the record. Install it with \`git config core.hooksPath <dir>\`, or copy it into
    \`.git/hooks/pre-commit\`. Keep its executable bit.
+4. Copy \`AGENTS.md\` into the root of the binding, and add the facts of the binding to its section "Binding notes".
 
 On each pin move, set the archive path and the sha256 in the hook again. Copy \`openspec/config.yaml\` again, and add
-the entries of the binding again.
+the entries of the binding again. Copy \`AGENTS.md\` again, and keep its section "Binding notes".
 
 ## Run the checker
 
@@ -182,6 +191,21 @@ The bundle holds these packages. It keeps their license comments.
 
 ${list}
 `;
+}
+
+/** A failure for each citation of the agent guide with a store prefix that names no live or retired identifier. */
+export function checkGuideCitations(text: string, store: StoreSpecs): string[] {
+  const failures: string[] = [];
+  for (const [lineNo, line] of proseLines(text)) {
+    for (const [, cited] of withoutCode(line).matchAll(CITATION)) {
+      const key = canonical(cited)!;
+      if (!store.ledger.prefixes.has(key.split("-")[0])) continue;
+      if (!store.live.has(key) && !isRetired(store.ledger, key)) {
+        failures.push(`[guide-citation] ${GUIDE}:${lineNo}: citation [${render(key)}] is neither live nor retired.`);
+      }
+    }
+  }
+  return failures;
 }
 
 /** Each generated file and its text, or failures. */
@@ -222,6 +246,8 @@ async function main(mode: "write" | "check"): Promise<number> {
     return 0;
   }
   failures.push(...compare(files, readCommitted(root)));
+  const store = storeSpecs(readRepository(root, [LEDGER]), failures);
+  if (store) failures.push(...checkGuideCitations(readCommitted(root)(GUIDE) ?? "", store));
   for (const failure of failures) console.error(failure);
   console.log(failures.length ? `\n${failures.length} template failure(s)` : "templates: ok");
   return failures.length ? 1 : 0;
@@ -264,6 +290,17 @@ async function selfTest(): Promise<number> {
         packages.every((p) => p.license && readme.includes(`\`${p.name}\` ${p.version}: ${p.license}`)) ||
         `listed ${listed.join(", ")}`
       );
+    });
+
+    console.log("\n## agent guide");
+    const store = storeSpecs(readRepository(root, [LEDGER]), [])!;
+    await test("SRF-009.05 a guide that cites an unknown store identifier fails and names it", () => {
+      const out = checkGuideCitations("Follow [PRS-999] and `[PRS-998]`.\n", store);
+      return (out.length === 1 && out[0].startsWith("[guide-citation]") && out[0].includes("[PRS-999]")) || out.join("; ");
+    });
+    await test("the committed agent guide cites only live or retired store identifiers", () => {
+      const out = checkGuideCitations(committed(GUIDE) ?? "", store);
+      return (committed(GUIDE) !== undefined && out.length === 0) || out.join("; ") || "the guide is missing";
     });
 
     console.log("\n## template config");

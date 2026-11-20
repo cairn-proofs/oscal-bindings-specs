@@ -76,8 +76,8 @@ function selfTest(): number {
     archivePaths("HEAD", CONTENTS.filter((c) => c !== "metaschema")).every((p) => !p.startsWith("metaschema/")) && inArchive.some((p) => p.startsWith("metaschema/")));
   test("SRF-006.04 the spec artifact holds the requirement index", () => inArchive.includes("openspec/requirements.json"));
   test("SRF-007.03 the spec artifact holds the traceability JSON Schema", () => inArchive.includes("openspec/traceability.schema.json"));
-  test("SRF-009.01 the archive holds the six files of templates/binding/", () => {
-    const files = ["README.md", "bin/check-binding.mjs", "hooks/pre-commit", "openspec/config.yaml", "openspec/spec-ids.yaml", "openspec/traceability.json"];
+  test("SRF-009.01 the archive holds the seven files of templates/binding/", () => {
+    const files = ["AGENTS.md", "README.md", "bin/check-binding.mjs", "hooks/pre-commit", "openspec/config.yaml", "openspec/spec-ids.yaml", "openspec/traceability.json"];
     const lacking = files.map((f) => `templates/binding/${f}`).filter((f) => !inArchive.includes(f));
     return lacking.length === 0 || `the archive lacks ${lacking.join(", ")}. Commit the templates before the self-test, because it reads HEAD.`;
   });

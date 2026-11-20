@@ -2858,7 +2858,7 @@
       "self-test": [
         {
           "script": "scripts/build-archive.ts",
-          "test": "SRF-009.01 the archive holds the six files of templates/binding/"
+          "test": "SRF-009.01 the archive holds the seven files of templates/binding/"
         }
       ]
     },
@@ -2889,6 +2889,16 @@
         {
           "script": "scripts/templates.ts",
           "test": "SRF-009.04 the hook fails for an archive with another hash, and runs no checker"
+        }
+      ]
+    },
+    {
+      "capability": "binding-surface",
+      "id": "SRF-009.05",
+      "self-test": [
+        {
+          "script": "scripts/templates.ts",
+          "test": "SRF-009.05 a guide that cites an unknown store identifier fails and names it"
         }
       ]
     },

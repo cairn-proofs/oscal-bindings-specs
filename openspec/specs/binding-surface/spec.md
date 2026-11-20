@@ -200,18 +200,19 @@ The record SHALL conform to it. The spec artifact SHALL hold it. The JSON Schema
 
 The spec artifact SHALL hold `templates/binding/`, with:
 
-1. The template config: an OpenSpec `config.yaml` for a binding.
+1. The template config: a `config.yaml` for a binding.
 2. An empty identifier ledger.
-3. The binding checker: one file that runs with Node.js 22 or later and git, and no installed package.
-4. A POSIX shell git pre-commit hook. It verifies the pinned archive by its hash, and runs the checker of that
-   archive and `openspec validate --all --strict` on the staged files.
-5. A traceability record with no operation.
+3. The binding checker: one file that needs only Node.js 22 or later and git.
+4. A POSIX shell pre-commit hook. It checks the archive hash, then runs the checker and
+   `openspec validate --all --strict` on the staged files.
+5. An empty traceability record.
+6. An agent guide, `AGENTS.md`, that cites only live or retired store identifiers.
 
 #### Scenario: SRF-009.01 Spec artifact holds the templates
 
 - **WHEN** the store builds the spec artifact
-- **THEN** the archive holds `templates/binding/` with the config, the ledger, the binding checker, the hook and the
-  record
+- **THEN** the archive holds `templates/binding/` with the config, the ledger, the binding checker, the hook, the
+  record and the agent guide
 
 #### Scenario: SRF-009.02 Stale binding checker fails the store checks
 
@@ -228,6 +229,11 @@ The spec artifact SHALL hold `templates/binding/`, with:
 
 - **WHEN** the archive file differs from the hash that the hook pins
 - **THEN** the hook fails before it runs the checker
+
+#### Scenario: SRF-009.05 Agent guide cites an unknown store identifier
+
+- **WHEN** the agent guide cites a store identifier that is neither live nor retired in the store
+- **THEN** the store checks fail and name the identifier
 
 ### Requirement: SRF-010 The binding checker applies the identifier rules to the specs of a binding
 

@@ -75,7 +75,8 @@ it (see [Verify a release](#verify-a-release)).
 A reference is planning context only. Builds and conformance runs use the tagged archive, pinned by its `sha256`.
 
 The archive holds `templates/binding/`: an OpenSpec config, an empty identifier ledger, an empty traceability record,
-the binding checker and a pre-commit hook. The hook verifies the pinned archive by its `sha256`, and runs the binding
+the binding checker, a pre-commit hook, and an agent guide (`AGENTS.md`) that states how a binding relates to the
+store. The hook verifies the pinned archive by its `sha256`, and runs the binding
 checker and `openspec validate --all --strict` on the staged files before each commit. So a binding finds a bad
 identifier, citation or record entry before it commits it. `templates/binding/README.md` gives the install steps.
 
