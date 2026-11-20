@@ -7,7 +7,10 @@
  * 3. Each file under documents/ and elements/ has a case.
  * 4. A round-trip input is valid against the schema, its source hash matches, and its expected file is its canonical
  *    form (docs/canonical-json.md).
- * 5. A parse input fails as its category states: not JSON, not UTF-8, or not valid against the schema.
+ * 5. A parse input fails as its category states: not JSON, not UTF-8, not valid against the schema, or a JSON object
+ *    with a duplicate key (PRS-020). A case that cites PRS-020.01 or PRS-020.02 has an input that is valid JSON for a
+ *    reader that keeps one value, that has a duplicate key, and that conforms to the schema when it is read with the
+ *    last value.
  * 6. A typed-parse, parse-file, assessment-period, or validate-element case has the precondition its category needs.
  * 7. A yaml-round-trip input reads with the reference YAML reader (scripts/yaml-reader.ts), and the canonical form of
  *    its JSON text is its expected file. A yaml-round-trip case that copies a source names the expected file of a JSON
@@ -69,14 +72,12 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { Ajv, type ValidateFunction } from "ajv";
-import addFormatsModule from "ajv-formats";
 
-import { canonicalize, normalizeDatetime } from "./canonical-json.js";
+import { assertNoDuplicateKeys, canonicalize, normalizeDatetime, parseStrict } from "./canonical-json.js";
+import { addDatatypeFormats } from "./datatype-rules.js";
 import { CorpusConstraints, type EntryFailure } from "./corpus-constraints.js";
 import type { Entry } from "./constraints-lib.js";
 import { checkSchemaForReader, readYaml } from "./yaml-reader.js";
-
-const addFormats = addFormatsModule as unknown as (ajv: Ajv) => Ajv;
 
 const RELEASE = fs.readFileSync("VERSION", "utf8").trim().split("+oscal.")[1];
 const ROOT = `corpus/${RELEASE}`;
@@ -330,6 +331,32 @@ export interface DocumentInput {
   expected: string[];
 }
 
+/** Reads the JSON text of a `parse` input. Throws on a syntax error and on a duplicate key (PRS-020). */
+export function readJsonInput(text: string): unknown {
+  return parseStrict(text);
+}
+
+/**
+ * Why the input of a case that cites PRS-020.01 or PRS-020.02 does not isolate a duplicate key, or undefined when it
+ * does. The text is valid JSON for a reader that keeps one value, it has a duplicate key, and the document that the
+ * last value gives conforms to the schema. A binding that keeps one value then returns a document, and the case fails it.
+ */
+export function duplicateKeyCaseProblem(text: string, isValid: (document: unknown) => boolean): string | undefined {
+  let lastValue: unknown;
+  try {
+    lastValue = JSON.parse(text);
+  } catch {
+    return "the input is not valid JSON, so the parse error does not come from a duplicate key";
+  }
+  try {
+    assertNoDuplicateKeys(text);
+    return "the input has no duplicate key";
+  } catch {
+    // A duplicate key is the intended fault.
+  }
+  return isValid(lastValue) ? undefined : "the input is not valid against the schema when it is read with the last value, so a reader that keeps one value also reports a parse error";
+}
+
 /**
  * The document of a case that the corpus checks against the constraint manifest, with the expected failures. The cases
  * are the round-trip, parse, parse-typed, facade, assessment-period, yaml-round-trip, and yaml-parse-typed cases whose
@@ -354,7 +381,7 @@ export function documentInput(c: Case, validateDocument: ValidateFunction): Docu
         return validateDocument(document) ? { document, expected: [] } : undefined;
       }
       case "parse": {
-        const document: unknown = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(fs.readFileSync(file)));
+        const document: unknown = readJsonInput(new TextDecoder("utf-8", { fatal: true }).decode(fs.readFileSync(file)));
         return validateDocument(document) ? { document, expected: c["expected-constraints"] ?? [] } : undefined;
       }
       case "yaml-round-trip":
@@ -387,7 +414,7 @@ export function loadSchema() {
   };
   checkSchemaForReader(schema);
   const ajv = new Ajv({ allErrors: true, strict: false });
-  addFormats(ajv);
+  addDatatypeFormats(ajv);
   ajv.addSchema(schema);
   return { schema, ajv, validateDocument: ajv.getSchema(schema.$id) as ValidateFunction };
 }
@@ -709,9 +736,13 @@ function main(write: boolean): number {
           if (c["input-form"] !== "bytes") fail(c.id, 'input is not UTF-8, so input-form must be "bytes"');
           break;
         }
+        if (c.requirements.some((r) => r === "PRS-020.01" || r === "PRS-020.02")) {
+          const problem = duplicateKeyCaseProblem(text, (document) => validateDocument(document) as boolean);
+          if (problem !== undefined) fail(c.id, problem);
+        }
         let doc: unknown;
         try {
-          doc = JSON.parse(text);
+          doc = readJsonInput(text);
         } catch {
           break;
         }
@@ -908,6 +939,7 @@ function main(write: boolean): number {
 /** The rule scenarios of check 17 (CNS-020). They run the reference evaluator on documents made for the test. */
 function selfTest(): number {
   const constraints = CorpusConstraints.load(RELEASE);
+  const { validateDocument } = loadSchema();
   const metadata = { title: "t", "last-modified": "2024-01-02T03:04:05Z", version: "1", "oscal-version": RELEASE };
   const catalog = (props: object[]) => ({ catalog: { uuid: "00000000-0000-4000-8000-000000000001", metadata, controls: [{ id: "c", title: "t", props, parts: [{ name: "statement" }] }] } });
   const bad = constraints.ofDocument(catalog([{ name: "bogus", value: "1" }]));
@@ -968,6 +1000,24 @@ function selfTest(): number {
       keysPresent({ a: { b: [{ c: 1 }] } }, ["c", "z"]).join() === "c" && keysPresent({ a: 1 }, ["b"]).length === 0 && keysPresent({ a: null }, ["a"]).join() === "a"],
     ["YML-007: a typed parse case needs an OSCAL type that is not the root key of the input", () =>
       typeMismatch("catalog", { profile: {} }) === undefined && typeMismatch("catalog", { catalog: {} }) !== undefined && typeMismatch("book", { profile: {} }) !== undefined && typeMismatch(undefined, { profile: {} }) !== undefined],
+    ["PRS-020: readJsonInput throws for a duplicate key, including an escaped one, and returns the value otherwise", () => {
+      const throwsFor = (text: string) => {
+        try {
+          readJsonInput(text);
+          return false;
+        } catch {
+          return true;
+        }
+      };
+      return throwsFor('{"a":1,"a":2}') && throwsFor('{"a":1,"\\u0061":2}') && JSON.stringify(readJsonInput('{"a":1,"b":{"a":2}}')) === '{"a":1,"b":{"a":2}}';
+    }],
+    ["PRS-020: a valid document with a duplicate key has no problem", () => {
+      const text = JSON.stringify(catalog([{ name: "label", value: "1" }])).replace('"title":"t","last-modified"', '"title":"x","title":"t","last-modified"');
+      return text.includes('"title":"x","title":"t"') && duplicateKeyCaseProblem(text, validateDocument as (d: unknown) => boolean) === undefined;
+    }],
+    ["PRS-020: a duplicate-key case with a syntax error has a problem", () => duplicateKeyCaseProblem('{"a":1,"a":2', () => true) !== undefined],
+    ["PRS-020: a duplicate-key case with no duplicate key has a problem", () => duplicateKeyCaseProblem(JSON.stringify(catalog([])), () => true) !== undefined],
+    ["PRS-020: a duplicate-key case that is not valid when read with the last value has a problem", () => duplicateKeyCaseProblem('{"a":1,"a":2}', () => false) !== undefined],
     ["CNS-018: an element type without a definition gives no failure", () => constraints.ofElement("no-such-type", {}).length === 0],
   ];
   let failed = 0;

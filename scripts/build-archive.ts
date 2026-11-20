@@ -76,6 +76,11 @@ function selfTest(): number {
     archivePaths("HEAD", CONTENTS.filter((c) => c !== "metaschema")).every((p) => !p.startsWith("metaschema/")) && inArchive.some((p) => p.startsWith("metaschema/")));
   test("SRF-006.04 the spec artifact holds the requirement index", () => inArchive.includes("openspec/requirements.json"));
   test("SRF-007.03 the spec artifact holds the traceability JSON Schema", () => inArchive.includes("openspec/traceability.schema.json"));
+  test("SRF-008.01 the spec artifact holds the sticker file", () => inArchive.includes("docs/sticker.md"));
+  test("SRF-008.02 the sticker file holds the version badge and the status badge", () => {
+    const sticker = fs.readFileSync("docs/sticker.md", "utf8");
+    return sticker.includes("https://img.shields.io/badge/dynamic/json?") && sticker.includes("https://img.shields.io/github/actions/workflow/status/");
+  });
   test("SRF-011.01 the archive holds the seven files of templates/binding/", () => {
     const files = ["AGENTS.md", "README.md", "bin/check-binding.mjs", "hooks/pre-commit", "openspec/config.yaml", "openspec/spec-ids.yaml", "openspec/traceability.json"];
     const lacking = files.map((f) => `templates/binding/${f}`).filter((f) => !inArchive.includes(f));

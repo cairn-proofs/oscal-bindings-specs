@@ -76,6 +76,8 @@ Each case has these fields:
       3. A builder case whose element conforms to the schema and fails the constraint manifest.
 
       A case whose input does not conform to the schema has no `expected-constraints`.
+      An input conforms to the schema only when each of its values also meets the datatype rules of
+      [PRS-016](../../openspec/specs/document-parsing/spec.md#requirement-prs-016-the-patterns-of-the-schema-decide-a-value-not-its-format-keyword).
    7. `source`: the repository, commit, path, and `sha256` of a document copied from another repository.
    8. `notes`: an explanation for people. For a `yaml-parse` case, the notes name the fault code of the reference
       YAML reader in backticks, for example `` `grammar` ``.

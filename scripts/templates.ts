@@ -375,8 +375,10 @@ async function selfTest(): Promise<number> {
       execFileSync("git", ["init", "-q", dir]);
       return dir;
     };
+    // The fixtures are new repositories, so a base ref of the store, such as the one CI sets, does not apply to them.
+    const fixtureEnv = { ...process.env, SPEC_IDS_BASE: "" };
     const run = (dir: string) =>
-      spawnSync("node", [path.join(bin, "check-binding.mjs"), "--store", root], { cwd: dir, encoding: "utf8" });
+      spawnSync("node", [path.join(bin, "check-binding.mjs"), "--store", root], { cwd: dir, encoding: "utf8", env: fixtureEnv });
     await test("SRF-011.03 the bundle runs with no node_modules and passes a valid binding", () => {
       const r = run(fixture("valid"));
       return r.status === 0 || `exit ${r.status}: ${r.stderr}`;
@@ -410,7 +412,7 @@ async function selfTest(): Promise<number> {
       const r = spawnSync("sh", [path.join(root, HOOK)], {
         cwd: dir,
         encoding: "utf8",
-        env: { ...process.env, OSCAL_SPECS_ARCHIVE: archive, OSCAL_SPECS_SHA256: "0".repeat(64) },
+        env: { ...fixtureEnv, OSCAL_SPECS_ARCHIVE: archive, OSCAL_SPECS_SHA256: "0".repeat(64) },
       });
       return (
         (r.status === 1 && r.stderr.includes("not the pinned") && !`${r.stdout}${r.stderr}`.includes("binding check")) ||
