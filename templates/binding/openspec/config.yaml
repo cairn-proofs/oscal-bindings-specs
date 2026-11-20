@@ -16,10 +16,13 @@ context: |
   Add line breaks to Markdown at 100 columns, not 80.
   List style: prefer NUMBERED lists (`1.`, `2.`) over bullets for any enumerable prose so each item is referenceable.
   Proposals and designs cite GitHub issues, discussions, etc. Specs do not.
-  When exploring an issue, do not ask for a decision if your recommendation is a logical conclusion of a 
-   decision already made. Escalate decisions to the user only when a conflict arises between precedents, tenets, etc.
+  In every phase (explore, propose, design, apply), do not ask for a decision if your recommendation is a logical
+   conclusion of a decision already made. Escalate decisions to the user only when a conflict arises between
+   precedents, tenets, etc.
   When exploring, proposing, or designing, NEVER extend the scope beyond what is explicitly stated in the context. 
    If you find an edge case or ambiguity that seems to justify extending the scope, stop and seek clarification. 
+   Work that the stated goal needs to be usable or correct is in scope, not an extension: if leaving it
+   out would make the deliverable broken or useless, include it and say so.
   Discussion during exploration may raise questions or considerations that are ruled out. Do not include those in
    the artifacts. Future readers will not understand answers to questions that were never asked.
   Always propose, spec, and design the smallest, simplest change that is a long-term solution to the problem at hand.
@@ -27,8 +30,6 @@ context: |
    solved by eliminating the requirement or scenario.
   User time and tokens are constrained resources. Do not waste them on trivial matters. If you're inclined to qualify
    a matter as a nit, minor, small, or otherwise inconsenquential, then either justify raising it or drop the matter.    
-  Scenarios in a requirement can't be renamed in place or removed. Such changes must be made manually in a post-archive step.
-  Place new requirements to minimize inter-spec dependencies when practical and appropriate.
 # Per-artifact rules (optional)
 rules:
   specs:
@@ -65,12 +66,19 @@ rules:
       main specs. A delta does not get this check, because its order is fixed at the sync. The sync can move a
       requirement to meet the rule.
     - >-
+      Scenarios in a requirement can't be renamed in place or removed. Such changes must be made manually in a
+      post-archive step.
+    - >-
+      Place new requirements to minimize inter-spec dependencies when practical and appropriate.
+    - >-
       A prefix in `openspec/spec-ids.yaml` is never a prefix in the ledger `openspec/spec-ids.yaml` of the pinned
       spec artifact of the store (SRF-008). The binding checker fails for such a prefix.
     - >-
       A spec can cite a requirement or a scenario of the store, such as `[PRS-001]` or `[PRS-001.01]`. The citation
       resolves in the pinned spec artifact of the store. The binding checker fails for a citation with a store
       prefix that names no live or retired identifier of the store.
+    - >-
+      Specs MUST NOT change behavior defined by the contract in the upstream store `oscal-bindings-specs`.
 
 # Per-operation guidance (optional)
 operations:

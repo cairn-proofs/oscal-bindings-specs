@@ -49,13 +49,14 @@ export const EDITS: Array<{ find: string; replace: string }> = [
   { find: ", as CONTRIBUTING.md describes", replace: "" },
 ];
 
-/** The rules.specs entries that only a binding has (SRF-008, SRF-010). */
+/** The rules.specs entries that only a binding has: the prefix rule (SRF-008), the citation rule (SRF-010), and the contract rule. */
 export const ADDED_RULES = [
   "A prefix in `openspec/spec-ids.yaml` is never a prefix in the ledger `openspec/spec-ids.yaml` of the pinned spec " +
     "artifact of the store (SRF-008). The binding checker fails for such a prefix.",
   "A spec can cite a requirement or a scenario of the store, such as `[PRS-001]` or `[PRS-001.01]`. The citation " +
     "resolves in the pinned spec artifact of the store. The binding checker fails for a citation with a store prefix " +
     "that names no live or retired identifier of the store.",
+  "Specs MUST NOT change behavior defined by the contract in the upstream store `oscal-bindings-specs`.",
 ];
 
 /** The OpenSpec reference to the store, as README.md of the store shows it. */
