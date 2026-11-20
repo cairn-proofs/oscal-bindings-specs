@@ -34,7 +34,7 @@ A binding can rely only on the paths in the spec artifact ([VER-005]). `scripts/
 `checkSpecIds(files, base, store?)` gets `store`: the ledger of the store and the identifiers in its main specs. With
 `store`, the function:
 
-1. Fails with `[store-prefix]` for each prefix of the binding ledger that is in the store ledger ([SRF-008]).
+1. Fails with `[store-prefix]` for each prefix of the binding ledger that is in the store ledger ([SRF-010]).
 2. Treats a bracketed identifier with a store prefix as a citation. The citation resolves when it names a live
    heading of the store specs, or an identifier that the store ledger retires.
 
@@ -58,7 +58,7 @@ calls `checkSpecIds()` and `checkRecord()`. `npm run templates:write` bundles it
 `github-slugger` and `ajv` inside it. The `node` build of `yaml` is CommonJS and calls `require`, which an ES module
 does not have. So the bundle starts with a banner that defines `require` with `createRequire(import.meta.url)`. A
 trial bundle with esbuild 0.28.2 runs with this banner, and fails at start without it. `npm run templates:check`
-bundles to memory and fails when the bytes differ from the committed file ([SRF-009.02]). `npm run check` runs it.
+bundles to memory and fails when the bytes differ from the committed file ([SRF-011.02]). `npm run check` runs it.
 
 `esbuild` becomes a direct development dependency at the exact version that `tsx` installs today (0.28.2). The exact
 version keeps the bundle bytes stable.
@@ -87,7 +87,7 @@ passes the vanished-scenario rule. Each failure starts with the rule name. The e
 ### 4. The record check
 
 `scripts/traceability.ts` holds `checkRecord(record, schema, index, files, storePrefixes)`. It returns one failure for
-each item of [SRF-011], and each failure starts with the rule name:
+each item of [SRF-013], and each failure starts with the rule name:
 
 1. `[record-schema]`: ajv validates the record against `<dir>/openspec/traceability.schema.json` with the options
    that the self-test of `scripts/requirements.ts` uses (`allErrors`, `strict`). When the record does not conform,
@@ -127,7 +127,7 @@ absolute first. It removes both temporary directories on exit. It stops at the f
 
 ### 6. The store generates the template `config.yaml` from its own `config.yaml`
 
-`npm run templates:write` writes `templates/binding/openspec/config.yaml` from `openspec/config.yaml` ([SRF-012]).
+`npm run templates:write` writes `templates/binding/openspec/config.yaml` from `openspec/config.yaml` ([SRF-014]).
 The generator reads the store config with the `yaml` document model, and changes it in three steps:
 
 1. It applies a table of edits in `scripts/templates.ts`. Each edit has an exact text to find in a string of the
@@ -139,7 +139,7 @@ The generator reads the store config with the `yaml` document model, and changes
    3. In the `archive` guidance, "Then run `npm run spec-ids`." becomes "Then run the binding checker."
    4. In the `archive` guidance, the generator removes ", as CONTRIBUTING.md describes".
 2. It adds two `rules.specs` entries after the identifier rules: a prefix of the binding ledger is never a prefix of
-   the store ([SRF-008]), and a binding spec cites a store identifier as `[PRS-001]`, which resolves in the pinned
+   the store ([SRF-010]), and a binding spec cites a store identifier as `[PRS-001]`, which resolves in the pinned
    spec artifact.
 3. It adds the `references` entry of the store, as the README of the store shows it.
 
@@ -147,8 +147,8 @@ Every other entry, the whole `context` included, goes into the template without 
 
 `npm run templates:check` generates the config in memory. It fails when:
 
-1. The committed template differs from the output ([SRF-012.01]).
-2. The find text of an edit is not in the store config ([SRF-012.02]). So a change to a store-specific sentence
+1. The committed template differs from the output ([SRF-014.01]).
+2. The find text of an edit is not in the store config ([SRF-014.02]). So a change to a store-specific sentence
    makes a contributor review its edit, and an edit cannot stop applying without a failure.
 
 Alternative: a hand-written template and a check that each store entry occurs in it. Rejected, because the check
@@ -167,7 +167,7 @@ hand.
    same pull request, and adds an edit to the table when the template needs one.
 3. [A binding adds entries of its own to its config] → On each pin move, the binding copies the new template config
    and adds its own entries again. The template README states this step.
-4. [A binding uses a store prefix today] → The check of [SRF-008] fails for it after the pin move. The pin-move issue
+4. [A binding uses a store prefix today] → The check of [SRF-010] fails for it after the pin move. The pin-move issue
    of that binding covers the new identifiers.
 
 ## Migration Plan
@@ -180,10 +180,10 @@ hand.
 
 [SRF-003]: ../../specs/binding-surface/spec.md#requirement-srf-003-a-binding-records-the-requirement-that-covers-each-public-operation
 [SRF-004]: ../../specs/binding-surface/spec.md#requirement-srf-004-contract-identifiers-in-a-traceability-record-resolve-in-the-requirement-index
-[SRF-008]: ../../specs/binding-surface/spec.md#requirement-srf-008-a-binding-local-requirement-does-not-use-a-store-prefix
-[SRF-009.02]: ../../specs/binding-surface/spec.md#requirement-srf-009-the-spec-artifact-holds-the-binding-templates
-[SRF-011]: ../../specs/binding-surface/spec.md#requirement-srf-011-the-binding-checker-checks-the-traceability-record
-[SRF-012]: ../../specs/binding-surface/spec.md#requirement-srf-012-the-template-config-follows-the-store-config
-[SRF-012.01]: ../../specs/binding-surface/spec.md#requirement-srf-012-the-template-config-follows-the-store-config
-[SRF-012.02]: ../../specs/binding-surface/spec.md#requirement-srf-012-the-template-config-follows-the-store-config
+[SRF-010]: ../../specs/binding-surface/spec.md#requirement-srf-010-a-binding-local-requirement-does-not-use-a-store-prefix
+[SRF-011.02]: ../../specs/binding-surface/spec.md#requirement-srf-011-the-spec-artifact-holds-the-binding-templates
+[SRF-013]: ../../specs/binding-surface/spec.md#requirement-srf-013-the-binding-checker-checks-the-traceability-record
+[SRF-014]: ../../specs/binding-surface/spec.md#requirement-srf-014-the-template-config-follows-the-store-config
+[SRF-014.01]: ../../specs/binding-surface/spec.md#requirement-srf-014-the-template-config-follows-the-store-config
+[SRF-014.02]: ../../specs/binding-surface/spec.md#requirement-srf-014-the-template-config-follows-the-store-config
 [VER-005]: ../../specs/schema-versioning/spec.md#requirement-ver-005-spec-artifacts-are-distributed-pinned-and-hash-verified

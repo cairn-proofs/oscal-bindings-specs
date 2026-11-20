@@ -10,9 +10,9 @@
       the store. Name each rule in the comment above its code. Verify `npm run spec-ids` passes with no change to
       its output.
 - [x] 1.2 Add one self-test for each scenario identifier, with a name that starts with that identifier, because
-      `scripts/coverage.ts` credits a name to the first identifier only: `SRF-008.01` and `SRF-010.01` (each: a
-      binding ledger with `PRS` fails with `[store-prefix]`), `SRF-008.02` (`PYB` passes), `SRF-010.02` (citations
-      `[PRS-001]` and `[PRS-001.01]` resolve), `SRF-010.03` (`[PRS-999]` fails with `[citation]`), and `SRF-010.04`
+      `scripts/coverage.ts` credits a name to the first identifier only: `SRF-010.01` and `SRF-012.01` (each: a
+      binding ledger with `PRS` fails with `[store-prefix]`), `SRF-010.02` (`PYB` passes), `SRF-012.02` (citations
+      `[PRS-001]` and `[PRS-001.01]` resolve), `SRF-012.03` (`[PRS-999]` fails with `[citation]`), and `SRF-012.04`
       (a heading at or above `next` in a binding ledger fails with `[next]`). Add a self-test for a binding
       repository with no commit: the base specs are empty, and the vanished-scenario rule reports nothing. Verify
       `npm run spec-ids:self-test` passes.
@@ -24,10 +24,10 @@
       name. Verify
       `npx tsx scripts/traceability.ts --self-test` runs.
 - [x] 2.2 Add one self-test for each scenario identifier, with a name that starts with that identifier:
-      `SRF-011.01` (an entry with both kinds of
-      identifier fails with `[record-schema]`), `SRF-011.02` and `SRF-004.02` (each: `MDL-004` fails with
-      `[record-contract]`), `SRF-011.03` (`PYB-009` with no heading fails with `[record-local]`), `SRF-011.04` (two
-      entries with one name fail with `[record-duplicate]`), and `SRF-011.05` and `SRF-004.01` (each: a record with
+      `SRF-013.01` (an entry with both kinds of
+      identifier fails with `[record-schema]`), `SRF-013.02` and `SRF-004.02` (each: `MDL-004` fails with
+      `[record-contract]`), `SRF-013.03` (`PYB-009` with no heading fails with `[record-local]`), `SRF-013.04` (two
+      entries with one name fail with `[record-duplicate]`), and `SRF-013.05` and `SRF-004.01` (each: a record with
       `PRS-001` and a live `PYB-001` passes). Use the committed `openspec/requirements.json` and
       `openspec/traceability.schema.json` as the store. Add `traceability:self-test` to `package.json` and to
       `npm run check`. Verify it passes.
@@ -52,8 +52,8 @@
       Add `templates:write`, `templates:check` and `templates:self-test` to `package.json`, and add the check and the
       self-test to `npm run check` and to `scripts/check-parallel.ts` if it lists the steps. Run
       `npm run templates:write`. Verify `npm run templates:check` passes.
-- [x] 3.4 Add self-tests to `scripts/templates.ts`: `SRF-009.02` (a changed bundle fails the check) and
-      `SRF-009.03` (copy the bundle to a temporary directory with no `node_modules`, run it with `node` against a
+- [x] 3.4 Add self-tests to `scripts/templates.ts`: `SRF-011.02` (a changed bundle fails the check) and
+      `SRF-011.03` (copy the bundle to a temporary directory with no `node_modules`, run it with `node` against a
       binding fixture and the store root, and get exit code 0 for a valid fixture, and 1 for a fixture with a store
       prefix and for a fixture with a duplicate operation name). Add a self-test that the package list of the
       template README matches the esbuild metafile. Verify `npm run templates:self-test` passes.
@@ -64,9 +64,9 @@
       and `templates/binding/openspec/traceability.json` with format 1 and an empty `operations` list. Verify the
       bundle passes on a fixture that uses these two files, the generated config and one spec with a prefix of its
       own. Verify `openspec validate --all --strict` passes in the fixture.
-- [x] 4.2 Add self-tests to `scripts/templates.ts`: `SRF-012.01` (a changed rule in an in-memory store config gives
-      a template that differs from the committed one, and the check fails), `SRF-012.02` (a store config without the
-      find text of one edit fails, and the failure names the text), and `SRF-012.03` (the generated template holds
+- [x] 4.2 Add self-tests to `scripts/templates.ts`: `SRF-014.01` (a changed rule in an in-memory store config gives
+      a template that differs from the committed one, and the check fails), `SRF-014.02` (a store config without the
+      find text of one edit fails, and the failure names the text), and `SRF-014.03` (the generated template holds
       no `npm run` and no `CONTRIBUTING.md`, and holds the binding checker in each of the three entries). Verify
       `npm run templates:self-test` passes.
 - [x] 4.3 Add `templates/binding/hooks/pre-commit`, as
@@ -74,7 +74,7 @@
       `sh -n` passes and `checkbashisms` (if installed) reports nothing. In a fixture repository, verify the hook
       exits 1 when the staged spec has a store prefix and the unstaged copy has no error, and exits 0 in the reverse
       case. Verify it exits 0 for the first commit of a repository and for a record at a path that is not the
-      default. Add the self-test `SRF-009.04` to `scripts/templates.ts`: the hook, with an archive that
+      default. Add the self-test `SRF-011.04` to `scripts/templates.ts`: the hook, with an archive that
       `npm run archive` builds and a wrong sha256, exits 1 and runs no checker.
 - [x] 4.4 Add `templates/binding/README.md`: the files, the install steps of
       [design.md, Migration Plan](design.md#migration-plan), the checker command, each bundled package with its
@@ -85,7 +85,7 @@
 ## 5. Archive and documentation
 
 - [x] 5.1 Add `"templates"` to `CONTENTS` in `scripts/build-archive.ts`. Keep the array a literal of double-quoted
-      strings that ends with `];`. Add the self-test `SRF-009.01`: the archive holds the six files of
+      strings that ends with `];`. Add the self-test `SRF-011.01`: the archive holds the six files of
       `templates/binding/`. The self-test reads `HEAD`, so commit the templates first. Verify
       `npm run archive:self-test` passes.
 - [x] 5.4 Add `/templates/ @dfkunstler` to `.github/CODEOWNERS`, and name the binding templates in its header
@@ -99,16 +99,16 @@
       `npm run templates:write`. Verify `npm run binding-links:check` passes.
 - [x] 5.2 In `README.md`, section "Use the store", add how a binding installs the templates. In `CONTRIBUTING.md`,
       section "Add an operation to a binding", state that a binding-local requirement uses a prefix of the binding,
-      not of the store ([SRF-008]), and that the binding checker checks the record ([SRF-011]). In
-      `CONTRIBUTING.md`, state that a change to `openspec/config.yaml` needs `npm run templates:write` ([SRF-012]).
+      not of the store ([SRF-010]), and that the binding checker checks the record ([SRF-013]). In
+      `CONTRIBUTING.md`, state that a change to `openspec/config.yaml` needs `npm run templates:write` ([SRF-014]).
       Verify `npm run spec-ids` and `npm run binding-links:check` pass.
 - [x] 5.3 Set `VERSION` to `0.10.0+oscal.1.2.3`. Verify `npm run version:check` passes.
 
 ## 6. Sync, archive and integration
 
-- [x] 6.1 Sync the delta into `openspec/specs/binding-surface/spec.md`. Put [SRF-008] directly below [SRF-002], and
-      [SRF-009], [SRF-010], [SRF-011] and [SRF-012] at the end. In `openspec/spec-ids.yaml`, set `next` of `SRF`
-      to 13. Run
+- [x] 6.1 Sync the delta into `openspec/specs/binding-surface/spec.md`. Put [SRF-010] directly below [SRF-002], and
+      [SRF-011], [SRF-012], [SRF-013] and [SRF-014] at the end. In `openspec/spec-ids.yaml`, set `next` of `SRF`
+      to 15. Run
       `npm run requirements:write` and `npm run coverage:write`. Verify `npm run spec-ids`,
       `npm run requirements:check` and `npm run coverage:check` pass, and that `openspec/coverage.json` gives a
       self-test for each new scenario and for `SRF-004.01` and `SRF-004.02`.
@@ -122,8 +122,8 @@
    requirement that uses a store prefix, and a first run of the record check.
 
 [SRF-002]: ../../specs/binding-surface/spec.md#requirement-srf-002-a-binding-local-operation-adds-no-contract-behavior
-[SRF-008]: ../../specs/binding-surface/spec.md#requirement-srf-008-a-binding-local-requirement-does-not-use-a-store-prefix
-[SRF-009]: ../../specs/binding-surface/spec.md#requirement-srf-009-the-spec-artifact-holds-the-binding-templates
-[SRF-010]: ../../specs/binding-surface/spec.md#requirement-srf-010-the-binding-checker-applies-the-identifier-rules-to-the-specs-of-a-binding
-[SRF-011]: ../../specs/binding-surface/spec.md#requirement-srf-011-the-binding-checker-checks-the-traceability-record
-[SRF-012]: ../../specs/binding-surface/spec.md#requirement-srf-012-the-template-config-follows-the-store-config
+[SRF-010]: ../../specs/binding-surface/spec.md#requirement-srf-010-a-binding-local-requirement-does-not-use-a-store-prefix
+[SRF-011]: ../../specs/binding-surface/spec.md#requirement-srf-011-the-spec-artifact-holds-the-binding-templates
+[SRF-012]: ../../specs/binding-surface/spec.md#requirement-srf-012-the-binding-checker-applies-the-identifier-rules-to-the-specs-of-a-binding
+[SRF-013]: ../../specs/binding-surface/spec.md#requirement-srf-013-the-binding-checker-checks-the-traceability-record
+[SRF-014]: ../../specs/binding-surface/spec.md#requirement-srf-014-the-template-config-follows-the-store-config

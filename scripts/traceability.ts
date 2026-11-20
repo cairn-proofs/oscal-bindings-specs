@@ -1,5 +1,5 @@
 /**
- * Checks the traceability record of a binding against its pinned store (openspec/specs/binding-surface, SRF-011).
+ * Checks the traceability record of a binding against its pinned store (openspec/specs/binding-surface, SRF-013).
  * scripts/binding-check.ts calls checkRecord(). Each failure starts with the name of the rule that failed.
  *
  *   npx tsx scripts/traceability.ts --self-test   run the rule scenarios on in-memory records
@@ -60,7 +60,7 @@ export function checkRecord(
   }
 
   // record-local: each binding-local identifier names a live requirement of the binding (SRF-003), and its prefix is
-  // not a store prefix (SRF-008).
+  // not a store prefix (SRF-010).
   const local = new Set<string>();
   for (const [file, text] of Object.entries(files)) {
     if (!SPEC_PATH.test(file)) continue;
@@ -118,12 +118,12 @@ function selfTest(): number {
 
   console.log("## traceability record");
   scenario(
-    "SRF-011.01 an entry with both kinds of identifier fails the JSON Schema",
+    "SRF-013.01 an entry with both kinds of identifier fails the JSON Schema",
     record({ name: "f", requirements: ["PRS-001"], "binding-local": "PYB-001" }),
     { rule: "record-schema", needle: "/operations/0" },
   );
   const retired = record({ name: "build_model", requirements: ["MDL-004"] });
-  scenario("SRF-011.02 the retired contract identifier MDL-004 fails", retired, {
+  scenario("SRF-013.02 the retired contract identifier MDL-004 fails", retired, {
     rule: "record-contract",
     needle: "MDL-004",
   });
@@ -132,16 +132,16 @@ function selfTest(): number {
     needle: "MDL-004 is not in the requirement index",
   });
   scenario(
-    "SRF-011.03 the binding-local identifier PYB-009 with no heading fails",
+    "SRF-013.03 the binding-local identifier PYB-009 with no heading fails",
     record({ name: "f", "binding-local": "PYB-009" }),
     { rule: "record-local", needle: "PYB-009 names no requirement" },
   );
   scenario(
-    "SRF-011.04 an operation name in two entries fails",
+    "SRF-013.04 an operation name in two entries fails",
     record({ name: "parse_oscal", requirements: ["PRS-001"] }, { name: "parse_oscal", requirements: ["PRS-003"] }),
     { rule: "record-duplicate", needle: "operation parse_oscal" },
   );
-  scenario("SRF-011.05 a record with PRS-001 and the live binding-local PYB-001 passes", valid, null);
+  scenario("SRF-013.05 a record with PRS-001 and the live binding-local PYB-001 passes", valid, null);
   scenario("SRF-004.01 the live requirement PRS-001 resolves in the index", valid, null);
   scenario(
     "record-local: a binding-local identifier with a store prefix fails",

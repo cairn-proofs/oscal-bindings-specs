@@ -6,10 +6,10 @@
       Cite store requirements as `[PREFIX-NNN]` with no link. Verify each cited identifier is in
       `openspec/requirements.json`.
 - [x] 1.2 In `scripts/templates.ts`, list the guide in the generated README, with its install step and its pin-move
-      step. Add the self-test `SRF-009.05`: a guide that cites `[PRS-999]` fails and names it, and the committed
+      step. Add the self-test `SRF-011.05`: a guide that cites `[PRS-999]` fails and names it, and the committed
       guide passes. Run `npm run templates:write`. Verify `npm run templates:check` and
       `npm run templates:self-test` pass.
-- [x] 1.3 In `scripts/build-archive.ts`, the self-test `SRF-009.01` expects `templates/binding/AGENTS.md` too. In the
+- [x] 1.3 In `scripts/build-archive.ts`, the self-test `SRF-011.01` expects `templates/binding/AGENTS.md` too. In the
       store `AGENTS.md` and `README.md`, add the guide to the template list. Verify `npm run binding-links:check`
       passes.
 

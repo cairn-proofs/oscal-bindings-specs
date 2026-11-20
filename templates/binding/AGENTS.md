@@ -32,7 +32,7 @@ artifact.
 1. A contract requirement defines each public operation, or the operation is binding-local [SRF-001]. A
    binding-local operation adds no contract behavior [SRF-002].
 2. A binding-local requirement is in `openspec/specs/` of this binding. Its identifier uses a prefix of this binding
-   from `openspec/spec-ids.yaml`, never a prefix of the store [SRF-008].
+   from `openspec/spec-ids.yaml`, never a prefix of the store [SRF-010].
 3. The traceability record, `openspec/traceability.json` by default, holds one entry for each public operation
    [SRF-003]. Each contract identifier in it is in the requirement index of the pinned archive [SRF-004].
 4. This binding keeps its expected conformance failures in its own repository [VER-007].
@@ -55,7 +55,7 @@ artifact.
 
 The pre-commit hook verifies the pinned archive by its sha256. Then it runs the binding checker of that archive and
 `openspec validate --all --strict` on the staged files. The binding checker applies the identifier rules of the store
-to the specs of this binding [SRF-010], and checks the traceability record [SRF-011]. Each failure starts with the
+to the specs of this binding [SRF-012], and checks the traceability record [SRF-013]. Each failure starts with the
 name of its rule. Fix the cause. Do not skip the hook with `--no-verify`.
 
 ## Binding notes

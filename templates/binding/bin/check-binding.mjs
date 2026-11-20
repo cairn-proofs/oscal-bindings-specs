@@ -14893,28 +14893,28 @@ ${extra}retired: []
       ${JSON.stringify(out)}`}`);
   };
   const storePrefix = (files) => files[LEDGER] = bindingLedger("  PRS:\n    capability: python-parse\n    next: 1\n");
-  bindingScenario("SRF-008.01 a binding ledger with the store prefix PRS fails", storePrefix, {
+  bindingScenario("SRF-010.01 a binding ledger with the store prefix PRS fails", storePrefix, {
     rule: "store-prefix",
     needle: "prefix PRS"
   });
-  bindingScenario("SRF-008.02 the binding prefix PYB, which the store does not hold, passes", () => {
+  bindingScenario("SRF-010.02 the binding prefix PYB, which the store does not hold, passes", () => {
   }, null);
-  bindingScenario("SRF-010.01 the binding checker fails and names the store prefix PRS", storePrefix, {
+  bindingScenario("SRF-012.01 the binding checker fails and names the store prefix PRS", storePrefix, {
     rule: "store-prefix",
     needle: "prefix PRS of openspec/spec-ids.yaml is a prefix of the store"
   });
   bindingScenario(
-    "SRF-010.02 citations of the store identifiers PRS-001 and PRS-001.01 resolve",
+    "SRF-012.02 citations of the store identifiers PRS-001 and PRS-001.01 resolve",
     (files) => files[API] = files[API].replace("Text.", "Wraps [PRS-001] and meets [PRS-001.01]."),
     null
   );
   bindingScenario(
-    "SRF-010.03 a citation of the unknown store identifier PRS-999 fails",
+    "SRF-012.03 a citation of the unknown store identifier PRS-999 fails",
     (files) => files[API] = files[API].replace("Text.", "Wraps [PRS-999]."),
     { rule: "citation", needle: "citation [PRS-999] is neither live nor retired in the store" }
   );
   bindingScenario(
-    "SRF-010.04 a binding heading at or above next of its ledger fails",
+    "SRF-012.04 a binding heading at or above next of its ledger fails",
     (files) => files[API] += req("PYB-002", "Too far", ["PYB-002.01 Example"]),
     { rule: "next", needle: '"PYB-002 Too far"' }
   );
@@ -15019,12 +15019,12 @@ function selfTest2() {
   };
   console.log("## traceability record");
   scenario(
-    "SRF-011.01 an entry with both kinds of identifier fails the JSON Schema",
+    "SRF-013.01 an entry with both kinds of identifier fails the JSON Schema",
     record({ name: "f", requirements: ["PRS-001"], "binding-local": "PYB-001" }),
     { rule: "record-schema", needle: "/operations/0" }
   );
   const retired = record({ name: "build_model", requirements: ["MDL-004"] });
-  scenario("SRF-011.02 the retired contract identifier MDL-004 fails", retired, {
+  scenario("SRF-013.02 the retired contract identifier MDL-004 fails", retired, {
     rule: "record-contract",
     needle: "MDL-004"
   });
@@ -15033,16 +15033,16 @@ function selfTest2() {
     needle: "MDL-004 is not in the requirement index"
   });
   scenario(
-    "SRF-011.03 the binding-local identifier PYB-009 with no heading fails",
+    "SRF-013.03 the binding-local identifier PYB-009 with no heading fails",
     record({ name: "f", "binding-local": "PYB-009" }),
     { rule: "record-local", needle: "PYB-009 names no requirement" }
   );
   scenario(
-    "SRF-011.04 an operation name in two entries fails",
+    "SRF-013.04 an operation name in two entries fails",
     record({ name: "parse_oscal", requirements: ["PRS-001"] }, { name: "parse_oscal", requirements: ["PRS-003"] }),
     { rule: "record-duplicate", needle: "operation parse_oscal" }
   );
-  scenario("SRF-011.05 a record with PRS-001 and the live binding-local PYB-001 passes", valid, null);
+  scenario("SRF-013.05 a record with PRS-001 and the live binding-local PYB-001 passes", valid, null);
   scenario("SRF-004.01 the live requirement PRS-001 resolves in the index", valid, null);
   scenario(
     "record-local: a binding-local identifier with a store prefix fails",
