@@ -657,6 +657,31 @@
       "title": "A binding shows the sticker only when it meets the sticker conditions"
     },
     {
+      "id": "SRF-010",
+      "capability": "binding-surface",
+      "title": "A binding-local requirement does not use a store prefix"
+    },
+    {
+      "id": "SRF-011",
+      "capability": "binding-surface",
+      "title": "The spec artifact holds the binding templates"
+    },
+    {
+      "id": "SRF-012",
+      "capability": "binding-surface",
+      "title": "The binding checker applies the identifier rules to the specs of a binding"
+    },
+    {
+      "id": "SRF-013",
+      "capability": "binding-surface",
+      "title": "The binding checker checks the traceability record"
+    },
+    {
+      "id": "SRF-014",
+      "capability": "binding-surface",
+      "title": "The template config follows the store config"
+    },
+    {
       "id": "VER-001",
       "capability": "schema-versioning",
       "title": "Bindings are namespaced by OSCAL major version"

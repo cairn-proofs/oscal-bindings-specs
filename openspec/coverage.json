@@ -2890,14 +2890,24 @@
       "id": "SRF-003.04"
     },
     {
-      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
       "capability": "binding-surface",
-      "id": "SRF-004.01"
+      "id": "SRF-004.01",
+      "self-test": [
+        {
+          "script": "scripts/traceability.ts",
+          "test": "SRF-004.01 the live requirement PRS-001 resolves in the index"
+        }
+      ]
     },
     {
-      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
       "capability": "binding-surface",
-      "id": "SRF-004.02"
+      "id": "SRF-004.02",
+      "self-test": [
+        {
+          "script": "scripts/traceability.ts",
+          "test": "SRF-004.02 the retired requirement MDL-004 does not resolve in the index"
+        }
+      ]
     },
     {
       "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
@@ -3030,6 +3040,196 @@
       "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
       "capability": "binding-surface",
       "id": "SRF-009.04"
+    },
+    {
+      "capability": "binding-surface",
+      "id": "SRF-010.01",
+      "self-test": [
+        {
+          "script": "scripts/check-spec-ids.ts",
+          "test": "SRF-010.01 a binding ledger with the store prefix PRS fails"
+        }
+      ]
+    },
+    {
+      "capability": "binding-surface",
+      "id": "SRF-010.02",
+      "self-test": [
+        {
+          "script": "scripts/check-spec-ids.ts",
+          "test": "SRF-010.02 the binding prefix PYB, which the store does not hold, passes"
+        }
+      ]
+    },
+    {
+      "capability": "binding-surface",
+      "id": "SRF-011.01",
+      "self-test": [
+        {
+          "script": "scripts/build-archive.ts",
+          "test": "SRF-011.01 the archive holds each file of templates/binding/"
+        }
+      ]
+    },
+    {
+      "capability": "binding-surface",
+      "id": "SRF-011.02",
+      "self-test": [
+        {
+          "script": "scripts/templates.ts",
+          "test": "SRF-011.02 a changed bundle fails the check"
+        }
+      ]
+    },
+    {
+      "capability": "binding-surface",
+      "id": "SRF-011.03",
+      "self-test": [
+        {
+          "script": "scripts/templates.ts",
+          "test": "SRF-011.03 the bundle runs with no node_modules and passes a valid binding"
+        }
+      ]
+    },
+    {
+      "capability": "binding-surface",
+      "id": "SRF-011.04",
+      "self-test": [
+        {
+          "script": "scripts/templates.ts",
+          "test": "SRF-011.04 the hook fails for an archive with another hash, and runs no checker"
+        }
+      ]
+    },
+    {
+      "capability": "binding-surface",
+      "id": "SRF-011.05",
+      "self-test": [
+        {
+          "script": "scripts/templates.ts",
+          "test": "SRF-011.05 a guide that cites an unknown store identifier fails and names it"
+        }
+      ]
+    },
+    {
+      "capability": "binding-surface",
+      "id": "SRF-012.01",
+      "self-test": [
+        {
+          "script": "scripts/check-spec-ids.ts",
+          "test": "SRF-012.01 the binding checker fails and names the store prefix PRS"
+        }
+      ]
+    },
+    {
+      "capability": "binding-surface",
+      "id": "SRF-012.02",
+      "self-test": [
+        {
+          "script": "scripts/check-spec-ids.ts",
+          "test": "SRF-012.02 citations of the store identifiers PRS-001 and PRS-001.01 resolve"
+        }
+      ]
+    },
+    {
+      "capability": "binding-surface",
+      "id": "SRF-012.03",
+      "self-test": [
+        {
+          "script": "scripts/check-spec-ids.ts",
+          "test": "SRF-012.03 a citation of the unknown store identifier PRS-999 fails"
+        }
+      ]
+    },
+    {
+      "capability": "binding-surface",
+      "id": "SRF-012.04",
+      "self-test": [
+        {
+          "script": "scripts/check-spec-ids.ts",
+          "test": "SRF-012.04 a binding heading at or above next of its ledger fails"
+        }
+      ]
+    },
+    {
+      "capability": "binding-surface",
+      "id": "SRF-013.01",
+      "self-test": [
+        {
+          "script": "scripts/traceability.ts",
+          "test": "SRF-013.01 an entry with both kinds of identifier fails the JSON Schema"
+        }
+      ]
+    },
+    {
+      "capability": "binding-surface",
+      "id": "SRF-013.02",
+      "self-test": [
+        {
+          "script": "scripts/traceability.ts",
+          "test": "SRF-013.02 the retired contract identifier MDL-004 fails"
+        }
+      ]
+    },
+    {
+      "capability": "binding-surface",
+      "id": "SRF-013.03",
+      "self-test": [
+        {
+          "script": "scripts/traceability.ts",
+          "test": "SRF-013.03 the binding-local identifier PYB-009 with no heading fails"
+        }
+      ]
+    },
+    {
+      "capability": "binding-surface",
+      "id": "SRF-013.04",
+      "self-test": [
+        {
+          "script": "scripts/traceability.ts",
+          "test": "SRF-013.04 an operation name in two entries fails"
+        }
+      ]
+    },
+    {
+      "capability": "binding-surface",
+      "id": "SRF-013.05",
+      "self-test": [
+        {
+          "script": "scripts/traceability.ts",
+          "test": "SRF-013.05 a record with PRS-001 and the live binding-local PYB-001 passes"
+        }
+      ]
+    },
+    {
+      "capability": "binding-surface",
+      "id": "SRF-014.01",
+      "self-test": [
+        {
+          "script": "scripts/templates.ts",
+          "test": "SRF-014.01 a changed store rule fails the check until the template follows"
+        }
+      ]
+    },
+    {
+      "capability": "binding-surface",
+      "id": "SRF-014.02",
+      "self-test": [
+        {
+          "script": "scripts/templates.ts",
+          "test": "SRF-014.02 a store config without the find text of an edit fails and names the text"
+        }
+      ]
+    },
+    {
+      "capability": "binding-surface",
+      "id": "SRF-014.03",
+      "self-test": [
+        {
+          "script": "scripts/templates.ts",
+          "test": "SRF-014.03 the template names the binding checker for each store command"
+        }
+      ]
     },
     {
       "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
