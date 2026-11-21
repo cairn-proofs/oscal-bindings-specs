@@ -71,6 +71,8 @@ rules:
     - >-
       Place new requirements to minimize inter-spec dependencies when practical and appropriate.
     - >-
+      Requirements MUST be 500 chars or less.
+    - >-
       A prefix in `openspec/spec-ids.yaml` is never a prefix in the ledger `openspec/spec-ids.yaml` of the pinned
       spec artifact of the store (SRF-010). The binding checker fails for such a prefix.
     - >-

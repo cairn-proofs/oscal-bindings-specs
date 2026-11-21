@@ -63,6 +63,8 @@ rules:
       post-archive step.
     - >-
       Place new requirements to minimize inter-spec dependencies when practical and appropriate.
+    - >-
+      Requirements MUST be 500 chars or less.
 
 # Per-operation guidance (optional)
 operations:
