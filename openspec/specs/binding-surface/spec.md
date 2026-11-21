@@ -83,8 +83,11 @@ A binding SHALL keep one traceability record. The record SHALL hold one entry fo
 operation name occurs in one entry only. The entry of a type covers the members of the type. Each entry holds one of
 these:
 
-1. The identifiers of the contract requirements that define the operation.
-2. The identifier of the binding-local requirement that defines the operation.
+1. The identifiers of the contract requirements that define it.
+2. The identifier of the binding-local requirement that defines it.
+
+A generated model type and its members have no entry. The model-derivation capability and the naming manifest govern
+them.
 
 #### Scenario: SRF-003.01 Contract operation is recorded
 
@@ -105,6 +108,11 @@ these:
 
 - **WHEN** a binding exports a public operation that has no entry in the record
 - **THEN** the binding does not conform
+
+#### Scenario: SRF-003.05 Generated model type
+
+- **WHEN** a binding exports the generated type of the Catalog document
+- **THEN** the record has no entry for the type, and the binding conforms
 
 ### Requirement: SRF-005 A binding-local operation that the contract defines conforms or is deprecated
 

@@ -3412,6 +3412,11 @@
       "id": "SRF-003.04"
     },
     {
+      "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
+      "capability": "binding-surface",
+      "id": "SRF-003.05"
+    },
+    {
       "capability": "binding-surface",
       "id": "SRF-004.01",
       "self-test": [
