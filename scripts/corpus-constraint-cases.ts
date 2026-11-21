@@ -612,15 +612,25 @@ function slugs(entries: Entry[], indexes: number[]): Map<number, string> {
   return out;
 }
 
-const caseText = (slug: string, e: Entry, ids: string[]) =>
+/** The expected failures of a case: the `id` and the location of each failure (CNS-020), sorted by `id`, then by location. */
+export const expectedOf = (failures: EntryFailure[]): Array<{ id: string; location: string }> =>
+  failures
+    .map((f) => ({ id: idOf(f), location: f.location }))
+    .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : a.location < b.location ? -1 : a.location > b.location ? 1 : 0));
+
+const caseText = (slug: string, e: Entry, failures: EntryFailure[]) =>
   [
     "    {",
     `      "id": "parse/constraint/${slug}",`,
     '      "operation": "parse",',
     `      "input": "${OUTPUT}/${slug}.json",`,
     '      "expected-category": "parse-error",',
-    `      "expected-constraints": [${ids.map((x) => JSON.stringify(x)).join(", ")}],`,
-    `      "requirements": ["PRS-015.01", "${SCENARIO[e.kind]}"]`,
+    '      "expected-constraints": [',
+    expectedOf(failures)
+      .map((x) => `        { "id": ${JSON.stringify(x.id)}, "location": ${JSON.stringify(x.location)} }`)
+      .join(",\n"),
+    "      ],",
+    `      "requirements": ["PRS-015.01", "PRS-015.04", "${SCENARIO[e.kind]}"]`,
     "    }",
   ].join("\n");
 
@@ -636,7 +646,7 @@ function write(tool: Tool, results: Map<number, Outcome>): void {
     const out = results.get(i)!;
     const slug = names.get(i)!;
     fs.writeFileSync(`${dir}/${slug}.json`, `${JSON.stringify(out.doc, null, 2)}\n`);
-    cases.push(caseText(slug, tool.entries[i], out.failures.map(idOf).sort()));
+    cases.push(caseText(slug, tool.entries[i], out.failures));
   }
   const text = fs.readFileSync(CASES_FILE, "utf8");
   const end = "\n  ]\n}\n";
@@ -670,6 +680,22 @@ function selfTest(): number {
     ["an expect entry gets an input that its test rejects", () => idsOf(outcome("oscal-parameter-depends-on-deprecated")).includes("oscal-parameter-depends-on-deprecated")],
     ["an entry that no document can fail gets no input", () => typeof outcome("oscal-unique-resource-base64-filename") === "string"],
     ["the failures that the construction adds are removed: an is-unique input fails that entry alone", () => idsOf(outcome("oscal-unique-resource-rlink-href")) === "oscal-unique-resource-rlink-href"],
+    ["PRS-015.04: the text of a case lists the id and the location of each failure, and cites PRS-015.04", () => {
+      const out = outcome("oscal-control-prop-name");
+      if (typeof out === "string") return out;
+      const text = caseText("t", tool.entries[index("oscal-control-prop-name")], out.failures);
+      const parsed = JSON.parse(`[${text}]`)[0] as { "expected-constraints": unknown; requirements: string[] };
+      return (JSON.stringify(parsed["expected-constraints"]) === JSON.stringify(expectedOf(out.failures)) && parsed.requirements.includes("PRS-015.04") && out.failures.every((f) => f.location.startsWith("$['catalog']"))) || text;
+    }],
+    ["the expected failures are sorted by id, then by location, and a repeated pair stays", () => {
+      const f = (id: string, location: string) => ({ entry: 0, id, location });
+      return JSON.stringify(expectedOf([f("b", "$[1]"), f("a", "$[2]"), f("a", "$[1]"), f("a", "$[1]")])) === JSON.stringify([
+        { id: "a", location: "$[1]" },
+        { id: "a", location: "$[1]" },
+        { id: "a", location: "$[2]" },
+        { id: "b", location: "$[1]" },
+      ]);
+    }],
     ["entries with the same id get different names", () => {
       const names = slugs(tool.entries, tool.entries.flatMap((e, i) => (e.reportable ? [i] : [])));
       return new Set(names.values()).size === names.size && names.get(index("oscal-metadata-prop-name-values", "allowed-values"))!.startsWith("oscal-metadata-prop-name-values-");

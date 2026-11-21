@@ -1,0 +1,45 @@
+{
+  "catalog": {
+    "uuid": "22222222-2222-4222-8222-222222222222",
+    "metadata": {
+      "title": "A control inside an earlier control",
+      "last-modified": "2024-01-02T03:04:05Z",
+      "version": "1.0",
+      "oscal-version": "1.2.3"
+    },
+    "controls": [
+      {
+        "id": "ac-1",
+        "title": "Policy and Procedures",
+        "parts": [
+          {
+            "id": "ac-1_smt",
+            "name": "statement"
+          }
+        ],
+        "controls": [
+          {
+            "id": "ac-2",
+            "title": "Account Management Inside Policy",
+            "parts": [
+              {
+                "id": "inner_smt",
+                "name": "statement"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "ac-2",
+        "title": "Account Management",
+        "parts": [
+          {
+            "id": "ac-2_smt",
+            "name": "statement"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -66,10 +66,24 @@ Each case has these fields:
       ([PRS-013](../../openspec/specs/document-parsing/spec.md#requirement-prs-013-the-root-key-selects-the-document-type-of-the-parse-failures)).
       An input with two or more root keys has no `expected-max-failures`, because PRS-013 sets no rule for its
       failures.
-   6. `expected-constraints`: the `id` of each constraint failure that the input gives, in any order,
-      once for each failure. An `id` occurs more than once when the input gives more than one
-      failure of the entries with that `id`. The field applies to a `parse`, `validate-element`, or
-      builder case ([CNS-020](../../openspec/specs/constraint-validation/spec.md#requirement-cns-020-the-corpus-has-a-failing-case-for-each-reportable-entry)).
+   6. `expected-constraints`: a list that holds one object for each constraint failure that the input gives. Each
+      object has two strings: `id` is the `id` of the manifest entry that fails, and `location` is the location of the
+      failure as the Normalized Path of [CNS-024](../../openspec/specs/constraint-validation/spec.md#requirement-cns-024-the-location-of-a-node-says-when-two-selections-are-the-same-node). The list is in any order. Two failures with the same `id` and
+      the same location are two objects, because one location can have more than one failure. The runner compares the
+      list of pairs with the failures of the binding as multisets. A failure at another location than the list gives
+      is a different failure. The field applies to a `parse`, `validate-element`, or builder case
+      ([CNS-020](../../openspec/specs/constraint-validation/spec.md#requirement-cns-020-the-corpus-has-a-failing-case-for-each-reportable-entry)).
+      The location of a failure follows these rules:
+      1. For a `parse` case, the location is the Normalized Path in the document, for example
+         `$['catalog']['controls'][0]['props'][0]['name']`.
+      2. For a `validate-element` case with an element that is one item, the location is the Normalized Path in an
+         array that holds only the element, so it starts with `$[0]`, for example `$[0]['value']`.
+      3. For an element that is a list of items, the location of a failure in item k is `$[0][k]`, followed by the
+         part of its location after `$[0]` in an array that holds only the item.
+      4. For an `is-unique` or `index` entry, the nodes with the same key are in the order of their locations
+         ([CNS-026](../../openspec/specs/constraint-validation/spec.md#requirement-cns-026-locations-are-in-a-fixed-order)).
+         The first node gives no failure. Each other node gives one failure, at its location.
+
       The input conforms to the JSON Schema. These cases have the field:
       1. A `parse` case whose input conforms to the schema.
       2. A `validate-element` case with `expected-valid` `false` whose input conforms to the schema.
@@ -127,8 +141,8 @@ what each form means for them.
    canonical form is defined in [Canonical JSON for conformance comparison](../../docs/canonical-json.md).
 2. `parse`: parse the input with the generic parser. The parser must report `expected-category`. The parse error must
    carry no more structured entries than `expected-max-failures`. The non-raising validity check must return false for
-   the same input. With `expected-constraints`, the `id` values of the constraint failures in the parse error must
-   equal the list, with each repeat. The exception is a parse error that identifies a limit of
+   the same input. With `expected-constraints`, the pairs of `id` and location of the constraint failures in the parse error
+   must equal the list, with each repeat. The exception is a parse error that identifies a limit of
    [PRS-010](../../openspec/specs/document-parsing/spec.md#requirement-prs-010-a-binding-can-limit-the-resources-that-a-parse-uses).
 3. `parse-typed`: parse the input with the typed parser of `document-type`. The parser must report
    `expected-category`.
@@ -143,7 +157,7 @@ what each form means for them.
    match a datetime. The binding chooses how the facade returns an empty bound, for example as a null value or an
    absent optional value. A string with no characters is not an empty bound.
 6. `validate-element`: validate the input against `element-type`. The result must be `expected-valid`, or the
-   operation must report `expected-category`. With `expected-constraints`, the `id` values of the
+   operation must report `expected-category`. With `expected-constraints`, the pairs of `id` and location of the
    constraint failures in the result must equal the list, with each repeat, unless the result
    identifies a limit of
    [ELV-004](../../openspec/specs/element-validation/spec.md#requirement-elv-004-a-binding-can-limit-the-resources-that-element-validation-uses).
@@ -195,7 +209,7 @@ what each form means for them.
     facade must report the category and name the path, as `parse-file` does.
 
 For a builder case with `expected-constraints`, the runner checks only that the builder reports
-the validation error. It does not compare the `id` values of the failures.
+the validation error. It does not compare the `id` values or the locations of the failures.
 
 For each case with `expected-category`, the runner also tests the category tree of
 [ERR-009](../../openspec/specs/error-model/spec.md#requirement-err-009-error-categories-form-a-tree). A test for a
@@ -223,7 +237,8 @@ confirms that each valid document is valid, that each invalid document fails in 
 file is the canonical form of its input. It also runs the reference evaluator of the constraint manifest, as
 [CNS-020](../../openspec/specs/constraint-validation/spec.md#requirement-cns-020-the-corpus-has-a-failing-case-for-each-reportable-entry) states:
 
-1. For each input with `expected-constraints`, the evaluator gives the failures that the field lists.
+1. For each input with `expected-constraints`, the evaluator gives the failures that the field lists, each with its
+   `id` and its location.
 2. Each reportable entry of `manifest/1.2.3/constraints.json` has a case whose input fails it.
 3. No input that a case expects to be valid, and no element that a builder case expects, fails an
    entry.

@@ -456,7 +456,10 @@
       "operation": "parse",
       "input": "documents/invalid/nested-control-part-name.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-control-part-name", "oscal-control-statement-part-name"],
+      "expected-constraints": [
+        { "id": "oscal-control-part-name", "location": "$['catalog']['groups'][0]['controls'][0]['controls'][0]['parts'][1]['name']" },
+        { "id": "oscal-control-statement-part-name", "location": "$['catalog']['groups'][0]['controls'][0]['controls'][0]['parts'][1]['name']" }
+      ],
       "requirements": ["PRS-015.01", "CNS-017.03", "CNS-024.01"],
       "notes": "Control ac-2.1 is in control ac-2 and has a part with the name bogus. The target query of oscal-control-statement-part-name selects that part from each ancestor control, and the entry still gives one failure. Every control has a statement part, so the entry oscal-catalog-control-require-statement-when-appropriate does not fail. The input is adapted and trimmed from AC-2 and AC-2(1) of the SP 800-53 rev5 catalog in usnistgov/oscal-content at commit 78650f02ad9321bb7b817846f8fbd4f2bcd620de."
     },
@@ -465,7 +468,10 @@
       "operation": "parse",
       "input": "documents/invalid/nested-control-part-name-three-levels.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-control-part-name", "oscal-control-statement-part-name"],
+      "expected-constraints": [
+        { "id": "oscal-control-part-name", "location": "$['catalog']['groups'][0]['controls'][0]['controls'][0]['controls'][0]['parts'][1]['name']" },
+        { "id": "oscal-control-statement-part-name", "location": "$['catalog']['groups'][0]['controls'][0]['controls'][0]['controls'][0]['parts'][1]['name']" }
+      ],
       "requirements": ["PRS-015.01", "CNS-017.03", "CNS-024.01"],
       "notes": "Control ac-2.1.1 is in control ac-2.1, which is in control ac-2, and has a part with the name bogus. The target query of oscal-control-statement-part-name selects that part from each of the three ancestor controls, and the entry still gives one failure. Every control has a statement part, so the entry oscal-catalog-control-require-statement-when-appropriate does not fail. The input is adapted and trimmed from AC-2 and AC-2(1) of the SP 800-53 rev5 catalog in usnistgov/oscal-content at commit 78650f02ad9321bb7b817846f8fbd4f2bcd620de. SP 800-53 has no third level, so control ac-2.1.1 is synthetic."
     },
@@ -474,7 +480,9 @@
       "operation": "parse",
       "input": "documents/invalid/allowed-value-case.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-activity-type-values"],
+      "expected-constraints": [
+        { "id": "oscal-activity-type-values", "location": "$['assessment-plan']['local-definitions']['activities'][0]['props'][0]['value']" }
+      ],
       "requirements": ["PRS-015.01", "CNS-025.01", "ERR-004.05", "PRS-015.03", "CNS-017.01"],
       "notes": "The entry oscal-activity-type-values is closed and lists the values INTERVIEW, EXAMINE and TEST. The method prop of the activity has the value test. This value differs from the listed value TEST only in case, and the entry gives one failure. The input is a copy of documents/invalid/constraints/oscal-activity-type-values.json with the value test in place of zz-invalid."
     },
@@ -663,13 +671,27 @@
       "notes": "A property name is a token, and a token has no spaces."
     },
     {
+      "id": "element/mapping-collection-mappings-list",
+      "operation": "validate-element",
+      "input": "elements/mapping-collection-mappings-list.json",
+      "element-type": "mapping-collection-mappings",
+      "expected-valid": false,
+      "expected-constraints": [
+        { "id": "oscal-metadata-prop-name-values", "location": "$[0][1]['props'][0]['name']" }
+      ],
+      "requirements": ["ELV-005.04", "CNS-023.02"],
+      "notes": "The element is a list of two mappings. The second mapping has a property with the name bogus. The location of the failure is the second item of the list, `$[0][1]`, followed by the rest of the location in that item."
+    },
+    {
       "id": "element/hash-wrong-length",
       "operation": "validate-element",
       "input": "elements/hash-wrong-length.json",
       "element-type": "hash",
       "expected-valid": false,
-      "expected-constraints": ["oscal-check-hash-length-SHA2-3-256"],
-      "requirements": ["ELV-005.01", "CNS-018.02"],
+      "expected-constraints": [
+        { "id": "oscal-check-hash-length-SHA2-3-256", "location": "$[0]['value']" }
+      ],
+      "requirements": ["ELV-005.01", "ELV-005.03", "CNS-018.02"],
       "notes": "The value has 63 hexadecimal digits, and SHA-256 needs 64."
     },
     {
@@ -804,7 +826,9 @@
       "operation": "build-hash",
       "arguments": {"value": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a0"},
       "expected-category": "builder-error",
-      "expected-constraints": ["oscal-check-hash-length-SHA2-3-256"],
+      "expected-constraints": [
+        { "id": "oscal-check-hash-length-SHA2-3-256", "location": "$[0]['value']" }
+      ],
       "requirements": ["BMB-005.01"],
       "notes": "The value has 63 hexadecimal digits, and the default algorithm SHA-256 needs 64."
     },
@@ -813,7 +837,9 @@
       "operation": "build-resource",
       "arguments": {"rlinks": [{"href": "https://example.com/a"}, {"href": "https://example.com/a"}]},
       "expected-category": "builder-error",
-      "expected-constraints": ["oscal-unique-resource-rlink-href"],
+      "expected-constraints": [
+        { "id": "oscal-unique-resource-rlink-href", "location": "$[0]['rlinks'][1]" }
+      ],
       "requirements": ["BMB-005.02"]
     },
     {
@@ -1148,1868 +1174,2474 @@
       "notes": "The start location takes a number, and the JSON number grammar has no plus sign. Reader fault: `grammar`."
     },
     {
+      "id": "parse/index-nested-control-id",
+      "operation": "parse",
+      "input": "documents/invalid/index-nested-control-id.json",
+      "expected-category": "parse-error",
+      "expected-constraints": [
+        { "id": "oscal-catalog-controls", "location": "$['catalog']['controls'][1]" },
+        { "id": "oscal-catalog-groups-controls-parts", "location": "$['catalog']['controls'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "CNS-014.04"],
+      "notes": "The second control has the id ac-2, and so has a control inside the first control. A selection in the order of the query gives the second control before the inner control, and the failure is at the inner control. The order of the locations puts the inner control first, so the failure is at the second control."
+    },
+    {
+      "id": "parse/index-parts-in-two-members",
+      "operation": "parse",
+      "input": "documents/invalid/index-parts-in-two-members.json",
+      "expected-category": "parse-error",
+      "expected-constraints": [
+        { "id": "oscal-catalog-groups-controls-parts", "location": "$['catalog']['groups'][0]['parts'][0]" },
+        { "id": "oscal-catalog-parts", "location": "$['catalog']['groups'][0]['parts'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "CNS-014.03"],
+      "notes": "The catalog gives the member groups before the member controls. A part in the first group and a part in the first control have the id ac_smt. By code point, controls comes before groups, so the failure is at the part in the group."
+    },
+    {
+      "id": "parse/index-control-ids-2-and-10",
+      "operation": "parse",
+      "input": "documents/invalid/index-control-ids-2-and-10.json",
+      "expected-category": "parse-error",
+      "expected-constraints": [
+        { "id": "oscal-catalog-controls", "location": "$['catalog']['controls'][10]" },
+        { "id": "oscal-catalog-groups-controls-parts", "location": "$['catalog']['controls'][10]" }
+      ],
+      "requirements": ["PRS-015.01", "CNS-026.01"],
+      "notes": "The controls at the indexes 2 and 10 have the id ac-3. The index 2 comes before the index 10, so the failure is at the control at the index 10. An order of the text of the locations puts the index 10 first."
+    },
+    {
       "id": "parse/constraint/oscal-assessment-objective-types",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-assessment-objective-types.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-assessment-method-cardinality", "oscal-assessment-objective-types", "oscal-assessment-objects-cardinality"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-assessment-method-cardinality", "location": "$['assessment-plan']['local-definitions']['objectives-and-methods'][0]" },
+        { "id": "oscal-assessment-objective-types", "location": "$['assessment-plan']['local-definitions']['objectives-and-methods'][0]['parts'][0]['name']" },
+        { "id": "oscal-assessment-objects-cardinality", "location": "$['assessment-plan']['local-definitions']['objectives-and-methods'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-assessment-objective-cardinality",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-assessment-objective-cardinality.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-assessment-method-cardinality", "oscal-assessment-objective-cardinality", "oscal-assessment-objects-cardinality"],
-      "requirements": ["PRS-015.01", "CNS-011.01"]
+      "expected-constraints": [
+        { "id": "oscal-assessment-method-cardinality", "location": "$['assessment-plan']['local-definitions']['objectives-and-methods'][0]" },
+        { "id": "oscal-assessment-objective-cardinality", "location": "$['assessment-plan']['local-definitions']['objectives-and-methods'][0]" },
+        { "id": "oscal-assessment-objects-cardinality", "location": "$['assessment-plan']['local-definitions']['objectives-and-methods'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-011.01"]
     },
     {
       "id": "parse/constraint/oscal-assessment-method-cardinality",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-assessment-method-cardinality.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-assessment-method-cardinality", "oscal-assessment-objects-cardinality"],
-      "requirements": ["PRS-015.01", "CNS-011.01"]
+      "expected-constraints": [
+        { "id": "oscal-assessment-method-cardinality", "location": "$['assessment-plan']['local-definitions']['objectives-and-methods'][0]" },
+        { "id": "oscal-assessment-objects-cardinality", "location": "$['assessment-plan']['local-definitions']['objectives-and-methods'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-011.01"]
     },
     {
       "id": "parse/constraint/oscal-assessment-objects-cardinality",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-assessment-objects-cardinality.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-assessment-method-cardinality", "oscal-assessment-objects-cardinality"],
-      "requirements": ["PRS-015.01", "CNS-011.01"]
+      "expected-constraints": [
+        { "id": "oscal-assessment-method-cardinality", "location": "$['assessment-plan']['local-definitions']['objectives-and-methods'][0]" },
+        { "id": "oscal-assessment-objects-cardinality", "location": "$['assessment-plan']['local-definitions']['objectives-and-methods'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-011.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-step-responsible-role",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-step-responsible-role.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-step-responsible-role"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-step-responsible-role", "location": "$['assessment-plan']['local-definitions']['activities'][0]['steps'][0]['responsible-roles'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-activity-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-activity-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-activity-type-cardinality", "oscal-activity-values", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-activity-type-cardinality", "location": "$['assessment-plan']['local-definitions']['activities'][0]" },
+        { "id": "oscal-activity-values", "location": "$['assessment-plan']['local-definitions']['activities'][0]['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['assessment-plan']['local-definitions']['activities'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-activity-type-cardinality",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-activity-type-cardinality.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-activity-type-cardinality"],
-      "requirements": ["PRS-015.01", "CNS-011.01"]
+      "expected-constraints": [
+        { "id": "oscal-activity-type-cardinality", "location": "$['assessment-plan']['local-definitions']['activities'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-011.01"]
     },
     {
       "id": "parse/constraint/oscal-activity-type-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-activity-type-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-activity-type-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-activity-type-values", "location": "$['assessment-plan']['local-definitions']['activities'][0]['props'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-unique-activity-responsible-role",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-activity-responsible-role.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-activity-responsible-role"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-activity-responsible-role", "location": "$['assessment-plan']['local-definitions']['activities'][0]['responsible-roles'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-associated-activity-responsible-role",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-associated-activity-responsible-role.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-associated-activity-responsible-role"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-associated-activity-responsible-role", "location": "$['assessment-plan']['tasks'][0]['associated-activities'][0]['responsible-roles'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-ssp-uses-component-responsible-party",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-ssp-uses-component-responsible-party.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-ssp-uses-component-responsible-party"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-ssp-uses-component-responsible-party", "location": "$['assessment-plan']['assessment-assets']['assessment-platforms'][0]['uses-components'][0]['responsible-parties'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-ssp-assessment-assets-component",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-ssp-assessment-assets-component.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-ssp-assessment-assets-component"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-ssp-assessment-assets-component", "location": "$['assessment-plan']['assessment-assets']['components'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-ssp-related-task-responsible-party",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-ssp-related-task-responsible-party.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-ssp-related-task-responsible-party"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-ssp-related-task-responsible-party", "location": "$['plan-of-action-and-milestones']['observations'][0]['origins'][0]['related-tasks'][0]['responsible-parties'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-risk-prop-name-values-entry",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-risk-prop-name-values-entry.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-metadata-prop-name-values", "oscal-risk-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-metadata-prop-name-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['risk-log']['entries'][0]['props'][0]['name']" },
+        { "id": "oscal-risk-prop-name-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['risk-log']['entries'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-risk-prop-name-values-risk",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-risk-prop-name-values-risk.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-metadata-prop-name-values", "oscal-risk-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-metadata-prop-name-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['props'][0]['name']" },
+        { "id": "oscal-risk-prop-name-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-risk-priority-datatype",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-risk-priority-datatype.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-risk-priority-datatype"],
-      "requirements": ["PRS-015.01", "CNS-010.01"]
+      "expected-constraints": [
+        { "id": "oscal-risk-priority-datatype", "location": "$['plan-of-action-and-milestones']['risks'][0]['props'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-010.01"]
     },
     {
       "id": "parse/constraint/oscal-facet-prop-name-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-prop-name-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-prop-name-values", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-prop-name-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-prop-state-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-prop-state-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-prop-state-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-prop-state-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['props'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-name-core-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-name-core-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-name-core-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-name-core-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-fedramp-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-fedramp-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-fedramp-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-fedramp-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-cve-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-cve-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-cve-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-cve-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-cvss2-name-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-cvss2-name-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-cvss2-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-cvss2-name-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-cvss2-access-vector-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-cvss2-access-vector-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-cvss2-access-vector-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-cvss2-access-vector-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-cvss2-access-complexity-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-cvss2-access-complexity-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-cvss2-access-complexity-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-cvss2-access-complexity-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-cvss2-authentication-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-cvss2-authentication-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-cvss2-authentication-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-cvss2-authentication-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-cvss2-confidentiality-impact-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-cvss2-confidentiality-impact-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-cvss2-confidentiality-impact-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-cvss2-confidentiality-impact-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-cvss2-exploitability-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-cvss2-exploitability-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-cvss2-exploitability-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-cvss2-exploitability-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-cvss2-remediation-level-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-cvss2-remediation-level-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-cvss2-remediation-level-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-cvss2-remediation-level-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-cvss2-report-confidence-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-cvss2-report-confidence-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-cvss2-report-confidence-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-cvss2-report-confidence-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-cvss2-collateral-damage-potential-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-cvss2-collateral-damage-potential-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-cvss2-collateral-damage-potential-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-cvss2-collateral-damage-potential-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-cvss2-cia-requirement-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-cvss2-cia-requirement-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-cvss2-cia-requirement-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-cvss2-cia-requirement-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-cvss3-name-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-cvss3-name-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-cvss3-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-cvss3-name-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-cvss3-access-vector-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-cvss3-access-vector-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-cvss3-access-vector-values", "oscal-facet-cvss3-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-cvss3-access-vector-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" },
+        { "id": "oscal-facet-cvss3-name-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-cvss3-access-complexity-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-cvss3-access-complexity-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-cvss3-access-complexity-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-cvss3-access-complexity-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-cvss3-cia-impact-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-cvss3-cia-impact-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-cvss3-cia-impact-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-cvss3-cia-impact-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-cvss3-user-interaction",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-cvss3-user-interaction.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-cvss3-user-interaction"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-cvss3-user-interaction", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-cvss3-scope",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-cvss3-scope.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-cvss3-scope"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-cvss3-scope", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-cvss3-exploit-code-maturity-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-cvss3-exploit-code-maturity-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-cvss3-exploit-code-maturity-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-cvss3-exploit-code-maturity-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-cvss3-remediation-level",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-cvss3-remediation-level.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-cvss3-remediation-level"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-cvss3-remediation-level", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-cvss3-report-confidence-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-cvss3-report-confidence-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-cvss3-report-confidence-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-cvss3-report-confidence-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-cvss3-cia-requirement-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-cvss3-cia-requirement-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-cvss3-cia-requirement-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-cvss3-cia-requirement-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-cvss3-modified-attack-vector-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-cvss3-modified-attack-vector-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-cvss3-modified-attack-vector-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-cvss3-modified-attack-vector-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-cvss3-modified-attack-complexity-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-cvss3-modified-attack-complexity-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-cvss3-modified-attack-complexity-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-cvss3-modified-attack-complexity-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-cvss3-modified-cia-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-cvss3-modified-cia-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-cvss3-modified-cia-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-cvss3-modified-cia-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-cvss3-modified-user-interaction-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-cvss3-modified-user-interaction-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-cvss3-modified-user-interaction-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-cvss3-modified-user-interaction-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-facet-cvss3-modified-scope-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-facet-cvss3-modified-scope-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-facet-cvss3-modified-scope-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-facet-cvss3-modified-scope-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-cvss-v4.0-vectors",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-cvss-v4.0-vectors.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-cvss-v4.0-vectors"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-cvss-v4.0-vectors", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-cvss-v4.0-av-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-cvss-v4.0-av-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-cvss-v4.0-av-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-cvss-v4.0-av-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-cvss-v4.0-ac-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-cvss-v4.0-ac-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-cvss-v4.0-ac-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-cvss-v4.0-ac-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-cvss-v4.0-at-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-cvss-v4.0-at-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-cvss-v4.0-at-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-cvss-v4.0-at-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-cvss-v4.0-pr-cia-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-cvss-v4.0-pr-cia-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-cvss-v4.0-pr-cia-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-cvss-v4.0-pr-cia-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-cvss-v4.0-ui-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-cvss-v4.0-ui-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-cvss-v4.0-ui-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-cvss-v4.0-ui-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-cvss-v4.0-s-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-cvss-v4.0-s-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-cvss-v4.0-s-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-cvss-v4.0-s-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-cvss-v4.0-au-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-cvss-v4.0-au-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-cvss-v4.0-au-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-cvss-v4.0-au-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-cvss-v4.0-r-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-cvss-v4.0-r-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-cvss-v4.0-r-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-cvss-v4.0-r-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-cvss-v4.0-v-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-cvss-v4.0-v-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-cvss-v4.0-v-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-cvss-v4.0-v-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-cvss-v4.0-re-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-cvss-v4.0-re-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-cvss-v4.0-re-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-cvss-v4.0-re-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-cvss-v4.0-u-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-cvss-v4.0-u-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-cvss-v4.0-u-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-cvss-v4.0-u-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-cvss-v4.0-mav-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-cvss-v4.0-mav-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-cvss-v4.0-mav-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-cvss-v4.0-mav-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-cvss-v4.0-mac-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-cvss-v4.0-mac-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-cvss-v4.0-mac-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-cvss-v4.0-mac-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-cvss-v4.0-mat-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-cvss-v4.0-mat-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-cvss-v4.0-mat-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-cvss-v4.0-mat-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-cvss-v4.0-mpr-mvs-cia-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-cvss-v4.0-mpr-mvs-cia-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-cvss-v4.0-mpr-mvs-cia-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-cvss-v4.0-mpr-mvs-cia-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-cvss-v4.0-mui-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-cvss-v4.0-mui-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-cvss-v4.0-mui-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-cvss-v4.0-mui-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-cvss-v4.0-msc-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-cvss-v4.0-msc-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-cvss-v4.0-msc-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-cvss-v4.0-msc-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-cvss-v4.0-msi-msa-cia-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-cvss-v4.0-msi-msa-cia-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-cvss-v4.0-msi-msa-cia-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-cvss-v4.0-msi-msa-cia-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-cvss-v4.0-env-cia-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-cvss-v4.0-env-cia-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-cvss-v4.0-env-cia-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-cvss-v4.0-env-cia-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-cvss-v4.0-e-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-cvss-v4.0-e-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-cvss-v4.0-e-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-cvss-v4.0-e-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['characterizations'][0]['facets'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-response-prop-name",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-response-prop-name.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-metadata-prop-name-values", "oscal-response-prop-name"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-metadata-prop-name-values", "location": "$['plan-of-action-and-milestones']['risks'][0]['remediations'][0]['props'][0]['name']" },
+        { "id": "oscal-response-prop-name", "location": "$['plan-of-action-and-milestones']['risks'][0]['remediations'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-response-prop-type-value",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-response-prop-type-value.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-response-prop-type-value"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-response-prop-type-value", "location": "$['plan-of-action-and-milestones']['risks'][0]['remediations'][0]['props'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-assesment-part-objective-name",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-assesment-part-objective-name.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-assesment-part-objective-name", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-assesment-part-objective-name", "location": "$['assessment-plan']['terms-and-conditions']['parts'][0]['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['assessment-plan']['terms-and-conditions']['parts'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-assesment-part-objective-method-value",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-assesment-part-objective-method-value.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-assesment-part-objective-method-value"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-assesment-part-objective-method-value", "location": "$['assessment-plan']['terms-and-conditions']['parts'][0]['props'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-unique-ap-local-definitions-component",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-ap-local-definitions-component.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-ap-local-definitions-component"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-ap-local-definitions-component", "location": "$['assessment-plan']['local-definitions']['components'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-ap-local-definitions-user",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-ap-local-definitions-user.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-ap-local-definitions-user"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-ap-local-definitions-user", "location": "$['assessment-plan']['local-definitions']['users'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-terms-and-conditions-part-name",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-terms-and-conditions-part-name.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-terms-and-conditions-part-name"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-terms-and-conditions-part-name", "location": "$['assessment-plan']['terms-and-conditions']['parts'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-unique-ar-local-definitions-component",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-ar-local-definitions-component.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-ar-local-definitions-component"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-ar-local-definitions-component", "location": "$['assessment-results']['results'][0]['local-definitions']['components'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-ar-local-definitions-user",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-ar-local-definitions-user.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-ar-local-definitions-user"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-ar-local-definitions-user", "location": "$['assessment-results']['results'][0]['local-definitions']['users'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-ar-attestation-responsible-party",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-ar-attestation-responsible-party.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-ar-attestation-responsible-party"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-ar-attestation-responsible-party", "location": "$['assessment-results']['results'][0]['attestations'][0]['responsible-parties'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-catalog-metadata-prop-name",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-catalog-metadata-prop-name.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-catalog-metadata-prop-name", "oscal-metadata-prop-name-values", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-catalog-metadata-prop-name", "location": "$['catalog']['metadata']['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['catalog']['metadata']['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['catalog']['metadata']['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-catalog-parts",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-catalog-parts.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-catalog-groups-controls-parts", "oscal-catalog-parts"],
-      "requirements": ["PRS-015.01", "CNS-014.01"]
+      "expected-constraints": [
+        { "id": "oscal-catalog-groups-controls-parts", "location": "$['catalog']['controls'][0]['parts'][1]" },
+        { "id": "oscal-catalog-parts", "location": "$['catalog']['controls'][0]['parts'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-014.01"]
     },
     {
       "id": "parse/constraint/oscal-catalog-props",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-catalog-props.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-catalog-props", "oscal-index-metadata-property-uuid"],
-      "requirements": ["PRS-015.01", "CNS-014.01"]
+      "expected-constraints": [
+        { "id": "oscal-catalog-props", "location": "$['catalog']['metadata']['props'][1]" },
+        { "id": "oscal-index-metadata-property-uuid", "location": "$['catalog']['metadata']['props'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-014.01"]
     },
     {
       "id": "parse/constraint/oscal-catalog-groups-controls-parts",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-catalog-groups-controls-parts.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-catalog-controls", "oscal-catalog-groups-controls-parts"],
-      "requirements": ["PRS-015.01", "CNS-014.01"]
+      "expected-constraints": [
+        { "id": "oscal-catalog-controls", "location": "$['catalog']['controls'][1]" },
+        { "id": "oscal-catalog-groups-controls-parts", "location": "$['catalog']['controls'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-014.01"]
     },
     {
       "id": "parse/constraint/oscal-catalog-controls",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-catalog-controls.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-catalog-controls", "oscal-catalog-groups-controls-parts"],
-      "requirements": ["PRS-015.01", "CNS-014.01"]
+      "expected-constraints": [
+        { "id": "oscal-catalog-controls", "location": "$['catalog']['controls'][1]" },
+        { "id": "oscal-catalog-groups-controls-parts", "location": "$['catalog']['controls'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-014.01"]
     },
     {
       "id": "parse/constraint/oscal-catalog-params",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-catalog-params.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-catalog-params"],
-      "requirements": ["PRS-015.01", "CNS-014.01"]
+      "expected-constraints": [
+        { "id": "oscal-catalog-params", "location": "$['catalog']['params'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-014.01"]
     },
     {
       "id": "parse/constraint/oscal-catalog-groups",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-catalog-groups.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-catalog-groups", "oscal-catalog-groups-controls-parts"],
-      "requirements": ["PRS-015.01", "CNS-014.01"]
+      "expected-constraints": [
+        { "id": "oscal-catalog-groups", "location": "$['catalog']['groups'][1]" },
+        { "id": "oscal-catalog-groups-controls-parts", "location": "$['catalog']['groups'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-014.01"]
     },
     {
       "id": "parse/constraint/oscal-group-prop-name",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-group-prop-name.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-group-prop-name", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-group-prop-name", "location": "$['catalog']['groups'][0]['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['catalog']['groups'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-group-part-name",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-group-part-name.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-group-part-name"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-group-part-name", "location": "$['catalog']['groups'][0]['parts'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-catalog-control-require-statement-when-appropriate",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-catalog-control-require-statement-when-appropriate.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-catalog-control-require-statement-when-appropriate"],
-      "requirements": ["PRS-015.01", "CNS-016.01"]
+      "expected-constraints": [
+        { "id": "oscal-catalog-control-require-statement-when-appropriate", "location": "$['catalog']['controls'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-016.01"]
     },
     {
       "id": "parse/constraint/oscal-control-prop-name",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-control-prop-name.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-control-prop-name", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-control-prop-name", "location": "$['catalog']['controls'][0]['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['catalog']['controls'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-control-part-name",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-control-part-name.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-catalog-control-require-statement-when-appropriate", "oscal-control-part-name", "oscal-control-statement-part-name"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-catalog-control-require-statement-when-appropriate", "location": "$['catalog']['controls'][0]" },
+        { "id": "oscal-control-part-name", "location": "$['catalog']['controls'][0]['parts'][0]['name']" },
+        { "id": "oscal-control-statement-part-name", "location": "$['catalog']['controls'][0]['parts'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-control-statement-part-subpart-name",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-control-statement-part-subpart-name.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-control-statement-part-name", "oscal-control-statement-part-subpart-name"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-control-statement-part-name", "location": "$['catalog']['controls'][0]['parts'][0]['parts'][0]['name']" },
+        { "id": "oscal-control-statement-part-subpart-name", "location": "$['catalog']['controls'][0]['parts'][0]['parts'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-control-statement-part-name",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-control-statement-part-name.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-catalog-control-require-statement-when-appropriate", "oscal-control-part-name", "oscal-control-statement-part-name"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-catalog-control-require-statement-when-appropriate", "location": "$['catalog']['controls'][0]" },
+        { "id": "oscal-control-part-name", "location": "$['catalog']['controls'][0]['parts'][0]['name']" },
+        { "id": "oscal-control-statement-part-name", "location": "$['catalog']['controls'][0]['parts'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-control-objective-part-subpart-name",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-control-objective-part-subpart-name.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-catalog-control-require-statement-when-appropriate", "oscal-control-objective-part-subpart-name", "oscal-control-statement-part-name"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-catalog-control-require-statement-when-appropriate", "location": "$['catalog']['controls'][0]" },
+        { "id": "oscal-control-objective-part-subpart-name", "location": "$['catalog']['controls'][0]['parts'][0]['parts'][0]['name']" },
+        { "id": "oscal-control-statement-part-name", "location": "$['catalog']['controls'][0]['parts'][0]['parts'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-control-statement-part-prop-name",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-control-statement-part-prop-name.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-catalog-control-require-statement-when-appropriate", "oscal-control-statement-part-prop-name", "oscal-metadata-prop-name-values", "oscal-part-prop-name"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-catalog-control-require-statement-when-appropriate", "location": "$['catalog']['controls'][0]" },
+        { "id": "oscal-control-statement-part-prop-name", "location": "$['catalog']['controls'][0]['parts'][0]['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['catalog']['controls'][0]['parts'][0]['props'][0]['name']" },
+        { "id": "oscal-part-prop-name", "location": "$['catalog']['controls'][0]['parts'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-control-statement-part-rmf-prop-name",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-control-statement-part-rmf-prop-name.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-catalog-control-require-statement-when-appropriate", "oscal-control-statement-part-rmf-prop-name"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-catalog-control-require-statement-when-appropriate", "location": "$['catalog']['controls'][0]" },
+        { "id": "oscal-control-statement-part-rmf-prop-name", "location": "$['catalog']['controls'][0]['parts'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-control-objective-part-method-prop-value",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-control-objective-part-method-prop-value.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-catalog-control-require-statement-when-appropriate", "oscal-control-objective-part-method-prop-value"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-catalog-control-require-statement-when-appropriate", "location": "$['catalog']['controls'][0]" },
+        { "id": "oscal-control-objective-part-method-prop-value", "location": "$['catalog']['controls'][0]['parts'][0]['props'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-index-system-component-uuid",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-index-system-component-uuid.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-index-system-component-uuid"],
-      "requirements": ["PRS-015.01", "CNS-014.01"]
+      "expected-constraints": [
+        { "id": "oscal-index-system-component-uuid", "location": "$['component-definition']['components'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-014.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-component-definition-capability",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-component-definition-capability.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-component-definition-capability"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-component-definition-capability", "location": "$['component-definition']['capabilities'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-component-prop-name",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-component-prop-name.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-component-prop-name", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-component-prop-name", "location": "$['component-definition']['components'][0]['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['component-definition']['components'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-component-allows-authenticated-scan-value",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-component-allows-authenticated-scan-value.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-component-allows-authenticated-scan-value"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-component-allows-authenticated-scan-value", "location": "$['component-definition']['components'][0]['props'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-component-virtual-value",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-component-virtual-value.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-component-virtual-value"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-component-virtual-value", "location": "$['component-definition']['components'][0]['props'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-component-public-value",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-component-public-value.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-component-public-value"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-component-public-value", "location": "$['component-definition']['components'][0]['props'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-component-implementation-point-value",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-component-implementation-point-value.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-component-implementation-point-value", "oscal-component-prop-name", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-component-implementation-point-value", "location": "$['component-definition']['components'][0]['props'][0]['value']" },
+        { "id": "oscal-component-prop-name", "location": "$['component-definition']['components'][0]['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['component-definition']['components'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-index-metadata-location-uuid-defined-component",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-index-metadata-location-uuid-defined-component.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-component-prop-name", "oscal-index-metadata-location-uuid", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-015.01"]
+      "expected-constraints": [
+        { "id": "oscal-component-prop-name", "location": "$['component-definition']['components'][0]['props'][0]['name']" },
+        { "id": "oscal-index-metadata-location-uuid", "location": "$['component-definition']['components'][0]['props'][0]" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['component-definition']['components'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-015.01"]
     },
     {
       "id": "parse/constraint/oscal-component-inherited-uuid-value-datatype-defined-component",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-component-inherited-uuid-value-datatype-defined-component.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-component-inherited-uuid-value-datatype", "oscal-component-prop-name", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-010.01"]
+      "expected-constraints": [
+        { "id": "oscal-component-inherited-uuid-value-datatype", "location": "$['component-definition']['components'][0]['props'][0]['value']" },
+        { "id": "oscal-component-prop-name", "location": "$['component-definition']['components'][0]['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['component-definition']['components'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-010.01"]
     },
     {
       "id": "parse/constraint/oscal-component-release-date-value-datatype-defined-component",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-component-release-date-value-datatype-defined-component.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-component-release-date-value-datatype"],
-      "requirements": ["PRS-015.01", "CNS-010.01"]
+      "expected-constraints": [
+        { "id": "oscal-component-release-date-value-datatype", "location": "$['component-definition']['components'][0]['props'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-010.01"]
     },
     {
       "id": "parse/constraint/oscal-software-component-prop-name",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-software-component-prop-name.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-component-prop-name", "oscal-metadata-prop-name-values", "oscal-software-component-prop-name"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-component-prop-name", "location": "$['component-definition']['components'][0]['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['component-definition']['components'][0]['props'][0]['name']" },
+        { "id": "oscal-software-component-prop-name", "location": "$['component-definition']['components'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-unique-defined-component-responsible-role",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-defined-component-responsible-role.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-defined-component-responsible-role"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-defined-component-responsible-role", "location": "$['component-definition']['components'][0]['responsible-roles'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-component-definition-capability-incorporates-component",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-component-definition-capability-incorporates-component.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-component-definition-capability-incorporates-component"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-component-definition-capability-incorporates-component", "location": "$['component-definition']['capabilities'][0]['incorporates-components'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-component-definition-control-implementation-set-parameter",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-component-definition-control-implementation-set-parameter.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-component-definition-control-implementation-set-parameter"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-component-definition-control-implementation-set-parameter", "location": "$['component-definition']['components'][0]['control-implementations'][0]['set-parameters'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-component-definition-implemented-requirement-set-parameter",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-component-definition-implemented-requirement-set-parameter.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-component-definition-implemented-requirement-set-parameter"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-component-definition-implemented-requirement-set-parameter", "location": "$['component-definition']['components'][0]['control-implementations'][0]['implemented-requirements'][0]['set-parameters'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-component-definition-implemented-requirement-responsible-role",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-component-definition-implemented-requirement-responsible-role.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-component-definition-implemented-requirement-responsible-role"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-component-definition-implemented-requirement-responsible-role", "location": "$['component-definition']['components'][0]['control-implementations'][0]['implemented-requirements'][0]['responsible-roles'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-component-definition-implemented-requirement-statement",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-component-definition-implemented-requirement-statement.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-component-definition-implemented-requirement-statement"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-component-definition-implemented-requirement-statement", "location": "$['component-definition']['components'][0]['control-implementations'][0]['implemented-requirements'][0]['statements'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-component-definition-statement-responsible-role",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-component-definition-statement-responsible-role.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-component-definition-statement-responsible-role"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-component-definition-statement-responsible-role", "location": "$['component-definition']['components'][0]['control-implementations'][0]['implemented-requirements'][0]['statements'][0]['responsible-roles'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-part-prop-name",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-part-prop-name.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-metadata-prop-name-values", "oscal-part-prop-name"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-metadata-prop-name-values", "location": "$['catalog']['controls'][0]['parts'][0]['props'][0]['name']" },
+        { "id": "oscal-part-prop-name", "location": "$['catalog']['controls'][0]['parts'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-parameter-prop-name",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-parameter-prop-name.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-metadata-prop-name-values", "oscal-parameter-prop-name"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-metadata-prop-name-values", "location": "$['catalog']['params'][0]['props'][0]['name']" },
+        { "id": "oscal-parameter-prop-name", "location": "$['catalog']['params'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-rmf-parameter-prop-name",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-rmf-parameter-prop-name.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-rmf-parameter-prop-name"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-rmf-parameter-prop-name", "location": "$['catalog']['params'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-parameter-depends-on-deprecated",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-parameter-depends-on-deprecated.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-parameter-depends-on-deprecated"],
-      "requirements": ["PRS-015.01", "CNS-016.01"]
+      "expected-constraints": [
+        { "id": "oscal-parameter-depends-on-deprecated", "location": "$['catalog']['params'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-016.01"]
     },
     {
       "id": "parse/constraint/oscal-component-prop-name-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-component-prop-name-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-component-prop-name-values", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-component-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-component-prop-allows-authenticated-scan-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-component-prop-allows-authenticated-scan-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-component-prop-allows-authenticated-scan-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-component-prop-allows-authenticated-scan-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-component-prop-is-public-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-component-prop-is-public-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-component-prop-is-public-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-component-prop-is-public-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-component-prop-is-virtual-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-component-prop-is-virtual-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-component-prop-is-virtual-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-component-prop-is-virtual-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-component-prop-implementation-point-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-component-prop-implementation-point-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-component-prop-implementation-point-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-component-prop-implementation-point-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-component-prop-physical-location",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-component-prop-physical-location.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-component-prop-name-values", "oscal-component-prop-physical-location", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-015.01"]
+      "expected-constraints": [
+        { "id": "oscal-component-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" },
+        { "id": "oscal-component-prop-physical-location", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-015.01"]
     },
     {
       "id": "parse/constraint/oscal-component-inherited-uuid-value-datatype-system-component",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-component-inherited-uuid-value-datatype-system-component.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-component-inherited-uuid-value-datatype"],
-      "requirements": ["PRS-015.01", "CNS-010.01"]
+      "expected-constraints": [
+        { "id": "oscal-component-inherited-uuid-value-datatype", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-010.01"]
     },
     {
       "id": "parse/constraint/oscal-component-release-date-value-datatype-system-component",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-component-release-date-value-datatype-system-component.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-component-release-date-value-datatype"],
-      "requirements": ["PRS-015.01", "CNS-010.01"]
+      "expected-constraints": [
+        { "id": "oscal-component-release-date-value-datatype", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-010.01"]
     },
     {
       "id": "parse/constraint/oscal-component-hardware-service-software-prop-name-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-component-hardware-service-software-prop-name-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-component-hardware-service-software-prop-name-values", "oscal-component-interconnection-service-software-system-prop-name-values", "oscal-component-prop-name-values", "oscal-component-software-prop-name-values", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-component-hardware-service-software-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" },
+        { "id": "oscal-component-interconnection-service-software-system-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" },
+        { "id": "oscal-component-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" },
+        { "id": "oscal-component-software-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-component-software-prop-name-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-component-software-prop-name-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-component-hardware-service-software-prop-name-values", "oscal-component-interconnection-service-software-system-prop-name-values", "oscal-component-prop-name-values", "oscal-component-software-prop-name-values", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-component-hardware-service-software-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" },
+        { "id": "oscal-component-interconnection-service-software-system-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" },
+        { "id": "oscal-component-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" },
+        { "id": "oscal-component-software-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-component-interconnection-prop-name-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-component-interconnection-prop-name-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-component-interconnection-prop-name-values", "oscal-component-interconnection-service-software-system-prop-name-values", "oscal-component-prop-name-values", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-component-interconnection-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" },
+        { "id": "oscal-component-interconnection-service-software-system-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" },
+        { "id": "oscal-component-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-component-interconnection-service-software-system-prop-name-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-component-interconnection-service-software-system-prop-name-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-component-interconnection-prop-name-values", "oscal-component-interconnection-service-software-system-prop-name-values", "oscal-component-prop-name-values", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-component-interconnection-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" },
+        { "id": "oscal-component-interconnection-service-software-system-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" },
+        { "id": "oscal-component-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-component-prop-ipaddress-class-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-component-prop-ipaddress-class-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-component-prop-ipaddress-class-values", "oscal-component-prop-ipv4address-value-datatype", "oscal-component-prop-name-values", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-component-prop-ipaddress-class-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['class']" },
+        { "id": "oscal-component-prop-ipv4address-value-datatype", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['value']" },
+        { "id": "oscal-component-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-component-prop-isa-date-value-datatype",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-component-prop-isa-date-value-datatype.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-component-prop-isa-date-value-datatype", "oscal-component-prop-name-values", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-010.01"]
+      "expected-constraints": [
+        { "id": "oscal-component-prop-isa-date-value-datatype", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['value']" },
+        { "id": "oscal-component-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-010.01"]
     },
     {
       "id": "parse/constraint/oscal-component-prop-ipv4address-value-datatype",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-component-prop-ipv4address-value-datatype.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-component-prop-ipv4address-value-datatype", "oscal-component-prop-name-values", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-010.01"]
+      "expected-constraints": [
+        { "id": "oscal-component-prop-ipv4address-value-datatype", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['value']" },
+        { "id": "oscal-component-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-010.01"]
     },
     {
       "id": "parse/constraint/oscal-component-prop-ipv6address-value-datatype",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-component-prop-ipv6address-value-datatype.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-component-prop-ipv6address-value-datatype", "oscal-component-prop-name-values", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-010.01"]
+      "expected-constraints": [
+        { "id": "oscal-component-prop-ipv6address-value-datatype", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['value']" },
+        { "id": "oscal-component-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-010.01"]
     },
     {
       "id": "parse/constraint/oscal-component-prop-uri-value-datatype",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-component-prop-uri-value-datatype.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-component-prop-name-values", "oscal-component-prop-uri-value-datatype", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-010.01"]
+      "expected-constraints": [
+        { "id": "oscal-component-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" },
+        { "id": "oscal-component-prop-uri-value-datatype", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['value']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-010.01"]
     },
     {
       "id": "parse/constraint/oscal-component-prop-direction-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-component-prop-direction-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-component-prop-direction-values", "oscal-component-prop-name-values", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-component-prop-direction-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['value']" },
+        { "id": "oscal-component-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['assessment-plan']['local-definitions']['components'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-unique-system-component-responsible-role",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-system-component-responsible-role.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-system-component-responsible-role"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-system-component-responsible-role", "location": "$['assessment-plan']['local-definitions']['components'][0]['responsible-roles'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-user-prop-name-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-user-prop-name-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-metadata-prop-name-values", "oscal-user-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-metadata-prop-name-values", "location": "$['assessment-plan']['local-definitions']['users'][0]['props'][0]['name']" },
+        { "id": "oscal-user-prop-name-values", "location": "$['assessment-plan']['local-definitions']['users'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-user-prop-type-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-user-prop-type-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-user-prop-type-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-user-prop-type-values", "location": "$['assessment-plan']['local-definitions']['users'][0]['props'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-user-prop-privilege-level-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-user-prop-privilege-level-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-user-prop-privilege-level-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-user-prop-privilege-level-values", "location": "$['assessment-plan']['local-definitions']['users'][0]['props'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-implemented-component-prop-name-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-implemented-component-prop-name-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-implemented-component-prop-name-values", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-implemented-component-prop-name-values", "location": "$['assessment-plan']['local-definitions']['inventory-items'][0]['implemented-components'][0]['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['assessment-plan']['local-definitions']['inventory-items'][0]['implemented-components'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-unique-implemented-component-responsible-party",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-implemented-component-responsible-party.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-implemented-component-responsible-party"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-implemented-component-responsible-party", "location": "$['assessment-plan']['local-definitions']['inventory-items'][0]['implemented-components'][0]['responsible-parties'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-inventory-item-prop-name-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-inventory-item-prop-name-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-inventory-item-prop-name-values", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-inventory-item-prop-name-values", "location": "$['assessment-plan']['local-definitions']['inventory-items'][0]['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['assessment-plan']['local-definitions']['inventory-items'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-inventory-item-prop-is-scanned-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-inventory-item-prop-is-scanned-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-inventory-item-prop-is-scanned-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-inventory-item-prop-is-scanned-values", "location": "$['assessment-plan']['local-definitions']['inventory-items'][0]['props'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-index-inventory-item-responsible-party-role-id",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-index-inventory-item-responsible-party-role-id.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-index-inventory-item-responsible-party-role-id", "oscal-metadata-responsible-party-index-metadata-role-id"],
-      "requirements": ["PRS-015.01", "CNS-015.01"]
+      "expected-constraints": [
+        { "id": "oscal-index-inventory-item-responsible-party-role-id", "location": "$['assessment-plan']['local-definitions']['inventory-items'][0]['responsible-parties'][0]" },
+        { "id": "oscal-metadata-responsible-party-index-metadata-role-id", "location": "$['assessment-plan']['local-definitions']['inventory-items'][0]['responsible-parties'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-015.01"]
     },
     {
       "id": "parse/constraint/oscal-index-inventory-item-responsible-party-party-uuid",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-index-inventory-item-responsible-party-party-uuid.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-index-inventory-item-responsible-party-party-uuid", "oscal-index-metadata-party-uuid"],
-      "requirements": ["PRS-015.01", "CNS-015.01"]
+      "expected-constraints": [
+        { "id": "oscal-index-inventory-item-responsible-party-party-uuid", "location": "$['assessment-plan']['local-definitions']['inventory-items'][0]['responsible-parties'][0]" },
+        { "id": "oscal-index-metadata-party-uuid", "location": "$['assessment-plan']['local-definitions']['inventory-items'][0]['responsible-parties'][0]['party-uuids'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-015.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-inventory-item-responsible-party",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-inventory-item-responsible-party.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-inventory-item-responsible-party"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-inventory-item-responsible-party", "location": "$['assessment-plan']['local-definitions']['inventory-items'][0]['responsible-parties'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-metadata-location-prop-name-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-metadata-location-prop-name-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-metadata-location-prop-name-values", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-metadata-location-prop-name-values", "location": "$['assessment-plan']['metadata']['locations'][0]['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['assessment-plan']['metadata']['locations'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-metadata-location-title-address-email-address-telephone-cardinality",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-metadata-location-title-address-email-address-telephone-cardinality.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-metadata-location-title-address-email-address-telephone-cardinality"],
-      "requirements": ["PRS-015.01", "CNS-011.01"]
+      "expected-constraints": [
+        { "id": "oscal-metadata-location-title-address-email-address-telephone-cardinality", "location": "$['assessment-plan']['metadata']['locations'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-011.01"]
     },
     {
       "id": "parse/constraint/oscal-index-metadata-party-organizations-uuid-member-of-organization",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-index-metadata-party-organizations-uuid-member-of-organization.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-index-metadata-party-organizations-uuid"],
-      "requirements": ["PRS-015.01", "CNS-015.01"]
+      "expected-constraints": [
+        { "id": "oscal-index-metadata-party-organizations-uuid", "location": "$['assessment-plan']['metadata']['parties'][0]['member-of-organizations'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-015.01"]
     },
     {
       "id": "parse/constraint/oscal-metadata-party-prop-name-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-metadata-party-prop-name-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-metadata-party-prop-name-values", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-metadata-party-prop-name-values", "location": "$['assessment-plan']['metadata']['parties'][0]['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['assessment-plan']['metadata']['parties'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-index-metadata-roles",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-index-metadata-roles.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-index-metadata-role-id", "oscal-index-metadata-roles"],
-      "requirements": ["PRS-015.01", "CNS-014.01"]
+      "expected-constraints": [
+        { "id": "oscal-index-metadata-role-id", "location": "$['assessment-plan']['metadata']['roles'][1]" },
+        { "id": "oscal-index-metadata-roles", "location": "$['assessment-plan']['metadata']['roles'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-014.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-metadata-doc-id",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-metadata-doc-id.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-metadata-unique-document-id", "oscal-unique-metadata-doc-id"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-metadata-unique-document-id", "location": "$['assessment-plan']['metadata']['document-ids'][1]" },
+        { "id": "oscal-unique-metadata-doc-id", "location": "$['assessment-plan']['metadata']['document-ids'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-metadata-property",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-metadata-property.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-metadata-property"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-metadata-property", "location": "$['assessment-plan']['metadata']['props'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-index-metadata-property-uuid",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-index-metadata-property-uuid.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-index-metadata-property-uuid"],
-      "requirements": ["PRS-015.01", "CNS-014.01"]
+      "expected-constraints": [
+        { "id": "oscal-index-metadata-property-uuid", "location": "$['assessment-plan']['metadata']['props'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-014.01"]
     },
     {
       "id": "parse/constraint/oscal-index-metadata-role-id-metadata",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-index-metadata-role-id-metadata.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-index-metadata-role-id", "oscal-index-metadata-roles"],
-      "requirements": ["PRS-015.01", "CNS-014.01"]
+      "expected-constraints": [
+        { "id": "oscal-index-metadata-role-id", "location": "$['assessment-plan']['metadata']['roles'][1]" },
+        { "id": "oscal-index-metadata-roles", "location": "$['assessment-plan']['metadata']['roles'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-014.01"]
     },
     {
       "id": "parse/constraint/oscal-index-metadata-location-uuid-metadata",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-index-metadata-location-uuid-metadata.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-index-metadata-location-uuid"],
-      "requirements": ["PRS-015.01", "CNS-014.01"]
+      "expected-constraints": [
+        { "id": "oscal-index-metadata-location-uuid", "location": "$['assessment-plan']['metadata']['locations'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-014.01"]
     },
     {
       "id": "parse/constraint/oscal-index-metadata-party-uuid-metadata",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-index-metadata-party-uuid-metadata.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-index-metadata-party-uuid"],
-      "requirements": ["PRS-015.01", "CNS-014.01"]
+      "expected-constraints": [
+        { "id": "oscal-index-metadata-party-uuid", "location": "$['assessment-plan']['metadata']['parties'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-014.01"]
     },
     {
       "id": "parse/constraint/oscal-index-metadata-party-organizations-uuid-metadata",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-index-metadata-party-organizations-uuid-metadata.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-index-metadata-party-organizations-uuid", "oscal-index-metadata-party-uuid"],
-      "requirements": ["PRS-015.01", "CNS-014.01"]
+      "expected-constraints": [
+        { "id": "oscal-index-metadata-party-organizations-uuid", "location": "$['assessment-plan']['metadata']['parties'][1]" },
+        { "id": "oscal-index-metadata-party-uuid", "location": "$['assessment-plan']['metadata']['parties'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-014.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-metadata-responsible-party",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-metadata-responsible-party.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-metadata-responsible-party"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-metadata-responsible-party", "location": "$['assessment-plan']['metadata']['responsible-parties'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-metadata-prop-name-values-metadata",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-metadata-prop-name-values-metadata.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-metadata-prop-name-values", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-metadata-prop-name-values", "location": "$['assessment-plan']['metadata']['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['assessment-plan']['metadata']['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-metadata-unique-document-id",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-metadata-unique-document-id.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-metadata-unique-document-id", "oscal-unique-metadata-doc-id"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-metadata-unique-document-id", "location": "$['assessment-plan']['metadata']['document-ids'][1]" },
+        { "id": "oscal-unique-metadata-doc-id", "location": "$['assessment-plan']['metadata']['document-ids'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-index-metadata-location-uuid-location-uuid",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-index-metadata-location-uuid-location-uuid.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-index-metadata-location-uuid"],
-      "requirements": ["PRS-015.01", "CNS-015.01"]
+      "expected-constraints": [
+        { "id": "oscal-index-metadata-location-uuid", "location": "$['assessment-plan']['metadata']['parties'][0]['location-uuids'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-015.01"]
     },
     {
       "id": "parse/constraint/oscal-index-metadata-party-uuid-party-uuid",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-index-metadata-party-uuid-party-uuid.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-index-metadata-party-uuid"],
-      "requirements": ["PRS-015.01", "CNS-015.01"]
+      "expected-constraints": [
+        { "id": "oscal-index-metadata-party-uuid", "location": "$['assessment-plan']['metadata']['responsible-parties'][0]['party-uuids'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-015.01"]
     },
     {
       "id": "parse/constraint/oscal-index-metadata-role-id-role-id",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-index-metadata-role-id-role-id.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-index-metadata-role-id"],
-      "requirements": ["PRS-015.01", "CNS-015.01"]
+      "expected-constraints": [
+        { "id": "oscal-index-metadata-role-id", "location": "$['assessment-plan']['local-definitions']['users'][0]['role-ids'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-015.01"]
     },
     {
       "id": "parse/constraint/oscal-back-matter-resource-prop-name-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-back-matter-resource-prop-name-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-back-matter-resource-prop-name-values", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-back-matter-resource-prop-name-values", "location": "$['assessment-plan']['back-matter']['resources'][0]['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['assessment-plan']['back-matter']['resources'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-back-matter-resource-prop-published-datatype",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-back-matter-resource-prop-published-datatype.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-back-matter-resource-prop-published-datatype"],
-      "requirements": ["PRS-015.01", "CNS-010.01"]
+      "expected-constraints": [
+        { "id": "oscal-back-matter-resource-prop-published-datatype", "location": "$['assessment-plan']['back-matter']['resources'][0]['props'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-010.01"]
     },
     {
       "id": "parse/constraint/oscal-back-matter-resource-prop-type-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-back-matter-resource-prop-type-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-back-matter-resource-prop-type-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-back-matter-resource-prop-type-values", "location": "$['assessment-plan']['back-matter']['resources'][0]['props'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-unique-resource-rlink-href",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-resource-rlink-href.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-resource-rlink-href"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-resource-rlink-href", "location": "$['assessment-plan']['back-matter']['resources'][0]['rlinks'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-back-matter-resource-citation-title",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-back-matter-resource-citation-title.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-back-matter-resource-citation-title"],
-      "requirements": ["PRS-015.01", "CNS-016.01"]
+      "expected-constraints": [
+        { "id": "oscal-back-matter-resource-citation-title", "location": "$['assessment-plan']['back-matter']['resources'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-016.01"]
     },
     {
       "id": "parse/constraint/oscal-back-matter-resource-uuid-index",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-back-matter-resource-uuid-index.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-back-matter-resource-uuid-index"],
-      "requirements": ["PRS-015.01", "CNS-014.01"]
+      "expected-constraints": [
+        { "id": "oscal-back-matter-resource-uuid-index", "location": "$['assessment-plan']['back-matter']['resources'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-014.01"]
     },
     {
       "id": "parse/constraint/oscal-metadata-prop-name-values-property",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-metadata-prop-name-values-property.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-metadata-prop-name-values", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-metadata-prop-name-values", "location": "$['assessment-plan']['metadata']['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['assessment-plan']['metadata']['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-metadata-link-uri-reference-no-media-type",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-metadata-link-uri-reference-no-media-type.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-metadata-link-uri-reference-no-media-type"],
-      "requirements": ["PRS-015.01", "CNS-016.01"]
+      "expected-constraints": [
+        { "id": "oscal-metadata-link-uri-reference-no-media-type", "location": "$['assessment-plan']['metadata']['links'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-016.01"]
     },
     {
       "id": "parse/constraint/oscal-metadata-link-reference-index-back-matter-resource",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-metadata-link-reference-index-back-matter-resource.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-metadata-link-reference-index-back-matter-resource"],
-      "requirements": ["PRS-015.01", "CNS-015.01"]
+      "expected-constraints": [
+        { "id": "oscal-metadata-link-reference-index-back-matter-resource", "location": "$['assessment-plan']['metadata']['links'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-015.01"]
     },
     {
       "id": "parse/constraint/oscal-metadata-link-reference-href-datatype-uri",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-metadata-link-reference-href-datatype-uri.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-metadata-link-reference-href-datatype-uri"],
-      "requirements": ["PRS-015.01", "CNS-010.01"]
+      "expected-constraints": [
+        { "id": "oscal-metadata-link-reference-href-datatype-uri", "location": "$['assessment-plan']['metadata']['links'][0]['href']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-010.01"]
     },
     {
       "id": "parse/constraint/oscal-metadata-link-resource-fragment-datatype",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-metadata-link-resource-fragment-datatype.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-metadata-link-resource-fragment-datatype"],
-      "requirements": ["PRS-015.01", "CNS-010.01"]
+      "expected-constraints": [
+        { "id": "oscal-metadata-link-resource-fragment-datatype", "location": "$['assessment-plan']['metadata']['links'][0]['resource-fragment']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-010.01"]
     },
     {
       "id": "parse/constraint/oscal-metadata-responsible-party-index-metadata-role-id",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-metadata-responsible-party-index-metadata-role-id.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-metadata-responsible-party-index-metadata-role-id"],
-      "requirements": ["PRS-015.01", "CNS-015.01"]
+      "expected-constraints": [
+        { "id": "oscal-metadata-responsible-party-index-metadata-role-id", "location": "$['assessment-plan']['metadata']['responsible-parties'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-015.01"]
     },
     {
       "id": "parse/constraint/oscal-metadata-action-name-index-metadata-role-id",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-metadata-action-name-index-metadata-role-id.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-metadata-action-name-index-metadata-role-id", "oscal-metadata-responsible-party-index-metadata-role-id"],
-      "requirements": ["PRS-015.01", "CNS-015.01"]
+      "expected-constraints": [
+        { "id": "oscal-metadata-action-name-index-metadata-role-id", "location": "$['assessment-plan']['metadata']['actions'][0]['responsible-parties'][0]" },
+        { "id": "oscal-metadata-responsible-party-index-metadata-role-id", "location": "$['assessment-plan']['metadata']['actions'][0]['responsible-parties'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-015.01"]
     },
     {
       "id": "parse/constraint/oscal-metadata-action-name-index-metadata-party-uuid",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-metadata-action-name-index-metadata-party-uuid.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-index-metadata-party-uuid", "oscal-metadata-action-name-index-metadata-party-uuid"],
-      "requirements": ["PRS-015.01", "CNS-015.01"]
+      "expected-constraints": [
+        { "id": "oscal-index-metadata-party-uuid", "location": "$['assessment-plan']['metadata']['actions'][0]['responsible-parties'][0]['party-uuids'][0]" },
+        { "id": "oscal-metadata-action-name-index-metadata-party-uuid", "location": "$['assessment-plan']['metadata']['actions'][0]['responsible-parties'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-015.01"]
     },
     {
       "id": "parse/constraint/oscal-check-hash-length-SHA2-3-224",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-check-hash-length-SHA2-3-224.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-check-hash-length-SHA2-3-224"],
-      "requirements": ["PRS-015.01", "CNS-010.01"]
+      "expected-constraints": [
+        { "id": "oscal-check-hash-length-SHA2-3-224", "location": "$['assessment-plan']['back-matter']['resources'][0]['rlinks'][0]['hashes'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-010.01"]
     },
     {
       "id": "parse/constraint/oscal-check-hash-length-SHA2-3-256",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-check-hash-length-SHA2-3-256.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-check-hash-length-SHA2-3-256"],
-      "requirements": ["PRS-015.01", "CNS-010.01"]
+      "expected-constraints": [
+        { "id": "oscal-check-hash-length-SHA2-3-256", "location": "$['assessment-plan']['back-matter']['resources'][0]['rlinks'][0]['hashes'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-010.01"]
     },
     {
       "id": "parse/constraint/oscal-check-hash-length-SHA2-3-384",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-check-hash-length-SHA2-3-384.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-check-hash-length-SHA2-3-384"],
-      "requirements": ["PRS-015.01", "CNS-010.01"]
+      "expected-constraints": [
+        { "id": "oscal-check-hash-length-SHA2-3-384", "location": "$['assessment-plan']['back-matter']['resources'][0]['rlinks'][0]['hashes'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-010.01"]
     },
     {
       "id": "parse/constraint/oscal-check-hash-length-SHA2-3-512",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-check-hash-length-SHA2-3-512.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-check-hash-length-SHA2-3-512"],
-      "requirements": ["PRS-015.01", "CNS-010.01"]
+      "expected-constraints": [
+        { "id": "oscal-check-hash-length-SHA2-3-512", "location": "$['assessment-plan']['back-matter']['resources'][0]['rlinks'][0]['hashes'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-010.01"]
     },
     {
       "id": "parse/constraint/oscal-metadata-location-address-country-regex",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-metadata-location-address-country-regex.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-metadata-location-address-country-regex"],
-      "requirements": ["PRS-015.01", "CNS-010.01"]
+      "expected-constraints": [
+        { "id": "oscal-metadata-location-address-country-regex", "location": "$['assessment-plan']['metadata']['locations'][0]['address']['country']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-010.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-poam-local-definitions-component",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-poam-local-definitions-component.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-poam-local-definitions-component"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-poam-local-definitions-component", "location": "$['plan-of-action-and-milestones']['local-definitions']['components'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-profile-modify-alter-prop-name-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-profile-modify-alter-prop-name-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-metadata-prop-name-values", "oscal-profile-modify-alter-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-metadata-prop-name-values", "location": "$['profile']['modify']['alters'][0]['adds'][0]['props'][0]['name']" },
+        { "id": "oscal-profile-modify-alter-prop-name-values", "location": "$['profile']['modify']['alters'][0]['adds'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-unique-profile-modify-set-parameter",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-profile-modify-set-parameter.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-profile-modify-set-parameter"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-profile-modify-set-parameter", "location": "$['profile']['modify']['set-parameters'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-ssp-by-component-uuid-index",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-ssp-by-component-uuid-index.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-ssp-by-component-uuid-index"],
-      "requirements": ["PRS-015.01", "CNS-014.01"]
+      "expected-constraints": [
+        { "id": "oscal-ssp-by-component-uuid-index", "location": "$['system-security-plan']['control-implementation']['implemented-requirements'][0]['by-components'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-014.01"]
     },
     {
       "id": "parse/constraint/oscal-system-characteristics-prop-name-values-system-characteristics-allowed-values-1",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-system-characteristics-prop-name-values-system-characteristics-allowed-values-1.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-metadata-prop-name-values", "oscal-system-characteristics-prop-name-values", "oscal-system-characteristics-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-metadata-prop-name-values", "location": "$['system-security-plan']['system-characteristics']['props'][0]['name']" },
+        { "id": "oscal-system-characteristics-prop-name-values", "location": "$['system-security-plan']['system-characteristics']['props'][0]['name']" },
+        { "id": "oscal-system-characteristics-prop-name-values", "location": "$['system-security-plan']['system-characteristics']['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-system-characteristics-prop-sp-800-63-assurance-level-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-system-characteristics-prop-sp-800-63-assurance-level-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-system-characteristics-prop-sp-800-63-assurance-level-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-system-characteristics-prop-sp-800-63-assurance-level-values", "location": "$['system-security-plan']['system-characteristics']['props'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-system-characteristics-prop-name-values-system-characteristics-allowed-values-2",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-system-characteristics-prop-name-values-system-characteristics-allowed-values-2.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-metadata-prop-name-values", "oscal-system-characteristics-prop-name-values", "oscal-system-characteristics-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-metadata-prop-name-values", "location": "$['system-security-plan']['system-characteristics']['props'][0]['name']" },
+        { "id": "oscal-system-characteristics-prop-name-values", "location": "$['system-security-plan']['system-characteristics']['props'][0]['name']" },
+        { "id": "oscal-system-characteristics-prop-name-values", "location": "$['system-security-plan']['system-characteristics']['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-system-characteristics-prop-cloud-deployment-model-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-system-characteristics-prop-cloud-deployment-model-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-system-characteristics-prop-cloud-deployment-model-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-system-characteristics-prop-cloud-deployment-model-values", "location": "$['system-security-plan']['system-characteristics']['props'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-system-characteristics-prop-cloud-service-model-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-system-characteristics-prop-cloud-service-model-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-system-characteristics-prop-cloud-service-model-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-system-characteristics-prop-cloud-service-model-values", "location": "$['system-security-plan']['system-characteristics']['props'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-unique-ssp-system-characteristics-responsible-party",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-ssp-system-characteristics-responsible-party.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-ssp-system-characteristics-responsible-party"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-ssp-system-characteristics-responsible-party", "location": "$['system-security-plan']['system-characteristics']['responsible-parties'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-system-information-prop-name-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-system-information-prop-name-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-metadata-prop-name-values", "oscal-system-information-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-metadata-prop-name-values", "location": "$['system-security-plan']['system-characteristics']['system-information']['props'][0]['name']" },
+        { "id": "oscal-system-information-prop-name-values", "location": "$['system-security-plan']['system-characteristics']['system-information']['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-system-information-prop-privacy-designation-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-system-information-prop-privacy-designation-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-system-information-prop-privacy-designation-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-system-information-prop-privacy-designation-values", "location": "$['system-security-plan']['system-characteristics']['system-information']['props'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-system-information-index-back-matter-resource-pia-link-rel",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-system-information-index-back-matter-resource-pia-link-rel.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-system-information-index-back-matter-resource-pia-link-rel"],
-      "requirements": ["PRS-015.01", "CNS-015.01"]
+      "expected-constraints": [
+        { "id": "oscal-system-information-index-back-matter-resource-pia-link-rel", "location": "$['system-security-plan']['system-characteristics']['system-information']['links'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-015.01"]
     },
     {
       "id": "parse/constraint/oscal-system-information-pia-datatype-uri",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-system-information-pia-datatype-uri.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-system-information-pia-datatype-uri"],
-      "requirements": ["PRS-015.01", "CNS-010.01"]
+      "expected-constraints": [
+        { "id": "oscal-system-information-pia-datatype-uri", "location": "$['system-security-plan']['system-characteristics']['system-information']['links'][0]['href']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-010.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-ssp-authorization-boundary-diagram",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-ssp-authorization-boundary-diagram.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-ssp-authorization-boundary-diagram"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-ssp-authorization-boundary-diagram", "location": "$['system-security-plan']['system-characteristics']['authorization-boundary']['diagrams'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-diagram-index-back-matter-resource-link-rel",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-diagram-index-back-matter-resource-link-rel.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-diagram-index-back-matter-resource-link-rel"],
-      "requirements": ["PRS-015.01", "CNS-015.01"]
+      "expected-constraints": [
+        { "id": "oscal-diagram-index-back-matter-resource-link-rel", "location": "$['system-security-plan']['system-characteristics']['authorization-boundary']['diagrams'][0]['links'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-015.01"]
     },
     {
       "id": "parse/constraint/oscal-diagram-datatype-uri",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-diagram-datatype-uri.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-diagram-datatype-uri"],
-      "requirements": ["PRS-015.01", "CNS-010.01"]
+      "expected-constraints": [
+        { "id": "oscal-diagram-datatype-uri", "location": "$['system-security-plan']['system-characteristics']['authorization-boundary']['diagrams'][0]['links'][0]['href']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-010.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-ssp-network-architecture-diagram",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-ssp-network-architecture-diagram.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-ssp-network-architecture-diagram"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-ssp-network-architecture-diagram", "location": "$['system-security-plan']['system-characteristics']['network-architecture']['diagrams'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-ssp-data-flow-diagram",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-ssp-data-flow-diagram.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-ssp-data-flow-diagram"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-ssp-data-flow-diagram", "location": "$['system-security-plan']['system-characteristics']['data-flow']['diagrams'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-leveraged-authorization-index-back-matter-resource-ssp",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-leveraged-authorization-index-back-matter-resource-ssp.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-leveraged-authorization-index-back-matter-resource-ssp"],
-      "requirements": ["PRS-015.01", "CNS-015.01"]
+      "expected-constraints": [
+        { "id": "oscal-leveraged-authorization-index-back-matter-resource-ssp", "location": "$['system-security-plan']['system-implementation']['leveraged-authorizations'][0]['links'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-015.01"]
     },
     {
       "id": "parse/constraint/oscal-leveraged-authorization-link-rel-ssp-datatype-uri",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-leveraged-authorization-link-rel-ssp-datatype-uri.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-leveraged-authorization-link-rel-ssp-datatype-uri"],
-      "requirements": ["PRS-015.01", "CNS-010.01"]
+      "expected-constraints": [
+        { "id": "oscal-leveraged-authorization-link-rel-ssp-datatype-uri", "location": "$['system-security-plan']['system-implementation']['leveraged-authorizations'][0]['links'][0]['href']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-010.01"]
     },
     {
       "id": "parse/constraint/oscal-system-implementation-component-leveraged-authorization-uuid-index",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-system-implementation-component-leveraged-authorization-uuid-index.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-system-implementation-component-leveraged-authorization-uuid-index"],
-      "requirements": ["PRS-015.01", "CNS-014.01"]
+      "expected-constraints": [
+        { "id": "oscal-system-implementation-component-leveraged-authorization-uuid-index", "location": "$['system-security-plan']['system-implementation']['leveraged-authorizations'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-014.01"]
     },
     {
       "id": "parse/constraint/oscal-system-implementation-component-prop-leveraged-authorization-uuid-index",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-system-implementation-component-prop-leveraged-authorization-uuid-index.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-system-implementation-component-prop-leveraged-authorization-uuid-index"],
-      "requirements": ["PRS-015.01", "CNS-015.01"]
+      "expected-constraints": [
+        { "id": "oscal-system-implementation-component-prop-leveraged-authorization-uuid-index", "location": "$['system-security-plan']['system-implementation']['components'][0]['props'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-015.01"]
     },
     {
       "id": "parse/constraint/oscal-system-implementation-component-uuid-index",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-system-implementation-component-uuid-index.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-system-implementation-component-uuid-index"],
-      "requirements": ["PRS-015.01", "CNS-014.01"]
+      "expected-constraints": [
+        { "id": "oscal-system-implementation-component-uuid-index", "location": "$['system-security-plan']['system-implementation']['components'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-014.01"]
     },
     {
       "id": "parse/constraint/oscal-system-implementation-component-depends-on-link-index",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-system-implementation-component-depends-on-link-index.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-system-implementation-component-depends-on-link-index"],
-      "requirements": ["PRS-015.01", "CNS-015.01"]
+      "expected-constraints": [
+        { "id": "oscal-system-implementation-component-depends-on-link-index", "location": "$['system-security-plan']['system-implementation']['components'][0]['links'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-015.01"]
     },
     {
       "id": "parse/constraint/oscal-system-implementation-component-validation-uuid-index",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-system-implementation-component-validation-uuid-index.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-system-implementation-component-uuid-index", "oscal-system-implementation-component-validation-uuid-index"],
-      "requirements": ["PRS-015.01", "CNS-014.01"]
+      "expected-constraints": [
+        { "id": "oscal-system-implementation-component-uuid-index", "location": "$['system-security-plan']['system-implementation']['components'][1]" },
+        { "id": "oscal-system-implementation-component-validation-uuid-index", "location": "$['system-security-plan']['system-implementation']['components'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-014.01"]
     },
     {
       "id": "parse/constraint/oscal-index-system-implementation-component-uuid-service-system-implementation-index",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-index-system-implementation-component-uuid-service-system-implementation-index.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-index-system-implementation-component-uuid-service", "oscal-system-implementation-component-uuid-index"],
-      "requirements": ["PRS-015.01", "CNS-014.01"]
+      "expected-constraints": [
+        { "id": "oscal-index-system-implementation-component-uuid-service", "location": "$['system-security-plan']['system-implementation']['components'][1]" },
+        { "id": "oscal-system-implementation-component-uuid-index", "location": "$['system-security-plan']['system-implementation']['components'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-014.01"]
     },
     {
       "id": "parse/constraint/oscal-index-system-implementation-component-uuid-service-system-implementation-index-has-key",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-index-system-implementation-component-uuid-service-system-implementation-index-has-key.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-index-system-implementation-component-uuid-service"],
-      "requirements": ["PRS-015.01", "CNS-015.01"]
+      "expected-constraints": [
+        { "id": "oscal-index-system-implementation-component-uuid-service", "location": "$['system-security-plan']['system-implementation']['components'][0]['links'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-015.01"]
     },
     {
       "id": "parse/constraint/oscal-component-inventory-item-allows-authenticated-scan-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-component-inventory-item-allows-authenticated-scan-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-component-inventory-item-allows-authenticated-scan-values", "oscal-component-prop-allows-authenticated-scan-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-component-inventory-item-allows-authenticated-scan-values", "location": "$['system-security-plan']['system-implementation']['components'][0]['props'][0]['value']" },
+        { "id": "oscal-component-prop-allows-authenticated-scan-values", "location": "$['system-security-plan']['system-implementation']['components'][0]['props'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-unique-ssp-system-implementation-user",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-ssp-system-implementation-user.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-ssp-system-implementation-user"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-ssp-system-implementation-user", "location": "$['system-security-plan']['system-implementation']['users'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-ssp-control-implementation-set-parameter",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-ssp-control-implementation-set-parameter.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-ssp-control-implementation-set-parameter"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-ssp-control-implementation-set-parameter", "location": "$['system-security-plan']['control-implementation']['set-parameters'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-by-component-export-provided-uuid-index-control-implementation",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-by-component-export-provided-uuid-index-control-implementation.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-by-component-export-provided-uuid-index"],
-      "requirements": ["PRS-015.01", "CNS-014.01"]
+      "expected-constraints": [
+        { "id": "oscal-by-component-export-provided-uuid-index", "location": "$['system-security-plan']['control-implementation']['implemented-requirements'][0]['by-components'][0]['export']['provided'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-014.01"]
     },
     {
       "id": "parse/constraint/oscal-implemented-requirement-statement-by-component-prop-name-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-implemented-requirement-statement-by-component-prop-name-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-implemented-requirement-statement-by-component-prop-name-values", "oscal-metadata-prop-name-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-implemented-requirement-statement-by-component-prop-name-values", "location": "$['system-security-plan']['control-implementation']['implemented-requirements'][0]['props'][0]['name']" },
+        { "id": "oscal-metadata-prop-name-values", "location": "$['system-security-plan']['control-implementation']['implemented-requirements'][0]['props'][0]['name']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-implemented-requirement-statement-by-component-prop-control-origination-values",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-implemented-requirement-statement-by-component-prop-control-origination-values.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-implemented-requirement-statement-by-component-prop-control-origination-values"],
-      "requirements": ["PRS-015.01", "CNS-008.02"]
+      "expected-constraints": [
+        { "id": "oscal-implemented-requirement-statement-by-component-prop-control-origination-values", "location": "$['system-security-plan']['control-implementation']['implemented-requirements'][0]['props'][0]['value']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-008.02"]
     },
     {
       "id": "parse/constraint/oscal-implemented-requirement-index-metadata-role-id",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-implemented-requirement-index-metadata-role-id.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-implemented-requirement-index-metadata-role-id"],
-      "requirements": ["PRS-015.01", "CNS-015.01"]
+      "expected-constraints": [
+        { "id": "oscal-implemented-requirement-index-metadata-role-id", "location": "$['system-security-plan']['control-implementation']['implemented-requirements'][0]['responsible-roles'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-015.01"]
     },
     {
       "id": "parse/constraint/oscal-implemented-requirement-index-metadata-party-uuid",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-implemented-requirement-index-metadata-party-uuid.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-implemented-requirement-index-metadata-party-uuid", "oscal-index-metadata-party-uuid"],
-      "requirements": ["PRS-015.01", "CNS-015.01"]
+      "expected-constraints": [
+        { "id": "oscal-implemented-requirement-index-metadata-party-uuid", "location": "$['system-security-plan']['control-implementation']['implemented-requirements'][0]['responsible-roles'][0]" },
+        { "id": "oscal-index-metadata-party-uuid", "location": "$['system-security-plan']['control-implementation']['implemented-requirements'][0]['responsible-roles'][0]['party-uuids'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-015.01"]
     },
     {
       "id": "parse/constraint/oscal-implemented-requirement-by-component-cardinality",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-implemented-requirement-by-component-cardinality.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-implemented-requirement-by-component-cardinality"],
-      "requirements": ["PRS-015.01", "CNS-011.01"]
+      "expected-constraints": [
+        { "id": "oscal-implemented-requirement-by-component-cardinality", "location": "$['system-security-plan']['control-implementation']['implemented-requirements'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-011.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-ssp-implemented-requirement-set-parameter",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-ssp-implemented-requirement-set-parameter.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-ssp-implemented-requirement-set-parameter"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-ssp-implemented-requirement-set-parameter", "location": "$['system-security-plan']['control-implementation']['implemented-requirements'][0]['set-parameters'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-ssp-implemented-requirement-responsible-role",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-ssp-implemented-requirement-responsible-role.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-ssp-implemented-requirement-responsible-role"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-ssp-implemented-requirement-responsible-role", "location": "$['system-security-plan']['control-implementation']['implemented-requirements'][0]['responsible-roles'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-ssp-implemented-requirement-statement",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-ssp-implemented-requirement-statement.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-ssp-implemented-requirement-statement"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-ssp-implemented-requirement-statement", "location": "$['system-security-plan']['control-implementation']['implemented-requirements'][0]['statements'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-ssp-implemented-requirement-by-component",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-ssp-implemented-requirement-by-component.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-ssp-implemented-requirement-by-component"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-ssp-implemented-requirement-by-component", "location": "$['system-security-plan']['control-implementation']['implemented-requirements'][0]['by-components'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-ssp-statement-responsible-role",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-ssp-statement-responsible-role.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-ssp-statement-responsible-role"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-ssp-statement-responsible-role", "location": "$['system-security-plan']['control-implementation']['implemented-requirements'][0]['statements'][0]['responsible-roles'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-ssp-implemented-requirement-statement-by-component",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-ssp-implemented-requirement-statement-by-component.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-ssp-implemented-requirement-statement-by-component"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-ssp-implemented-requirement-statement-by-component", "location": "$['system-security-plan']['control-implementation']['implemented-requirements'][0]['statements'][0]['by-components'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-provided-responsible-role",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-provided-responsible-role.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-provided-responsible-role"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-provided-responsible-role", "location": "$['system-security-plan']['control-implementation']['implemented-requirements'][0]['by-components'][0]['export']['provided'][0]['responsible-roles'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-responsibility-responsible-role",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-responsibility-responsible-role.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-responsibility-responsible-role"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-responsibility-responsible-role", "location": "$['system-security-plan']['control-implementation']['implemented-requirements'][0]['by-components'][0]['export']['responsibilities'][0]['responsible-roles'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-by-component-export-provided-responsibility-cardinality",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-by-component-export-provided-responsibility-cardinality.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-by-component-export-provided-responsibility-cardinality"],
-      "requirements": ["PRS-015.01", "CNS-011.01"]
+      "expected-constraints": [
+        { "id": "oscal-by-component-export-provided-responsibility-cardinality", "location": "$['system-security-plan']['control-implementation']['implemented-requirements'][0]['by-components'][0]['export']" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-011.01"]
     },
     {
       "id": "parse/constraint/oscal-by-component-export-provided-uuid-index-export",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-by-component-export-provided-uuid-index-export.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-by-component-export-provided-uuid-index"],
-      "requirements": ["PRS-015.01", "CNS-015.01"]
+      "expected-constraints": [
+        { "id": "oscal-by-component-export-provided-uuid-index", "location": "$['system-security-plan']['control-implementation']['implemented-requirements'][0]['by-components'][0]['export']['responsibilities'][0]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-015.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-inherited-responsible-role",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-inherited-responsible-role.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-inherited-responsible-role"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-inherited-responsible-role", "location": "$['system-security-plan']['control-implementation']['implemented-requirements'][0]['by-components'][0]['inherited'][0]['responsible-roles'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-satisfied-responsible-role",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-satisfied-responsible-role.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-satisfied-responsible-role"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-satisfied-responsible-role", "location": "$['system-security-plan']['control-implementation']['implemented-requirements'][0]['by-components'][0]['satisfied'][0]['responsible-roles'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     },
     {
       "id": "parse/constraint/oscal-unique-ssp-by-component-set-parameter",
       "operation": "parse",
       "input": "documents/invalid/constraints/oscal-unique-ssp-by-component-set-parameter.json",
       "expected-category": "parse-error",
-      "expected-constraints": ["oscal-unique-ssp-by-component-set-parameter"],
-      "requirements": ["PRS-015.01", "CNS-013.01"]
+      "expected-constraints": [
+        { "id": "oscal-unique-ssp-by-component-set-parameter", "location": "$['system-security-plan']['control-implementation']['implemented-requirements'][0]['by-components'][0]['set-parameters'][1]" }
+      ],
+      "requirements": ["PRS-015.01", "PRS-015.04", "CNS-013.01"]
     }
   ]
 }

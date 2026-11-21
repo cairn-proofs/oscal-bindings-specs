@@ -8,12 +8,11 @@
  * 2. The unpatched evaluator must give the expected failures for each case. Otherwise the run fails.
  * 3. A patched evaluator that throws for a case fails the run.
  * 4. A fault that no case detects fails the run.
- * 5. A fault is valid only when an input that conforms to the schema can change the list of failure identifiers that the
- *    runner compares. A fault that changes only the location, the entry, or the key of a failure is not valid, because the
- *    runner compares the `id` of each failure only.
+ * 5. A fault is valid only when an input that conforms to the schema can change the list of pairs of `id` and location of
+ *    the failures that the runner compares (CNS-020). A fault that changes only the entry or the key of a failure is not
+ *    valid, because the runner does not compare them. A fault that changes the location of a failure and no `id` is valid.
  *
- * The faults are for `allowed-values` entries only. The report goes to the output, and to $GITHUB_STEP_SUMMARY when that
- * is set.
+ * The report goes to the output, and to $GITHUB_STEP_SUMMARY when that is set.
  *
  *   npm run coverage:faults             run the faults and write the report
  *   npm run coverage:faults:self-test   run the scenarios of the runner
@@ -44,7 +43,7 @@ export interface Fault {
   patches: Patch[];
 }
 
-/** The first set of faults, from #69. Each patch text occurs once in scripts/constraints-manifest.ts. */
+/** The faults for the entries of each kind. Each patch text occurs once in scripts/constraints-manifest.ts. */
 export const FAULTS: Fault[] = [
   {
     id: "no-union",
@@ -81,6 +80,39 @@ export const FAULTS: Fault[] = [
       {
         find: "if (set.some((i) => entries[i].values!.includes(String(value)))) continue;",
         replace: "if (set.some((i) => entries[i].values!.some((v) => v.toLowerCase() === String(value).toLowerCase()))) continue;",
+      },
+    ],
+  },
+  // The faults of the location of a failure and of the order of the nodes with the same key (CNS-017, CNS-013, CNS-014,
+  // CNS-026). An is-unique entry of the store selects the nodes of one array, so the order of its query is the order of
+  // the locations, and no input can detect the order of the query for an is-unique entry.
+  {
+    id: "failure-at-context-node",
+    breaks: "CNS-017",
+    patches: [{ find: "for (const t of targets) if (!matches(e.pattern!, t.value)) add(i, t.path);", replace: "for (const t of targets) if (!matches(e.pattern!, t.value)) add(i, ctx.path);" }],
+  },
+  {
+    id: "is-unique-first-node-fails",
+    breaks: "CNS-013",
+    patches: [{ find: "for (const t of inLocationOrder(targets, (x) => x.path))", replace: "for (const t of inLocationOrder(targets, (x) => x.path).reverse())" }],
+  },
+  {
+    id: "index-first-node-fails",
+    breaks: "CNS-014",
+    patches: [{ find: "of inLocationOrder(members, (x) => x.path).slice(1))", replace: "of inLocationOrder(members, (x) => x.path).reverse().slice(1))" }],
+  },
+  {
+    id: "index-order-of-query",
+    breaks: "CNS-026",
+    patches: [{ find: "of inLocationOrder(members, (x) => x.path).slice(1))", replace: "of members.slice(1))" }],
+  },
+  {
+    id: "index-order-of-text",
+    breaks: "CNS-026",
+    patches: [
+      {
+        find: "of inLocationOrder(members, (x) => x.path).slice(1))",
+        replace: "of [...members].sort((p, q) => (p.path < q.path ? -1 : p.path > q.path ? 1 : 0)).slice(1))",
       },
     ],
   },
@@ -182,7 +214,7 @@ export async function runFaults(faults: Fault[], env: Env): Promise<{ failures: 
     results.push({ fault, detected });
     if (detected.length === 0) {
       failures.push(
-        `[fault ${fault.id}] no case detects the fault, which breaks ${fault.breaks}. Add a corpus case that detects it, or remove the fault if no input that conforms to the schema can change the list of failure identifiers.`,
+        `[fault ${fault.id}] no case detects the fault, which breaks ${fault.breaks}. Add a corpus case that detects it, or remove the fault if no input that conforms to the schema can change the list of pairs of identifier and location.`,
       );
     }
   }
@@ -194,7 +226,7 @@ export async function runFaults(faults: Fault[], env: Env): Promise<{ failures: 
  * that no case detects is a gap. The cases are in `summaryReport`.
  */
 export function report(results: FaultResult[]): string[] {
-  const lines = ["## Fault detection of the corpus", "", "The faults change the manifest evaluator, and are for allowed-values entries only.", ""];
+  const lines = ["## Fault detection of the corpus", "", "The faults change the manifest evaluator.", ""];
   for (const [i, { fault, detected }] of results.entries()) {
     const n = detected.length;
     lines.push(
@@ -208,7 +240,7 @@ export function report(results: FaultResult[]): string[] {
 
 /** The report for the job summary: the same lines as `report`, and each case on its own line in a collapsed block. */
 export function summaryReport(results: FaultResult[]): string[] {
-  const lines = ["## Fault detection of the corpus", "", "The faults change the manifest evaluator, and are for allowed-values entries only.", ""];
+  const lines = ["## Fault detection of the corpus", "", "The faults change the manifest evaluator.", ""];
   for (const { fault, detected } of results) {
     const n = detected.length;
     if (n === 0) {
@@ -267,7 +299,7 @@ async function selfTest(): Promise<number> {
     source: "alpha beta alpha gamma",
     entries: [],
     cases: [
-      { id: "c1", input: { document: "c1", expected: ["x"] } },
+      { id: "c1", input: { document: "c1", expected: [{ id: "x", location: "$" }] } },
       { id: "c2", input: { document: "c2", expected: [] } },
     ],
     evaluate: byCase(false),
@@ -320,6 +352,16 @@ async function selfTest(): Promise<number> {
     ["a case detects a fault when its result changes, and a case with the same result does not", async () => {
       const { failures, results } = await runFaults([fault("f6", { find: "beta", replace: "BREAK" })], env());
       return (failures.length === 0 && show(results[0].detected) === '["c1"]') || show({ failures, results });
+    }],
+    ["a fault that changes only the location of a failure is detected, because the runner compares the location", async () => {
+      const moved = ((_e: Entry[], doc: unknown) => (doc === "c1" ? [{ entry: 0, id: "x", location: "$['moved']" }] : [])) as unknown as Evaluate;
+      const { failures, results } = await runFaults([fault("f12", { find: "beta", replace: "BREAK" })], env({ load: async () => moved }));
+      return (failures.length === 0 && show(results[0].detected) === '["c1"]') || show({ failures, results });
+    }],
+    ["a fault that changes only the entry or the key of a failure is not detected, so the run fails", async () => {
+      const other = ((_e: Entry[], doc: unknown) => (doc === "c1" ? [{ entry: 7, id: "x", location: "$", key: "k" }] : [])) as unknown as Evaluate;
+      const { failures, results } = await runFaults([fault("f13", { find: "beta", replace: "BREAK" })], env({ load: async () => other }));
+      return (failures.length === 1 && failures[0].includes("f13") && results[0].detected.length === 0) || show({ failures, results });
     }],
     ["a fault that no case detects fails the run, the failure names the fault and what it breaks, and the report still lists it", async () => {
       const { failures, results } = await runFaults([fault("f7", { find: "beta", replace: "same" })], env());

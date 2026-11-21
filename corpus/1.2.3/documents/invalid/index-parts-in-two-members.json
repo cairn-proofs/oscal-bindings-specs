@@ -1,0 +1,35 @@
+{
+  "catalog": {
+    "uuid": "33333333-3333-4333-8333-333333333333",
+    "metadata": {
+      "title": "Parts in two members of the catalog",
+      "last-modified": "2024-01-02T03:04:05Z",
+      "version": "1.0",
+      "oscal-version": "1.2.3"
+    },
+    "groups": [
+      {
+        "id": "ac",
+        "title": "Access Control",
+        "parts": [
+          {
+            "id": "ac_smt",
+            "name": "overview"
+          }
+        ]
+      }
+    ],
+    "controls": [
+      {
+        "id": "ac-1",
+        "title": "Policy and Procedures",
+        "parts": [
+          {
+            "id": "ac_smt",
+            "name": "statement"
+          }
+        ]
+      }
+    ]
+  }
+}

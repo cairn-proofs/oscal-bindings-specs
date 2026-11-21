@@ -1,0 +1,123 @@
+{
+  "catalog": {
+    "uuid": "44444444-4444-4444-8444-444444444444",
+    "metadata": {
+      "title": "Controls at the indexes 2 and 10",
+      "last-modified": "2024-01-02T03:04:05Z",
+      "version": "1.0",
+      "oscal-version": "1.2.3"
+    },
+    "controls": [
+      {
+        "id": "ac-10",
+        "title": "Control 0",
+        "parts": [
+          {
+            "id": "c0_smt",
+            "name": "statement"
+          }
+        ]
+      },
+      {
+        "id": "ac-11",
+        "title": "Control 1",
+        "parts": [
+          {
+            "id": "c1_smt",
+            "name": "statement"
+          }
+        ]
+      },
+      {
+        "id": "ac-3",
+        "title": "Control 2",
+        "parts": [
+          {
+            "id": "c2_smt",
+            "name": "statement"
+          }
+        ]
+      },
+      {
+        "id": "ac-13",
+        "title": "Control 3",
+        "parts": [
+          {
+            "id": "c3_smt",
+            "name": "statement"
+          }
+        ]
+      },
+      {
+        "id": "ac-14",
+        "title": "Control 4",
+        "parts": [
+          {
+            "id": "c4_smt",
+            "name": "statement"
+          }
+        ]
+      },
+      {
+        "id": "ac-15",
+        "title": "Control 5",
+        "parts": [
+          {
+            "id": "c5_smt",
+            "name": "statement"
+          }
+        ]
+      },
+      {
+        "id": "ac-16",
+        "title": "Control 6",
+        "parts": [
+          {
+            "id": "c6_smt",
+            "name": "statement"
+          }
+        ]
+      },
+      {
+        "id": "ac-17",
+        "title": "Control 7",
+        "parts": [
+          {
+            "id": "c7_smt",
+            "name": "statement"
+          }
+        ]
+      },
+      {
+        "id": "ac-18",
+        "title": "Control 8",
+        "parts": [
+          {
+            "id": "c8_smt",
+            "name": "statement"
+          }
+        ]
+      },
+      {
+        "id": "ac-19",
+        "title": "Control 9",
+        "parts": [
+          {
+            "id": "c9_smt",
+            "name": "statement"
+          }
+        ]
+      },
+      {
+        "id": "ac-3",
+        "title": "Control 10",
+        "parts": [
+          {
+            "id": "c10_smt",
+            "name": "statement"
+          }
+        ]
+      }
+    ]
+  }
+}
