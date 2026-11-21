@@ -92,10 +92,27 @@ Each case has these fields:
       A case whose input does not conform to the schema has no `expected-constraints`.
       An input conforms to the schema only when each of its values also meets the datatype rules of
       [PRS-016](../../openspec/specs/document-parsing/spec.md#requirement-prs-016-the-patterns-of-the-schema-decide-a-value-not-its-format-keyword).
-   7. `source`: the repository, commit, path, and `sha256` of a document copied from another repository.
-   8. `notes`: an explanation for people. For a `yaml-parse` case, the notes name the fault code of the reference
+   7. `expected-locations`: a list of the Normalized Paths of the faults of the schema that the input gives
+      ([PRS-021](../../openspec/specs/document-parsing/spec.md#requirement-prs-021-a-fault-of-the-schema-has-the-location-of-its-failing-node),
+      [PRS-022](../../openspec/specs/document-parsing/spec.md#requirement-prs-022-each-fault-of-the-selected-failures-gives-one-structured-entry),
+      [ELV-006](../../openspec/specs/element-validation/spec.md#requirement-elv-006-the-location-of-a-schema-failure-of-an-element-is-the-location-of-the-failing-node)). The list is in any
+      order. Two faults at one location are two items, because one object can have more than one fault. The runner
+      compares the list with the locations of the schema failures of the binding as multisets. A failure at another
+      location than the list gives is a different failure. These cases have the field, and no other case has it:
+      1. A `parse` case with `expected-max-failures` whose input names one document type.
+      2. A `validate-element` case with `expected-valid` `false`.
+
+      The location of a fault is the location of its failing node, as the Normalized Path of
+      [CNS-024](../../openspec/specs/constraint-validation/spec.md#requirement-cns-024-the-location-of-a-node-says-when-two-selections-are-the-same-node). It starts with `$` for a
+      `parse` case and with `$[0]` for a `validate-element` case, as for `expected-constraints`. For a rejected value,
+      the failing node is the value, for example `$['catalog']['metadata']['last-modified']`. For an absent member or
+      a member that the schema does not define, it is the object, for example `$['catalog']['metadata']`.
+      The field is not present with `expected-constraints`, because a fault of the schema gives no constraint
+      failure. The number of items is not less than `expected-min-failures` and not more than `expected-max-failures`.
+   8. `source`: the repository, commit, path, and `sha256` of a document copied from another repository.
+   9. `notes`: an explanation for people. For a `yaml-parse` case, the notes name the fault code of the reference
       YAML reader in backticks, for example `` `grammar` ``.
-   9. `expected-absent-keys`: for a `yaml-round-trip` case, the keys that the serialized YAML must not hold at any
+   10. `expected-absent-keys`: for a `yaml-round-trip` case, the keys that the serialized YAML must not hold at any
       depth ([YML-008](../../openspec/specs/yaml-documents/spec.md#requirement-yml-008-serialize-an-oscal-document-to-yaml)).
       Each key is absent from the input, so a serializer that writes it has written an absent field.
 
@@ -144,6 +161,8 @@ what each form means for them.
    the same input. With `expected-constraints`, the pairs of `id` and location of the constraint failures in the parse error
    must equal the list, with each repeat. The exception is a parse error that identifies a limit of
    [PRS-010](../../openspec/specs/document-parsing/spec.md#requirement-prs-010-a-binding-can-limit-the-resources-that-a-parse-uses).
+   With `expected-locations`, the locations of the structured entries of the parse error must equal the list, with
+   each repeat, in the same way.
 3. `parse-typed`: parse the input with the typed parser of `document-type`. The parser must report
    `expected-category`.
 4. `parse-file`: parse the file at the input path. For the not-found category, the path does not exist.
@@ -161,6 +180,8 @@ what each form means for them.
    constraint failures in the result must equal the list, with each repeat, unless the result
    identifies a limit of
    [ELV-004](../../openspec/specs/element-validation/spec.md#requirement-elv-004-a-binding-can-limit-the-resources-that-element-validation-uses).
+   With `expected-locations`, the locations of the failures in the result must equal the list, with each repeat, in the
+   same way.
 7. `yaml-round-trip`: parse the YAML input with the YAML parse operation. Serialize the parsed document to JSON. The
    canonical form of the output must be the same bytes as `expected`. Then serialize the parsed document to YAML,
    parse that output with the YAML parse operation, and serialize the result to JSON. Its canonical form must also be

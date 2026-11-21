@@ -63,8 +63,17 @@
  *     with `expected-valid` false that conforms to it, and a builder element that conforms to it and fails the manifest
  *     need the field. Each reportable entry of the constraint manifest has a case whose input fails it. No input that a
  *     case expects to be valid, and no element that a builder case expects, fails an entry.
+ * 18. A case field `expected-locations` (PRS-021, PRS-022, ELV-006) lists the Normalized Path (RFC 9535) of each fault of
+ *     the schema, with each repeat. A parse case with `expected-max-failures` whose input names one document type, and a
+ *     validate-element case whose input fails the schema, need the field. No other case has it, and no case has it with
+ *     `expected-constraints`. The number of items is not less than `expected-min-failures` and not more than
+ *     `expected-max-failures`. The list equals, as a multiset, the faults that the checker derives from the errors of the
+ *     validator of the root key (or of the element type): it drops the errors of a union branch that the object does not
+ *     select (PRS-014) and the errors with the keyword anyOf, oneOf or if, it counts one fault for each `required` error
+ *     and each `additionalProperties` error and one for each other node with an error, and it writes each location as a
+ *     Normalized Path. A location of an element starts with `$[0]`.
  *
- *   npm run corpus:check           check the corpus
+ *   npm run corpus:check          check the corpus
  *   npm run corpus:write           regenerate each expected file, then check
  *   npm run corpus:self-test       run the self-tests of the rules
  */
@@ -72,7 +81,7 @@ import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 
-import { Ajv, type ValidateFunction } from "ajv";
+import { Ajv, type ErrorObject, type ValidateFunction } from "ajv";
 
 import { assertNoDuplicateKeys, canonicalize, normalizeDatetime, parseStrict } from "./canonical-json.js";
 import { addDatatypeFormats } from "./datatype-rules.js";
@@ -188,6 +197,7 @@ export interface Case {
   "expected-element"?: unknown;
   "expected-uuid"?: string;
   "expected-constraints"?: ExpectedConstraint[];
+  "expected-locations"?: string[];
   requirements: string[];
   source?: { repository: string; commit: string; path: string; sha256: string };
   notes?: string;
@@ -237,6 +247,110 @@ export function uncoveredEntries(entries: Entry[], covered: Set<number>): string
   return entries.flatMap((e, i) =>
     e.reportable && !covered.has(i) ? [`no case has an input that fails the reportable entry ${i} (${idOf(e.id)}, ${e.kind} on ${e.definition})`] : [],
   );
+}
+
+const isObject = (x: unknown): x is Record<string, unknown> => typeof x === "object" && x !== null && !Array.isArray(x);
+const decodePointerSegment = (raw: string) => raw.replaceAll("~1", "/").replaceAll("~0", "~");
+const pointerSegments = (pointer: string) => (pointer === "" ? [] : pointer.split("/").slice(1).map(decodePointerSegment));
+/** The node of `root` at an RFC 6901 JSON Pointer. */
+function nodeAt(root: unknown, pointer: string): unknown {
+  let node = root;
+  for (const segment of pointerSegments(pointer)) node = Array.isArray(node) ? node[Number(segment)] : isObject(node) ? node[segment] : undefined;
+  return node;
+}
+const NORMAL_ESCAPES: Record<string, string> = { "\\": "\\\\", "'": "\\'", "\b": "\\b", "\f": "\\f", "\n": "\\n", "\r": "\\r", "\t": "\\t" };
+/** The name segment of an RFC 9535 Normalized Path (Section 2.7): the escapes of its grammar. */
+const escapeName = (name: string) => name.replace(/[\\'\u0000-\u001f]/g, (ch) => NORMAL_ESCAPES[ch] ?? `\\u00${ch.charCodeAt(0).toString(16).padStart(2, "0")}`);
+/**
+ * PRS-021: the Normalized Path (RFC 9535) of the node that an Ajv `instancePath` names. `prefix` is `$` for a document and
+ * `$[0]` for an element, which CNS-024 wraps in an array. An array gives an index segment and an object a name segment.
+ */
+export function normalizedPath(pointer: string, root: unknown, prefix: string): string {
+  let out = prefix;
+  let node = root;
+  for (const segment of pointerSegments(pointer)) {
+    if (Array.isArray(node)) {
+      out += `[${Number(segment)}]`;
+      node = node[Number(segment)];
+    } else {
+      out += `['${escapeName(segment)}']`;
+      node = isObject(node) ? node[segment] : undefined;
+    }
+  }
+  return out;
+}
+const NORMALIZED_PATH = /^\$(?:\[(?:0|[1-9][0-9]*)\]|\['(?:[^'\\\u0000-\u001f]|\\[bfnrt'\\]|\\u00(?:0[0-7bdef]|1[0-9a-f]))*'\])*$/u;
+/** PRS-021: whether the text is a Normalized Path of RFC 9535, Section 2.7. */
+export const isNormalizedPath = (text: string) => NORMALIZED_PATH.test(text);
+/**
+ * PRS-021, PRS-022, ELV-006: the Normalized Path of each fault of the schema, from the errors of the validator of the
+ * root key or of the element type. The validator must keep the schema of each error (Ajv option `verbose`).
+ *
+ * 1. An object that holds the distinguishing property of exactly one branch of a union selects that branch (PRS-014). The
+ *    errors at that object from another branch are dropped. A property is distinguishing for a branch when only that
+ *    branch defines or requires it (MDL-006).
+ * 2. An error with the keyword anyOf, oneOf or if only summarizes other errors, so it is dropped.
+ * 3. Each `required` error and each `additionalProperties` error is one fault, at the object. Each other node that has an
+ *    error is one fault.
+ */
+export function schemaFaults(errors: ErrorObject[], data: unknown, prefix: string): string[] {
+  const dropped = new Set<ErrorObject>();
+  for (const summary of errors) {
+    if (summary.keyword !== "anyOf" && summary.keyword !== "oneOf") continue;
+    const node = nodeAt(data, summary.instancePath);
+    if (!isObject(node) || !Array.isArray(summary.schema)) continue;
+    const defined = (summary.schema as Array<{ properties?: object; required?: string[] }>).map(
+      (branch) => new Set([...Object.keys(branch.properties ?? {}), ...(branch.required ?? [])]),
+    );
+    const holds = defined.map((names, k) => [...names].some((name) => name in node && defined.every((other, j) => j === k || !other.has(name))));
+    if (holds.filter(Boolean).length !== 1) continue;
+    const selected = holds.indexOf(true);
+    for (const error of errors) {
+      const branch = error.instancePath === summary.instancePath ? /(?:^|\/)(?:anyOf|oneOf)\/(\d+)\//.exec(error.schemaPath) : null;
+      if (branch && Number(branch[1]) !== selected) dropped.add(error);
+    }
+  }
+  const faults = new Map<string, string>();
+  for (const error of errors) {
+    if (dropped.has(error) || ["anyOf", "oneOf", "if"].includes(error.keyword)) continue;
+    const params = error.params as { missingProperty?: string; additionalProperty?: string };
+    const key =
+      error.keyword === "required" ? ["required", error.instancePath, params.missingProperty]
+      : error.keyword === "additionalProperties" ? ["additionalProperties", error.instancePath, params.additionalProperty]
+      : ["node", error.instancePath];
+    faults.set(JSON.stringify(key), error.instancePath);
+  }
+  return [...faults.values()].map((pointer) => normalizedPath(pointer, data, prefix)).sort();
+}
+/**
+ * PRS-022, ELV-006: the faults equal the list of the case, as multisets. Undefined when they are equal.
+ */
+export function locationsMismatch(listed: string[] | undefined, faults: string[]): string | undefined {
+  const want = [...(listed ?? [])].sort();
+  const got = [...faults].sort();
+  return JSON.stringify(want) === JSON.stringify(got) ? undefined : `expected-locations is ${JSON.stringify(want)}, but the faults of the schema are at ${JSON.stringify(got)}`;
+}
+/**
+ * PRS-021: the rules of `expected-locations` that need no validator. `needed` is true for a case that expects faults of
+ * the schema: a parse case with `expected-max-failures` whose input names one document type, or a validate-element case
+ * whose input fails the schema. Undefined when the case meets the rules.
+ */
+export function expectedLocationsProblem(
+  c: Pick<Case, "expected-locations" | "expected-constraints" | "expected-min-failures" | "expected-max-failures">,
+  needed: boolean,
+): string | undefined {
+  const listed: unknown = c["expected-locations"];
+  if (listed === undefined) return needed ? "the case expects faults of the schema and has no expected-locations" : undefined;
+  if (!needed)
+    return "expected-locations applies only to a parse case with expected-max-failures whose input names one document type, or a validate-element case whose input fails the schema";
+  if (!Array.isArray(listed) || listed.length === 0 || !listed.every((x) => typeof x === "string" && isNormalizedPath(x)))
+    return "expected-locations is not a list of one or more Normalized Paths (RFC 9535)";
+  if (c["expected-constraints"] !== undefined) return "a case that expects faults of the schema has no expected-constraints";
+  const min = c["expected-min-failures"];
+  const max = c["expected-max-failures"];
+  if (min !== undefined && listed.length < min) return `expected-locations has ${listed.length} items, fewer than expected-min-failures ${min}`;
+  if (max !== undefined && listed.length > max) return `expected-locations has ${listed.length} items, more than expected-max-failures ${max}`;
+  return undefined;
 }
 
 interface Instant {
@@ -431,10 +545,21 @@ export function loadSchema() {
     oneOf: { required?: string[] }[];
   };
   checkSchemaForReader(schema);
-  const ajv = new Ajv({ allErrors: true, strict: false });
+  // `verbose` keeps the schema of each error, which `schemaFaults` reads to find the branches of a union.
+  const ajv = new Ajv({ allErrors: true, strict: false, verbose: true });
   addDatatypeFormats(ajv);
   ajv.addSchema(schema);
   return { schema, ajv, validateDocument: ajv.getSchema(schema.$id) as ValidateFunction };
+}
+
+/** The validator of each document type, by root key (PRS-013): each required key of a root `oneOf` branch, other than `$schema`. */
+export function rootKeyBranches(schema: { $id: string; oneOf: { required?: string[] }[] }, ajv: Ajv): Map<string, ValidateFunction> {
+  const branchOfRootKey = new Map<string, ValidateFunction>();
+  schema.oneOf.forEach((branch, i) => {
+    const validate = ajv.getSchema(`${schema.$id}#/oneOf/${i}`) as ValidateFunction;
+    for (const key of branch.required ?? []) if (key !== "$schema") branchOfRootKey.set(key, validate);
+  });
+  return branchOfRootKey;
 }
 
 /** The cases of the case index of the release. */
@@ -590,12 +715,8 @@ function main(write: boolean): number {
   const checkBuilder = checkBuilderFactory(constraints, { expectFailures, expectNone }, fail);
 
   const { schema, ajv, validateDocument } = loadSchema();
-  // The root keys of PRS-013: each required key of a root `oneOf` branch, other than `$schema`, selects that branch.
-  const branchOfRootKey = new Map<string, ValidateFunction>();
-  schema.oneOf.forEach((branch, i) => {
-    const validate = ajv.getSchema(`${schema.$id}#/oneOf/${i}`) as ValidateFunction;
-    for (const key of branch.required ?? []) if (key !== "$schema") branchOfRootKey.set(key, validate);
-  });
+  // The root keys of PRS-013 select the branch of their document type.
+  const branchOfRootKey = rootKeyBranches(schema, ajv);
   if ([...branchOfRootKey.keys()].sort().join() !== [...DOCUMENT_TYPES].sort().join())
     fail(SCHEMA, "the root keys of the oneOf branches are not the eight document types");
   const manifest = JSON.parse(fs.readFileSync(`manifest/${RELEASE}/names.json`, "utf8")) as { types: { name: string; kind: string; sites: string[] }[] };
@@ -641,8 +762,15 @@ function main(write: boolean): number {
   const keysDocument = fs.readFileSync("docs/back-matter-keys.md", "utf8");
   for (const value of [KEY_NAMESPACE_URL, KEY_NAMESPACE])
     if (!keysDocument.includes(value)) fail("docs/back-matter-keys.md", `the document does not contain ${value}`);
+  // Check 18: the rules of `expected-locations`, and the list against the faults that the checker derives.
+  const checkLocations = (c: Case, needed: boolean, faults?: string[]) => {
+    const problem = expectedLocationsProblem(c, needed);
+    if (problem) return fail(c.id, problem);
+    const mismatch = needed && faults ? locationsMismatch(c["expected-locations"], faults) : undefined;
+    if (mismatch) fail(c.id, mismatch);
+  };
   const ids = specIdentifiers();
-  const jsonExpected = new Set(index.cases.filter((c) => c.operation === "round-trip").map((c) => c.expected));
+  const jsonExpected =new Set(index.cases.filter((c) => c.operation === "round-trip").map((c) => c.expected));
   const seen = new Set<string>();
   const used = new Set<string>();
   const covered = new Set<string>();
@@ -684,6 +812,8 @@ function main(write: boolean): number {
       const problem = expectedConstraintsProblem(listed);
       if (problem) fail(c.id, problem);
     }
+    if (c["expected-locations"] !== undefined && c.operation !== "parse" && c.operation !== "validate-element")
+      fail(c.id, "expected-locations applies only to a parse or validate-element case");
     if (isBuilder) {
       if (validateResource && validateRlink && validateHash) checkBuilder(c, { validateResource, validateRlink, validateHash });
       continue;
@@ -755,6 +885,7 @@ function main(write: boolean): number {
           text = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
         } catch {
           if (c["input-form"] !== "bytes") fail(c.id, 'input is not UTF-8, so input-form must be "bytes"');
+          checkLocations(c, false);
           break;
         }
         if (c.requirements.some((r) => r === "PRS-020.01" || r === "PRS-020.02")) {
@@ -765,25 +896,32 @@ function main(write: boolean): number {
         try {
           doc = readJsonInput(text);
         } catch {
+          checkLocations(c, false);
           break;
         }
         const parsed = documentInput(c, validateDocument);
         if (parsed) {
           if (c["expected-constraints"] === undefined) fail(c.id, "input is valid against the schema and the case has no expected-constraints, so parsing it is not an error");
           else expectFailures(c, constraints.ofDocument(parsed.document));
+          checkLocations(c, false);
           break;
         }
         if (c["expected-constraints"] !== undefined) fail(c.id, "the input does not conform to the schema, so the case has no expected-constraints");
         const min = c["expected-min-failures"];
         if (min !== undefined && (validateDocument.errors?.length ?? 0) < min)
           fail(c.id, `the schema reports ${validateDocument.errors?.length} failures, fewer than ${min}`);
+        // PRS-021, PRS-022: an input that names one document type has faults of that type, and the case lists their locations.
+        let faults: string[] | undefined;
         if (max !== undefined && doc !== null && typeof doc === "object" && !Array.isArray(doc)) {
           const rootKeys = Object.keys(doc).filter((key) => branchOfRootKey.has(key));
           const branch = branchOfRootKey.get(rootKeys[0]);
           if (rootKeys.length >= 2) fail(c.id, "the input has two or more root keys, so PRS-013 sets no maximum");
-          else if (branch !== undefined && branch(doc))
-            fail(c.id, `the input is valid against the ${rootKeys[0]} branch, so its fault is not in that type`);
+          else if (branch !== undefined) {
+            if (branch(doc)) fail(c.id, `the input is valid against the ${rootKeys[0]} branch, so its fault is not in that type`);
+            else faults = schemaFaults(branch.errors ?? [], doc, "$");
+          }
         }
+        checkLocations(c, faults !== undefined, faults);
         break;
       }
       case "parse-typed": {
@@ -858,10 +996,12 @@ function main(write: boolean): number {
         const validate = elementValidator(c["element-type"] ?? "");
         if (category === "unknown-element-type") {
           if (validate) fail(c.id, `element type "${c["element-type"]}" exists`);
+          checkLocations(c, false);
           break;
         }
         if (!validate) {
           fail(c.id, `element type "${c["element-type"]}" has no unique schema definition`);
+          checkLocations(c, false);
           break;
         }
         const element: unknown = JSON.parse(fs.readFileSync(inputPath, "utf8"));
@@ -869,11 +1009,16 @@ function main(write: boolean): number {
         if (!valid) {
           if (c["expected-valid"] !== false) fail(c.id, `the schema reports valid=false, not ${c["expected-valid"]}: ${ajv.errorsText(validate.errors)}`);
           if (c["expected-constraints"] !== undefined) fail(c.id, "the input does not conform to the schema, so the case has no expected-constraints");
-        } else if (c["expected-valid"] === true) {
-          if (c["expected-constraints"] !== undefined) fail(c.id, "expected-valid is true, so the case has no expected-constraints");
-          expectNone(c, constraints.ofElement(c["element-type"] ?? "", element));
-        } else if (c["expected-constraints"] === undefined) fail(c.id, "the schema reports valid=true, not false, and the case has no expected-constraints");
-        else expectFailures(c, constraints.ofElement(c["element-type"] ?? "", element));
+          // ELV-006: the location of a fault of an element starts with `$[0]`, as CNS-024 wraps the element in an array.
+          checkLocations(c, c["expected-valid"] === false, schemaFaults(validate.errors ?? [], element, "$[0]"));
+        } else {
+          checkLocations(c, false);
+          if (c["expected-valid"] === true) {
+            if (c["expected-constraints"] !== undefined) fail(c.id, "expected-valid is true, so the case has no expected-constraints");
+            expectNone(c, constraints.ofElement(c["element-type"] ?? "", element));
+          } else if (c["expected-constraints"] === undefined) fail(c.id, "the schema reports valid=true, not false, and the case has no expected-constraints");
+          else expectFailures(c, constraints.ofElement(c["element-type"] ?? "", element));
+        }
         break;
       }
       case "yaml-round-trip": {
@@ -960,8 +1105,27 @@ function main(write: boolean): number {
 /** The rule scenarios of check 17 (CNS-020). They run the reference evaluator on documents made for the test. */
 function selfTest(): number {
   const constraints = CorpusConstraints.load(RELEASE);
-  const { validateDocument } = loadSchema();
+  const { schema, ajv, validateDocument } = loadSchema();
   const metadata = { title: "t", "last-modified": "2024-01-02T03:04:05Z", version: "1", "oscal-version": RELEASE };
+  // Check 18 (PRS-021, PRS-022, ELV-006): documents with one kind of fault each, and the faults that the checker derives.
+  const branches = rootKeyBranches(schema, ajv);
+  const uuid = "00000000-0000-4000-8000-000000000001";
+  const catalogOf = (members: object, meta: object = metadata) => ({ catalog: { uuid, metadata: meta, ...members } });
+  const branchOf = (doc: object) => branches.get(Object.keys(doc)[0]) as ValidateFunction;
+  const faultsOf = (doc: object) => {
+    const validate = branchOf(doc);
+    validate(doc);
+    return schemaFaults(validate.errors ?? [], doc, "$");
+  };
+  const { title: _title, version: _version, ...withoutTitleAndVersion } = metadata;
+  const { title: _t, ...withoutTitle } = metadata;
+  const unionDocument = catalogOf({ params: [{ id: "p", select: { "how-many": "seven" } }] });
+  const noTimezone = catalogOf({}, { ...metadata, "last-modified": "2024-01-02T03:04:05" });
+  const lastModified = "$['catalog']['metadata']['last-modified']";
+  const backMatter = ajv.getSchema(`${schema.$id}#/definitions/oscal-complete-oscal-metadata:back-matter`) as ValidateFunction;
+  const emptyResources = { resources: [] };
+  backMatter(emptyResources);
+  const problemOf = (c: Parameters<typeof expectedLocationsProblem>[0], needed = true) => expectedLocationsProblem(c, needed);
   const catalog = (props: object[]) => ({ catalog: { uuid: "00000000-0000-4000-8000-000000000001", metadata, controls: [{ id: "c", title: "t", props, parts: [{ name: "statement" }] }] } });
   const bad = constraints.ofDocument(catalog([{ name: "bogus", value: "1" }]));
   const reportable = constraints.entries.map((e, i) => (e.reportable ? i : -1)).filter((i) => i >= 0);
@@ -1051,6 +1215,53 @@ function selfTest(): number {
     ["PRS-020: a duplicate-key case with no duplicate key has a problem", () => duplicateKeyCaseProblem(JSON.stringify(catalog([])), () => true) !== undefined],
     ["PRS-020: a duplicate-key case that is not valid when read with the last value has a problem", () => duplicateKeyCaseProblem('{"a":1,"a":2}', () => false) !== undefined],
     ["CNS-018: an element type without a definition gives no failure", () => constraints.ofElement("no-such-type", {}).length === 0],
+    ["PRS-021.01: the fault of a rejected value is at the value", () => {
+      const faults = faultsOf(catalogOf({}, { ...metadata, "last-modified": "2026-01-01T00:00:00z" }));
+      return (faults.join() === lastModified && locationsMismatch([lastModified], faults) === undefined) || JSON.stringify(faults);
+    }],
+    ["PRS-021.02: the fault of a member that the schema does not define is at the object that holds it", () => faultsOf(catalogOf({ extra: 1 })).join() === "$['catalog']" || JSON.stringify(faultsOf(catalogOf({ extra: 1 })))],
+    ["PRS-021.03: the fault of an absent required member is at the object that lacks it", () => faultsOf(catalogOf({}, withoutTitle)).join() === "$['catalog']['metadata']" || JSON.stringify(faultsOf(catalogOf({}, withoutTitle)))],
+    ["PRS-021.04: a value that fails two keywords is one fault", () => {
+      const validate = branchOf(noTimezone);
+      validate(noTimezone);
+      const faults = schemaFaults(validate.errors ?? [], noTimezone, "$");
+      return ((validate.errors?.length ?? 0) >= 2 && faults.join() === lastModified) || `${validate.errors?.length} errors, faults ${JSON.stringify(faults)}`;
+    }],
+    ["PRS-022.01: two absent members of one object are two faults at one location, and the list repeats the location", () => {
+      const faults = faultsOf(catalogOf({}, withoutTitleAndVersion));
+      const here = "$['catalog']['metadata']";
+      return (faults.length === 2 && locationsMismatch([here, here], faults) === undefined && locationsMismatch([here], faults) !== undefined) || JSON.stringify(faults);
+    }],
+    ["PRS-014.01: the fault of a selected branch is at the value, not at the object that holds it, and the unselected branch gives no fault", () => {
+      const faults = faultsOf(unionDocument);
+      const value = "$['catalog']['params'][0]['select']['how-many']";
+      const holder = "$['catalog']['params'][0]";
+      const validate = branchOf(unionDocument);
+      validate(unionDocument);
+      return (
+        (validate.errors?.length ?? 0) > 1 && locationsMismatch([value], faults) === undefined && locationsMismatch([holder], faults) !== undefined && locationsMismatch([value, holder], faults) !== undefined
+      ) || JSON.stringify(faults);
+    }],
+    ["PRS-021: a list that holds the root fails the check for a document with a fault elsewhere", () => locationsMismatch(["$"], faultsOf(noTimezone)) !== undefined],
+    ["ELV-006.03: the location of a fault of an element starts with $[0]", () => {
+      const faults = schemaFaults(backMatter.errors ?? [], emptyResources, "$[0]");
+      return (faults.join() === "$[0]['resources']" && locationsMismatch(["$['resources']"], faults) !== undefined) || JSON.stringify(faults);
+    }],
+    ["PRS-021: a name with a quote, a slash or a control character is escaped as RFC 9535 states", () => {
+      const root = { "a/b": { "c'd": [{ "e\u001f\\": 1 }] } };
+      return normalizedPath("/a~1b/c'd/0/e\u001f\\", root, "$") === "$['a/b']['c\\'d'][0]['e\\u001f\\\\']" || normalizedPath("/a~1b/c'd/0/e\u001f\\", root, "$");
+    }],
+    ["PRS-021: a path that is not a Normalized Path fails the check, and an escaped name passes", () =>
+      ["catalog", "$.catalog", "$['a']['b", '$["a"]', "$[01]", "$[-1]", "$['a\\x']", "$[*]", "$['a'] "].every((text) => !isNormalizedPath(text)) &&
+      ["$", "$['a']", "$[0]['a\\'b'][12]", "$['\\u001f']", "$['\\\\']"].every((text) => isNormalizedPath(text))],
+    ["PRS-021: a list with an item that is not a Normalized Path fails the case", () => problemOf({ "expected-locations": ["$.catalog"] }) !== undefined && problemOf({ "expected-locations": [] }) !== undefined && problemOf({ "expected-locations": ["$['a']"] }) === undefined],
+    ["PRS-013: a list with more items than expected-max-failures, or fewer than expected-min-failures, fails the case", () =>
+      problemOf({ "expected-locations": ["$['a']", "$['b']"], "expected-max-failures": 1 }) !== undefined &&
+      problemOf({ "expected-locations": ["$['a']"], "expected-min-failures": 2, "expected-max-failures": 2 }) !== undefined &&
+      problemOf({ "expected-locations": ["$['a']", "$['a']"], "expected-min-failures": 2, "expected-max-failures": 2 }) === undefined],
+    ["PRS-015.02: a list with expected-constraints fails the case", () => problemOf({ "expected-locations": ["$['a']"], "expected-constraints": [{ id: "x", location: "$" }] }) !== undefined],
+    ["PRS-021: a case that expects faults of the schema and has no list fails, and a list in a case that expects none fails", () =>
+      problemOf({}) !== undefined && problemOf({}, false) === undefined && problemOf({ "expected-locations": ["$['a']"] }, false) !== undefined],
   ];
   let failed = 0;
   for (const [name, fn] of cases) {

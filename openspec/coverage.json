@@ -949,6 +949,7 @@
       "corpus": [
         "element/back-matter-empty-resources",
         "element/observation-missing-collected",
+        "element/parameter-select-out-of-set",
         "element/parameter-selection-out-of-set",
         "element/property-invalid-name"
       ],
@@ -1017,6 +1018,40 @@
         "element/mapping-collection-mappings-list"
       ],
       "id": "ELV-005.04"
+    },
+    {
+      "capability": "element-validation",
+      "corpus": [
+        "element/parameter-selection-out-of-set"
+      ],
+      "id": "ELV-006.01"
+    },
+    {
+      "capability": "element-validation",
+      "corpus": [
+        "element/observation-missing-collected"
+      ],
+      "id": "ELV-006.02"
+    },
+    {
+      "capability": "element-validation",
+      "corpus": [
+        "element/back-matter-empty-resources"
+      ],
+      "id": "ELV-006.03",
+      "self-test": [
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "ELV-006.03: the location of a fault of an element starts with $[0]"
+        }
+      ]
+    },
+    {
+      "capability": "element-validation",
+      "corpus": [
+        "element/parameter-select-out-of-set"
+      ],
+      "id": "ELV-006.04"
     },
     {
       "by-design": "The rule applies to how a binding surfaces a result, which no store script can observe.",
@@ -2445,7 +2480,13 @@
       "corpus": [
         "parse/closed-enum-out-of-set"
       ],
-      "id": "PRS-014.01"
+      "id": "PRS-014.01",
+      "self-test": [
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "PRS-014.01: the fault of a selected branch is at the value, not at the object that holds it, and the unselected branch gives no fault"
+        }
+      ]
     },
     {
       "capability": "document-parsing",
@@ -2697,7 +2738,13 @@
       "corpus": [
         "parse/schema-and-constraint-failure"
       ],
-      "id": "PRS-015.02"
+      "id": "PRS-015.02",
+      "self-test": [
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "PRS-015.02: a list with expected-constraints fails the case"
+        }
+      ]
     },
     {
       "capability": "document-parsing",
@@ -3111,6 +3158,71 @@
         "parse/duplicate-key"
       ],
       "id": "PRS-020.03"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/datetime-lowercase-zone"
+      ],
+      "id": "PRS-021.01",
+      "self-test": [
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "PRS-021.01: the fault of a rejected value is at the value"
+        }
+      ]
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/unknown-field-top"
+      ],
+      "id": "PRS-021.02",
+      "self-test": [
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "PRS-021.02: the fault of a member that the schema does not define is at the object that holds it"
+        }
+      ]
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/missing-required-field"
+      ],
+      "id": "PRS-021.03",
+      "self-test": [
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "PRS-021.03: the fault of an absent required member is at the object that lacks it"
+        }
+      ]
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/datetime-without-timezone"
+      ],
+      "id": "PRS-021.04",
+      "self-test": [
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "PRS-021.04: a value that fails two keywords is one fault"
+        }
+      ]
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/two-failures"
+      ],
+      "id": "PRS-022.01",
+      "self-test": [
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "PRS-022.01: two absent members of one object are two faults at one location, and the list repeats the location"
+        }
+      ]
     },
     {
       "capability": "serialization",
