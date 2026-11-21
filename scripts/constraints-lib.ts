@@ -58,6 +58,8 @@ export interface ElementTarget {
   key: string;
   def?: Def;
   roots?: Def[];
+  /** The element is one item of `def` or a list of items (CNS-023). */
+  singleOrMany?: boolean;
 }
 
 interface Inputs {
@@ -233,7 +235,7 @@ export class Generator {
         const item = this.names.types.find((x) => x.name === t.item);
         const def = item && this.defAtSite(item.sites[0]);
         if (!def) throw new GenerationError(`the type ${t.name} has no item definition`);
-        out.set(key, { key, def });
+        out.set(key, { key, def, singleOrMany: true });
       }
       else {
         const defs = new Set(t.sites.map((s) => this.defAtSite(s)));

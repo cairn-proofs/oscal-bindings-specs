@@ -9,6 +9,8 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { datatypePattern, loadModel, metaschemaDir, readModuleText, type Constraint, type Def, type KeyField } from "./metaschema.js";
+import { CorpusConstraints } from "./corpus-constraints.js";
+import { inLocationOrder } from "./location-order.js";
 import {
   allNodes,
   atomize,
@@ -185,9 +187,10 @@ export function evaluate(constraints: Constraint[], tree: MNode, release = "1.2.
             break;
           }
           case "is-unique": {
-            // CNS-013: the target nodes of one context node with the same key give one failure fewer than their number.
+            // CNS-013: the nodes with the same key are in the order of their locations (CNS-026). The first node gives no
+            // failure, and each other node gives one.
             const seen = new Set<string>();
-            for (const t of targets) {
+            for (const t of inLocationOrder(targets, (x) => x.path)) {
               const keys = guard(c, t.path, () => keysOf(c, keyExprs, t, false));
               for (const key of keys ?? []) {
                 const k = JSON.stringify(key);
@@ -234,9 +237,10 @@ export function evaluate(constraints: Constraint[], tree: MNode, release = "1.2.
     }
   }
 
-  // CNS-014: the target nodes with the same key in one index give one failure fewer than their number.
+  // CNS-014: the target nodes with the same key in one index are in the order of their locations (CNS-026). The first
+  // node gives no failure, and each other node gives one.
   for (const index of indexes.values())
-    for (const [key, members] of index) for (const m of members.slice(1)) add(m.c, m.node.path, key);
+    for (const [key, members] of index) for (const m of inLocationOrder(members, (x) => x.node.path).slice(1)) add(m.c, m.node.path, key);
 
   // CNS-008: a node fails for each closed constraint of its applicable set when no constraint of the set lists the value.
   for (const [node, { value, set }] of closedSets) {
@@ -449,6 +453,33 @@ function selfTest(): number {
     const e = parseMetapath(byId("oscal-ssp-by-component-uuid-index")[0].target);
     const { expr, dropped } = localPart(e);
     return (dropped && expr !== null && !callsDoc(expr)) || "doc() branch not dropped";
+  });
+
+  // The three inputs of design D5. Their failures and locations are derived by hand from CNS-026, not from an evaluator.
+  const catalogIndexes = ["oscal-catalog-parts", "oscal-catalog-controls", "oscal-catalog-groups-controls-parts"].flatMap((id) => byId(id, "index"));
+  const orderCase = (file: string, expected: string[]) => () => {
+    const json = JSON.parse(fs.readFileSync(`corpus/1.2.3/documents/invalid/${file}`, "utf8"));
+    const got = run(catalogIndexes, json).failures.map((f) => `${f.id} ${f.location}`).sort();
+    return same(got, expected);
+  };
+  test(
+    "CNS-014.04: a control inside the first control, with the id of the second control, gives the failure at the second control",
+    orderCase("index-nested-control-id.json", ["oscal-catalog-controls $['catalog']['controls'][1]", "oscal-catalog-groups-controls-parts $['catalog']['controls'][1]"]),
+  );
+  test(
+    "CNS-014.03: parts in the members `groups` and `controls` give the failure at the part in `groups`, where `controls` comes first by code point",
+    orderCase("index-parts-in-two-members.json", ["oscal-catalog-groups-controls-parts $['catalog']['groups'][0]['parts'][0]", "oscal-catalog-parts $['catalog']['groups'][0]['parts'][0]"]),
+  );
+  test(
+    "CNS-026.01: two controls with the same id at the indexes 2 and 10 give the failure at the index 10",
+    orderCase("index-control-ids-2-and-10.json", ["oscal-catalog-controls $['catalog']['controls'][10]", "oscal-catalog-groups-controls-parts $['catalog']['controls'][10]"]),
+  );
+
+  // CNS-023: the location of a failure in an item of a list element.
+  test("CNS-023.02: a failure in the second item of a list has the location of the item in the list, then the rest of its location", () => {
+    const list = [{ uuid: "a" }, { uuid: "b", props: [{ name: "bogus", value: "v" }] }];
+    const failures = CorpusConstraints.load("1.2.3").ofElement("mapping-collection-mappings", list);
+    return same(failures.filter((f) => f.id === "oscal-metadata-prop-name-values").map((f) => f.location), ["$[0][1]['props'][0]['name']"]);
   });
 
   // CNS-017: at most one failure for one location.

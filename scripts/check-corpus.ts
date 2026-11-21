@@ -58,7 +58,8 @@
  *     does not exist.
  * 17. A case field `expected-constraints` (CNS-020) applies to a parse, validate-element, or builder case. Its input
  *     conforms to the schema, and the reference evaluator (scripts/constraint-reference.ts) gives the failures that the
- *     field lists by `id`, once for each failure. A parse input that conforms to the schema, a validate-element input
+ *     field lists. Each item is an object with the strings `id` and `location` (CNS-024). The lists of pairs are equal
+ *     as multisets, so a pair that occurs more than once in the failures occurs as often in the field. A parse input that conforms to the schema, a validate-element input
  *     with `expected-valid` false that conforms to it, and a builder element that conforms to it and fails the manifest
  *     need the field. Each reportable entry of the constraint manifest has a case whose input fails it. No input that a
  *     case expects to be valid, and no element that a builder case expects, fails an entry.
@@ -152,6 +153,12 @@ function expectations(fail: (id: string, message: string) => void, covered: Set<
 const TYPE_OF: Record<string, string> = { "build-hash": "hash", "build-rlink": "back-matter-resource-rlink", "build-resource": "back-matter-resource" };
 const ID = /^[A-Z]{2,5}-\d{3}(?:\.\d{2})?$/;
 
+/** CNS-020: an expected constraint failure, with the `id` of its entry and its location (CNS-024). */
+export interface ExpectedConstraint {
+  id: string;
+  location: string;
+}
+
 export interface Case {
   id: string;
   operation: string;
@@ -180,7 +187,7 @@ export interface Case {
   };
   "expected-element"?: unknown;
   "expected-uuid"?: string;
-  "expected-constraints"?: string[];
+  "expected-constraints"?: ExpectedConstraint[];
   requirements: string[];
   source?: { repository: string; commit: string; path: string; sha256: string };
   notes?: string;
@@ -207,12 +214,23 @@ const GENERATED_UUID = "0c6b8f1e-4a2d-4b7e-9c3f-5d6e7f8a9b0c";
 const sha256 = (bytes: Buffer) => createHash("sha256").update(bytes).digest("hex");
 
 const idOf = (id: string | null) => id ?? "(no id)";
-/** CNS-020: the `id` values of the failures equal the list of the case, with each repeat. Undefined when they are equal. */
-export function constraintMismatch(listed: string[] | undefined, failures: EntryFailure[]): string | undefined {
-  const got = failures.map((f) => idOf(f.id)).sort();
-  const want = [...(listed ?? [])].sort();
+/**
+ * CNS-020: the pairs of `id` and location of the failures equal the list of the case, as multisets. Undefined when they
+ * are equal.
+ */
+export function constraintMismatch(listed: ExpectedConstraint[] | undefined, failures: EntryFailure[]): string | undefined {
+  const pairs = (items: Array<{ id: string; location: string }>) => items.map((x) => JSON.stringify([x.id, x.location])).sort();
+  const got = pairs(failures.map((f) => ({ id: idOf(f.id), location: f.location })));
+  const want = pairs(listed ?? []);
   if (JSON.stringify(got) === JSON.stringify(want)) return undefined;
-  return `expected-constraints is ${JSON.stringify(want)}, but the reference evaluator gives ${JSON.stringify(got)}`;
+  const show = (list: string[]) => JSON.stringify(list.map((x) => JSON.parse(x) as [string, string]).map(([id, location]) => ({ id, location })));
+  return `expected-constraints is ${show(want)}, but the reference evaluator gives ${show(got)}`;
+}
+/** CNS-020: a message when `listed` is not a list of one or more objects with the strings `id` and `location`. */
+export function expectedConstraintsProblem(listed: unknown): string | undefined {
+  const isItem = (x: unknown) =>
+    typeof x === "object" && x !== null && !Array.isArray(x) && Object.keys(x).sort().join() === "id,location" && typeof (x as ExpectedConstraint).id === "string" && typeof (x as ExpectedConstraint).location === "string";
+  return Array.isArray(listed) && listed.length > 0 && listed.every(isItem) ? undefined : "expected-constraints is not a list of one or more objects with the strings id and location";
 }
 /** CNS-020: a message for each reportable entry that no case fails. */
 export function uncoveredEntries(entries: Entry[], covered: Set<number>): string[] {
@@ -327,8 +345,8 @@ export function keysPresent(value: unknown, keys: string[]): string[] {
 /** A document that the corpus checks against the constraint manifest (CNS-020), and the failures that its case expects. */
 export interface DocumentInput {
   document: unknown;
-  /** The `id` values of the expected failures, with each repeat. Empty for a case that expects a valid document. */
-  expected: string[];
+  /** The expected failures, with each repeat. Empty for a case that expects a valid document. */
+  expected: ExpectedConstraint[];
 }
 
 /** Reads the JSON text of a `parse` input. Throws on a syntax error and on a duplicate key (PRS-020). */
@@ -580,9 +598,13 @@ function main(write: boolean): number {
   });
   if ([...branchOfRootKey.keys()].sort().join() !== [...DOCUMENT_TYPES].sort().join())
     fail(SCHEMA, "the root keys of the oneOf branches are not the eight document types");
+  const manifest = JSON.parse(fs.readFileSync(`manifest/${RELEASE}/names.json`, "utf8")) as { types: { name: string; kind: string; sites: string[] }[] };
+  // The schema of an element type of kind single-or-many is the property that holds one item or a list (CNS-023).
   const elementValidator = (type: string): ValidateFunction | undefined => {
     const keys = Object.keys(schema.definitions).filter((key) => key.split(":")[1] === type);
-    return keys.length === 1 ? ajv.getSchema(`${schema.$id}#/definitions/${keys[0]}`) : undefined;
+    if (keys.length === 1) return ajv.getSchema(`${schema.$id}#/definitions/${keys[0]}`);
+    const many = manifest.types.filter((t) => t.kind === "single-or-many" && kebab(t.name) === type);
+    return many.length === 1 && many[0].sites.length === 1 ? ajv.getSchema(`${schema.$id}${many[0].sites[0]}`) : undefined;
   };
 
   // The rlink and resource have no top-level definition. They are item schemas of the back-matter definition.
@@ -593,7 +615,6 @@ function main(write: boolean): number {
   if (!validateResource || !validateRlink || !validateHash) fail(SCHEMA, "the hash, rlink, or resource schema is missing");
 
   // The element-type names of ELV-002: one for each type of the naming manifest, in code-point order.
-  const manifest = JSON.parse(fs.readFileSync(`manifest/${RELEASE}/names.json`, "utf8")) as { types: { name: string }[] };
   const typeNames = new Map<string, string>();
   for (const { name } of manifest.types) {
     const elementType = kebab(name);
@@ -660,8 +681,8 @@ function main(write: boolean): number {
     if (listed !== undefined) {
       if (c.operation !== "parse" && c.operation !== "validate-element" && !isBuilder)
         fail(c.id, "expected-constraints applies only to a parse, validate-element, or builder case");
-      if (!Array.isArray(listed) || listed.length === 0 || listed.some((x) => typeof x !== "string"))
-        fail(c.id, "expected-constraints is not a list of one or more identifiers");
+      const problem = expectedConstraintsProblem(listed);
+      if (problem) fail(c.id, problem);
     }
     if (isBuilder) {
       if (validateResource && validateRlink && validateHash) checkBuilder(c, { validateResource, validateRlink, validateHash });
@@ -945,6 +966,10 @@ function selfTest(): number {
   const bad = constraints.ofDocument(catalog([{ name: "bogus", value: "1" }]));
   const reportable = constraints.entries.map((e, i) => (e.reportable ? i : -1)).filter((i) => i >= 0);
   const hashFailures = constraints.ofElement("hash", { algorithm: "SHA-256", value: "abc" });
+  const propName = "$['catalog']['controls'][0]['props'][0]['name']";
+  const pair = (id: string, location = propName): ExpectedConstraint => ({ id, location });
+  const both = [pair("oscal-metadata-prop-name-values"), pair("oscal-control-prop-name")];
+  const twice = [{ entry: 0, id: "a", location: "$" }, { entry: 1, id: "a", location: "$" }];
   const messages: string[] = [];
   const { expectFailures, expectNone } = expectations((id, message) => messages.push(`${id}: ${message}`), new Set());
   const run = (check: (c: Case, f: EntryFailure[]) => void, c: Partial<Case>, failures: EntryFailure[]) => {
@@ -961,15 +986,22 @@ function selfTest(): number {
     ["VER-006.01: a case with a known-defects field fails the check", () => caseBindingData({ id: "t", "known-defects": ["x"] }) !== undefined && caseBindingData({ id: "t" }) === undefined],
     ["VER-006.01: an index with a defect-twins field fails the check", () => indexBindingData({ "defect-twins": [] }) !== undefined && indexBindingData({ cases: [] }) === undefined],
     ["a valid document fails no entry", () => constraints.ofDocument(catalog([{ name: "label", value: "1" }])).length === 0],
-    ["CNS-020: the listed identifiers equal the failures", () => constraintMismatch(["oscal-metadata-prop-name-values", "oscal-control-prop-name"], bad) === undefined],
+    ["CNS-020: the listed pairs equal the failures, and the location of each failure is the name of the property", () => constraintMismatch(both, bad) === undefined && bad.every((f) => f.location === propName) || JSON.stringify(bad)],
     ["CNS-020.01: a reportable entry without a case fails the check, one message for each entry", () => uncoveredEntries(constraints.entries, new Set()).length === reportable.length && uncoveredEntries(constraints.entries, new Set(reportable)).length === 0 && uncoveredEntries(constraints.entries, new Set(reportable.slice(1))).length === 1],
     ["CNS-020: an entry that is not reportable needs no case", () => reportable.length < constraints.entries.length && uncoveredEntries(constraints.entries, new Set(reportable)).length === 0],
-    ["CNS-020: a wrong identifier fails the check", () => constraintMismatch(["oscal-metadata-prop-name-values", "oscal-control-prop-names"], bad) !== undefined],
-    ["CNS-020: a missing repeat of an identifier fails the check", () => constraintMismatch(["oscal-control-prop-name"], bad) !== undefined && constraintMismatch(["oscal-control-prop-name", "oscal-control-prop-name", "oscal-metadata-prop-name-values"], bad) !== undefined],
-    ["CNS-020: an identifier repeated for two failures passes", () => constraintMismatch(["a", "a"], [{ entry: 0, id: "a", location: "$" }, { entry: 1, id: "a", location: "$" }]) === undefined && constraintMismatch(["a"], [{ entry: 0, id: "a", location: "$" }, { entry: 1, id: "a", location: "$" }]) !== undefined],
+    ["CNS-020: a wrong identifier fails the check", () => constraintMismatch([pair("oscal-metadata-prop-name-values"), pair("oscal-control-prop-names")], bad) !== undefined],
+    ["CNS-020.03: a failure at another location than the case lists fails the check, and the order of the list does not matter", () =>
+      constraintMismatch([pair("oscal-metadata-prop-name-values"), pair("oscal-control-prop-name", "$['catalog']['controls'][0]['props'][0]")], bad) !== undefined &&
+      constraintMismatch([pair("oscal-control-prop-name"), pair("oscal-metadata-prop-name-values")], bad) === undefined],
+    ["CNS-020: a missing repeat of a pair fails the check", () => constraintMismatch([pair("oscal-control-prop-name")], bad) !== undefined && constraintMismatch([pair("oscal-control-prop-name"), pair("oscal-control-prop-name"), pair("oscal-metadata-prop-name-values")], bad) !== undefined],
+    ["CNS-020: a pair repeated for two failures passes", () => constraintMismatch([pair("a", "$"), pair("a", "$")], twice) === undefined && constraintMismatch([pair("a", "$")], twice) !== undefined],
+    ["CNS-020: two failures with the same id at two locations are two pairs", () => constraintMismatch([pair("a", "$"), pair("a", "$['x']")], [{ entry: 0, id: "a", location: "$['x']" }, { entry: 0, id: "a", location: "$" }]) === undefined],
+    ["CNS-020: an item that is a string, or lacks the location, is not an expected failure", () =>
+      [["oscal-control-prop-name"], [{ id: "a" }], [{ id: "a", location: "$", entry: 0 }], []].every((listed) => expectedConstraintsProblem(listed) !== undefined) &&
+      expectedConstraintsProblem([{ id: "a", location: "$" }]) === undefined],
     ["CNS-020: a case with failures that lists none fails the check", () => constraintMismatch(undefined, bad) !== undefined],
     ["CNS-020.02: a valid input that fails an entry fails the check", () => run(expectNone, {}, bad) === 1 && run(expectNone, {}, []) === 0],
-    ["CNS-020: a listed failure that does not occur fails the check", () => run(expectFailures, { "expected-constraints": ["oscal-control-prop-name"] }, []) === 1],
+    ["CNS-020: a listed failure that does not occur fails the check", () => run(expectFailures, { "expected-constraints": [pair("oscal-control-prop-name")] }, []) === 1],
     ["CNS-018.02: a hash element with a short value fails the entry of its algorithm", () => hashFailures.map((f) => f.id).join() === "oscal-check-hash-length-SHA2-3-256" || JSON.stringify(hashFailures)],
     ["FAC-005: an Assessment Plan with only at-frequency timing has empty bounds", () => {
       const plan = { "assessment-plan": { tasks: [{ timing: { "at-frequency": { period: 1, unit: "days" } }, tasks: [{ timing: { "at-frequency": { period: 2, unit: "days" } } }] }] } };

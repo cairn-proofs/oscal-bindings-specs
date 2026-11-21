@@ -17,6 +17,7 @@ import { Generator, serializeManifest, type ConstraintManifest, type Entry } fro
 import { evaluateManifest } from "./constraints-manifest.js";
 import { GenerationError, toIRegexp, datatypeIRegexp } from "./constraints-regex.js";
 import { compile, run, runOnce } from "./jsonpath.js";
+import { compareLocations, inLocationOrder } from "./location-order.js";
 import { allNodes, loadDoc } from "./metapath.js";
 import type { Constraint } from "./metaschema.js";
 import { storeReleases } from "./names-lib.js";
@@ -314,6 +315,61 @@ function selfTest(): number {
     return (
       JSON.stringify(perItem) === JSON.stringify([[], ["oscal-metadata-prop-name-values $[0]['props'][0]['name']"]]) || JSON.stringify(perItem)
     );
+  });
+  // The three inputs of design D5. Their failures and locations are derived by hand from CNS-026, not from an evaluator.
+  const orderCase = (file: string, expected: string[]) => () => {
+    const json = readJson(`corpus/1.2.3/documents/invalid/${file}`);
+    const got = evaluateManifest(entries, json, { document: true })
+      .map((f) => `${f.id} ${f.location}`)
+      .sort();
+    return JSON.stringify(got) === JSON.stringify(expected) || JSON.stringify(got);
+  };
+  test(
+    "CNS-014.04: a control inside the first control, with the id of the second control, gives the failure at the second control",
+    orderCase("index-nested-control-id.json", ["oscal-catalog-controls $['catalog']['controls'][1]", "oscal-catalog-groups-controls-parts $['catalog']['controls'][1]"]),
+  );
+  test(
+    "CNS-014.03: parts in the members `groups` and `controls`, with `groups` first in the document, give the failure at the part in `groups`",
+    orderCase("index-parts-in-two-members.json", ["oscal-catalog-groups-controls-parts $['catalog']['groups'][0]['parts'][0]", "oscal-catalog-parts $['catalog']['groups'][0]['parts'][0]"]),
+  );
+  test(
+    "CNS-026.01: two controls with the same id at the indexes 2 and 10 give the failure at the index 10",
+    orderCase("index-control-ids-2-and-10.json", ["oscal-catalog-controls $['catalog']['controls'][10]", "oscal-catalog-groups-controls-parts $['catalog']['controls'][10]"]),
+  );
+
+  // CNS-026: the order of locations. No corpus input can hold the names of CNS-026.02 and CNS-026.03 (design Context 9).
+  const before = (a: string, b: string) => compareLocations(a, b) < 0 && compareLocations(b, a) > 0;
+  test("CNS-026.01: the index 2 comes before the index 10", () => before("$['a'][2]", "$['a'][10]") || "the order is the order of the text");
+  test("CNS-026.02: the name `B` comes before the name `a`, because U+0042 is less than U+0061", () => before("$['B']", "$['a']") || "the order is the order of the text of the names");
+  test("CNS-026.03: the name U+FF5E comes before the name U+1F600, by code point and not by UTF-16 code unit", () => {
+    const bmp = "～";
+    const astral = "\u{1F600}";
+    return (before(`$['${bmp}']`, `$['${astral}']`) && astral < bmp) || "the order is the order of UTF-16 code units";
+  });
+  test("CNS-026.04: the location `$['a']` comes before the location `$['a']['b']`", () => before("$['a']", "$['a']['b']"));
+  test("CNS-026: a name segment compares as the name that it gives, and not as its escaped text", () => {
+    // The text of `a'` is `a\'`, and `\` (U+005C) is greater than `'` (U+0027) and less than `b`.
+    return before("$['a']", "$['a\\'']") && before("$['a\\'']", "$['ab']") && before("$['\\u0041']", "$['B']") && compareLocations("$['\\u0041']", "$['A']") === 0;
+  });
+  test("CNS-026: the first segment that differs decides the order, and equal locations have no order", () =>
+    before("$['a'][9]['z']", "$['b'][0]['a']") && compareLocations("$['a'][1]", "$['a'][1]") === 0 && before("$[0][1]", "$[0][1]['props']"));
+  test("CNS-026: inLocationOrder sorts by location and is stable for equal locations", () => {
+    const sorted = inLocationOrder(
+      [
+        { at: "$['a'][10]", n: 1 },
+        { at: "$['a'][2]", n: 2 },
+        { at: "$['a'][2]", n: 3 },
+      ],
+      (x) => x.at,
+    );
+    return JSON.stringify(sorted.map((x) => x.n)) === "[2,3,1]" || JSON.stringify(sorted);
+  });
+  test("CNS-023.02: a failure in the second item of a list has the location of the item in the list, then the rest of its location", () => {
+    const list = [{ uuid: "a" }, { uuid: "b", props: [{ name: "bogus", value: "v" }] }];
+    const got = evaluateManifest(entries, [list], { element: "mapping-collection-mappings" })
+      .filter((f) => f.id === "oscal-metadata-prop-name-values")
+      .map((f) => f.location);
+    return JSON.stringify(got) === JSON.stringify(["$[0][1]['props'][0]['name']"]) || JSON.stringify(got);
   });
   test("CNS-007: the element types of kind document hold context nodes",() => one("oscal-catalog-parts").context.elements["catalog-document"] !== undefined);
 

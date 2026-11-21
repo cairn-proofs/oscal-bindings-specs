@@ -629,6 +629,40 @@
     {
       "capability": "constraint-validation",
       "corpus": [
+        "parse/index-parts-in-two-members"
+      ],
+      "id": "CNS-014.03",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "CNS-014.03: parts in the members `groups` and `controls` give the failure at the part in `groups`, where `controls` comes first by code point"
+        },
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-014.03: parts in the members `groups` and `controls`, with `groups` first in the document, give the failure at the part in `groups`"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "corpus": [
+        "parse/index-nested-control-id"
+      ],
+      "id": "CNS-014.04",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "CNS-014.04: a control inside the first control, with the id of the second control, gives the failure at the second control"
+        },
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-014.04: a control inside the first control, with the id of the second control, gives the failure at the second control"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "corpus": [
         "parse/constraint/oscal-by-component-export-provided-uuid-index-export",
         "parse/constraint/oscal-component-prop-physical-location",
         "parse/constraint/oscal-diagram-index-back-matter-resource-link-rel",
@@ -766,6 +800,16 @@
     },
     {
       "capability": "constraint-validation",
+      "id": "CNS-020.03",
+      "self-test": [
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "CNS-020.03: a failure at another location than the case lists fails the check, and the order of the list does not matter"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
       "id": "CNS-021.01",
       "self-test": [
         {
@@ -811,6 +855,23 @@
     {
       "capability": "constraint-validation",
       "corpus": [
+        "element/mapping-collection-mappings-list"
+      ],
+      "id": "CNS-023.02",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "CNS-023.02: a failure in the second item of a list has the location of the item in the list, then the rest of its location"
+        },
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-023.02: a failure in the second item of a list has the location of the item in the list, then the rest of its location"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "corpus": [
         "parse/nested-control-part-name",
         "parse/nested-control-part-name-three-levels"
       ],
@@ -822,6 +883,57 @@
         "parse/allowed-value-case"
       ],
       "id": "CNS-025.01"
+    },
+    {
+      "capability": "constraint-validation",
+      "corpus": [
+        "parse/index-control-ids-2-and-10"
+      ],
+      "id": "CNS-026.01",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "CNS-026.01: two controls with the same id at the indexes 2 and 10 give the failure at the index 10"
+        },
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-026.01: the index 2 comes before the index 10"
+        },
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-026.01: two controls with the same id at the indexes 2 and 10 give the failure at the index 10"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "id": "CNS-026.02",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-026.02: the name `B` comes before the name `a`, because U+0042 is less than U+0061"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "id": "CNS-026.03",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-026.03: the name U+FF5E comes before the name U+1F600, by code point and not by UTF-16 code unit"
+        }
+      ]
+    },
+    {
+      "capability": "constraint-validation",
+      "id": "CNS-026.04",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "CNS-026.04: the location `$['a']` comes before the location `$['a']['b']`"
+        }
+      ]
     },
     {
       "capability": "element-validation",
@@ -891,6 +1003,20 @@
         "element/responsible-party-unknown-party"
       ],
       "id": "ELV-005.02"
+    },
+    {
+      "capability": "element-validation",
+      "corpus": [
+        "element/hash-wrong-length"
+      ],
+      "id": "ELV-005.03"
+    },
+    {
+      "capability": "element-validation",
+      "corpus": [
+        "element/mapping-collection-mappings-list"
+      ],
+      "id": "ELV-005.04"
     },
     {
       "by-design": "The rule applies to how a binding surfaces a result, which no store script can observe.",
@@ -2558,6 +2684,9 @@
         "parse/constraint/oscal-user-prop-name-values",
         "parse/constraint/oscal-user-prop-privilege-level-values",
         "parse/constraint/oscal-user-prop-type-values",
+        "parse/index-control-ids-2-and-10",
+        "parse/index-nested-control-id",
+        "parse/index-parts-in-two-members",
         "parse/nested-control-part-name",
         "parse/nested-control-part-name-three-levels"
       ],
@@ -2576,6 +2705,251 @@
         "parse/allowed-value-case"
       ],
       "id": "PRS-015.03"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/constraint/oscal-activity-type-cardinality",
+        "parse/constraint/oscal-activity-type-values",
+        "parse/constraint/oscal-activity-values",
+        "parse/constraint/oscal-assesment-part-objective-method-value",
+        "parse/constraint/oscal-assesment-part-objective-name",
+        "parse/constraint/oscal-assessment-method-cardinality",
+        "parse/constraint/oscal-assessment-objective-cardinality",
+        "parse/constraint/oscal-assessment-objective-types",
+        "parse/constraint/oscal-assessment-objects-cardinality",
+        "parse/constraint/oscal-back-matter-resource-citation-title",
+        "parse/constraint/oscal-back-matter-resource-prop-name-values",
+        "parse/constraint/oscal-back-matter-resource-prop-published-datatype",
+        "parse/constraint/oscal-back-matter-resource-prop-type-values",
+        "parse/constraint/oscal-back-matter-resource-uuid-index",
+        "parse/constraint/oscal-by-component-export-provided-responsibility-cardinality",
+        "parse/constraint/oscal-by-component-export-provided-uuid-index-control-implementation",
+        "parse/constraint/oscal-by-component-export-provided-uuid-index-export",
+        "parse/constraint/oscal-catalog-control-require-statement-when-appropriate",
+        "parse/constraint/oscal-catalog-controls",
+        "parse/constraint/oscal-catalog-groups",
+        "parse/constraint/oscal-catalog-groups-controls-parts",
+        "parse/constraint/oscal-catalog-metadata-prop-name",
+        "parse/constraint/oscal-catalog-params",
+        "parse/constraint/oscal-catalog-parts",
+        "parse/constraint/oscal-catalog-props",
+        "parse/constraint/oscal-check-hash-length-SHA2-3-224",
+        "parse/constraint/oscal-check-hash-length-SHA2-3-256",
+        "parse/constraint/oscal-check-hash-length-SHA2-3-384",
+        "parse/constraint/oscal-check-hash-length-SHA2-3-512",
+        "parse/constraint/oscal-component-allows-authenticated-scan-value",
+        "parse/constraint/oscal-component-hardware-service-software-prop-name-values",
+        "parse/constraint/oscal-component-implementation-point-value",
+        "parse/constraint/oscal-component-inherited-uuid-value-datatype-defined-component",
+        "parse/constraint/oscal-component-inherited-uuid-value-datatype-system-component",
+        "parse/constraint/oscal-component-interconnection-prop-name-values",
+        "parse/constraint/oscal-component-interconnection-service-software-system-prop-name-values",
+        "parse/constraint/oscal-component-inventory-item-allows-authenticated-scan-values",
+        "parse/constraint/oscal-component-prop-allows-authenticated-scan-values",
+        "parse/constraint/oscal-component-prop-direction-values",
+        "parse/constraint/oscal-component-prop-implementation-point-values",
+        "parse/constraint/oscal-component-prop-ipaddress-class-values",
+        "parse/constraint/oscal-component-prop-ipv4address-value-datatype",
+        "parse/constraint/oscal-component-prop-ipv6address-value-datatype",
+        "parse/constraint/oscal-component-prop-is-public-values",
+        "parse/constraint/oscal-component-prop-is-virtual-values",
+        "parse/constraint/oscal-component-prop-isa-date-value-datatype",
+        "parse/constraint/oscal-component-prop-name",
+        "parse/constraint/oscal-component-prop-name-values",
+        "parse/constraint/oscal-component-prop-physical-location",
+        "parse/constraint/oscal-component-prop-uri-value-datatype",
+        "parse/constraint/oscal-component-public-value",
+        "parse/constraint/oscal-component-release-date-value-datatype-defined-component",
+        "parse/constraint/oscal-component-release-date-value-datatype-system-component",
+        "parse/constraint/oscal-component-software-prop-name-values",
+        "parse/constraint/oscal-component-virtual-value",
+        "parse/constraint/oscal-control-objective-part-method-prop-value",
+        "parse/constraint/oscal-control-objective-part-subpart-name",
+        "parse/constraint/oscal-control-part-name",
+        "parse/constraint/oscal-control-prop-name",
+        "parse/constraint/oscal-control-statement-part-name",
+        "parse/constraint/oscal-control-statement-part-prop-name",
+        "parse/constraint/oscal-control-statement-part-rmf-prop-name",
+        "parse/constraint/oscal-control-statement-part-subpart-name",
+        "parse/constraint/oscal-cvss-v4.0-ac-values",
+        "parse/constraint/oscal-cvss-v4.0-at-values",
+        "parse/constraint/oscal-cvss-v4.0-au-values",
+        "parse/constraint/oscal-cvss-v4.0-av-values",
+        "parse/constraint/oscal-cvss-v4.0-e-values",
+        "parse/constraint/oscal-cvss-v4.0-env-cia-values",
+        "parse/constraint/oscal-cvss-v4.0-mac-values",
+        "parse/constraint/oscal-cvss-v4.0-mat-values",
+        "parse/constraint/oscal-cvss-v4.0-mav-values",
+        "parse/constraint/oscal-cvss-v4.0-mpr-mvs-cia-values",
+        "parse/constraint/oscal-cvss-v4.0-msc-values",
+        "parse/constraint/oscal-cvss-v4.0-msi-msa-cia-values",
+        "parse/constraint/oscal-cvss-v4.0-mui-values",
+        "parse/constraint/oscal-cvss-v4.0-pr-cia-values",
+        "parse/constraint/oscal-cvss-v4.0-r-values",
+        "parse/constraint/oscal-cvss-v4.0-re-values",
+        "parse/constraint/oscal-cvss-v4.0-s-values",
+        "parse/constraint/oscal-cvss-v4.0-u-values",
+        "parse/constraint/oscal-cvss-v4.0-ui-values",
+        "parse/constraint/oscal-cvss-v4.0-v-values",
+        "parse/constraint/oscal-cvss-v4.0-vectors",
+        "parse/constraint/oscal-diagram-datatype-uri",
+        "parse/constraint/oscal-diagram-index-back-matter-resource-link-rel",
+        "parse/constraint/oscal-facet-cve-values",
+        "parse/constraint/oscal-facet-cvss2-access-complexity-values",
+        "parse/constraint/oscal-facet-cvss2-access-vector-values",
+        "parse/constraint/oscal-facet-cvss2-authentication-values",
+        "parse/constraint/oscal-facet-cvss2-cia-requirement-values",
+        "parse/constraint/oscal-facet-cvss2-collateral-damage-potential-values",
+        "parse/constraint/oscal-facet-cvss2-confidentiality-impact-values",
+        "parse/constraint/oscal-facet-cvss2-exploitability-values",
+        "parse/constraint/oscal-facet-cvss2-name-values",
+        "parse/constraint/oscal-facet-cvss2-remediation-level-values",
+        "parse/constraint/oscal-facet-cvss2-report-confidence-values",
+        "parse/constraint/oscal-facet-cvss3-access-complexity-values",
+        "parse/constraint/oscal-facet-cvss3-access-vector-values",
+        "parse/constraint/oscal-facet-cvss3-cia-impact-values",
+        "parse/constraint/oscal-facet-cvss3-cia-requirement-values",
+        "parse/constraint/oscal-facet-cvss3-exploit-code-maturity-values",
+        "parse/constraint/oscal-facet-cvss3-modified-attack-complexity-values",
+        "parse/constraint/oscal-facet-cvss3-modified-attack-vector-values",
+        "parse/constraint/oscal-facet-cvss3-modified-cia-values",
+        "parse/constraint/oscal-facet-cvss3-modified-scope-values",
+        "parse/constraint/oscal-facet-cvss3-modified-user-interaction-values",
+        "parse/constraint/oscal-facet-cvss3-name-values",
+        "parse/constraint/oscal-facet-cvss3-remediation-level",
+        "parse/constraint/oscal-facet-cvss3-report-confidence-values",
+        "parse/constraint/oscal-facet-cvss3-scope",
+        "parse/constraint/oscal-facet-cvss3-user-interaction",
+        "parse/constraint/oscal-facet-fedramp-values",
+        "parse/constraint/oscal-facet-name-core-values",
+        "parse/constraint/oscal-facet-prop-name-values",
+        "parse/constraint/oscal-facet-prop-state-values",
+        "parse/constraint/oscal-group-part-name",
+        "parse/constraint/oscal-group-prop-name",
+        "parse/constraint/oscal-implemented-component-prop-name-values",
+        "parse/constraint/oscal-implemented-requirement-by-component-cardinality",
+        "parse/constraint/oscal-implemented-requirement-index-metadata-party-uuid",
+        "parse/constraint/oscal-implemented-requirement-index-metadata-role-id",
+        "parse/constraint/oscal-implemented-requirement-statement-by-component-prop-control-origination-values",
+        "parse/constraint/oscal-implemented-requirement-statement-by-component-prop-name-values",
+        "parse/constraint/oscal-index-inventory-item-responsible-party-party-uuid",
+        "parse/constraint/oscal-index-inventory-item-responsible-party-role-id",
+        "parse/constraint/oscal-index-metadata-location-uuid-defined-component",
+        "parse/constraint/oscal-index-metadata-location-uuid-location-uuid",
+        "parse/constraint/oscal-index-metadata-location-uuid-metadata",
+        "parse/constraint/oscal-index-metadata-party-organizations-uuid-member-of-organization",
+        "parse/constraint/oscal-index-metadata-party-organizations-uuid-metadata",
+        "parse/constraint/oscal-index-metadata-party-uuid-metadata",
+        "parse/constraint/oscal-index-metadata-party-uuid-party-uuid",
+        "parse/constraint/oscal-index-metadata-property-uuid",
+        "parse/constraint/oscal-index-metadata-role-id-metadata",
+        "parse/constraint/oscal-index-metadata-role-id-role-id",
+        "parse/constraint/oscal-index-metadata-roles",
+        "parse/constraint/oscal-index-system-component-uuid",
+        "parse/constraint/oscal-index-system-implementation-component-uuid-service-system-implementation-index",
+        "parse/constraint/oscal-index-system-implementation-component-uuid-service-system-implementation-index-has-key",
+        "parse/constraint/oscal-inventory-item-prop-is-scanned-values",
+        "parse/constraint/oscal-inventory-item-prop-name-values",
+        "parse/constraint/oscal-leveraged-authorization-index-back-matter-resource-ssp",
+        "parse/constraint/oscal-leveraged-authorization-link-rel-ssp-datatype-uri",
+        "parse/constraint/oscal-metadata-action-name-index-metadata-party-uuid",
+        "parse/constraint/oscal-metadata-action-name-index-metadata-role-id",
+        "parse/constraint/oscal-metadata-link-reference-href-datatype-uri",
+        "parse/constraint/oscal-metadata-link-reference-index-back-matter-resource",
+        "parse/constraint/oscal-metadata-link-resource-fragment-datatype",
+        "parse/constraint/oscal-metadata-link-uri-reference-no-media-type",
+        "parse/constraint/oscal-metadata-location-address-country-regex",
+        "parse/constraint/oscal-metadata-location-prop-name-values",
+        "parse/constraint/oscal-metadata-location-title-address-email-address-telephone-cardinality",
+        "parse/constraint/oscal-metadata-party-prop-name-values",
+        "parse/constraint/oscal-metadata-prop-name-values-metadata",
+        "parse/constraint/oscal-metadata-prop-name-values-property",
+        "parse/constraint/oscal-metadata-responsible-party-index-metadata-role-id",
+        "parse/constraint/oscal-metadata-unique-document-id",
+        "parse/constraint/oscal-parameter-depends-on-deprecated",
+        "parse/constraint/oscal-parameter-prop-name",
+        "parse/constraint/oscal-part-prop-name",
+        "parse/constraint/oscal-profile-modify-alter-prop-name-values",
+        "parse/constraint/oscal-response-prop-name",
+        "parse/constraint/oscal-response-prop-type-value",
+        "parse/constraint/oscal-risk-priority-datatype",
+        "parse/constraint/oscal-risk-prop-name-values-entry",
+        "parse/constraint/oscal-risk-prop-name-values-risk",
+        "parse/constraint/oscal-rmf-parameter-prop-name",
+        "parse/constraint/oscal-software-component-prop-name",
+        "parse/constraint/oscal-ssp-by-component-uuid-index",
+        "parse/constraint/oscal-system-characteristics-prop-cloud-deployment-model-values",
+        "parse/constraint/oscal-system-characteristics-prop-cloud-service-model-values",
+        "parse/constraint/oscal-system-characteristics-prop-name-values-system-characteristics-allowed-values-1",
+        "parse/constraint/oscal-system-characteristics-prop-name-values-system-characteristics-allowed-values-2",
+        "parse/constraint/oscal-system-characteristics-prop-sp-800-63-assurance-level-values",
+        "parse/constraint/oscal-system-implementation-component-depends-on-link-index",
+        "parse/constraint/oscal-system-implementation-component-leveraged-authorization-uuid-index",
+        "parse/constraint/oscal-system-implementation-component-prop-leveraged-authorization-uuid-index",
+        "parse/constraint/oscal-system-implementation-component-uuid-index",
+        "parse/constraint/oscal-system-implementation-component-validation-uuid-index",
+        "parse/constraint/oscal-system-information-index-back-matter-resource-pia-link-rel",
+        "parse/constraint/oscal-system-information-pia-datatype-uri",
+        "parse/constraint/oscal-system-information-prop-name-values",
+        "parse/constraint/oscal-system-information-prop-privacy-designation-values",
+        "parse/constraint/oscal-terms-and-conditions-part-name",
+        "parse/constraint/oscal-unique-activity-responsible-role",
+        "parse/constraint/oscal-unique-ap-local-definitions-component",
+        "parse/constraint/oscal-unique-ap-local-definitions-user",
+        "parse/constraint/oscal-unique-ar-attestation-responsible-party",
+        "parse/constraint/oscal-unique-ar-local-definitions-component",
+        "parse/constraint/oscal-unique-ar-local-definitions-user",
+        "parse/constraint/oscal-unique-associated-activity-responsible-role",
+        "parse/constraint/oscal-unique-component-definition-capability",
+        "parse/constraint/oscal-unique-component-definition-capability-incorporates-component",
+        "parse/constraint/oscal-unique-component-definition-control-implementation-set-parameter",
+        "parse/constraint/oscal-unique-component-definition-implemented-requirement-responsible-role",
+        "parse/constraint/oscal-unique-component-definition-implemented-requirement-set-parameter",
+        "parse/constraint/oscal-unique-component-definition-implemented-requirement-statement",
+        "parse/constraint/oscal-unique-component-definition-statement-responsible-role",
+        "parse/constraint/oscal-unique-defined-component-responsible-role",
+        "parse/constraint/oscal-unique-implemented-component-responsible-party",
+        "parse/constraint/oscal-unique-inherited-responsible-role",
+        "parse/constraint/oscal-unique-inventory-item-responsible-party",
+        "parse/constraint/oscal-unique-metadata-doc-id",
+        "parse/constraint/oscal-unique-metadata-property",
+        "parse/constraint/oscal-unique-metadata-responsible-party",
+        "parse/constraint/oscal-unique-poam-local-definitions-component",
+        "parse/constraint/oscal-unique-profile-modify-set-parameter",
+        "parse/constraint/oscal-unique-provided-responsible-role",
+        "parse/constraint/oscal-unique-resource-rlink-href",
+        "parse/constraint/oscal-unique-responsibility-responsible-role",
+        "parse/constraint/oscal-unique-satisfied-responsible-role",
+        "parse/constraint/oscal-unique-ssp-assessment-assets-component",
+        "parse/constraint/oscal-unique-ssp-authorization-boundary-diagram",
+        "parse/constraint/oscal-unique-ssp-by-component-set-parameter",
+        "parse/constraint/oscal-unique-ssp-control-implementation-set-parameter",
+        "parse/constraint/oscal-unique-ssp-data-flow-diagram",
+        "parse/constraint/oscal-unique-ssp-implemented-requirement-by-component",
+        "parse/constraint/oscal-unique-ssp-implemented-requirement-responsible-role",
+        "parse/constraint/oscal-unique-ssp-implemented-requirement-set-parameter",
+        "parse/constraint/oscal-unique-ssp-implemented-requirement-statement",
+        "parse/constraint/oscal-unique-ssp-implemented-requirement-statement-by-component",
+        "parse/constraint/oscal-unique-ssp-network-architecture-diagram",
+        "parse/constraint/oscal-unique-ssp-related-task-responsible-party",
+        "parse/constraint/oscal-unique-ssp-statement-responsible-role",
+        "parse/constraint/oscal-unique-ssp-system-characteristics-responsible-party",
+        "parse/constraint/oscal-unique-ssp-system-implementation-user",
+        "parse/constraint/oscal-unique-ssp-uses-component-responsible-party",
+        "parse/constraint/oscal-unique-step-responsible-role",
+        "parse/constraint/oscal-unique-system-component-responsible-role",
+        "parse/constraint/oscal-user-prop-name-values",
+        "parse/constraint/oscal-user-prop-privilege-level-values",
+        "parse/constraint/oscal-user-prop-type-values"
+      ],
+      "id": "PRS-015.04",
+      "self-test": [
+        {
+          "script": "scripts/corpus-constraint-cases.ts",
+          "test": "PRS-015.04: the text of a case lists the id and the location of each failure, and cites PRS-015.04"
+        }
+      ]
     },
     {
       "capability": "document-parsing",

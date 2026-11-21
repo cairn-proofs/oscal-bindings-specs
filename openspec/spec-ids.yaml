@@ -40,7 +40,7 @@ prefixes:
     next: 12
   CNS:
     capability: constraint-validation
-    next: 26
+    next: 27
 
 # One entry for each retired identifier: id, reason and, for a relocation, replaced_by.
 retired:

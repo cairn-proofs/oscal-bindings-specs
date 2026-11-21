@@ -5,6 +5,7 @@
  */
 import type { Entry } from "./constraints-lib.js";
 import { run, runOnce, type Hit } from "./jsonpath.js";
+import { inLocationOrder } from "./location-order.js";
 
 export interface ManifestFailure {
   /** The position of the entry in the manifest. */
@@ -88,7 +89,8 @@ export function evaluateManifest(entries: Entry[], data: unknown, form: Form): M
             break;
           case "is-unique": {
             const seen = new Set<string>();
-            for (const t of targets)
+            // CNS-013: the nodes with the same key are in the order of their locations (CNS-026).
+            for (const t of inLocationOrder(targets, (x) => x.path))
               for (const key of keysOf(e, t)) {
                 if (seen.has(key)) add(i, t.path, key);
                 else seen.add(key);
@@ -121,8 +123,10 @@ export function evaluateManifest(entries: Entry[], data: unknown, form: Form): M
       }
     }
   }
-  // CNS-014: the target nodes with the same key in one index give one failure fewer than their number.
-  for (const index of indexes.values()) for (const [key, members] of index) for (const m of members.slice(1)) add(m.entry, m.path, key);
+  // CNS-014: the target nodes with the same key in one index are in the order of their locations (CNS-026). The first
+  // node gives no failure, and each other node gives one.
+  for (const index of indexes.values())
+    for (const [key, members] of index) for (const m of inLocationOrder(members, (x) => x.path).slice(1)) add(m.entry, m.path, key);
   // CNS-008: a node fails for each closed entry of its applicable set when no entry of the set lists the value.
   for (const [path, { value, entries: set }] of applicable) {
     if (set.some((i) => entries[i].values!.includes(String(value)))) continue;
