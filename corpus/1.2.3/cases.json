@@ -235,7 +235,10 @@
       "input": "documents/invalid/unknown-field-top.json",
       "expected-category": "parse-error",
       "expected-max-failures": 1,
-      "requirements": ["PRS-004.01", "MDL-008.01", "PRS-013"]
+      "expected-locations": [
+        "$['catalog']"
+      ],
+      "requirements": ["PRS-004.01", "MDL-008.01", "PRS-013", "PRS-021.02"]
     },
     {
       "id": "parse/unknown-field-nested",
@@ -243,6 +246,9 @@
       "input": "documents/invalid/unknown-field-nested.json",
       "expected-category": "parse-error",
       "expected-max-failures": 1,
+      "expected-locations": [
+        "$['catalog']['metadata']"
+      ],
       "requirements": ["PRS-004.02", "PRS-013"]
     },
     {
@@ -251,6 +257,9 @@
       "input": "documents/invalid/name-keyed-field.json",
       "expected-category": "parse-error",
       "expected-max-failures": 1,
+      "expected-locations": [
+        "$['catalog']['back-matter']['resources'][0]['rlinks'][0]"
+      ],
       "requirements": ["PRS-005.02", "PRS-013.01"],
       "notes": "The rlink carries media_type, an internal field name, in place of the OSCAL key media-type."
     },
@@ -261,7 +270,10 @@
       "expected-category": "parse-error",
       "expected-min-failures": 1,
       "expected-max-failures": 1,
-      "requirements": ["PRS-006.01", "ERR-003.01", "PRS-013"]
+      "expected-locations": [
+        "$['catalog']['metadata']"
+      ],
+      "requirements": ["PRS-006.01", "ERR-003.01", "PRS-013", "PRS-021.03"]
     },
     {
       "id": "parse/two-failures",
@@ -270,7 +282,11 @@
       "expected-category": "parse-error",
       "expected-min-failures": 2,
       "expected-max-failures": 2,
-      "requirements": ["PRS-006.01", "ERR-003.01", "PRS-013"]
+      "expected-locations": [
+        "$['catalog']['metadata']",
+        "$['catalog']['metadata']"
+      ],
+      "requirements": ["PRS-006.01", "ERR-003.01", "PRS-013", "PRS-022.01"]
     },
     {
       "id": "parse/many-failures",
@@ -286,6 +302,9 @@
       "input": "documents/invalid/invalid-uuid.json",
       "expected-category": "parse-error",
       "expected-max-failures": 1,
+      "expected-locations": [
+        "$['catalog']['uuid']"
+      ],
       "requirements": ["PRS-007.01", "PRS-013"]
     },
     {
@@ -294,7 +313,10 @@
       "input": "documents/invalid/datetime-without-timezone.json",
       "expected-category": "parse-error",
       "expected-max-failures": 1,
-      "requirements": ["PRS-008.01", "PRS-013"]
+      "expected-locations": [
+        "$['catalog']['metadata']['last-modified']"
+      ],
+      "requirements": ["PRS-008.01", "PRS-013", "PRS-021.04"]
     },
     {
       "id": "parse/uri-reference-space",
@@ -303,6 +325,9 @@
       "expected-category": "parse-error",
       "expected-min-failures": 1,
       "expected-max-failures": 1,
+      "expected-locations": [
+        "$['catalog']['back-matter']['resources'][0]['rlinks'][0]['href']"
+      ],
       "requirements": ["PRS-017.01"]
     },
     {
@@ -312,6 +337,9 @@
       "expected-category": "parse-error",
       "expected-min-failures": 1,
       "expected-max-failures": 1,
+      "expected-locations": [
+        "$['catalog']['back-matter']['resources'][0]['rlinks'][0]['href']"
+      ],
       "requirements": ["PRS-017.02"]
     },
     {
@@ -321,6 +349,9 @@
       "expected-category": "parse-error",
       "expected-min-failures": 1,
       "expected-max-failures": 1,
+      "expected-locations": [
+        "$['catalog']['back-matter']['resources'][0]['rlinks'][0]['href']"
+      ],
       "requirements": ["PRS-017.03"]
     },
     {
@@ -330,6 +361,9 @@
       "expected-category": "parse-error",
       "expected-min-failures": 1,
       "expected-max-failures": 1,
+      "expected-locations": [
+        "$['catalog']['back-matter']['resources'][0]['rlinks'][0]['href']"
+      ],
       "requirements": ["PRS-017.04"]
     },
     {
@@ -339,6 +373,9 @@
       "expected-category": "parse-error",
       "expected-min-failures": 1,
       "expected-max-failures": 1,
+      "expected-locations": [
+        "$['catalog']['back-matter']['resources'][0]['rlinks'][0]['href']"
+      ],
       "requirements": ["PRS-017.05"]
     },
     {
@@ -348,6 +385,9 @@
       "expected-category": "parse-error",
       "expected-min-failures": 1,
       "expected-max-failures": 1,
+      "expected-locations": [
+        "$['catalog']['metadata']['props'][0]['ns']"
+      ],
       "requirements": ["PRS-017.06"]
     },
     {
@@ -357,6 +397,9 @@
       "expected-category": "parse-error",
       "expected-min-failures": 1,
       "expected-max-failures": 1,
+      "expected-locations": [
+        "$['catalog']['metadata']['props'][0]['ns']"
+      ],
       "requirements": ["PRS-017.13"]
     },
     {
@@ -366,6 +409,9 @@
       "expected-category": "parse-error",
       "expected-min-failures": 1,
       "expected-max-failures": 1,
+      "expected-locations": [
+        "$['catalog']['back-matter']['resources'][0]['rlinks'][0]['href']"
+      ],
       "requirements": ["PRS-017.10"]
     },
     {
@@ -375,6 +421,9 @@
       "expected-category": "parse-error",
       "expected-min-failures": 1,
       "expected-max-failures": 1,
+      "expected-locations": [
+        "$['catalog']['back-matter']['resources'][0]['rlinks'][0]['href']"
+      ],
       "requirements": ["PRS-017.11"]
     },
     {
@@ -384,6 +433,9 @@
       "expected-category": "parse-error",
       "expected-min-failures": 1,
       "expected-max-failures": 1,
+      "expected-locations": [
+        "$['catalog']['back-matter']['resources'][0]['rlinks'][0]['href']"
+      ],
       "requirements": ["PRS-017.12"]
     },
     {
@@ -393,6 +445,9 @@
       "expected-category": "parse-error",
       "expected-min-failures": 1,
       "expected-max-failures": 1,
+      "expected-locations": [
+        "$['catalog']['metadata']['parties'][0]['email-addresses'][0]"
+      ],
       "requirements": ["PRS-018.01"]
     },
     {
@@ -402,6 +457,9 @@
       "expected-category": "parse-error",
       "expected-min-failures": 1,
       "expected-max-failures": 1,
+      "expected-locations": [
+        "$['catalog']['metadata']['parties'][0]['email-addresses'][0]"
+      ],
       "requirements": ["PRS-018.03"]
     },
     {
@@ -411,7 +469,10 @@
       "expected-category": "parse-error",
       "expected-min-failures": 1,
       "expected-max-failures": 1,
-      "requirements": ["PRS-016.02"]
+      "expected-locations": [
+        "$['catalog']['metadata']['last-modified']"
+      ],
+      "requirements": ["PRS-016.02", "PRS-021.01"]
     },
     {
       "id": "parse/datetime-two-digit-year",
@@ -420,6 +481,9 @@
       "expected-category": "parse-error",
       "expected-min-failures": 1,
       "expected-max-failures": 1,
+      "expected-locations": [
+        "$['catalog']['metadata']['last-modified']"
+      ],
       "requirements": ["PRS-019.01"]
     },
     {
@@ -429,6 +493,9 @@
       "expected-category": "parse-error",
       "expected-min-failures": 1,
       "expected-max-failures": 1,
+      "expected-locations": [
+        "$['catalog']['back-matter']['resources'][0]['rlinks'][0]['href']"
+      ],
       "requirements": ["PRS-016.03"],
       "notes": "The href is not a valid URI reference, so the schema reports one failure. The property priority alone gives three constraint failures, which is more than the maximum, so the parse error carries no entry for them."
     },
@@ -439,6 +506,9 @@
       "expected-category": "parse-error",
       "expected-min-failures": 1,
       "expected-max-failures": 1,
+      "expected-locations": [
+        "$['catalog']['params'][0]['select']['how-many']"
+      ],
       "requirements": ["PRS-009.01", "PRS-014.01"]
     },
     {
@@ -448,6 +518,9 @@
       "expected-category": "parse-error",
       "expected-min-failures": 1,
       "expected-max-failures": 1,
+      "expected-locations": [
+        "$['catalog']['metadata']"
+      ],
       "requirements": ["PRS-015.02", "PRS-013"],
       "notes": "The metadata has no title, so the schema reports one failure. The property priority also fails a constraint, and the parse error carries no entry for it."
     },
@@ -651,7 +724,10 @@
       "input": "elements/observation-missing-collected.json",
       "element-type": "observation",
       "expected-valid": false,
-      "requirements": ["ELV-001.02"]
+      "expected-locations": [
+        "$[0]"
+      ],
+      "requirements": ["ELV-001.02", "ELV-006.02"]
     },
     {
       "id": "element/property-valid",
@@ -667,6 +743,9 @@
       "input": "elements/property-invalid-name.json",
       "element-type": "property",
       "expected-valid": false,
+      "expected-locations": [
+        "$[0]['name']"
+      ],
       "requirements": ["ELV-001.02", "PRS-007.01"],
       "notes": "A property name is a token, and a token has no spaces."
     },
@@ -726,6 +805,9 @@
       "input": "elements/back-matter-rlink-href-space.json",
       "element-type": "back-matter",
       "expected-valid": false,
+      "expected-locations": [
+        "$[0]['resources'][0]['rlinks'][0]['href']"
+      ],
       "requirements": ["PRS-017.08"]
     },
     {
@@ -734,7 +816,10 @@
       "input": "elements/back-matter-empty-resources.json",
       "element-type": "back-matter",
       "expected-valid": false,
-      "requirements": ["ELV-001.02"]
+      "expected-locations": [
+        "$[0]['resources']"
+      ],
+      "requirements": ["ELV-001.02", "ELV-006.03"]
     },
     {
       "id": "element/parameter-selection-out-of-set",
@@ -742,7 +827,21 @@
       "input": "elements/parameter-selection-out-of-set.json",
       "element-type": "parameter-selection",
       "expected-valid": false,
-      "requirements": ["ELV-001.02", "PRS-009.03"]
+      "expected-locations": [
+        "$[0]['how-many']"
+      ],
+      "requirements": ["ELV-001.02", "PRS-009.03", "ELV-006.01"]
+    },
+    {
+      "id": "element/parameter-select-out-of-set",
+      "operation": "validate-element",
+      "input": "elements/parameter-select-out-of-set.json",
+      "element-type": "parameter",
+      "expected-valid": false,
+      "expected-locations": [
+        "$[0]['select']['how-many']"
+      ],
+      "requirements": ["ELV-001.02", "ELV-006.04"]
     },
     {
       "id": "element/unknown-element-type",

@@ -182,6 +182,11 @@
       "title": "Element validation applies the constraints that the element can decide"
     },
     {
+      "id": "ELV-006",
+      "capability": "element-validation",
+      "title": "The location of a schema failure of an element is the location of the failing node"
+    },
+    {
       "id": "ERR-001",
       "capability": "error-model",
       "title": "Error situations map to a fixed taxonomy"
@@ -590,6 +595,16 @@
       "id": "PRS-020",
       "capability": "document-parsing",
       "title": "A JSON object has no two members with the same key"
+    },
+    {
+      "id": "PRS-021",
+      "capability": "document-parsing",
+      "title": "A fault of the schema has the location of its failing node"
+    },
+    {
+      "id": "PRS-022",
+      "capability": "document-parsing",
+      "title": "Each fault of the selected failures gives one structured entry"
     },
     {
       "id": "SER-001",
