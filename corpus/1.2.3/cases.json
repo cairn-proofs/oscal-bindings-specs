@@ -166,6 +166,15 @@
       "notes": "Written for this corpus."
     },
     {
+      "id": "round-trip/surrogate-pair",
+      "operation": "round-trip",
+      "input": "documents/valid/surrogate-pair.json",
+      "document-type": "catalog",
+      "expected": "expected/surrogate-pair.json",
+      "requirements": ["PRS-023.03"],
+      "notes": "Written for this corpus. The title of the metadata is the escape \\ud83d and then the escape \\ude00, which are the one character U+1F600."
+    },
+    {
       "id": "round-trip/uri-forms",
       "operation": "round-trip",
       "input": "documents/valid/uri-forms.json",
@@ -220,6 +229,22 @@
       "expected-category": "parse-error",
       "requirements": ["PRS-020.02", "ERR-004.06"],
       "notes": "The metadata holds the key title, and the same key written as \\u0074itle."
+    },
+    {
+      "id": "parse/lone-high-surrogate",
+      "operation": "parse",
+      "input": "documents/invalid/lone-high-surrogate.json",
+      "expected-category": "parse-error",
+      "requirements": ["PRS-023.01", "PRS-023.04", "ERR-004.07"],
+      "notes": "The title of the metadata is the escape \\ud800 and nothing else. The document conforms to the schema when a reader keeps the lone surrogate."
+    },
+    {
+      "id": "parse/lone-low-surrogate",
+      "operation": "parse",
+      "input": "documents/invalid/lone-low-surrogate.json",
+      "expected-category": "parse-error",
+      "requirements": ["PRS-023.02", "ERR-004.07"],
+      "notes": "The title of the metadata is the escape \\udc00 and nothing else. The document conforms to the schema when a reader keeps the lone surrogate."
     },
     {
       "id": "parse/unknown-root",

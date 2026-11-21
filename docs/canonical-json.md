@@ -12,7 +12,7 @@ binding writes.
 
 To make the canonical form of a document, apply these steps in this sequence:
 
-1. Parse the document as JSON. A document with a duplicate object key is not valid input.
+1. Parse the document as JSON. A document with a duplicate object key, or with a lone surrogate escape in a string, is not valid input.
 2. Normalize each datetime value, as [Datetimes](#datetimes) states.
 3. Serialize the result with the JSON Canonicalization Scheme (JCS) of
    [RFC 8785](https://www.rfc-editor.org/rfc/rfc8785). JCS sets these properties:

@@ -41,6 +41,12 @@ const throws: Array<[string, string]> = [
   ["escaped duplicate key", '{"a":1,"\\u0061":2}'],
   ["nested duplicate key", '{"a":{"b":1,"c":{"d":1,"d":2}}}'],
   ["not JSON", '{"a":'],
+  ["lone high surrogate escape", '{"a":"\\ud800"}'],
+  ["lone low surrogate escape", '{"a":"\\udc00"}'],
+  ["high surrogate escape then a literal character", '{"a":"\\ud800x"}'],
+  ["low then high surrogate escape", '{"a":"\\udc00\\ud800"}'],
+  ["high surrogate escape then a separated low one", '{"a":"\\ud800abc\\udc00"}'],
+  ["lone surrogate escape in a key", '{"\\ud800":1}'],
 ];
 
 let failed = 0;
@@ -70,6 +76,8 @@ for (const [name, text] of [
   ["same key in sibling objects", '[{"a":1},{"a":2}]'],
   ["string value equal to a key", '{"a":"a","b":"a"}'],
   ["escaped quote in a key", '{"a\\"b":1,"a":2}'],
+  ["surrogate pair", '{"a":"\\ud83d\\ude00"}'],
+  ["escaped backslash before ud800", '{"a":"\\\\ud800"}'],
 ] as const) {
   let ok = true;
   try {

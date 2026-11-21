@@ -607,6 +607,11 @@
       "title": "Each fault of the selected failures gives one structured entry"
     },
     {
+      "id": "PRS-023",
+      "capability": "document-parsing",
+      "title": "A JSON string has no lone surrogate escape"
+    },
+    {
       "id": "SER-001",
       "capability": "serialization",
       "title": "Serialization emits OSCAL property keys"

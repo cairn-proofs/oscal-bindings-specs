@@ -1133,6 +1133,14 @@
     {
       "capability": "error-model",
       "corpus": [
+        "parse/lone-high-surrogate",
+        "parse/lone-low-surrogate"
+      ],
+      "id": "ERR-004.07"
+    },
+    {
+      "capability": "error-model",
+      "corpus": [
         "parse-typed/wrong-document-type",
         "yaml-parse-typed/wrong-document-type"
       ],
@@ -3223,6 +3231,34 @@
           "test": "PRS-022.01: two absent members of one object are two faults at one location, and the list repeats the location"
         }
       ]
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/lone-high-surrogate"
+      ],
+      "id": "PRS-023.01"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/lone-low-surrogate"
+      ],
+      "id": "PRS-023.02"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "round-trip/surrogate-pair"
+      ],
+      "id": "PRS-023.03"
+    },
+    {
+      "capability": "document-parsing",
+      "corpus": [
+        "parse/lone-high-surrogate"
+      ],
+      "id": "PRS-023.04"
     },
     {
       "capability": "serialization",

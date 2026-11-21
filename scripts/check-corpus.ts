@@ -10,7 +10,9 @@
  * 5. A parse input fails as its category states: not JSON, not UTF-8, not valid against the schema, or a JSON object
  *    with a duplicate key (PRS-020). A case that cites PRS-020.01 or PRS-020.02 has an input that is valid JSON for a
  *    reader that keeps one value, that has a duplicate key, and that conforms to the schema when it is read with the
- *    last value.
+ *    last value. A case that cites PRS-023.01 or PRS-023.02 has an input that is valid JSON, that has a lone surrogate
+ *    escape and no duplicate key, and whose document, read with the lone surrogate kept, conforms to the schema and
+ *    meets the constraint manifest.
  * 6. A typed-parse, parse-file, assessment-period, or validate-element case has the precondition its category needs.
  * 7. A yaml-round-trip input reads with the reference YAML reader (scripts/yaml-reader.ts), and the canonical form of
  *    its JSON text is its expected file. A yaml-round-trip case that copies a source names the expected file of a JSON
@@ -83,7 +85,7 @@ import path from "node:path";
 
 import { Ajv, type ErrorObject, type ValidateFunction } from "ajv";
 
-import { assertNoDuplicateKeys, canonicalize, normalizeDatetime, parseStrict } from "./canonical-json.js";
+import { assertNoDuplicateKeys, canonicalize, findLoneSurrogateEscape, normalizeDatetime, parseStrict } from "./canonical-json.js";
 import { addDatatypeFormats } from "./datatype-rules.js";
 import { CorpusConstraints, type EntryFailure } from "./corpus-constraints.js";
 import type { Entry } from "./constraints-lib.js";
@@ -490,6 +492,27 @@ export function duplicateKeyCaseProblem(text: string, isValid: (document: unknow
 }
 
 /**
+ * Why the input of a case that cites PRS-023.01 or PRS-023.02 does not isolate a lone surrogate escape, or undefined
+ * when it does. The text is valid JSON, it has a lone surrogate escape and no duplicate key, and the document that
+ * plain `JSON.parse` returns is valid: it conforms to the schema and meets the constraint manifest. A binding that
+ * keeps the lone surrogate then returns a document, and the case fails it.
+ */
+export function loneSurrogateCaseProblem(text: string, isValid: (document: unknown) => boolean): string | undefined {
+  let document: unknown;
+  try {
+    document = JSON.parse(text);
+  } catch {
+    return "the input is not valid JSON, so the parse error does not come from a lone surrogate escape";
+  }
+  if (findLoneSurrogateEscape(text) === undefined) return "the input has no lone surrogate escape";
+  try {
+    assertNoDuplicateKeys(text);
+  } catch {
+    return "the input has a duplicate key, so a reader that keeps the lone surrogate also reports a parse error";
+  }
+  return isValid(document) ? undefined : "the input is not valid against the schema or the constraint manifest when the lone surrogate is kept, so a reader that keeps it also reports a parse error";
+}
+/**
  * The document of a case that the corpus checks against the constraint manifest, with the expected failures. The cases
  * are the round-trip, parse, parse-typed, facade, assessment-period, yaml-round-trip, and yaml-parse-typed cases whose
  * input conforms to the schema. Undefined for any other case, and for an input that cannot be read. `main()` and scripts/coverage-faults.ts
@@ -892,6 +915,10 @@ function main(write: boolean): number {
           const problem = duplicateKeyCaseProblem(text, (document) => validateDocument(document) as boolean);
           if (problem !== undefined) fail(c.id, problem);
         }
+        if (c.requirements.some((r) => r === "PRS-023.01" || r === "PRS-023.02")) {
+          const problem = loneSurrogateCaseProblem(text, (document) => (validateDocument(document) as boolean) && constraints.ofDocument(document).length === 0);
+          if (problem !== undefined) fail(c.id, problem);
+        }
         let doc: unknown;
         try {
           doc = readJsonInput(text);
@@ -1214,6 +1241,29 @@ function selfTest(): number {
     ["PRS-020: a duplicate-key case with a syntax error has a problem", () => duplicateKeyCaseProblem('{"a":1,"a":2', () => true) !== undefined],
     ["PRS-020: a duplicate-key case with no duplicate key has a problem", () => duplicateKeyCaseProblem(JSON.stringify(catalog([])), () => true) !== undefined],
     ["PRS-020: a duplicate-key case that is not valid when read with the last value has a problem", () => duplicateKeyCaseProblem('{"a":1,"a":2}', () => false) !== undefined],
+    ["PRS-023: parseStrict rejects a lone surrogate escape and accepts a pair", () => {
+      const throwsFor = (text: string) => {
+        try {
+          parseStrict(text);
+          return false;
+        } catch {
+          return true;
+        }
+      };
+      return throwsFor('"\\ud800"') && throwsFor('"\\udc00"') && !throwsFor('"\\ud83d\\ude00"') && !throwsFor('"\\\\ud800"');
+    }],
+    ["PRS-023: a conformant document with a lone surrogate escape has no problem", () => {
+      const text = JSON.stringify(catalog([{ name: "label", value: "1" }])).replace('"title":"t"', '"title":"\\ud800"');
+      return text.includes('\\ud800') && loneSurrogateCaseProblem(text, (d) => (validateDocument(d) as boolean) && constraints.ofDocument(d).length === 0) === undefined;
+    }],
+    ["PRS-023: a lone-surrogate case with a syntax error has a problem", () => loneSurrogateCaseProblem('{"a":"\\ud800"', () => true) !== undefined],
+    ["PRS-023: a lone-surrogate case with no lone surrogate escape has a problem", () => loneSurrogateCaseProblem(JSON.stringify(catalog([])), () => true) !== undefined],
+    ["PRS-023: a lone-surrogate case with a duplicate key has a problem", () => loneSurrogateCaseProblem('{"a":"\\ud800","a":1}', () => true) !== undefined],
+    ["PRS-023: a lone-surrogate case that does not conform to the schema has a problem", () => loneSurrogateCaseProblem('{"a":"\\ud800"}', (d) => validateDocument(d) as boolean) !== undefined],
+    ["PRS-023: a lone-surrogate case that fails a manifest entry has a problem", () => {
+      const text = JSON.stringify(catalog([{ name: "bogus", value: "1" }])).replace('"title":"t"', '"title":"\\ud800"');
+      return text.includes("\\ud800") && loneSurrogateCaseProblem(text, (d) => (validateDocument(d) as boolean) && constraints.ofDocument(d).length === 0) !== undefined;
+    }],
     ["CNS-018: an element type without a definition gives no failure", () => constraints.ofElement("no-such-type", {}).length === 0],
     ["PRS-021.01: the fault of a rejected value is at the value", () => {
       const faults = faultsOf(catalogOf({}, { ...metadata, "last-modified": "2026-01-01T00:00:00z" }));
