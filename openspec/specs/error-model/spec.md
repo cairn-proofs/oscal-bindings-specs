@@ -73,7 +73,7 @@ The parse-error category of [ERR-001] SHALL apply to these inputs:
 1. An input that is not valid JSON, not valid UTF-8, or not conformant to the schema or to the constraint manifest.
 2. A YAML input that [YML-002], [YML-003], [YML-004], or [YML-009] rejects.
 3. An input that exceeds a documented limit of [PRS-010].
-4. A JSON input that [PRS-020] rejects.
+4. A JSON input that [PRS-020] or [PRS-023] rejects.
 
 A parse error for an input that fails the schema or the manifest carries the structured detail of [ERR-003].
 
@@ -109,6 +109,10 @@ A parse error for an input that fails the schema or the manifest carries the str
 - **WHEN** a parse operation receives a JSON input in which one object has two members with the same key
 - **THEN** the binding reports the parse-error category
 
+#### Scenario: ERR-004.07 A lone surrogate escape in a JSON input maps to parse error
+
+- **WHEN** a parse operation receives a JSON input in which a string holds the escape of a lone surrogate
+- **THEN** the binding reports the parse-error category
 ### Requirement: ERR-005 A document of another type is a document-type mismatch
 
 A typed parser that receives a document of another type SHALL report the document-type mismatch category of

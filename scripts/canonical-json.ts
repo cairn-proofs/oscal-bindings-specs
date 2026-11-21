@@ -56,10 +56,35 @@ export function assertNoDuplicateKeys(text: string): void {
   }
 }
 
-/** Parses JSON text and rejects duplicate keys (docs/canonical-json.md, Rules, step 1). */
+/**
+ * The offset of the first lone surrogate escape in the JSON text, or undefined when there is none. The text must
+ * already be valid JSON. It reads the escape sequences from left to right, and `\\` is one sequence. A high surrogate
+ * escape must be followed immediately by a low surrogate escape.
+ */
+export function findLoneSurrogateEscape(text: string): number | undefined {
+  const escape = /\\(?:u([0-9a-fA-F]{4})|[^u])/g;
+  let pending: { at: number; end: number } | undefined;
+  for (let m = escape.exec(text); m; m = escape.exec(text)) {
+    const code = m[1] === undefined ? undefined : parseInt(m[1], 16);
+    const isLow = code !== undefined && code >= 0xdc00 && code <= 0xdfff;
+    if (pending) {
+      if (isLow && m.index === pending.end) {
+        pending = undefined;
+        continue;
+      }
+      return pending.at;
+    }
+    if (isLow) return m.index;
+    if (code !== undefined && code >= 0xd800 && code <= 0xdbff) pending = { at: m.index, end: m.index + m[0].length };
+  }
+  return pending?.at;
+}
+/** Parses JSON text and rejects duplicate keys and lone surrogate escapes (docs/canonical-json.md, Rules, step 1). */
 export function parseStrict(text: string): unknown {
   const value: unknown = JSON.parse(text);
   assertNoDuplicateKeys(text);
+  const lone = findLoneSurrogateEscape(text);
+  if (lone !== undefined) throw new Error(`lone surrogate escape at offset ${lone}`);
   return value;
 }
 
