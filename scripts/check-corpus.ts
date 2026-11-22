@@ -1145,11 +1145,9 @@ function main(write: boolean): number {
   }
   for (const message of uncoveredEntries(constraints.entries, coveredEntries)) fail("cases.json", message);
   // Check 19 (SER-006).
-  const validDir = `${ROOT}/documents/valid`;
-  const validDocuments = fs
-    .readdirSync(validDir)
-    .filter((name) => name.endsWith(".json"))
-    .map((name) => JSON.parse(fs.readFileSync(`${validDir}/${name}`, "utf8")) as unknown);
+  const validDocuments = corpusFiles()
+    .filter((file) => file.startsWith("documents/valid/") && file.endsWith(".json"))
+    .map((file) => JSON.parse(fs.readFileSync(`${ROOT}/${file}`, "utf8")) as unknown);
   const required = (JSON.parse(fs.readFileSync(`${ROOT}/required-keys.json`, "utf8")) as { pairs: string[] }).pairs;
   for (const pair of unusedKeyPairs(required, validDocuments))
     fail("required-keys.json", `no JSON document in documents/valid/ uses the key pair ${pair} (SER-006)`);

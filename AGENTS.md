@@ -102,7 +102,7 @@ The release steps are in [README.md, Release](README.md#release).
 | `manifest/<release>/names.json` | Naming manifest that bindings read | No. Run `npm run names:write`. |
 | `manifest/<release>/constraints.json` | Constraint manifest that bindings read | No. Run `npm run constraints:write`. |
 | `manifest/<release>/constraint-exclusions.json` | Excluded and cannot-fail constraints | Yes |
-| `corpus/<release>/cases.json`, `documents/`, `elements/` | Corpus cases and inputs | Yes |
+| `corpus/<release>/cases.json`, `documents/`, `elements/`, `required-keys.json` | Corpus cases and inputs, and the key pairs that the valid corpus must use ([SER-006]) | Yes |
 | `corpus/<release>/expected/` | Canonical expected outputs | No. Run `npm run corpus:write`. |
 | `schemas/<release>/` | NIST schema files, byte-for-byte | Never |
 | `metaschema/<release>/` | NIST Metaschema modules and the datatypes XSD, byte-for-byte | Never |
@@ -129,6 +129,7 @@ These rules are not obvious from the code:
    same commit. `npm run templates:check` fails until then ([SRF-014]).
 
 [SRF-011]: openspec/specs/binding-surface/spec.md#requirement-srf-011-the-spec-artifact-holds-the-binding-templates
+[SER-006]: openspec/specs/serialization/spec.md#requirement-ser-006-the-valid-corpus-uses-each-listed-key-pair
 [SRF-014]: openspec/specs/binding-surface/spec.md#requirement-srf-014-the-template-config-follows-the-store-config
 [VER-005]: openspec/specs/schema-versioning/spec.md#requirement-ver-005-spec-artifacts-are-distributed-pinned-and-hash-verified
 [VER-006]: openspec/specs/schema-versioning/spec.md#requirement-ver-006-dependencies-run-from-bindings-to-the-store-never-back
