@@ -1,7 +1,7 @@
 /**
  * Evaluates the constraint manifest on the JSON documents of a clone of usnistgov/oscal-content, and reports the result for
  * each document (tasks.md 3.5 of the change validate-metaschema-constraints). The clone is not part of the store. The
- * reference evaluator (CNS-019) gives the failures. The RFC 9535 evaluation of the manifest (CNS-022) must give the same
+ * reference evaluator (STO-012) gives the failures. The RFC 9535 evaluation of the manifest (STO-013) must give the same
  * number of failures for each entry.
  *
  *   npm run content:evaluate -- <clone directory>   print the result for each document

@@ -1,5 +1,5 @@
 /**
- * Checks the exclusion list of each OSCAL release in the store (openspec/specs/constraint-validation, CNS-003):
+ * Checks the exclusion list of each OSCAL release in the store (openspec/specs/constraint-validation, STO-008):
  *
  * 1. manifest/<release>/constraint-exclusions.json conforms to manifest/constraint-exclusions.schema.json.
  * 2. Each item of the lists `excluded` and `cannot-fail` identifies exactly one constraint of metaschema/<release>/.
@@ -91,21 +91,21 @@ function selfTest(): number {
   const doc = (excluded: object[], cannotFail: object[] = []) => ({ format: 1, "oscal-release": "1.2.3", excluded, "cannot-fail": cannotFail });
   const cases: Array<[string, () => boolean | string]> = [];
   const test = (name: string, fn: () => boolean | string) => cases.push([name, fn]);
-  test("CNS-003: items that identify one constraint each pass", () => {
+  test("STO-008: items that identify one constraint each pass", () => {
     const d = doc([{ id: "b", issue }, { module: "m", definition: "field:f", kind: "allowed-values", issue }], [{ id: "b", reason: "r" }]);
     return (checkSchema(schema, d).length === 0 && checkItems(d, all).length === 0) || JSON.stringify([checkSchema(schema, d), checkItems(d, all)]);
   });
-  test("CNS-003.01: an unknown id fails", () => checkItems(doc([{ id: "zz", issue }]) as Exclusions, all).some((f) => f.includes("identifies 0")));
-  test("CNS-003: an unknown id in cannot-fail fails", () => checkItems(doc([], [{ id: "zz", reason: "r" }]) as Exclusions, all).some((f) => f.includes("[cannot-fail]")));
-  test("CNS-003: an id that two constraints share fails", () => checkItems(doc([{ id: "a", issue }]) as Exclusions, all).some((f) => f.includes("identifies 2")));
-  test("CNS-003: a module, definition and kind that two constraints share fails", () =>
+  test("STO-008.01: an unknown id fails", () => checkItems(doc([{ id: "zz", issue }]) as Exclusions, all).some((f) => f.includes("identifies 0")));
+  test("STO-008: an unknown id in cannot-fail fails", () => checkItems(doc([], [{ id: "zz", reason: "r" }]) as Exclusions, all).some((f) => f.includes("[cannot-fail]")));
+  test("STO-008: an id that two constraints share fails", () => checkItems(doc([{ id: "a", issue }]) as Exclusions, all).some((f) => f.includes("identifies 2")));
+  test("STO-008: a module, definition and kind that two constraints share fails", () =>
     checkItems(doc([{ module: "m", definition: "flag:g", kind: "allowed-values", issue }]) as Exclusions, all).some((f) => f.includes("identifies 2")));
-  test("CNS-003: a module, definition and kind never identify a constraint that has an id", () =>
+  test("STO-008: a module, definition and kind never identify a constraint that has an id", () =>
     checkItems(doc([{ module: "m", definition: "assembly:x", kind: "expect", issue }]) as Exclusions, all).some((f) => f.includes("identifies 0")));
-  test("CNS-003.02: an item without an issue fails the schema", () => checkSchema(schema, doc([{ id: "b" }])).length > 0);
-  test("CNS-003.02: an issue outside usnistgov/OSCAL fails the schema", () =>
+  test("STO-008.02: an item without an issue fails the schema", () => checkSchema(schema, doc([{ id: "b" }])).length > 0);
+  test("STO-008.02: an issue outside usnistgov/OSCAL fails the schema", () =>
     checkSchema(schema, doc([{ id: "b", issue: "https://github.com/other/repo/issues/1" }])).length > 0);
-  test("CNS-021: a cannot-fail item without a reason fails the schema", () => checkSchema(schema, doc([], [{ id: "b" }])).length > 0);
+  test("STO-011: a cannot-fail item without a reason fails the schema", () => checkSchema(schema, doc([], [{ id: "b" }])).length > 0);
   test("an item with an id and a module fails the schema", () => checkSchema(schema, doc([{ id: "b", module: "m", definition: "flag:g", kind: "expect", issue }])).length > 0);
   let failed = 0;
   for (const [name, fn] of cases) {

@@ -15,7 +15,7 @@ artifact.
    conformance corpus and the binding templates. It holds no binding code.
 2. This binding implements the contract in one programming language. It holds its code, its binding-local
    requirements, its traceability record and its expected conformance failures.
-3. Dependencies go from this binding to the store, never back [VER-006]. Do not put the state of this binding in the
+3. Dependencies go from this binding to the store, never back [STO-003]. Do not put the state of this binding in the
    store: no defect, no expected failure, no supported version, and no link to an issue of this binding.
 
 ## How this binding reads the store
@@ -55,7 +55,7 @@ artifact.
 
 The pre-commit hook verifies the pinned archive by its sha256. Then it runs the binding checker of that archive and
 `openspec validate --all --strict` on the staged files. The binding checker applies the identifier rules of the store
-to the specs of this binding [SRF-012], and checks the traceability record [SRF-013]. Each failure starts with the
+to the specs of this binding [STO-056], and checks the traceability record [STO-057]. Each failure starts with the
 name of its rule. Fix the cause. Do not skip the hook with `--no-verify`.
 
 ## Binding notes

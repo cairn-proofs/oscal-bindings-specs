@@ -157,22 +157,22 @@ the specs.
 ### Version
 
 `VERSION` holds the spec artifact version. The version is `MAJOR.MINOR.PATCH+oscal.<release>`, for example
-`0.1.0+oscal.1.2.3`. It follows [Semantic Versioning 2.0.0][VER-003], has no pre-release label, and holds the OSCAL
-release as [build metadata][VER-004].
+`0.1.0+oscal.1.2.3`. It follows [Semantic Versioning 2.0.0][STO-001], has no pre-release label, and holds the OSCAL
+release as [build metadata][STO-002].
 
-1. A reviewer decides if a change is a break, an addition or a fix ([VER-003]). Semantic Versioning 2.0.0 gives the
+1. A reviewer decides if a change is a break, an addition or a fix ([STO-001]). Semantic Versioning 2.0.0 gives the
    increment for each kind.
 2. A change that needs an increment sets `VERSION` to the version of the next release. Do this also when no release
    follows at once. Changes between two releases share one increment.
-3. `VERSION` must be the latest release, or one patch, minor or major step above it ([VER-008]). The latest release is
+3. `VERSION` must be the latest release, or one patch, minor or major step above it ([STO-004]). The latest release is
    the release tag on `main` with the highest precedence, for all OSCAL releases. `npm run releases:check` fails
    when `VERSION` is not one of these versions. It cannot find an increment that is too small, so the reviewer
    checks that too.
 4. For the steps after the merge, see [Release](#release).
 
-[VER-003]: openspec/specs/schema-versioning/spec.md#requirement-ver-003-the-shared-spec-artifact-uses-semantic-versioning-for-its-own-compatibility
-[VER-004]: openspec/specs/schema-versioning/spec.md#requirement-ver-004-the-oscal-release-is-recorded-as-semantic-versioning-build-metadata
-[VER-008]: openspec/specs/schema-versioning/spec.md#requirement-ver-008-the-version-is-the-latest-release-or-one-step-above-it
+[STO-001]: openspec/specs/spec-store/spec.md#requirement-sto-001-the-shared-spec-artifact-uses-semantic-versioning-for-its-own-compatibility
+[STO-002]: openspec/specs/spec-store/spec.md#requirement-sto-002-the-oscal-release-is-recorded-as-semantic-versioning-build-metadata
+[STO-004]: openspec/specs/spec-store/spec.md#requirement-sto-004-the-version-is-the-latest-release-or-one-step-above-it
 
 ## Threat model
 

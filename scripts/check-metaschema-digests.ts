@@ -1,6 +1,6 @@
 /**
  * Checks that the digest check of the vendored metaschema fails for a changed file (openspec/specs/constraint-validation,
- * CNS-001). The digest check is the command of the script `metaschema:verify` in package.json. The self-test copies
+ * STO-006). The digest check is the command of the script `metaschema:verify` in package.json. The self-test copies
  * metaschema/<release>/ to a temporary directory, changes a file of the copy, and runs that command in the copy.
  *
  *   npm run metaschema:self-test    run the scenarios
@@ -54,12 +54,12 @@ function selfTest(): number {
       }
       return true;
     };
-    test("CNS-001.01: the unchanged files pass the digest check", () =>
+    test("STO-006.01: the unchanged files pass the digest check", () =>
       eachRelease((release) => {
         const r = verify(copy(release, () => {}));
         return r.ok || r.output;
       }));
-    test("CNS-001.01: a changed byte in a module fails the digest check", () =>
+    test("STO-006.01: a changed byte in a module fails the digest check", () =>
       eachRelease((release) => {
         const modules = listed(release).filter((f) => f.endsWith(".xml"));
         if (modules.length === 0) return "SHA256SUMS lists no module";
@@ -69,12 +69,12 @@ function selfTest(): number {
         }
         return true;
       }));
-    test("CNS-001.01: a changed byte in metaschema-datatypes.xsd fails the digest check", () =>
+    test("STO-006.01: a changed byte in metaschema-datatypes.xsd fails the digest check", () =>
       eachRelease((release) => {
         const r = verify(copy(release, appendByte("metaschema-datatypes.xsd")));
         return (!r.ok && r.output.includes("metaschema-datatypes.xsd")) || r.output;
       }));
-    test("CNS-001.01: a missing module fails the digest check", () =>
+    test("STO-006.01: a missing module fails the digest check", () =>
       eachRelease((release) => {
         const file = listed(release).find((f) => f.endsWith(".xml"));
         return (file !== undefined && !verify(copy(release, (dir) => fs.rmSync(path.join(dir, file)))).ok) || "the digest check passes";

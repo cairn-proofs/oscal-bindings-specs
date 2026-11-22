@@ -13,10 +13,10 @@ When a commit adds, renames, or removes a requirement in the main specs, do thes
 1. Run `npm run requirements:write`.
 2. Commit `openspec/requirements.json` with the specs.
 
-`npm run check` fails when the index differs from the main specs ([SRF-006]).
+`npm run check` fails when the index differs from the main specs ([STO-053]).
 
 When a commit changes `openspec/config.yaml`, run `npm run templates:write`, and commit the template config in
-`templates/binding/` with it ([SRF-014]). Read the diff of the template config. When the change adds a sentence that
+`templates/binding/` with it ([STO-058]). Read the diff of the template config. When the change adds a sentence that
 only the store can follow, such as an `npm run` command, add an edit for it to `EDITS` in `scripts/templates.ts`.
 
 When a commit adds a scenario to the main specs, the scenario needs one of these:
@@ -48,7 +48,7 @@ When a binding needs an operation that the contract does not define:
 1. If the operation meets each condition of [SRF-002], define it in a binding-local requirement of the binding. Add
    it to the record of the binding. The contract does not change. The identifier of the requirement uses a prefix of
    the binding, never a prefix of the store ([SRF-010]). The binding checker in `templates/binding/` checks the
-   record of the binding ([SRF-013]).
+   record of the binding ([STO-057]).
 2. If the operation does not meet a condition of [SRF-002], open an issue in this repo first. The binding adds the
    operation only after a contract requirement defines it.
 
@@ -67,7 +67,7 @@ contract:
 [SRF-003]: openspec/specs/binding-surface/spec.md#requirement-srf-003-a-binding-records-the-requirement-that-covers-each-public-operation
 [SRF-004]: openspec/specs/binding-surface/spec.md#requirement-srf-004-contract-identifiers-in-a-traceability-record-resolve-in-the-requirement-index
 [SRF-005]: openspec/specs/binding-surface/spec.md#requirement-srf-005-a-binding-local-operation-that-the-contract-defines-conforms-or-is-deprecated
-[SRF-006]: openspec/specs/binding-surface/spec.md#requirement-srf-006-the-store-publishes-a-requirement-index
+[STO-053]: openspec/specs/spec-store/spec.md#requirement-sto-053-the-store-publishes-a-requirement-index
 [SRF-010]: openspec/specs/binding-surface/spec.md#requirement-srf-010-a-binding-local-requirement-does-not-use-a-store-prefix
-[SRF-013]: openspec/specs/binding-surface/spec.md#requirement-srf-013-the-binding-checker-checks-the-traceability-record
-[SRF-014]: openspec/specs/binding-surface/spec.md#requirement-srf-014-the-template-config-follows-the-store-config
+[STO-057]: openspec/specs/spec-store/spec.md#requirement-sto-057-the-binding-checker-checks-the-traceability-record
+[STO-058]: openspec/specs/spec-store/spec.md#requirement-sto-058-the-template-config-follows-the-store-config

@@ -1,5 +1,5 @@
 /**
- * The spec artifact version grammar (openspec/specs/schema-versioning, VER-003 and VER-004), shared by
+ * The spec artifact version grammar (openspec/specs/schema-versioning, STO-001 and STO-002), shared by
  * check-version.ts and check-releases.ts. The version is MAJOR.MINOR.PATCH+oscal.<release>. It has no pre-release
  * label. This module has no side effect, so a script can import it.
  */

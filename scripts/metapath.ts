@@ -1,5 +1,5 @@
 /**
- * The reference evaluator of the store (openspec/specs/constraint-validation, CNS-019). It holds:
+ * The reference evaluator of the store (openspec/specs/constraint-validation, STO-012). It holds:
  *
  * 1. A parser for the subset of Metapath that the constraints of the vendored metaschema use.
  * 2. The Metapath data model of an OSCAL JSON value: a tree of nodes over the definitions of the metaschema.

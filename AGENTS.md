@@ -25,7 +25,7 @@ This repository is an OpenSpec store. It holds the language-neutral contract for
 3. The naming manifest, in `manifest/<release>/`.
 4. The conformance corpus, in `corpus/<release>/`.
 5. The binding templates, in `templates/binding/`: an OpenSpec config, a ledger, a traceability record, a pre-commit
-   hook, an agent guide, and a generated binding checker that each binding runs ([SRF-011]). The agent guide,
+   hook, an agent guide, and a generated binding checker that each binding runs ([STO-055]). The agent guide,
    `templates/binding/AGENTS.md`, is the binding side of this file.
 
 The store holds no runtime code and no binding. The TypeScript in `scripts/` is store tooling only. It checks and
@@ -52,7 +52,7 @@ See also [Where a change goes](#where-a-change-goes) for what follows a release.
 
 <!-- tags: boundary, binding-state, ver-006, ver-007 -->
 
-Dependencies go from a binding to the store, never back ([VER-006]). The store must not hold binding state:
+Dependencies go from a binding to the store, never back ([STO-003]). The store must not hold binding state:
 
 1. Known defects, expected conformance failures, or conformance results of a binding.
 2. The versions that a binding supports, or the status of a binding.
@@ -61,7 +61,7 @@ Dependencies go from a binding to the store, never back ([VER-006]). The store m
 Each binding keeps these in its own repository:
 
 1. Its expected conformance failures ([VER-007]). The corpus states one expected result for every binding.
-2. Its traceability record. The record conforms to `openspec/traceability.schema.json` ([SRF-003], [SRF-007]).
+2. Its traceability record. The record conforms to `openspec/traceability.schema.json` ([SRF-003], [STO-054]).
 
 `npm run binding-links:check` fails when a tracked file outside `openspec/changes/` links a binding issue or pull
 request. This rule applies to this file. The store can link a binding repository or its issue tracker. An OpenSpec
@@ -102,7 +102,7 @@ The release steps are in [README.md, Release](README.md#release).
 | `manifest/<release>/names.json` | Naming manifest that bindings read | No. Run `npm run names:write`. |
 | `manifest/<release>/constraints.json` | Constraint manifest that bindings read | No. Run `npm run constraints:write`. |
 | `manifest/<release>/constraint-exclusions.json` | Excluded and cannot-fail constraints | Yes |
-| `corpus/<release>/cases.json`, `documents/`, `elements/`, `required-keys.json` | Corpus cases and inputs, and the key pairs that the valid corpus must use ([SER-006]) | Yes |
+| `corpus/<release>/cases.json`, `documents/`, `elements/`, `required-keys.json` | Corpus cases and inputs, and the key pairs that the valid corpus must use ([STO-005]) | Yes |
 | `corpus/<release>/expected/` | Canonical expected outputs | No. Run `npm run corpus:write`. |
 | `schemas/<release>/` | NIST schema files, byte-for-byte | Never |
 | `metaschema/<release>/` | NIST Metaschema modules and the datatypes XSD, byte-for-byte | Never |
@@ -118,7 +118,7 @@ These rules are not obvious from the code:
 1. `npm run releases:check` reads git tags and `origin/main`. It fails in a shallow clone or in a clone without tags.
 2. `SPEC_IDS_BASE` sets the base ref for the vanished-scenario check and the name diff. The default is `HEAD`. CI sets
    it to the target branch of the pull request.
-3. A changed released name needs a breaking `VERSION` increment ([NAM-008]). The PR template has a naming section for
+3. A changed released name needs a breaking `VERSION` increment ([STO-029]). The PR template has a naming section for
    a change to `manifest/`.
 4. `scripts/verify-release.sh` reads `CONTENTS` in `build-archive.ts` as text. Keep `CONTENTS` a literal array of
    double-quoted strings that ends with `];`.
@@ -126,18 +126,18 @@ These rules are not obvious from the code:
 6. CODEOWNERS requires code-owner review for the specs, corpus, docs, manifest, schemas, scripts, binding templates,
    CI, pins, and `VERSION`.
 7. A change to `openspec/config.yaml`, or to the identifier checks in `scripts/`, needs `npm run templates:write` in the
-   same commit. `npm run templates:check` fails until then ([SRF-014]).
+   same commit. `npm run templates:check` fails until then ([STO-058]).
 
-[SRF-011]: openspec/specs/binding-surface/spec.md#requirement-srf-011-the-spec-artifact-holds-the-binding-templates
-[SER-006]: openspec/specs/serialization/spec.md#requirement-ser-006-the-valid-corpus-uses-each-listed-key-pair
-[SRF-014]: openspec/specs/binding-surface/spec.md#requirement-srf-014-the-template-config-follows-the-store-config
+[STO-055]: openspec/specs/spec-store/spec.md#requirement-sto-055-the-spec-artifact-holds-the-binding-templates
+[STO-005]: openspec/specs/spec-store/spec.md#requirement-sto-005-the-valid-corpus-uses-each-listed-key-pair
+[STO-058]: openspec/specs/spec-store/spec.md#requirement-sto-058-the-template-config-follows-the-store-config
 [VER-005]: openspec/specs/schema-versioning/spec.md#requirement-ver-005-spec-artifacts-are-distributed-pinned-and-hash-verified
-[VER-006]: openspec/specs/schema-versioning/spec.md#requirement-ver-006-dependencies-run-from-bindings-to-the-store-never-back
+[STO-003]: openspec/specs/spec-store/spec.md#requirement-sto-003-dependencies-run-from-bindings-to-the-store-never-back
 [VER-007]: openspec/specs/schema-versioning/spec.md#requirement-ver-007-each-binding-keeps-its-own-expected-conformance-failures
 [SRF-002]: openspec/specs/binding-surface/spec.md#requirement-srf-002-a-binding-local-operation-adds-no-contract-behavior
 [SRF-003]: openspec/specs/binding-surface/spec.md#requirement-srf-003-a-binding-records-the-requirement-that-covers-each-public-operation
-[SRF-007]: openspec/specs/binding-surface/spec.md#requirement-srf-007-the-store-publishes-a-json-schema-for-the-traceability-record
-[NAM-008]: openspec/specs/naming-manifest/spec.md#requirement-nam-008-a-changed-released-name-needs-a-breaking-version-increment
+[STO-054]: openspec/specs/spec-store/spec.md#requirement-sto-054-the-store-publishes-a-json-schema-for-the-traceability-record
+[STO-029]: openspec/specs/spec-store/spec.md#requirement-sto-029-a-changed-released-name-needs-a-breaking-version-increment
 
 ## Custom Instructions
 <!-- This section is for human and agent-maintained operational knowledge.

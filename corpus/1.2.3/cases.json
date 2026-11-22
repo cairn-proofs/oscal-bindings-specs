@@ -144,7 +144,7 @@
       "input": "documents/valid/group-without-distinguishing-property.json",
       "document-type": "catalog",
       "expected": "expected/group-without-distinguishing-property.json",
-      "requirements": ["NAM-020.01"],
+      "requirements": ["STO-040.01"],
       "notes": "Written for this corpus. The group holds a title and neither groups nor controls, so it conforms to both branches of the catalog group union."
     },
     {
@@ -281,7 +281,7 @@
       "expected-locations": [
         "$['catalog']"
       ],
-      "requirements": ["PRS-004.01", "MDL-008.01", "PRS-013", "PRS-021.02"]
+      "requirements": ["PRS-004.01", "PRS-004.01", "PRS-013", "PRS-021.02"]
     },
     {
       "id": "parse/unknown-field-nested",

@@ -1,5 +1,5 @@
 /**
- * Checks that the store links no individual issue or pull request in a binding repository (VER-006). A binding keeps
+ * Checks that the store links no individual issue or pull request in a binding repository (STO-003). A binding keeps
  * its own expected failures, so no store content depends on the state of a binding.
  *
  * 1. The binding repositories are the GitHub repositories that `## Known implementations` in README.md links, and
@@ -70,7 +70,7 @@ export function checkFiles(files: File[]): string[] {
       for (const pattern of [URL_LINK, REFERENCE]) {
         for (const m of line.matchAll(pattern)) {
           if (isBinding(m[1], m[2]))
-            fail(`${file.path}:${i + 1}: "${m[0]}" links an individual binding issue. Link the tracker (VER-006).`);
+            fail(`${file.path}:${i + 1}: "${m[0]}" links an individual binding issue. Link the tracker (STO-003).`);
         }
       }
     });
@@ -100,9 +100,9 @@ function selfTest(): number {
   const run = (extra: File[], text = readme) => checkFiles([{ path: README, text }, ...extra]);
   const doc = (text: string, path = "docs/note.md"): File[] => [{ path, text }];
   const cases: Array<[string, string[], string | null]> = [
-    ["VER-006.03 repository and tracker links pass", run([]), null],
-    ["VER-006.02 issue URL fails", run(doc(`https://github.com/${PY}/issues/6`)), "docs/note.md:1"],
-    ["VER-006.02 pull URL fails", run(doc(`x github.com/${PY}/pull/12 y`)), "/pull/12"],
+    ["STO-003.03 repository and tracker links pass", run([]), null],
+    ["STO-003.02 issue URL fails", run(doc(`https://github.com/${PY}/issues/6`)), "docs/note.md:1"],
+    ["STO-003.02 pull URL fails", run(doc(`x github.com/${PY}/pull/12 y`)), "/pull/12"],
     ["reference fails", run(doc(`See ${PY}#33.`)), "oscal-bindings-python#33"],
     ["match ignores case", run(doc(`GitHub.com/${PY.toUpperCase()}/issues/6`)), "links an individual"],
     ["line number is reported", run(doc(`one\ntwo ${PY}#6`)), "docs/note.md:2"],

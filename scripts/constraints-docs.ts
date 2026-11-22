@@ -1,5 +1,5 @@
 /**
- * The documents of the checks of the constraint manifest (openspec/specs/constraint-validation, CNS-019, CNS-022):
+ * The documents of the checks of the constraint manifest (openspec/specs/constraint-validation, STO-012, STO-013):
  * documents of each model that conform to the JSON Schema, that together hold each definition, flag and child of the
  * metaschema, and that unroll each recursive definition to a depth of 6 (tasks.md 3.4), and the documents of the
  * corpus that conform to the schema. The elements of the element context queries come from these documents.

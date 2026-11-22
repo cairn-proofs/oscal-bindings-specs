@@ -72,7 +72,7 @@ Each case has these fields:
       the same location are two objects, because one location can have more than one failure. The runner compares the
       list of pairs with the failures of the binding as multisets. A failure at another location than the list gives
       is a different failure. The field applies to a `parse`, `validate-element`, or builder case
-      ([CNS-020](../../openspec/specs/constraint-validation/spec.md#requirement-cns-020-the-corpus-has-a-failing-case-for-each-reportable-entry)).
+      ([STO-014](../../openspec/specs/spec-store/spec.md#requirement-sto-014-the-corpus-has-a-failing-case-for-each-reportable-entry)).
       The location of a failure follows these rules:
       1. For a `parse` case, the location is the Normalized Path in the document, for example
          `$['catalog']['controls'][0]['props'][0]['name']`.
@@ -256,7 +256,7 @@ optional.
 Schema validator. For a YAML input, it uses the reference YAML reader, `scripts/yaml-reader.ts`. For example, it
 confirms that each valid document is valid, that each invalid document fails in the stated way, and that each expected
 file is the canonical form of its input. It also runs the reference evaluator of the constraint manifest, as
-[CNS-020](../../openspec/specs/constraint-validation/spec.md#requirement-cns-020-the-corpus-has-a-failing-case-for-each-reportable-entry) states:
+[STO-014](../../openspec/specs/spec-store/spec.md#requirement-sto-014-the-corpus-has-a-failing-case-for-each-reportable-entry) states:
 
 1. For each input with `expected-constraints`, the evaluator gives the failures that the field lists, each with its
    `id` and its location.
@@ -265,7 +265,7 @@ file is the canonical form of its input. It also runs the reference evaluator of
    entry.
 
 It also checks that the valid corpus uses each key pair that `required-keys.json` lists
-([SER-006](../../openspec/specs/serialization/spec.md#requirement-ser-006-the-valid-corpus-uses-each-listed-key-pair)).
+([STO-005](../../openspec/specs/spec-store/spec.md#requirement-sto-005-the-valid-corpus-uses-each-listed-key-pair)).
 A pair `a>b` is used when a JSON document in `documents/valid/` has the key `b` in an object that is the value of the key
 `a`, or in an item of an array that is the value of `a`. The check reads the key names only. It does not look at where
 in the document the pair is, so `props>class` is used by any `props` item that has a `class`. It reads each JSON file

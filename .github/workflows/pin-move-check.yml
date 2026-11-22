@@ -5,7 +5,7 @@ name: Pin-move check
 # pin move. It does not replace the issues that each contract change opens in the binding.
 #
 # It runs with the caller's GITHUB_TOKEN. The store is public, so the caller needs no secret. The store reads nothing
-# from the binding: the caller supplies its pin (VER-006). Call it from a scheduled workflow, and pin the ref to a full
+# from the binding: the caller supplies its pin (STO-003). Call it from a scheduled workflow, and pin the ref to a full
 # commit SHA:
 #
 #   on:

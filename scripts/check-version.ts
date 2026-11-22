@@ -24,7 +24,7 @@ function selfTest(): number {
   const has = (release: string) => release === "1.2.3";
   const cases: Array<[string, string | undefined, string | null]> = [
     ["valid version", "0.1.0+oscal.1.2.3\n", null],
-    ["VER-003.06 pre-release label fails", "1.0.0-rc.1+oscal.1.2.3", "is not MAJOR"],
+    ["STO-001.06 pre-release label fails", "1.0.0-rc.1+oscal.1.2.3", "is not MAJOR"],
     ["missing file", undefined, "does not exist"],
     ["no build metadata", "0.1.0", "is not MAJOR"],
     ["other build metadata", "0.1.0+build.7", "is not MAJOR"],
@@ -38,10 +38,10 @@ function selfTest(): number {
     if (!ok) failed++;
     console.log(`${ok ? "PASS" : "FAIL"}  ${name}${ok ? "" : `\n      ${JSON.stringify(out)}`}`);
   }
-  // VER-004.01: the OSCAL release is the build metadata, and the check reads it from there.
+  // STO-002.01: the OSCAL release is the build metadata, and the check reads it from there.
   const v = "2.4.1+oscal.1.2.3";
   const ok = parseVersion(v)?.release === "1.2.3" && checkVersion(v, has).length === 0;
-  const name = "VER-004.01 OSCAL release appears as build metadata";
+  const name = "STO-002.01 OSCAL release appears as build metadata";
   if (!ok) failed++;
   console.log(`${ok ? "PASS" : "FAIL"}  ${name}`);
   return failed ? 1 : 0;

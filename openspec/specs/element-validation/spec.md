@@ -28,8 +28,8 @@ message. The operation validates the element against the named OSCAL type's cons
 
 ### Requirement: ELV-002 Element-type names are kebab-case and derived from the type names
 
-The element-type names SHALL be the kebab-case forms of the canonical type names from the model-derivation capability.
-Each type of the naming manifest SHALL have an element-type name, whatever its kind of [NAM-010]. For example, the
+The element-type names SHALL be the kebab-case forms of the canonical type names of the naming manifest.
+Each type of the naming manifest SHALL have an element-type name, whatever its kind of [STO-017]. For example, the
 back-matter type has the element-type name `back-matter`, the `Parameter` union has `parameter`, and the
 `HashAlgorithm` enum has `hash-algorithm`. The implementation SHALL provide an operation that returns the full sorted
 list of supported element-type names.
@@ -55,6 +55,7 @@ type.
 
 - **WHEN** the caller validates an element against a type name the binding does not recognize
 - **THEN** the operation reports the unknown-element-type error
+
 ### Requirement: ELV-004 A binding can limit the resources that element validation uses
 
 A binding SHALL document each resource limit that it applies to element validation, as [PRS-010]

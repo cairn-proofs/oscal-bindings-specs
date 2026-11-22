@@ -10,7 +10,7 @@
  * it to the pull request's target branch.
  *
  * scripts/binding-check.ts imports checkSpecIds() and passes the specs of the pinned store, so that the same rules
- * check the specs of a binding (openspec/specs/binding-surface, SRF-012).
+ * check the specs of a binding (openspec/specs/binding-surface, STO-056).
  */
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
@@ -192,7 +192,7 @@ export function checkSpecIds(files: Files, base: Files | Error, store?: StoreSpe
             failures.push(`[citation] ${file}:${lineNo}: citation [${cited}] is neither live nor retired.`);
           }
         } else if (store?.ledger.prefixes.has(prefix)) {
-          // A citation with a store prefix resolves in the pinned store (SRF-012).
+          // A citation with a store prefix resolves in the pinned store (STO-056).
           if (!store.live.has(key) && !isRetired(store.ledger, key)) {
             failures.push(`[citation] ${file}:${lineNo}: citation [${cited}] is neither live nor retired in the store.`);
           }
@@ -513,7 +513,7 @@ function selfTest(): number {
     null,
   );
 
-  // Binding specs checked against a store (SRF-010, SRF-012). The store is this repository.
+  // Binding specs checked against a store (SRF-010, STO-056). The store is this repository.
   console.log("\n## spec-ids of a binding");
   const store = storeSpecs(readRepository(process.cwd(), [LEDGER]), []);
   if (!store) throw new Error("cannot read the store specs of this repository");
@@ -546,22 +546,22 @@ function selfTest(): number {
     needle: "prefix PRS",
   });
   bindingScenario("SRF-010.02 the binding prefix PYB, which the store does not hold, passes", () => {}, null);
-  bindingScenario("SRF-012.01 the binding checker fails and names the store prefix PRS", storePrefix, {
+  bindingScenario("STO-056.01 the binding checker fails and names the store prefix PRS", storePrefix, {
     rule: "store-prefix",
     needle: "prefix PRS of openspec/spec-ids.yaml is a prefix of the store",
   });
   bindingScenario(
-    "SRF-012.02 citations of the store identifiers PRS-001 and PRS-001.01 resolve",
+    "STO-056.02 citations of the store identifiers PRS-001 and PRS-001.01 resolve",
     (files) => (files[API] = files[API].replace("Text.", "Wraps [PRS-001] and meets [PRS-001.01].")),
     null,
   );
   bindingScenario(
-    "SRF-012.03 a citation of the unknown store identifier PRS-999 fails",
+    "STO-056.03 a citation of the unknown store identifier PRS-999 fails",
     (files) => (files[API] = files[API].replace("Text.", "Wraps [PRS-999].")),
     { rule: "citation", needle: "citation [PRS-999] is neither live nor retired in the store" },
   );
   bindingScenario(
-    "SRF-012.04 a binding heading at or above next of its ledger fails",
+    "STO-056.04 a binding heading at or above next of its ledger fails",
     (files) => (files[API] += req("PYB-002", "Too far", ["PYB-002.01 Example"])),
     { rule: "next", needle: '"PYB-002 Too far"' },
   );
