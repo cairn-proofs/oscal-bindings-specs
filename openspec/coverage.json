@@ -2283,11 +2283,13 @@
         "round-trip/assessment-plan",
         "round-trip/assessment-results",
         "round-trip/catalog",
+        "round-trip/catalog-unused-structures",
         "round-trip/component-definition",
         "round-trip/mapping-collection",
         "round-trip/minimal-catalog",
         "round-trip/plan-of-action-and-milestones",
         "round-trip/profile",
+        "round-trip/profile-unused-structures",
         "round-trip/system-security-plan"
       ],
       "id": "PRS-001.01"
@@ -3301,11 +3303,13 @@
         "round-trip/assessment-results",
         "round-trip/catalog",
         "round-trip/catalog-bytes",
+        "round-trip/catalog-unused-structures",
         "round-trip/component-definition",
         "round-trip/mapping-collection",
         "round-trip/minimal-catalog",
         "round-trip/plan-of-action-and-milestones",
         "round-trip/profile",
+        "round-trip/profile-unused-structures",
         "round-trip/system-security-plan"
       ],
       "id": "SER-004.01"

@@ -1,0 +1,33 @@
+{
+  "profile": {
+    "uuid": "9a1b3c5d-7e2f-4a60-b8c4-0d1e2f3a4b44",
+    "metadata": {
+      "title": "Profile that uses the structures that the other valid documents do not use",
+      "last-modified": "2024-01-02T03:04:05Z",
+      "version": "1.0",
+      "oscal-version": "1.2.3"
+    },
+    "imports": [
+      {
+        "href": "https://example.com/catalog.json",
+        "include-all": {}
+      }
+    ],
+    "merge": {
+      "as-is": true
+    },
+    "back-matter": {
+      "resources": [
+        {
+          "uuid": "e5f7a9b1-2c3d-4e4f-9a6b-7c8d9e0f1a55",
+          "title": "Imported catalog",
+          "rlinks": [
+            {
+              "href": "https://example.com/catalog.json"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

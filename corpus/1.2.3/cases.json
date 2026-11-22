@@ -148,6 +148,24 @@
       "notes": "Written for this corpus. The group holds a title and neither groups nor controls, so it conforms to both branches of the catalog group union."
     },
     {
+      "id": "round-trip/catalog-unused-structures",
+      "operation": "round-trip",
+      "input": "documents/valid/catalog-unused-structures.json",
+      "document-type": "catalog",
+      "expected": "expected/catalog-unused-structures.json",
+      "requirements": ["PRS-001.01", "SER-004.01"],
+      "notes": "Written for this corpus, not copied from SP 800-53 (issue 53). The catalog uses the catalog, metadata and back matter structures that no other valid document uses, including the recursive controls>controls."
+    },
+    {
+      "id": "round-trip/profile-unused-structures",
+      "operation": "round-trip",
+      "input": "documents/valid/profile-unused-structures.json",
+      "document-type": "profile",
+      "expected": "expected/profile-unused-structures.json",
+      "requirements": ["PRS-001.01", "SER-004.01"],
+      "notes": "Written for this corpus, not copied from SP 800-53 (issue 53). The profile uses merge>as-is and profile>back-matter."
+    },
+    {
       "id": "round-trip/datetime-forms",
       "operation": "round-trip",
       "input": "documents/valid/datetime-forms.json",
