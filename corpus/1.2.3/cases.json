@@ -281,7 +281,7 @@
       "expected-locations": [
         "$['catalog']"
       ],
-      "requirements": ["PRS-004.01", "PRS-004.01", "PRS-013", "PRS-021.02"]
+      "requirements": ["PRS-004.01", "PRS-013", "PRS-021.02"]
     },
     {
       "id": "parse/unknown-field-nested",
