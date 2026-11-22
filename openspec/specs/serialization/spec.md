@@ -97,3 +97,14 @@ or as `+00:00`, and MAY add or remove trailing zeros of the fractional seconds. 
 
 - **WHEN** a document with the datetime `2024-01-02T03:04:05.1234567Z` is parsed and serialized
 - **THEN** the serialized datetime keeps all seven fraction digits
+
+### Requirement: SER-006 The valid corpus uses each listed key pair
+
+The valid corpus SHALL use each key pair that the file `required-keys.json` of the release lists. A pair `a>b` is used
+when a JSON document in `documents/valid/` has the key `b` in an object that is the value of the key `a`, or in an item
+of an array that is the value of `a`. The corpus check MUST fail when a listed pair is not used.
+
+#### Scenario: SER-006.01 A listed key pair that no valid document uses fails the check
+
+- **WHEN** no JSON document in `documents/valid/` uses a pair that `required-keys.json` lists
+- **THEN** the corpus check fails and names the pair

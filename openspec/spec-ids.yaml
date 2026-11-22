@@ -31,7 +31,7 @@ prefixes:
     next: 9
   SER:
     capability: serialization
-    next: 6
+    next: 7
   SRF:
     capability: binding-surface
     next: 15
