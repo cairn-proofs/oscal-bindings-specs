@@ -1,0 +1,140 @@
+{
+  "catalog": {
+    "uuid": "5b0f2c1e-3a47-4d58-9c6e-7a1d2e4f8b01",
+    "metadata": {
+      "title": "Catalog that uses the structures that the other valid documents do not use",
+      "last-modified": "2024-01-02T03:04:05Z",
+      "version": "1.0",
+      "oscal-version": "1.2.3",
+      "props": [
+        {
+          "name": "keywords",
+          "ns": "https://example.com/ns/oscal",
+          "value": "round-trip"
+        }
+      ],
+      "links": [
+        {
+          "href": "https://example.com/catalog",
+          "rel": "canonical"
+        }
+      ],
+      "parties": [
+        {
+          "uuid": "8c3d1a52-6f0e-4b79-a2d4-1e5f7b9c0d22",
+          "type": "organization",
+          "name": "Example Organization",
+          "email-addresses": [
+            "info@example.com"
+          ],
+          "addresses": [
+            {
+              "type": "work",
+              "addr-lines": [
+                "1 Example Way",
+                "Suite 100"
+              ],
+              "city": "Springfield",
+              "state": "IL",
+              "postal-code": "62701",
+              "country": "US"
+            }
+          ]
+        }
+      ]
+    },
+    "params": [
+      {
+        "id": "top-prm_1",
+        "props": [
+          {
+            "name": "label",
+            "value": "top-level parameter"
+          }
+        ],
+        "guidelines": [
+          {
+            "prose": "Choose a value that the organization defines."
+          }
+        ]
+      }
+    ],
+    "groups": [
+      {
+        "id": "g1",
+        "class": "family",
+        "title": "Group with a class",
+        "controls": [
+          {
+            "id": "c1",
+            "class": "SP800-53",
+            "title": "Control with child controls",
+            "props": [
+              {
+                "name": "label",
+                "ns": "https://example.com/ns/oscal",
+                "class": "sp800-53a",
+                "value": "C-1"
+              }
+            ],
+            "links": [
+              {
+                "href": "#c1.1",
+                "rel": "related"
+              }
+            ],
+            "parts": [
+              {
+                "id": "c1_smt",
+                "name": "statement",
+                "title": "Statement",
+                "prose": "A part with a title and a link.",
+                "links": [
+                  {
+                    "href": "#c1.1",
+                    "rel": "related"
+                  }
+                ]
+              }
+            ],
+            "controls": [
+              {
+                "id": "c1.1",
+                "title": "Child control",
+                "parts": [
+                  {
+                    "name": "statement",
+                    "prose": "Child statement."
+                  }
+                ],
+                "controls": [
+                  {
+                    "id": "c1.1.1",
+                    "title": "Grandchild control",
+                    "parts": [
+                      {
+                        "name": "statement",
+                        "prose": "Grandchild statement."
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "back-matter": {
+      "resources": [
+        {
+          "uuid": "d4e6f8a0-1b2c-4d3e-8f5a-6b7c8d9e0f33",
+          "title": "Cited publication",
+          "citation": {
+            "text": "Example Organization, Example Publication, 2024."
+          }
+        }
+      ]
+    }
+  }
+}
