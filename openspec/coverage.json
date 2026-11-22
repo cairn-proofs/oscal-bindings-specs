@@ -3366,6 +3366,16 @@
       "id": "SER-005.03"
     },
     {
+      "capability": "serialization",
+      "id": "SER-006.01",
+      "self-test": [
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "SER-006.01: a listed key pair that no valid document uses fails the check, and a pair that a document uses passes"
+        }
+      ]
+    },
+    {
       "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
       "capability": "binding-surface",
       "id": "SRF-001.01"

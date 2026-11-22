@@ -264,6 +264,11 @@ file is the canonical form of its input. It also runs the reference evaluator of
 3. No input that a case expects to be valid, and no element that a builder case expects, fails an
    entry.
 
+It also checks that the valid corpus uses each key pair that `required-keys.json` lists
+([SER-006](../../openspec/specs/serialization/spec.md#requirement-ser-006-the-valid-corpus-uses-each-listed-key-pair)).
+A pair `a>b` is used when a JSON document in `documents/valid/` has the key `b` in an object that is the value of the key
+`a`, or in an item of an array that is the value of `a`.
+
 A YAML input that copies a NIST example uses the expected file of its JSON twin. Each document in
 `documents/valid/` that has a `source` is a public-domain example from NIST `usnistgov/oscal-content`.
 The other documents were written for this corpus.

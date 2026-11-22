@@ -637,6 +637,11 @@
       "title": "A datetime keeps its instant and offset"
     },
     {
+      "id": "SER-006",
+      "capability": "serialization",
+      "title": "The valid corpus uses each listed key pair"
+    },
+    {
       "id": "SRF-001",
       "capability": "binding-surface",
       "title": "A binding exposes only operations that a requirement defines"

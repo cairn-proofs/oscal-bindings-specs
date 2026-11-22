@@ -1,0 +1,27 @@
+{
+  "pairs": [
+    "controls>controls",
+    "controls>class",
+    "controls>links",
+    "groups>class",
+    "params>props",
+    "params>guidelines",
+    "guidelines>prose",
+    "parts>links",
+    "parts>title",
+    "props>ns",
+    "props>class",
+    "metadata>props",
+    "metadata>links",
+    "parties>addresses",
+    "parties>email-addresses",
+    "addresses>addr-lines",
+    "addresses>city",
+    "addresses>state",
+    "addresses>postal-code",
+    "resources>citation",
+    "citation>text",
+    "merge>as-is",
+    "profile>back-matter"
+  ]
+}

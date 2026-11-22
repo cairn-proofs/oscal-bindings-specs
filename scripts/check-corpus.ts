@@ -75,6 +75,9 @@
  *     and each `additionalProperties` error and one for each other node with an error, and it writes each location as a
  *     Normalized Path. A location of an element starts with `$[0]`.
  *
+ * 19. Each pair `a>b` in `required-keys.json` is used by a JSON document in `documents/valid/` (SER-006): the key `b` is
+ *     a member of an object that is the value of the key `a`, or of an item of an array that is the value of `a`.
+ *
  *   npm run corpus:check          check the corpus
  *   npm run corpus:write           regenerate each expected file, then check
  *   npm run corpus:self-test       run the self-tests of the rules
@@ -583,6 +586,28 @@ export function rootKeyBranches(schema: { $id: string; oneOf: { required?: strin
     for (const key of branch.required ?? []) if (key !== "$schema") branchOfRootKey.set(key, validate);
   });
   return branchOfRootKey;
+}
+
+/** The pairs `a>b` that the documents use (check 19, SER-006). The key `b` is a member of the value of `a`, or of an item of it. */
+export function keyPairs(documents: unknown[]): Set<string> {
+  const pairs = new Set<string>();
+  const walk = (key: string, value: unknown) => {
+    for (const item of Array.isArray(value) ? value : [value]) {
+      if (typeof item !== "object" || item === null || Array.isArray(item)) continue;
+      for (const [member, child] of Object.entries(item)) {
+        pairs.add(`${key}>${member}`);
+        walk(member, child);
+      }
+    }
+  };
+  for (const document of documents) walk("$", document);
+  return pairs;
+}
+
+/** The pairs of required-keys.json that no document uses (check 19, SER-006). */
+export function unusedKeyPairs(required: string[], documents: unknown[]): string[] {
+  const used = keyPairs(documents);
+  return required.filter((pair) => !used.has(pair));
 }
 
 /** The cases of the case index of the release. */
@@ -1119,6 +1144,15 @@ function main(write: boolean): number {
     if (!used.has(file)) fail(file, "no case uses this file");
   }
   for (const message of uncoveredEntries(constraints.entries, coveredEntries)) fail("cases.json", message);
+  // Check 19 (SER-006).
+  const validDir = `${ROOT}/documents/valid`;
+  const validDocuments = fs
+    .readdirSync(validDir)
+    .filter((name) => name.endsWith(".json"))
+    .map((name) => JSON.parse(fs.readFileSync(`${validDir}/${name}`, "utf8")) as unknown);
+  const required = (JSON.parse(fs.readFileSync(`${ROOT}/required-keys.json`, "utf8")) as { pairs: string[] }).pairs;
+  for (const pair of unusedKeyPairs(required, validDocuments))
+    fail("required-keys.json", `no JSON document in documents/valid/ uses the key pair ${pair} (SER-006)`);
 
   for (const failure of failures) console.error(failure);
   console.log(
@@ -1310,6 +1344,14 @@ function selfTest(): number {
       problemOf({ "expected-locations": ["$['a']"], "expected-min-failures": 2, "expected-max-failures": 2 }) !== undefined &&
       problemOf({ "expected-locations": ["$['a']", "$['a']"], "expected-min-failures": 2, "expected-max-failures": 2 }) === undefined],
     ["PRS-015.02: a list with expected-constraints fails the case", () => problemOf({ "expected-locations": ["$['a']"], "expected-constraints": [{ id: "x", location: "$" }] }) !== undefined],
+    ["SER-006.01: a listed key pair that no valid document uses fails the check, and a pair that a document uses passes", () => {
+      const documents = [{ catalog: { controls: [{ id: "c", controls: [{ id: "d" }] }], metadata: { props: [] } } }];
+      return (
+        unusedKeyPairs(["controls>controls", "metadata>props", "catalog>controls"], documents).length === 0 &&
+        unusedKeyPairs(["controls>controls", "metadata>links"], documents).join() === "metadata>links" &&
+        unusedKeyPairs(["controls>controls"], [{ catalog: { controls: [{ id: "c" }] } }]).join() === "controls>controls"
+      );
+    }],
     ["PRS-021: a case that expects faults of the schema and has no list fails, and a list in a case that expects none fails", () =>
       problemOf({}) !== undefined && problemOf({}, false) === undefined && problemOf({ "expected-locations": ["$['a']"] }, false) !== undefined],
   ];
