@@ -17,13 +17,13 @@ When a commit adds, renames, or removes a requirement in the main specs, do thes
 
 When a commit changes `openspec/config.yaml`, run `npm run templates:write`, and commit the template config in
 `templates/binding/` with it ([STO-058]). Read the diff of the template config. When the change adds a sentence that
-only the store can follow, such as an `npm run` command, add an edit for it to `EDITS` in `scripts/templates.ts`.
+only the contract store can follow, such as an `npm run` command, add an edit for it to `EDITS` in `scripts/templates.ts`.
 
 When a commit adds a scenario to the main specs, the scenario needs one of these:
 
 1. A corpus case that cites the scenario identifier.
 2. A self-test in `scripts/` with a name that starts with the scenario identifier.
-3. A `by-design` reason in [openspec/scenario-checks.yaml](openspec/scenario-checks.yaml). Use it only when no store
+3. A `by-design` reason in [openspec/scenario-checks.yaml](openspec/scenario-checks.yaml). Use it only when no contract store
    script can check the scenario.
 
 Then run `npm run coverage:write`, and commit `openspec/coverage.json` with the specs. Do not add a `gap` entry. The
@@ -47,7 +47,7 @@ When a binding needs an operation that the contract does not define:
 
 1. If the operation meets each condition of [SRF-002], define it in a binding-local requirement of the binding. Add
    it to the record of the binding. The contract does not change. The identifier of the requirement uses a prefix of
-   the binding, never a prefix of the store ([SRF-010]). The binding checker in `templates/binding/` checks the
+   the binding, never a prefix of the contract store ([SRF-010]). The binding checker in `templates/binding/` checks the
    record of the binding ([STO-057]).
 2. If the operation does not meet a condition of [SRF-002], open an issue in this repo first. The binding adds the
    operation only after a contract requirement defines it.
@@ -67,7 +67,7 @@ contract:
 [SRF-003]: openspec/specs/binding-surface/spec.md#requirement-srf-003-a-binding-records-the-requirement-that-covers-each-public-operation
 [SRF-004]: openspec/specs/binding-surface/spec.md#requirement-srf-004-contract-identifiers-in-a-traceability-record-resolve-in-the-requirement-index
 [SRF-005]: openspec/specs/binding-surface/spec.md#requirement-srf-005-a-binding-local-operation-that-the-contract-defines-conforms-or-is-deprecated
-[STO-053]: openspec/specs/spec-store/spec.md#requirement-sto-053-the-store-publishes-a-requirement-index
-[SRF-010]: openspec/specs/binding-surface/spec.md#requirement-srf-010-a-binding-local-requirement-does-not-use-a-store-prefix
-[STO-057]: openspec/specs/spec-store/spec.md#requirement-sto-057-the-binding-checker-checks-the-traceability-record
-[STO-058]: openspec/specs/spec-store/spec.md#requirement-sto-058-the-template-config-follows-the-store-config
+[STO-053]: openspec/specs/contract-store/spec.md#requirement-sto-053-the-contract-store-publishes-a-requirement-index
+[SRF-010]: openspec/specs/binding-surface/spec.md#requirement-srf-010-a-binding-local-requirement-does-not-use-a-contract-store-prefix
+[STO-057]: openspec/specs/contract-store/spec.md#requirement-sto-057-the-binding-checker-checks-the-traceability-record
+[STO-058]: openspec/specs/contract-store/spec.md#requirement-sto-058-the-template-config-follows-the-contract-store-config

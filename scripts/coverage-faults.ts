@@ -84,7 +84,7 @@ export const FAULTS: Fault[] = [
     ],
   },
   // The faults of the location of a failure and of the order of the nodes with the same key (CNS-017, CNS-013, CNS-014,
-  // CNS-026). An is-unique entry of the store selects the nodes of one array, so the order of its query is the order of
+  // CNS-026). An is-unique entry of the contract store selects the nodes of one array, so the order of its query is the order of
   // the locations, and no input can detect the order of the query for an is-unique entry.
   {
     id: "failure-at-context-node",

@@ -27,8 +27,8 @@ interface Entry {
 }
 
 /**
- * Checks `record` against the JSON Schema `schema` and the requirement index `index` of the store. `files` holds the
- * main specs of the binding. `storePrefixes` holds the prefixes of the store ledger.
+ * Checks `record` against the JSON Schema `schema` and the requirement index `index` of the contract store. `files` holds the
+ * main specs of the binding. `storePrefixes` holds the prefixes of the contract store ledger.
  */
 export function checkRecord(
   record: unknown,
@@ -39,7 +39,7 @@ export function checkRecord(
 ): string[] {
   const failures: string[] = [];
 
-  // record-schema: the record conforms to the JSON Schema of the store (STO-054). The other rules need its shape.
+  // record-schema: the record conforms to the JSON Schema of the contract store (STO-054). The other rules need its shape.
   const validate = new Ajv({ allErrors: true, strict: true }).compile(schema);
   if (!validate(record)) {
     for (const error of validate.errors ?? []) {
@@ -54,13 +54,13 @@ export function checkRecord(
   for (const entry of entries) {
     for (const id of entry.requirements ?? []) {
       if (!indexed.has(id)) {
-        failures.push(`[record-contract] ${entry.name}: ${id} is not in the requirement index of the store.`);
+        failures.push(`[record-contract] ${entry.name}: ${id} is not in the requirement index of the contract store.`);
       }
     }
   }
 
   // record-local: each binding-local identifier names a live requirement of the binding (SRF-003), and its prefix is
-  // not a store prefix (SRF-010).
+  // not a contract store prefix (SRF-010).
   const local = new Set<string>();
   for (const [file, text] of Object.entries(files)) {
     if (!SPEC_PATH.test(file)) continue;
@@ -72,7 +72,7 @@ export function checkRecord(
     const id = entry["binding-local"];
     if (id === undefined) continue;
     if (storePrefixes.has(id.split("-")[0])) {
-      failures.push(`[record-local] ${entry.name}: ${id} uses a prefix of the store.`);
+      failures.push(`[record-local] ${entry.name}: ${id} uses a prefix of the contract store.`);
     } else if (!local.has(canonical(id)!)) {
       failures.push(`[record-local] ${entry.name}: ${id} names no requirement in the main specs of the binding.`);
     }
@@ -144,9 +144,9 @@ function selfTest(): number {
   scenario("STO-057.05 a record with PRS-001 and the live binding-local PYB-001 passes", valid, null);
   scenario("SRF-004.01 the live requirement PRS-001 resolves in the index", valid, null);
   scenario(
-    "record-local: a binding-local identifier with a store prefix fails",
+    "record-local: a binding-local identifier with a contract store prefix fails",
     record({ name: "f", "binding-local": "PRS-101" }),
-    { rule: "record-local", needle: "PRS-101 uses a prefix of the store" },
+    { rule: "record-local", needle: "PRS-101 uses a prefix of the contract store" },
   );
   scenario("record-schema: an empty record passes", record(), null);
 

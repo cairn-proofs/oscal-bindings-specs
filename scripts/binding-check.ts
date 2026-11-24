@@ -1,6 +1,6 @@
 /**
  * The binding checker (openspec/specs/binding-surface, STO-056 and STO-057). It checks the specs, the identifier
- * ledger and the traceability record of the binding in the current directory against a store: the root directory of
+ * ledger and the traceability record of the binding in the current directory against a contract store: the root directory of
  * the extracted spec artifact that the binding pins. `npm run templates:write` bundles this file into
  * templates/binding/bin/check-binding.mjs, which runs with Node.js and git, and no installed package.
  *

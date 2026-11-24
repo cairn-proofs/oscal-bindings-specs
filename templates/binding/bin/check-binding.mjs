@@ -14463,7 +14463,7 @@ function checkSpecIds(files, base, store) {
   if (ledger && store) {
     for (const prefix of ledger.prefixes.keys()) {
       if (store.ledger.prefixes.has(prefix)) {
-        failures.push(`[store-prefix] prefix ${prefix} of ${LEDGER} is a prefix of the store.`);
+        failures.push(`[store-prefix] prefix ${prefix} of ${LEDGER} is a prefix of the contract store.`);
       }
     }
   }
@@ -14546,7 +14546,7 @@ function checkSpecIds(files, base, store) {
           }
         } else if (store?.ledger.prefixes.has(prefix)) {
           if (!store.live.has(key) && !isRetired(store.ledger, key)) {
-            failures.push(`[citation] ${file}:${lineNo}: citation [${cited}] is neither live nor retired in the store.`);
+            failures.push(`[citation] ${file}:${lineNo}: citation [${cited}] is neither live nor retired in the contract store.`);
           }
         }
       }
@@ -14871,7 +14871,7 @@ ${extra}retired: ${retired}
   );
   console.log("\n## spec-ids of a binding");
   const store = storeSpecs(readRepository(process.cwd(), [LEDGER]), []);
-  if (!store) throw new Error("cannot read the store specs of this repository");
+  if (!store) throw new Error("cannot read the contract store specs of this repository");
   const API = "openspec/specs/python-api/spec.md";
   const bindingLedger = (extra = "") => `prefixes:
   PYB:
@@ -14893,25 +14893,25 @@ ${extra}retired: []
       ${JSON.stringify(out)}`}`);
   };
   const storePrefix = (files) => files[LEDGER] = bindingLedger("  PRS:\n    capability: python-parse\n    next: 1\n");
-  bindingScenario("SRF-010.01 a binding ledger with the store prefix PRS fails", storePrefix, {
+  bindingScenario("SRF-010.01 a binding ledger with the contract store prefix PRS fails", storePrefix, {
     rule: "store-prefix",
     needle: "prefix PRS"
   });
-  bindingScenario("SRF-010.02 the binding prefix PYB, which the store does not hold, passes", () => {
+  bindingScenario("SRF-010.02 the binding prefix PYB, which the contract store does not hold, passes", () => {
   }, null);
-  bindingScenario("STO-056.01 the binding checker fails and names the store prefix PRS", storePrefix, {
+  bindingScenario("STO-056.01 the binding checker fails and names the contract store prefix PRS", storePrefix, {
     rule: "store-prefix",
-    needle: "prefix PRS of openspec/spec-ids.yaml is a prefix of the store"
+    needle: "prefix PRS of openspec/spec-ids.yaml is a prefix of the contract store"
   });
   bindingScenario(
-    "STO-056.02 citations of the store identifiers PRS-001 and PRS-001.01 resolve",
+    "STO-056.02 citations of the contract store identifiers PRS-001 and PRS-001.01 resolve",
     (files) => files[API] = files[API].replace("Text.", "Wraps [PRS-001] and meets [PRS-001.01]."),
     null
   );
   bindingScenario(
-    "STO-056.03 a citation of the unknown store identifier PRS-999 fails",
+    "STO-056.03 a citation of the unknown contract store identifier PRS-999 fails",
     (files) => files[API] = files[API].replace("Text.", "Wraps [PRS-999]."),
-    { rule: "citation", needle: "citation [PRS-999] is neither live nor retired in the store" }
+    { rule: "citation", needle: "citation [PRS-999] is neither live nor retired in the contract store" }
   );
   bindingScenario(
     "STO-056.04 a binding heading at or above next of its ledger fails",
@@ -14970,7 +14970,7 @@ function checkRecord(record, schema, index, files, storePrefixes) {
   for (const entry of entries) {
     for (const id of entry.requirements ?? []) {
       if (!indexed.has(id)) {
-        failures.push(`[record-contract] ${entry.name}: ${id} is not in the requirement index of the store.`);
+        failures.push(`[record-contract] ${entry.name}: ${id} is not in the requirement index of the contract store.`);
       }
     }
   }
@@ -14985,7 +14985,7 @@ function checkRecord(record, schema, index, files, storePrefixes) {
     const id = entry["binding-local"];
     if (id === void 0) continue;
     if (storePrefixes.has(id.split("-")[0])) {
-      failures.push(`[record-local] ${entry.name}: ${id} uses a prefix of the store.`);
+      failures.push(`[record-local] ${entry.name}: ${id} uses a prefix of the contract store.`);
     } else if (!local.has(canonical(id))) {
       failures.push(`[record-local] ${entry.name}: ${id} names no requirement in the main specs of the binding.`);
     }
@@ -15045,9 +15045,9 @@ function selfTest2() {
   scenario("STO-057.05 a record with PRS-001 and the live binding-local PYB-001 passes", valid, null);
   scenario("SRF-004.01 the live requirement PRS-001 resolves in the index", valid, null);
   scenario(
-    "record-local: a binding-local identifier with a store prefix fails",
+    "record-local: a binding-local identifier with a contract store prefix fails",
     record({ name: "f", "binding-local": "PRS-101" }),
-    { rule: "record-local", needle: "PRS-101 uses a prefix of the store" }
+    { rule: "record-local", needle: "PRS-101 uses a prefix of the contract store" }
   );
   scenario("record-schema: an empty record passes", record(), null);
   console.log(failed ? `

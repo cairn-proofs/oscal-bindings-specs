@@ -46,7 +46,7 @@ it (see [Verify a release](#verify-a-release)).
 2. `schemas/<release>/`: the NIST OSCAL JSON Schema files of one release, byte-for-byte, with `sha256` sums.
 3. `metaschema/<release>/`: the NIST OSCAL Metaschema modules of one release and the Metaschema datatypes XSD,
    byte-for-byte, with `sha256` sums. The constraint manifest comes from these files.
-   The directories of the store group files by the kind of content that they hold, not by the repository that the
+   The directories of the contract store group files by the kind of content that they hold, not by the repository that the
    content comes from. The modules in `metaschema/<release>/` and the JSON Schema files in `schemas/<release>/` come
    from the same OSCAL release. The datatypes XSD comes from `usnistgov/metaschema`. `SOURCE.md` in each directory
    records the source of each file.
@@ -60,13 +60,13 @@ it (see [Verify a release](#verify-a-release)).
 6. `docs/`: shared documents that the specs cite, such as
    [canonical JSON for conformance comparison](docs/canonical-json.md). It also holds the
    [README sticker for bindings](docs/sticker.md).
-7. `scripts/`: the store tooling.
+7. `scripts/`: the contract store tooling.
 
-## Use the store
+## Use the contract store
 
 1. Clone this repo.
 2. Register it: `openspec store register <path>`.
-3. In a binding repo, add the store to `openspec/config.yaml`:
+3. In a binding repo, add the contract store to `openspec/config.yaml`:
 
    ```yaml
    references:
@@ -77,7 +77,7 @@ A reference is planning context only. Builds and conformance runs use the tagged
 
 The archive holds `templates/binding/`: an OpenSpec config, an empty identifier ledger, an empty traceability record,
 the binding checker, a pre-commit hook, and an agent guide (`AGENTS.md`) that states how a binding relates to the
-store. The hook verifies the pinned archive by its `sha256`, and runs the binding
+contract store. The hook verifies the pinned archive by its `sha256`, and runs the binding
 checker and `openspec validate --all --strict` on the staged files before each commit. So a binding finds a bad
 identifier, citation or record entry before it commits it. `templates/binding/README.md` gives the install steps.
 
@@ -93,7 +93,7 @@ workflow opens one issue, "Move the spec pin to v<version>", in the binding's tr
 2. `oscal-bindings-typescript`, in TypeScript: [repository](https://github.com/cairn-proofs/oscal-bindings-typescript),
    [issue tracker](https://github.com/cairn-proofs/oscal-bindings-typescript/issues).
 
-Each binding keeps its own expected conformance failures, in its own repository. This store holds no data about the
+Each binding keeps its own expected conformance failures, in its own repository. This contract store holds no data about the
 state of a binding (see [schema-versioning](openspec/specs/schema-versioning/spec.md)). `npm run binding-links:check`
 reads this list.
 
@@ -133,7 +133,7 @@ wall time of a parallel run.
 10. The binding link check and its self-test, `npm run binding-links:check`. It fails when a tracked file outside
     `openspec/changes/` links an individual issue or pull request in a binding repository. The binding repositories are
     the repositories in [Known implementations](#known-implementations) and each `oscal-bindings-*` repository other
-    than this store.
+    than this contract store.
 11. The names generator self-test, and `npm run names:check`: it validates each manifest file and fails when
     `names.json` differs from the generator output.
 12. The release checks and their self-test, `npm run releases:check`. A released name that changes needs a breaking
@@ -170,9 +170,9 @@ release as [build metadata][STO-002].
    checks that too.
 4. For the steps after the merge, see [Release](#release).
 
-[STO-001]: openspec/specs/spec-store/spec.md#requirement-sto-001-the-shared-spec-artifact-uses-semantic-versioning-for-its-own-compatibility
-[STO-002]: openspec/specs/spec-store/spec.md#requirement-sto-002-the-oscal-release-is-recorded-as-semantic-versioning-build-metadata
-[STO-004]: openspec/specs/spec-store/spec.md#requirement-sto-004-the-version-is-the-latest-release-or-one-step-above-it
+[STO-001]: openspec/specs/contract-store/spec.md#requirement-sto-001-the-shared-spec-artifact-uses-semantic-versioning-for-its-own-compatibility
+[STO-002]: openspec/specs/contract-store/spec.md#requirement-sto-002-the-oscal-release-is-recorded-as-semantic-versioning-build-metadata
+[STO-004]: openspec/specs/contract-store/spec.md#requirement-sto-004-the-version-is-the-latest-release-or-one-step-above-it
 
 ## Threat model
 

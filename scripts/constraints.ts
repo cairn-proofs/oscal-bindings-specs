@@ -1,5 +1,5 @@
 /**
- * Generates and checks the constraint manifest of each OSCAL release in the store (openspec/specs/constraint-validation,
+ * Generates and checks the constraint manifest of each OSCAL release in the contract store (openspec/specs/constraint-validation,
  * STO-009). The inputs of manifest/<release>/constraints.json are metaschema/<release>/, manifest/<release>/names.json,
  * schemas/<release>/oscal_complete_schema.json and manifest/<release>/constraint-exclusions.json.
  *

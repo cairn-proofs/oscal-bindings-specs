@@ -1,7 +1,7 @@
 # README sticker for bindings
 
 A binding can show this sticker at the top of its README. The sticker has two badges. The first badge shows
-the spec artifact version that the binding pins. That version holds the store release and the OSCAL release,
+the spec artifact version that the binding pins. That version holds the contract store release and the OSCAL release,
 for example `0.8.0+oscal.1.2.3`. The second badge shows the status of a workflow of the binding. It is red
 when the workflow fails. [SRF-008] defines the sticker. [SRF-009] defines when a binding can show it.
 
@@ -28,7 +28,7 @@ when the workflow fails. [SRF-008] defines the sticker. [SRF-009] defines when a
 3. Update `spec-pin.json` in the same commit that moves the pin of the binding.
 
 The badges show data that a third-party service, [Shields](https://shields.io), reads from the public
-repository of the binding. The store needs no access to that repository.
+repository of the binding. The contract store needs no access to that repository.
 
 [SRF-008]: ../openspec/specs/binding-surface/spec.md
 [SRF-009]: ../openspec/specs/binding-surface/spec.md

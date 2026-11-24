@@ -18,7 +18,7 @@ badge cannot hold a computed number unless a file holds that number.
 
 **Non-Goals:**
 
-1. A workflow, a runner or a service that the store provides.
+1. A workflow, a runner or a service that the contract store provides.
 2. Proof that a binding ran the corpus. The record is committed data that the binding states.
 3. A corpus runner contract. Each binding runs the corpus its own way.
 
@@ -34,7 +34,7 @@ badge cannot hold a computed number unless a file holds that number.
    A Shields badge has two cells, label and message. The three signals are parts of the message.
 3. **Traced share.** The numerator is the number of distinct contract identifiers in the record that the index
    marks. The denominator is the number of marked index entries. Both round down, so 100% means all.
-4. **The index marks requirements that have a corpus case.** Without a mark, store requirements such as
+4. **The index marks requirements that have a corpus case.** Without a mark, contract store requirements such as
    [SRF-006] stay in the denominator, and 100% is not reachable. A requirement is marked when at least one of
    its scenarios lists a corpus case in `openspec/coverage.json`. This matches [SRF-003]. The model-derivation
    capability and the naming manifest govern generated types, which have no record entry, and they have almost
@@ -64,7 +64,7 @@ badge cannot hold a computed number unless a file holds that number.
    identifiers with the pinned corpus. The README tells a binding to run the checker in its CI to prove it.
 2. [A mark that comes from `coverage.json` changes when the corpus changes.] → The requirement index is
    regenerated with the corpus, and the traced share is stated for the pinned version only.
-3. [A format 2 record is not valid under a store that pins format 1.] → Each store version checks the record
+3. [A format 2 record is not valid under a contract store that pins format 1.] → Each contract store version checks the record
    against its own JSON Schema. A binding moves to format 2 with the pin move that brings the schema.
 4. [A binding with a small record and a green corpus passes with a low traced share.] → This is the intent. The
    badge shows both numbers.

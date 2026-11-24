@@ -1,8 +1,8 @@
 /**
- * Generates and checks the naming manifest of each OSCAL release in the store (openspec/specs/spec-store).
+ * Generates and checks the naming manifest of each OSCAL release in the contract store (openspec/specs/contract-store).
  *
  * The inputs of manifest/<release>/names.json are schemas/<release>/oscal_complete_schema.json,
- * manifest/<release>/overrides.json, and the names.json of the previous OSCAL release in the store, when one exists.
+ * manifest/<release>/overrides.json, and the names.json of the previous OSCAL release in the contract store, when one exists.
  * Releases run in release order, so each release can pin the names of the one before it.
  *
  *   npm run names:write        regenerate each names.json
@@ -614,7 +614,7 @@ function selfTest(): number {
   test("STO-027 override name changes a pinned name", () =>
     nameAt(run(schemaOf({ [hash]: obj({}) }), { names: { [D(hash)]: "Digest" } }, prev([{ name: "Hash", kind: "object", sites: [D(hash)] }])), D(hash)) === "Digest");
 
-  // A store on disk in a temporary directory, for the scenarios of the checks that read the store. Each release holds
+  // A contract store on disk in a temporary directory, for the scenarios of the checks that read the contract store. Each release holds
   // the generated manifest, and `tamper` can change the committed copy of a release.
   const withStore = <T>(releases: string[], schema: string, tamper: (release: string, manifest: Manifest) => Manifest, fn: (root: string) => T): T => {
     const root = fs.mkdtempSync(path.join(os.tmpdir(), "names-store-"));

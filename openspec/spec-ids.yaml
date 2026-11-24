@@ -39,7 +39,7 @@ prefixes:
     capability: generated-models
     next: 4
   STO:
-    capability: spec-store
+    capability: contract-store
     next: 59
   YML:
     capability: yaml-documents
@@ -181,235 +181,235 @@ retired:
     replaced_by: STO-031.01
   - id: VER-003
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-001
   - id: VER-004
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-002
   - id: VER-006
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-003
   - id: VER-008
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-004
   - id: SER-006
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-005
   - id: CNS-001
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-006
   - id: CNS-002
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-007
   - id: CNS-003
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-008
   - id: CNS-004
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-009
   - id: CNS-005
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-010
   - id: CNS-021
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-011
   - id: CNS-019
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-012
   - id: CNS-022
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-013
   - id: CNS-020
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-014
   - id: NAM-001
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-015
   - id: NAM-002
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-016
   - id: NAM-010
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-017
   - id: NAM-011
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-018
   - id: NAM-003
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-019
   - id: NAM-021
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-020
   - id: NAM-004
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-021
   - id: NAM-013
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-022
   - id: NAM-005
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-023
   - id: NAM-015
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-024
   - id: NAM-006
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-025
   - id: NAM-016
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-026
   - id: NAM-007
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-027
   - id: NAM-017
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-028
   - id: NAM-008
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-029
   - id: NAM-018
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-030
   - id: NAM-019
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-031
   - id: MDL-001
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-032
   - id: MDL-014
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-033
   - id: MDL-015
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-034
   - id: MDL-016
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-035
   - id: MDL-017
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-036
   - id: MDL-002
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-037
   - id: MDL-005
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-038
   - id: MDL-006
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-039
   - id: NAM-020
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-040
   - id: MDL-007
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-041
   - id: MDL-009
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-042
   - id: MDL-010
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-043
   - id: MDL-011
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-044
   - id: MDL-018
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-045
   - id: MDL-012
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-046
   - id: MDL-003
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-047
   - id: NAM-009
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-048
   - id: MDL-013
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-049
   - id: MDL-019
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-050
   - id: MDL-020
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-051
   - id: MDL-021
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-052
   - id: SRF-006
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-053
   - id: SRF-007
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-054
   - id: SRF-011
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-055
   - id: SRF-012
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-056
   - id: SRF-013
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-057
   - id: SRF-014
     reason: >-
-      The requirement moved to the spec-store capability.
+      The requirement moved to the contract-store capability.
     replaced_by: STO-058
   - id: NAM-012
     reason: >-

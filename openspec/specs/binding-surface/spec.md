@@ -6,7 +6,7 @@ Defines which public operations a binding can expose, and how a binding records 
 A binding is an
 implementation of the OSCAL bindings contract in one programming language. A public operation is a function, a type, or
 a member of a type that the binding exports in its public API. A contract requirement is a requirement in the main
-specs of the store. A binding-local requirement is a requirement in the specs of one binding.
+specs of the contract store. A binding-local requirement is a requirement in the specs of one binding.
 
 ## Requirements
 
@@ -36,20 +36,20 @@ A binding-local requirement of the binding SHALL define each binding-local opera
 - **WHEN** a function parses an OSCAL document and accepts unknown fields
 - **THEN** the function is not binding-local, because it gives alternative behavior for [PRS-004]
 
-### Requirement: SRF-010 A binding-local requirement does not use a store prefix
+### Requirement: SRF-010 A binding-local requirement does not use a contract store prefix
 
-The identifier of a binding-local requirement MUST NOT start with a prefix that the store identifier ledger,
+The identifier of a binding-local requirement MUST NOT start with a prefix that the contract store identifier ledger,
 `openspec/spec-ids.yaml`, holds. The ledger is the one in the spec artifact version that the binding pins.
 
-#### Scenario: SRF-010.01 Store prefix
+#### Scenario: SRF-010.01 Contract contract store prefix
 
 - **WHEN** a binding defines a binding-local requirement with the identifier `PRS-101`
-- **THEN** the binding does not conform, because `PRS` is a prefix in the store identifier ledger
+- **THEN** the binding does not conform, because `PRS` is a prefix in the contract store identifier ledger
 
 #### Scenario: SRF-010.02 Prefix of the binding
 
-- **WHEN** a binding defines a binding-local requirement with the identifier `PYB-001`, and the store identifier
-  ledger has no prefix `PYB`
+- **WHEN** a binding defines a binding-local requirement with the identifier `PYB-001`, and the contract store
+  identifier ledger has no prefix `PYB`
 - **THEN** the identifier meets this rule
 
 ### Requirement: SRF-001 A binding exposes only operations that a requirement defines
@@ -152,13 +152,13 @@ requirement identifier does not meet this rule.
 - **WHEN** a record entry holds the retired identifier [MDL-004]
 - **THEN** the record is invalid, because the index has no entry for that identifier
 
-### Requirement: SRF-008 The store publishes a README sticker for bindings
-The store SHALL publish `docs/sticker.md`. The file holds the Markdown of a sticker for the README of a
+### Requirement: SRF-008 The contract store publishes a README sticker for bindings
+The contract store SHALL publish `docs/sticker.md`. The file holds the Markdown of a sticker for the README of a
 binding. The sticker has two badges. The first badge shows the `version` member of the file
 `spec-pin.json` in the repository of the binding. The second badge shows the status of a workflow of the
 binding. The spec artifact SHALL hold the file.
 #### Scenario: SRF-008.01 Spec artifact holds the sticker file
-- **WHEN** the store builds the spec artifact
+- **WHEN** the contract store builds the spec artifact
 - **THEN** the archive holds `docs/sticker.md`
 #### Scenario: SRF-008.02 Sticker file holds both badges
 - **WHEN** a reader opens `docs/sticker.md`

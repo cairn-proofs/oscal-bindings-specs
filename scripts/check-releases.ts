@@ -1,5 +1,5 @@
 /**
- * Checks that read git history (openspec/specs/spec-store, STO-029, and design.md of define-names-manifest-format,
+ * Checks that read git history (openspec/specs/contract-store, STO-029, and design.md of define-names-manifest-format,
  * and openspec/specs/schema-versioning, STO-004):
  *
  * 0. The version step check: VERSION is the latest release, or one patch, minor or major step above it. The latest

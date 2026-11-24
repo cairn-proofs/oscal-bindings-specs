@@ -1,20 +1,20 @@
 # AGENTS.md
 
-This file tells an agent what this store is, how language bindings consume it, and where each kind of change goes.
+This file tells an agent what this contract store is, how language bindings consume it, and where each kind of change goes.
 [README.md](README.md) and [CONTRIBUTING.md](CONTRIBUTING.md) hold the details. This file points to them and does not
 copy them. A longer knowledge base is in `.agents/summary/index.md` when it is present.
 
 ## Contents
 
-1. [What this store is](#what-this-store-is): the contract, and no runtime code.
-2. [Who consumes the store](#who-consumes-the-store): the bindings, and the two ways they read the store.
-3. [The boundary between the store and a binding](#the-boundary-between-the-store-and-a-binding): what the store must
+1. [What this contract store is](#what-this-contract-store-is): the contract, and no runtime code.
+2. [Who consumes the contract store](#who-consumes-the-contract-store): the bindings, and the two ways they read the contract store.
+3. [The boundary between the contract store and a binding](#the-boundary-between-the-contract-store-and-a-binding): what the contract store must
    not hold.
-4. [Where a change goes](#where-a-change-goes): store, binding tracker, or pin-move issue.
+4. [Where a change goes](#where-a-change-goes): contract store, binding tracker, or pin-move issue.
 5. [Find your way](#find-your-way): directories, generated files, and the checks that surprise agents.
 6. [Custom Instructions](#custom-instructions): maintained by people and agents.
 
-## What this store is
+## What this contract store is
 
 <!-- tags: scope, contract, openspec-store -->
 
@@ -28,31 +28,31 @@ This repository is an OpenSpec store. It holds the language-neutral contract for
    hook, an agent guide, and a generated binding checker that each binding runs ([STO-055]). The agent guide,
    `templates/binding/AGENTS.md`, is the binding side of this file.
 
-The store holds no runtime code and no binding. The TypeScript in `scripts/` is store tooling only. It checks and
+The contract store holds no runtime code and no binding. The TypeScript in `scripts/` is contract store tooling only. It checks and
 generates contract files, and it is not part of the release archive. The binding checker in the archive is a bundle
 that `npm run templates:write` builds from `scripts/`. Do not add an implementation of an operation here.
 
-## Who consumes the store
+## Who consumes the contract store
 
 <!-- tags: consumers, bindings, pinning -->
 
 The consumers are the bindings in [Known implementations](README.md#known-implementations). That list is the only list
 of bindings. Do not copy it. `scripts/check-binding-links.ts` reads it.
 
-A binding reads the store in two ways ([README.md, Use the store](README.md#use-the-store)):
+A binding reads the contract store in two ways ([README.md, Use the contract store](README.md#use-the-contract-store)):
 
-1. For planning context, the binding adds an OpenSpec `references` entry for this store in its `openspec/config.yaml`.
+1. For planning context, the binding adds an OpenSpec `references` entry for this contract store in its `openspec/config.yaml`.
    This pins no version.
 2. For builds and conformance runs, the binding pins the tagged release archive by its `sha256` ([VER-005]).
    `scripts/build-archive.ts` (`CONTENTS`) lists the paths in the archive. A binding can rely on those paths only.
 
 See also [Where a change goes](#where-a-change-goes) for what follows a release.
 
-## The boundary between the store and a binding
+## The boundary between the contract store and a binding
 
 <!-- tags: boundary, binding-state, ver-006, ver-007 -->
 
-Dependencies go from a binding to the store, never back ([STO-003]). The store must not hold binding state:
+Dependencies go from a binding to the contract store, never back ([STO-003]). The contract store must not hold binding state:
 
 1. Known defects, expected conformance failures, or conformance results of a binding.
 2. The versions that a binding supports, or the status of a binding.
@@ -64,22 +64,22 @@ Each binding keeps these in its own repository:
 2. Its traceability record. The record conforms to `openspec/traceability.schema.json` ([SRF-003], [STO-054]).
 
 `npm run binding-links:check` fails when a tracked file outside `openspec/changes/` links a binding issue or pull
-request. This rule applies to this file. The store can link a binding repository or its issue tracker. An OpenSpec
+request. This rule applies to this file. The contract store can link a binding repository or its issue tracker. An OpenSpec
 change can name a binding issue.
 
 ## Where a change goes
 
 <!-- tags: routing, workflow, releases -->
 
-1. A change to the contract goes through an OpenSpec change in `openspec/changes/` in this store. One pull request
+1. A change to the contract goes through an OpenSpec change in `openspec/changes/` in this contract store. One pull request
    carries the change from proposal to archive. See [CONTRIBUTING.md](CONTRIBUTING.md#change-a-requirement).
 2. Work that is specific to one binding goes to the issue tracker of that binding. Examples: a defect, an expected
    failure, a binding-local operation that meets [SRF-002], or a pin update. Do not edit a binding from this
    repository.
 3. A binding operation that the contract does not define follows
    [CONTRIBUTING.md](CONTRIBUTING.md#add-an-operation-to-a-binding). To promote an operation that two bindings share,
-   open an issue in this store ([CONTRIBUTING.md](CONTRIBUTING.md#promote-a-binding-local-operation)).
-4. After a store release, each binding gets a pin-move issue in its tracker. The binding moves its pin and applies the
+   open an issue in this contract store ([CONTRIBUTING.md](CONTRIBUTING.md#promote-a-binding-local-operation)).
+4. After a contract store release, each binding gets a pin-move issue in its tracker. The binding moves its pin and applies the
    new release. A binding that calls `.github/workflows/pin-move-check.yml` gets the issue from that workflow. For any
    other binding, open it by hand. Put this step in `## Workflow follow-up` of the change's `tasks.md`, not in a
    tracked task. The pin-move issue does not replace the binding issues that a change opens for its requirements.
@@ -128,16 +128,16 @@ These rules are not obvious from the code:
 7. A change to `openspec/config.yaml`, or to the identifier checks in `scripts/`, needs `npm run templates:write` in the
    same commit. `npm run templates:check` fails until then ([STO-058]).
 
-[STO-055]: openspec/specs/spec-store/spec.md#requirement-sto-055-the-spec-artifact-holds-the-binding-templates
-[STO-005]: openspec/specs/spec-store/spec.md#requirement-sto-005-the-valid-corpus-uses-each-listed-key-pair
-[STO-058]: openspec/specs/spec-store/spec.md#requirement-sto-058-the-template-config-follows-the-store-config
+[STO-055]: openspec/specs/contract-store/spec.md#requirement-sto-055-the-spec-artifact-holds-the-binding-templates
+[STO-005]: openspec/specs/contract-store/spec.md#requirement-sto-005-the-valid-corpus-uses-each-listed-key-pair
+[STO-058]: openspec/specs/contract-store/spec.md#requirement-sto-058-the-template-config-follows-the-contract-store-config
 [VER-005]: openspec/specs/schema-versioning/spec.md#requirement-ver-005-spec-artifacts-are-distributed-pinned-and-hash-verified
-[STO-003]: openspec/specs/spec-store/spec.md#requirement-sto-003-dependencies-run-from-bindings-to-the-store-never-back
+[STO-003]: openspec/specs/contract-store/spec.md#requirement-sto-003-dependencies-run-from-bindings-to-the-contract-store-never-back
 [VER-007]: openspec/specs/schema-versioning/spec.md#requirement-ver-007-each-binding-keeps-its-own-expected-conformance-failures
 [SRF-002]: openspec/specs/binding-surface/spec.md#requirement-srf-002-a-binding-local-operation-adds-no-contract-behavior
 [SRF-003]: openspec/specs/binding-surface/spec.md#requirement-srf-003-a-binding-records-the-requirement-that-covers-each-public-operation
-[STO-054]: openspec/specs/spec-store/spec.md#requirement-sto-054-the-store-publishes-a-json-schema-for-the-traceability-record
-[STO-029]: openspec/specs/spec-store/spec.md#requirement-sto-029-a-changed-released-name-needs-a-breaking-version-increment
+[STO-054]: openspec/specs/contract-store/spec.md#requirement-sto-054-the-contract-store-publishes-a-json-schema-for-the-traceability-record
+[STO-029]: openspec/specs/contract-store/spec.md#requirement-sto-029-a-changed-released-name-needs-a-breaking-version-increment
 
 ## Custom Instructions
 <!-- This section is for human and agent-maintained operational knowledge.

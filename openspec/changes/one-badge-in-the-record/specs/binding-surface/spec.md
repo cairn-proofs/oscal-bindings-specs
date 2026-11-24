@@ -2,12 +2,12 @@
 
 ## MODIFIED Requirements
 
-### Requirement: SRF-006 The store publishes a requirement index
+### Requirement: SRF-006 The contract store publishes a requirement index
 
-The store SHALL publish `openspec/requirements.json`, generated from the main specs. It holds a format version and
+The contract store SHALL publish `openspec/requirements.json`, generated from the main specs. It holds a format version and
 one entry for each requirement, in identifier order. Each entry holds the identifier, the capability, the title, and
 `corpus`. The value of `corpus` is true when a scenario of the requirement lists a corpus case in
-`openspec/coverage.json`. The store checks MUST fail when the committed index differs from the generator output. The
+`openspec/coverage.json`. The contract store checks MUST fail when the committed index differs from the generator output. The
 spec artifact SHALL hold the index.
 
 #### Scenario: SRF-006.01 Index entry of a requirement
@@ -16,10 +16,10 @@ spec artifact SHALL hold the index.
 - **THEN** the index has an entry with the identifier `PRS-001`, the capability `document-parsing`, and the title
   `Parse an OSCAL document from text or bytes`
 
-#### Scenario: SRF-006.02 Stale index fails the store checks
+#### Scenario: SRF-006.02 Stale index fails the contract store checks
 
 - **WHEN** a pull request adds a requirement to the main specs and does not regenerate the index
-- **THEN** the store checks fail
+- **THEN** the contract store checks fail
 
 #### Scenario: SRF-006.03 Retired requirement has no entry
 
@@ -28,7 +28,7 @@ spec artifact SHALL hold the index.
 
 #### Scenario: SRF-006.04 Spec artifact holds the index
 
-- **WHEN** the store builds the spec artifact
+- **WHEN** the contract store builds the spec artifact
 - **THEN** the archive holds `openspec/requirements.json`
 
 #### Scenario: SRF-006.05 Requirement with a corpus case
@@ -43,7 +43,7 @@ spec artifact SHALL hold the index.
 
 ## REMOVED Requirements
 
-### Requirement: SRF-008 The store publishes a README sticker for bindings
+### Requirement: SRF-008 The contract store publishes a README sticker for bindings
 
 **Reason**: The sticker is one badge that reads the traceability record. [SRF-015] replaces this requirement.
 
@@ -73,15 +73,15 @@ SHALL define these members.
 - **WHEN** a record has `format`, `pin`, `operations` and `badge`, and has no `corpus` member
 - **THEN** the record conforms to the JSON Schema
 
-### Requirement: SRF-015 The store publishes one README sticker for bindings
+### Requirement: SRF-015 The contract store publishes one README sticker for bindings
 
-The store SHALL publish `docs/sticker.md`. The file holds the Markdown of one badge for the README of a binding. The
+The contract store SHALL publish `docs/sticker.md`. The file holds the Markdown of one badge for the README of a binding. The
 badge shows the `badge` member of the traceability record in the repository of the binding. The spec artifact SHALL
 hold the file.
 
 #### Scenario: SRF-015.01 Spec artifact holds the sticker file
 
-- **WHEN** the store builds the spec artifact
+- **WHEN** the contract store builds the spec artifact
 - **THEN** the archive holds `docs/sticker.md`
 
 #### Scenario: SRF-015.02 Sticker file holds one badge that reads the record

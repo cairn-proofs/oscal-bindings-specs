@@ -1,5 +1,5 @@
 /**
- * Checks the exclusion list of each OSCAL release in the store (openspec/specs/constraint-validation, STO-008):
+ * Checks the exclusion list of each OSCAL release in the contract store (openspec/specs/constraint-validation, STO-008):
  *
  * 1. manifest/<release>/constraint-exclusions.json conforms to manifest/constraint-exclusions.schema.json.
  * 2. Each item of the lists `excluded` and `cannot-fail` identifies exactly one constraint of metaschema/<release>/.

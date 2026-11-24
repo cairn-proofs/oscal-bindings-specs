@@ -1,10 +1,10 @@
-# spec-store Specification
+# contract-store Specification
 
 ## Purpose
-Defines what the store builds, publishes and checks: the spec artifact and its version, the vendored metaschema, the
-constraint manifest, the naming manifest and the rules that derive it, the conformance corpus rules, the requirement
-index, the traceability record JSON Schema, and the binding templates. A requirement in this capability applies to the
-store. It does not apply to a binding.
+Defines what the contract store builds, publishes and checks: the spec artifact and its version, the vendored
+metaschema, the constraint manifest, the naming manifest and the rules that derive it, the conformance corpus rules, the
+requirement index, the traceability record JSON Schema, and the binding templates. A requirement in this capability
+applies to the contract store. It does not apply to a binding.
 
 ## Requirements
 
@@ -45,7 +45,7 @@ the version increment for each kind.
 #### Scenario: STO-001.06 Pre-release label fails the version check
 
 - **WHEN** `VERSION` holds `1.0.0-rc.1+oscal.1.2.3`
-- **THEN** the store checks fail
+- **THEN** the contract store checks fail
 
 ### Requirement: STO-002 The OSCAL release is recorded as Semantic Versioning build metadata
 
@@ -75,16 +75,16 @@ OSCAL major version is a break.
 - **WHEN** two versions are `2.4.1+oscal.1.2.3` and `2.4.1+oscal.1.2.4`
 - **THEN** the two versions have the same precedence
 
-### Requirement: STO-003 Dependencies run from bindings to the store, never back
+### Requirement: STO-003 Dependencies run from bindings to the contract store, never back
 
-A binding MAY depend on the store by pinning a spec artifact. The store SHALL NOT hold content whose correctness depends
-on the state of a binding. Such content includes:
+A binding MAY pin a spec artifact of the contract store. The contract store SHALL NOT hold content whose correctness
+depends on the state of a binding. It includes:
 
 1. The known defects, expected failures, or conformance results of a binding.
 2. The versions that a binding supports.
 3. A link to an individual issue or pull request in a binding repository.
 
-The store MAY link the repository and the issue tracker of each known implementation. An OpenSpec change MAY name a
+The contract store MAY link the repository and issue tracker of each known implementation. An OpenSpec change MAY name a
 binding issue.
 
 #### Scenario: STO-003.01 A corpus case carries no binding-specific data
@@ -93,22 +93,22 @@ binding issue.
   field
 - **THEN** the check fails
 
-#### Scenario: STO-003.02 Store content links no individual binding issue
+#### Scenario: STO-003.02 Contract contract store content links no individual binding issue
 
 - **WHEN** a tracked file outside `openspec/changes/` contains a link to an individual issue or pull request in a
   binding repository
-- **THEN** the store checks fail
+- **THEN** the contract store checks fail
 
 #### Scenario: STO-003.03 A listed implementation links only its repository and tracker
 
-- **WHEN** the store lists a known implementation with a link to its repository and a link to its issue tracker
-- **THEN** the store checks pass
+- **WHEN** the contract store lists a known implementation with a link to its repository and a link to its issue tracker
+- **THEN** the contract store checks pass
 
 ### Requirement: STO-004 The version is the latest release or one step above it
 
-The store checks SHALL compare the version in `VERSION` with the latest release. The latest release is the release
-tag of [VER-005] on the main branch with the highest precedence, for all OSCAL releases. The checks MUST fail unless
-the version is one of these:
+The contract store checks SHALL compare the version in `VERSION` with the latest release. The latest release is the
+release tag of [VER-005] on the main branch with the highest precedence, for all OSCAL releases. The checks MUST fail
+unless the version is one of these:
 
 1. The version of the latest release, with the same build metadata.
 2. The next patch, minor or major version after the latest release.
@@ -130,17 +130,17 @@ The checks MUST fail when they cannot find the latest release.
 
 - **WHEN** the latest release is `v0.8.0+oscal.1.2.3`, and `VERSION` holds `0.10.0+oscal.1.2.3` or
   `0.9.1+oscal.1.2.3`
-- **THEN** the store checks fail and name the latest release
+- **THEN** the contract store checks fail and name the latest release
 
 #### Scenario: STO-004.04 A version below the latest release fails
 
 - **WHEN** the latest release is `v0.8.0+oscal.1.2.3`, and `VERSION` holds `0.7.0+oscal.1.2.3`
-- **THEN** the store checks fail and name the latest release
+- **THEN** the contract store checks fail and name the latest release
 
 #### Scenario: STO-004.05 The latest version with other build metadata fails
 
 - **WHEN** the latest release is `v0.8.0+oscal.1.2.3`, and `VERSION` holds `0.8.0+oscal.1.2.4`
-- **THEN** the store checks fail and name the latest release
+- **THEN** the contract store checks fail and name the latest release
 
 #### Scenario: STO-004.06 A release for another OSCAL release is the latest release
 
@@ -150,7 +150,7 @@ The checks MUST fail when they cannot find the latest release.
 #### Scenario: STO-004.07 No release on the main branch fails the check
 
 - **WHEN** the clone has release tags, and no release tag is on the main branch
-- **THEN** the store checks fail
+- **THEN** the contract store checks fail
 
 ### Requirement: STO-005 The valid corpus uses each listed key pair
 
@@ -163,7 +163,7 @@ of an array that is the value of `a`. The corpus check MUST fail when a listed p
 - **WHEN** no JSON document in `documents/valid/` uses a pair that `required-keys.json` lists
 - **THEN** the corpus check fails and names the pair
 
-### Requirement: STO-006 The store vendors the metaschema of each vendored OSCAL release
+### Requirement: STO-006 The contract store vendors the metaschema of each vendored OSCAL release
 
 For each vendored OSCAL release, `metaschema/<release>/` SHALL hold these files:
 
@@ -171,13 +171,13 @@ For each vendored OSCAL release, `metaschema/<release>/` SHALL hold these files:
    as assets.
 2. `metaschema-datatypes.xsd` of `usnistgov/metaschema`, at the commit that `SOURCE.md` records.
 
-Each file SHALL have the bytes of its source, and `SHA256SUMS` SHALL list its digest. The store
+Each file SHALL have the bytes of its source, and `SHA256SUMS` SHALL list its digest. The contract store
 checks SHALL fail on a digest that does not match. The spec artifact SHALL hold the directory.
 
-#### Scenario: STO-006.01 A changed module fails the store checks
+#### Scenario: STO-006.01 A changed module fails the contract store checks
 
 - **WHEN** a file in `metaschema/1.2.3/` differs from the digest that `SHA256SUMS` lists for it
-- **THEN** the store checks fail
+- **THEN** the contract store checks fail
 
 #### Scenario: STO-006.02 The spec artifact holds the metaschema
 
@@ -188,7 +188,7 @@ checks SHALL fail on a digest that does not match. The spec artifact SHALL hold 
 ### Requirement: STO-007 A constraint that cannot work as written is defective
 
 A constraint is an `allowed-values`, `matches`, `has-cardinality`, `is-unique`, `index`,
-`index-has-key` or `expect` element of a module. The store SHALL treat an ERROR or CRITICAL
+`index-has-key` or `expect` element. The contract store SHALL treat an ERROR or CRITICAL
 constraint as defective when:
 
 1. Its target selects nothing in any document that conforms to the schema.
@@ -216,40 +216,40 @@ constraint as defective when:
 
 ### Requirement: STO-008 The exclusion list names each defective constraint with its issue
 
-The store SHALL list each defective constraint of [STO-007] in the list `excluded` of the
-exclusion list `manifest/<release>/constraint-exclusions.json`, and no other constraint. Each item
+The contract store SHALL list each defective constraint of [STO-007] in the list `excluded` of
+`manifest/<release>/constraint-exclusions.json`, and no other constraint. Each item
 SHALL identify one constraint by its `id`, or, for a constraint without an `id`, by its module,
 its declaring definition and its kind. Each item SHALL hold the URL of an issue of
-`usnistgov/OSCAL` that reports the defect. The store checks SHALL fail when an item identifies no
+`usnistgov/OSCAL` that reports the defect. The contract store checks SHALL fail when an item identifies no
 constraint, or more than one.
 
 #### Scenario: STO-008.01 An item that identifies no constraint
 
 - **WHEN** an item of the list `excluded` holds a constraint `id` that no vendored module holds
-- **THEN** the store checks fail
+- **THEN** the contract store checks fail
 
 #### Scenario: STO-008.02 Each item holds its issue
 
 - **WHEN** a consumer reads an item of the list `excluded`
 - **THEN** the item holds the URL of an issue of `usnistgov/OSCAL`
 
-### Requirement: STO-009 The store publishes a constraint manifest for each release
+### Requirement: STO-009 The contract store publishes a constraint manifest for each release
 
-The store SHALL publish the constraint manifest `manifest/<release>/constraints.json`. The store
+The contract store SHALL publish the constraint manifest `manifest/<release>/constraints.json`. The contract store
 SHALL generate it from the vendored metaschema, the naming manifest and the exclusion list of
-[STO-008]. The store checks SHALL fail when the file differs from the result of the generation.
+[STO-008]. The contract store checks SHALL fail when the file differs from the result of the generation.
 The manifest SHALL hold its format version in the member `format`. It SHALL conform to the JSON
 Schema `manifest/constraints.schema.json`. The spec artifact SHALL hold both files.
 
-#### Scenario: STO-009.01 An edit by hand fails the store checks
+#### Scenario: STO-009.01 An edit by hand fails the contract store checks
 
 - **WHEN** a person edits `manifest/1.2.3/constraints.json` by hand
-- **THEN** the file differs from the result of the generation, and the store checks fail
+- **THEN** the file differs from the result of the generation, and the contract store checks fail
 
 #### Scenario: STO-009.02 The manifest conforms to its JSON Schema
 
-- **WHEN** the store checks read the manifest
-- **THEN** the manifest conforms to `manifest/constraints.schema.json`, or the store checks fail
+- **WHEN** the contract store checks read the manifest
+- **THEN** the manifest conforms to `manifest/constraints.schema.json`, or the contract store checks fail
 
 ### Requirement: STO-010 The manifest holds each constraint that can decide validity
 
@@ -290,9 +290,9 @@ The generation SHALL fail for a reportable entry without an `id`.
   list `cannot-fail` names the entry with that reason
 - **THEN** the entry is not reportable
 
-### Requirement: STO-012 The store checks the queries against a reference evaluator
+### Requirement: STO-012 The contract store checks the queries against a reference evaluator
 
-The store checks SHALL evaluate the vendored constraints with a reference evaluator that reads
+The contract store checks SHALL evaluate the vendored constraints with a reference evaluator that reads
 the metaschema and applies [CNS-011] to [CNS-017]. They SHALL fail when the queries of an entry
 select other nodes than the reference evaluator selects for its constraint. The check SHALL use
 the corpus documents that conform to the schema, and generated documents of each model that
@@ -302,44 +302,44 @@ conform to it and together hold each definition, flag and choice branch of the m
 
 - **WHEN** the context queries of an entry select a node of another definition with the same key
   name
-- **THEN** the store checks fail
+- **THEN** the contract store checks fail
 
-### Requirement: STO-013 The store checks the failures of the manifest against the reference evaluator
+### Requirement: STO-013 The contract store checks the failures of the manifest against the reference evaluator
 
-The store checks SHALL evaluate the manifest with an RFC 9535 implementation, as [CNS-017] states
-for a document and [CNS-018] for an element, on the documents of [STO-012]. They SHALL fail when the number of failures of an
-entry differs from the number that the reference evaluator of [STO-012] gives for its constraint.
+The contract store checks SHALL evaluate the manifest with an RFC 9535 implementation, as [CNS-017] states
+for a document and [CNS-018] for an element, on the documents of [STO-012]. They SHALL fail when the number of failures
+of an entry differs from the number that the reference evaluator of [STO-012] gives for its constraint.
 
 #### Scenario: STO-013.01 A pattern that the generation writes wrong
 
 - **WHEN** the I-Regexp of a `matches` entry rejects a value that the pattern of its constraint
   accepts
-- **THEN** the manifest gives a failure that the reference evaluator does not give, and the store
+- **THEN** the manifest gives a failure that the reference evaluator does not give, and the contract store
   checks fail
 
 ### Requirement: STO-014 The corpus has a failing case for each reportable entry
 
 For each reportable entry of [STO-011], the corpus SHALL hold a case with an input that conforms to
 the schema and fails that entry. The case lists the `id` and the location ([CNS-024]) of each
-failure, once for each failure. The store checks SHALL fail when such a case is missing, when the
+failure, once for each failure. The contract store checks SHALL fail when such a case is missing, when the
 reference evaluator of [STO-012] gives other failures (by `id` or location) than a case lists, or
 when it gives a failure for an input that a case expects to be valid or for a builder case result.
 
 #### Scenario: STO-014.01 A reportable entry without a case
 
 - **WHEN** no corpus case expects a failure of a reportable entry
-- **THEN** the store checks fail
+- **THEN** the contract store checks fail
 
 #### Scenario: STO-014.02 A valid corpus document that fails an entry
 
 - **WHEN** an input of `documents/valid/` gives a failure of an entry
-- **THEN** the store checks fail
+- **THEN** the contract store checks fail
 
 #### Scenario: STO-014.03 A failure at another location
 
 - **WHEN** the reference evaluator gives a failure with the `id` that a case lists, at another
   location than the case lists
-- **THEN** the store checks fail
+- **THEN** the contract store checks fail
 
 ### Requirement: STO-015 A type is identified by JSON pointers into the complete schema
 
@@ -458,22 +458,22 @@ that is not a JSON object, or that has no `format` member, is invalid under [STO
 - **WHEN** a consumer reads a manifest that is not a JSON object, or a manifest that has no `format` member
 - **THEN** the consumer rejects the manifest
 
-### Requirement: STO-021 The store publishes a JSON Schema for each manifest file
+### Requirement: STO-021 The contract store publishes a JSON Schema for each manifest file
 
-The store SHALL publish a JSON Schema for `names.json` and a JSON Schema for `overrides.json`. Each file in the store
-MUST conform to its JSON Schema. The store checks MUST fail when a file does not conform. The store checks SHALL also
-check the rules that a JSON Schema cannot express, for example uniqueness across entries, pointers that resolve, and
-property names that are keys at their pointer.
+The contract store SHALL publish a JSON Schema for `names.json` and a JSON Schema for `overrides.json`. Each file in the
+contract store MUST conform to its JSON Schema. The contract store checks MUST fail when a file does not conform. The
+contract store checks SHALL also check the rules that a JSON Schema cannot express, for example uniqueness across
+entries, pointers that resolve, and property names that are keys at their pointer.
 
-#### Scenario: STO-021.01 Nonconforming manifest fails the store checks
+#### Scenario: STO-021.01 Nonconforming manifest fails the contract store checks
 
 - **WHEN** `names.json` has an entry without a kind
-- **THEN** the store checks fail and name the entry
+- **THEN** the contract store checks fail and name the entry
 
-#### Scenario: STO-021.03 Distinguishing property that is not a key fails the store checks
+#### Scenario: STO-021.03 Distinguishing property that is not a key fails the contract store checks
 
 - **WHEN** a union entry names a distinguishing property that is not a property key of the branch at its pointer
-- **THEN** the store checks fail and name the entry
+- **THEN** the contract store checks fail and name the entry
 
 ### Requirement: STO-022 The JSON Schemas of the manifest files constrain every string
 
@@ -485,20 +485,20 @@ The JSON Schemas of [STO-021] SHALL constrain every string in the files, not onl
 4. The schema file name is a bare file name, with no directory part.
 5. No object holds a member that the JSON Schema does not define.
 
-#### Scenario: STO-022.01 Schema file name with a path fails the store checks
+#### Scenario: STO-022.01 Schema file name with a path fails the contract store checks
 
 - **WHEN** the schema file name in `names.json` holds a directory part, for example `../schema.json`
-- **THEN** the store checks fail
+- **THEN** the contract store checks fail
 
-#### Scenario: STO-022.02 Unknown member fails the store checks
+#### Scenario: STO-022.02 Unknown member fails the contract store checks
 
 - **WHEN** an entry of `names.json` holds a member that the JSON Schema does not define
-- **THEN** the store checks fail
+- **THEN** the contract store checks fail
 
 ### Requirement: STO-023 The override data is the only hand-edited naming input
 
-The store SHALL hold one override file, `overrides.json`, for each OSCAL release. It is the only naming data that a
-person edits. It holds these items:
+The contract store SHALL hold one override file, `overrides.json`, for each OSCAL release. It is the only naming data
+that a person edits. It holds these items:
 
 1. The singular local name of each list item, keyed by the pointer of the item.
 2. The canonical names that replace a rule-derived name, keyed by pointer.
@@ -536,16 +536,16 @@ The manifest SHALL be the output of a generation step with only these inputs:
 
 1. The complete schema of the release.
 2. The override file of the release.
-3. The manifest of the previous OSCAL release, when the store holds one.
+3. The manifest of the previous OSCAL release, when the contract store holds one.
 
-Two runs with the same inputs SHALL produce byte-identical files. The store checks SHALL run the generation for each
-OSCAL release in the store, in release order. The checks MUST fail when a result differs from the committed
+Two runs with the same inputs SHALL produce byte-identical files. The contract store checks SHALL run the generation for
+each OSCAL release, in release order. The checks MUST fail when a result differs from the committed
 `names.json` of that release.
 
 #### Scenario: STO-025.01 Hand edit of the manifest fails the check
 
 - **WHEN** a person changes a name in `names.json` and does not change the override file
-- **THEN** the store checks fail, because the generated manifest differs from the committed file
+- **THEN** the contract store checks fail, because the generated manifest differs from the committed file
 
 #### Scenario: STO-025.02 Generation is reproducible
 
@@ -555,7 +555,8 @@ OSCAL release in the store, in release order. The checks MUST fail when a result
 #### Scenario: STO-025.03 Edit of a previous release manifest fails the check
 
 - **WHEN** a pull request changes a name in the manifest of a previous OSCAL release
-- **THEN** the store checks fail, because the regenerated manifest of that release differs from the committed file
+- **THEN** the contract store checks fail, because the regenerated manifest of that release differs from the committed
+  file
 
 ### Requirement: STO-026 The generation checks the manifest of the previous release before use
 
@@ -569,8 +570,8 @@ Before the generation of [STO-025] uses the manifest of the previous OSCAL relea
 
 ### Requirement: STO-027 Published names stay the same in later releases
 
-When the store holds the manifest of a previous OSCAL release, the generation SHALL keep the name of each type whose
-pointer occurs in both releases. The derivation rules of this capability SHALL name only the types with new
+When the contract store holds the manifest of a previous OSCAL release, the generation SHALL keep the name of each type
+whose pointer occurs in both releases. The derivation rules of this capability SHALL name only the types with new
 pointers.
 
 1. A new type whose rule-derived name equals a kept name MUST get another name: the module-prefixed name for a
@@ -605,15 +606,15 @@ in the new schema.
 
 ### Requirement: STO-029 A changed released name needs a breaking version increment
 
-The store checks SHALL compare `names.json` with the manifest for the same OSCAL release in the latest released spec
-artifact, when one exists. The checks MUST fail when a name of the released manifest is changed or removed, unless the
-version marks a breaking change: an increment of the major component, or of the minor component when the major
+The contract store checks SHALL compare `names.json` with the manifest for the same OSCAL release in the latest released
+spec artifact, when one exists. The checks MUST fail when a name of the released manifest is changed or removed, unless
+the version marks a breaking change: an increment of the major component, or of the minor component when the major
 component is 0. The checks SHALL list each changed or removed name, also when the version permits the change.
 
 #### Scenario: STO-029.01 Rename without a breaking increment fails
 
 - **WHEN** a pull request changes a released canonical name and keeps the major and minor components of the version
-- **THEN** the store checks fail and name the changed type
+- **THEN** the contract store checks fail and name the changed type
 
 #### Scenario: STO-029.02 Added type passes without a breaking increment
 
@@ -978,8 +979,8 @@ single-or-many kind that [STO-046] defines.
 
 The pointers of [STO-015] SHALL meet these constraints:
 
-1. Each entry has one or more pointers. An entry has more than one pointer only when the derivation rules of this capability
-   merge those places into one type.
+1. Each entry has one or more pointers. An entry has more than one pointer only when the derivation rules of this
+   capability merge those places into one type.
 2. A pointer occurs in no more than one entry.
 3. Each pointer resolves to a subschema of the complete schema.
 4. A scalar definition of [STO-047] has no entry, unless it holds an enum directly, as [STO-045] defines.
@@ -1090,12 +1091,12 @@ Each of these guards reports every failure at once.
 - **WHEN** two list properties hold inline items, and the override data has no singular local name for either
 - **THEN** the derivation stops and names both list properties
 
-### Requirement: STO-053 The store publishes a requirement index
+### Requirement: STO-053 The contract store publishes a requirement index
 
-The store SHALL publish `openspec/requirements.json`, generated from the main specs. It holds a format version and one
-entry for each requirement in the main specs, in identifier order. Each entry holds the requirement identifier, the
-capability, and the title. The store checks MUST fail when the committed index differs from the generator output. The
-spec artifact SHALL hold the index.
+The contract store SHALL publish `openspec/requirements.json`, generated from the main specs. It holds a format version
+and one entry for each requirement in the main specs, in identifier order. Each entry holds the requirement identifier,
+the capability, and the title. The contract store checks MUST fail when the committed index differs from the generator
+output. The spec artifact SHALL hold the index.
 
 #### Scenario: STO-053.01 Index entry of a requirement
 
@@ -1103,10 +1104,10 @@ spec artifact SHALL hold the index.
 - **THEN** the index has an entry with the identifier `PRS-001`, the capability `document-parsing`, and the title
   `Parse an OSCAL document from text or bytes`
 
-#### Scenario: STO-053.02 Stale index fails the store checks
+#### Scenario: STO-053.02 Stale index fails the contract store checks
 
 - **WHEN** a pull request adds a requirement to the main specs and does not regenerate the index
-- **THEN** the store checks fail
+- **THEN** the contract store checks fail
 
 #### Scenario: STO-053.03 Retired requirement has no entry
 
@@ -1115,16 +1116,16 @@ spec artifact SHALL hold the index.
 
 #### Scenario: STO-053.04 Spec artifact holds the index
 
-- **WHEN** the store builds the spec artifact
+- **WHEN** the contract store builds the spec artifact
 - **THEN** the archive holds `openspec/requirements.json`
 
-### Requirement: STO-054 The store publishes a JSON Schema for the traceability record
+### Requirement: STO-054 The contract store publishes a JSON Schema for the traceability record
 
-The store SHALL publish `openspec/traceability.schema.json`, the JSON Schema of the traceability record of [SRF-003].
-The record SHALL conform to it. The spec artifact SHALL hold it. The JSON Schema SHALL constrain the record:
+The contract store SHALL publish `openspec/traceability.schema.json`, the JSON Schema of the traceability record of
+[SRF-003]. The record SHALL conform to it. The spec artifact SHALL hold it. The JSON Schema SHALL constrain the record:
 
 1. Each requirement identifier is two to five uppercase letters, a hyphen, and three digits.
-2. Each entry holds contract requirement identifiers or one binding-local requirement identifier, not both.
+2. Each entry holds contract requirement identifiers or one binding-local identifier, not both.
 3. No object holds a member that the JSON Schema does not define.
 
 #### Scenario: STO-054.01 Entry with both kinds of identifier is invalid
@@ -1139,7 +1140,7 @@ The record SHALL conform to it. The spec artifact SHALL hold it. The JSON Schema
 
 #### Scenario: STO-054.03 Spec artifact holds the JSON Schema
 
-- **WHEN** the store builds the spec artifact
+- **WHEN** the contract store builds the spec artifact
 - **THEN** the archive holds `openspec/traceability.schema.json`
 
 ### Requirement: STO-055 The spec artifact holds the binding templates
@@ -1154,13 +1155,14 @@ before each commit. They include:
 
 #### Scenario: STO-055.01 Spec artifact holds the templates
 
-- **WHEN** the store builds the spec artifact
+- **WHEN** the contract store builds the spec artifact
 - **THEN** the archive holds `templates/binding/`
 
-#### Scenario: STO-055.02 Stale binding checker fails the store checks
+#### Scenario: STO-055.02 Stale binding checker fails the contract store checks
 
-- **WHEN** a pull request changes the identifier checks of the store and does not regenerate the binding checker
-- **THEN** the store checks fail
+- **WHEN** a pull request changes the identifier checks of the contract store and does not regenerate the binding
+  checker
+- **THEN** the contract store checks fail
 
 #### Scenario: STO-055.03 Binding checker needs no installed package
 
@@ -1173,39 +1175,39 @@ before each commit. They include:
 - **WHEN** the archive file differs from the hash that the hook pins
 - **THEN** the hook fails before it runs the binding checker, and checks no staged file
 
-#### Scenario: STO-055.05 Agent guide cites an unknown store identifier
+#### Scenario: STO-055.05 Agent guide cites an unknown contract store identifier
 
-- **WHEN** the agent guide cites a store identifier that is neither live nor retired in the store
-- **THEN** the store checks fail and name the identifier
+- **WHEN** the agent guide cites a contract store identifier that is neither live nor retired in the contract store
+- **THEN** the contract store checks fail and name the identifier
 
 ### Requirement: STO-056 The binding checker applies the identifier rules to the specs of a binding
 
-The binding checker SHALL apply each identifier check of the store to the main specs and the identifier ledger of a
-binding. It reads the store from the spec artifact that the binding pins. It SHALL also fail when:
+The binding checker SHALL apply each identifier check of the contract store to the main specs and the identifier ledger
+of a binding. It reads the contract store from the spec artifact that the binding pins. It SHALL also fail when:
 
-1. A prefix in the ledger of the binding is a prefix of the store, as [SRF-010] states.
-2. A citation that uses a prefix of the store names no live or retired identifier of the store.
+1. A prefix in the ledger of the binding is a prefix of the contract store, as [SRF-010] states.
+2. A citation that uses a prefix of the contract store names no live or retired identifier of the contract store.
 
-#### Scenario: STO-056.01 Store prefix in the ledger of a binding fails
+#### Scenario: STO-056.01 Contract contract store prefix in the ledger of a binding fails
 
 - **WHEN** the ledger of a binding holds the prefix `PRS`
 - **THEN** the binding checker fails and names the prefix
 
-#### Scenario: STO-056.02 Citation of a store identifier resolves
+#### Scenario: STO-056.02 Citation of a contract store identifier resolves
 
 - **WHEN** a binding spec cites [PRS-001] or `[PRS-001.01]`, and the pinned spec artifact holds that identifier
 - **THEN** the binding checker reports no failure for the citation
 
-#### Scenario: STO-056.03 Citation of an unknown store identifier fails
+#### Scenario: STO-056.03 Citation of an unknown contract store identifier fails
 
 - **WHEN** a binding spec cites `[PRS-999]`, and the pinned spec artifact neither holds nor retires it
 - **THEN** the binding checker fails and names the citation
 
-#### Scenario: STO-056.04 Identifier rule of the store applies to a binding
+#### Scenario: STO-056.04 Identifier rule of the contract store applies to a binding
 
 - **WHEN** a requirement heading in a binding spec has a number at or above `next` for its prefix in the ledger of
   the binding
-- **THEN** the binding checker fails, as the store check fails for the same heading in the store
+- **THEN** the binding checker fails, as the contract store check fails for the same heading in the contract store
 
 ### Requirement: STO-057 The binding checker checks the traceability record
 
@@ -1215,7 +1217,7 @@ It SHALL fail when:
 1. The record does not conform to the JSON Schema of [STO-054].
 2. A contract requirement identifier does not resolve, as [SRF-004] states.
 3. A binding-local requirement identifier names no requirement in the main specs of the binding, or starts with a
-   prefix of the store, as [SRF-010] states.
+   prefix of the contract store, as [SRF-010] states.
 4. An operation name occurs in more than one entry.
 
 #### Scenario: STO-057.01 Record that does not conform fails
@@ -1245,27 +1247,28 @@ It SHALL fail when:
   requirement in the main specs of the binding
 - **THEN** the binding checker reports no failure for the record
 
-### Requirement: STO-058 The template config follows the store config
+### Requirement: STO-058 The template config follows the contract store config
 
-The template config of [STO-055] SHALL hold each entry of the store `openspec/config.yaml`, with each store
-command or store file in it replaced for a binding. It SHALL also hold the prefix rule of [SRF-010], the citation
-rule of [STO-056], and a `references` entry for the store. The store checks MUST fail when:
+The template config of [STO-055] SHALL hold each entry of `openspec/config.yaml` of the contract store, with each
+command or file of the contract store in it replaced for a binding. It SHALL also hold the prefix rule of [SRF-010], the
+citation rule of [STO-056], and a `references` entry for the contract store. The contract store checks MUST fail when:
 
-1. The template differs from the store config with these changes.
-2. A store-specific text that the template replaces is not in the store config.
+1. The template differs from that config with these changes.
+2. A text that the template replaces is not in that config.
 
-#### Scenario: STO-058.01 Changed store rule fails the store checks until the template follows
+#### Scenario: STO-058.01 Changed contract store rule fails the contract store checks until the template follows
 
-- **WHEN** a pull request changes an entry of the store `openspec/config.yaml` and does not regenerate the template
-- **THEN** the store checks fail
+- **WHEN** a pull request changes an entry of the contract store `openspec/config.yaml` and does not regenerate the
+  template
+- **THEN** the contract store checks fail
 
-#### Scenario: STO-058.02 Stale replacement fails the store checks
+#### Scenario: STO-058.02 Stale replacement fails the contract store checks
 
-- **WHEN** a pull request rewords a store-specific sentence of the store `openspec/config.yaml`, and the template
-  replaces the old sentence
-- **THEN** the store checks fail and name the sentence
+- **WHEN** a pull request rewords a contract-store-specific sentence of the contract store `openspec/config.yaml`, and
+  the template replaces the old sentence
+- **THEN** the contract store checks fail and name the sentence
 
-#### Scenario: STO-058.03 Template names the binding checker for a store command
+#### Scenario: STO-058.03 Template names the binding checker for a contract store command
 
-- **WHEN** an entry of the store `openspec/config.yaml` names `npm run spec-ids`
+- **WHEN** an entry of the contract store `openspec/config.yaml` names `npm run spec-ids`
 - **THEN** the same entry in the template names the binding checker instead

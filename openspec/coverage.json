@@ -2391,7 +2391,7 @@
       "self-test": [
         {
           "script": "scripts/check-spec-ids.ts",
-          "test": "SRF-010.01 a binding ledger with the store prefix PRS fails"
+          "test": "SRF-010.01 a binding ledger with the contract store prefix PRS fails"
         }
       ]
     },
@@ -2401,37 +2401,37 @@
       "self-test": [
         {
           "script": "scripts/check-spec-ids.ts",
-          "test": "SRF-010.02 the binding prefix PYB, which the store does not hold, passes"
+          "test": "SRF-010.02 the binding prefix PYB, which the contract store does not hold, passes"
         }
       ]
     },
     {
       "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-001.01"
     },
     {
       "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-001.02"
     },
     {
       "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-001.03"
     },
     {
       "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-001.04"
     },
     {
       "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-001.05"
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-001.06",
       "self-test": [
         {
@@ -2441,7 +2441,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-002.01",
       "self-test": [
         {
@@ -2452,16 +2452,16 @@
     },
     {
       "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-002.02"
     },
     {
       "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-002.03"
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-002.04",
       "self-test": [
         {
@@ -2471,7 +2471,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-003.01",
       "self-test": [
         {
@@ -2485,7 +2485,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-003.02",
       "self-test": [
         {
@@ -2499,7 +2499,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-003.03",
       "self-test": [
         {
@@ -2509,7 +2509,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-004.01",
       "self-test": [
         {
@@ -2519,7 +2519,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-004.02",
       "self-test": [
         {
@@ -2529,7 +2529,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-004.03",
       "self-test": [
         {
@@ -2539,7 +2539,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-004.04",
       "self-test": [
         {
@@ -2549,7 +2549,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-004.05",
       "self-test": [
         {
@@ -2559,7 +2559,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-004.06",
       "self-test": [
         {
@@ -2569,7 +2569,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-004.07",
       "self-test": [
         {
@@ -2579,7 +2579,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-005.01",
       "self-test": [
         {
@@ -2589,7 +2589,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-006.01",
       "self-test": [
         {
@@ -2611,7 +2611,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-006.02",
       "self-test": [
         {
@@ -2625,7 +2625,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-007.01",
       "self-test": [
         {
@@ -2635,7 +2635,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-007.02",
       "self-test": [
         {
@@ -2645,7 +2645,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-007.03",
       "self-test": [
         {
@@ -2655,7 +2655,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-008.01",
       "self-test": [
         {
@@ -2665,7 +2665,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-008.02",
       "self-test": [
         {
@@ -2679,7 +2679,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-009.01",
       "self-test": [
         {
@@ -2701,7 +2701,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-009.02",
       "self-test": [
         {
@@ -2715,7 +2715,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-010.01",
       "self-test": [
         {
@@ -2725,7 +2725,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-010.02",
       "self-test": [
         {
@@ -2735,7 +2735,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-011.01",
       "self-test": [
         {
@@ -2745,7 +2745,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-011.02",
       "self-test": [
         {
@@ -2755,7 +2755,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-012.01",
       "self-test": [
         {
@@ -2765,7 +2765,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-013.01",
       "self-test": [
         {
@@ -2775,7 +2775,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-014.01",
       "self-test": [
         {
@@ -2785,7 +2785,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-014.02",
       "self-test": [
         {
@@ -2795,7 +2795,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-014.03",
       "self-test": [
         {
@@ -2805,7 +2805,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-015.01",
       "self-test": [
         {
@@ -2815,7 +2815,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-016.03",
       "self-test": [
         {
@@ -2825,7 +2825,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-017.01",
       "self-test": [
         {
@@ -2835,7 +2835,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-017.02",
       "self-test": [
         {
@@ -2845,7 +2845,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-017.03",
       "self-test": [
         {
@@ -2855,7 +2855,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-017.04",
       "self-test": [
         {
@@ -2865,7 +2865,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-018.01",
       "self-test": [
         {
@@ -2875,7 +2875,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-018.02",
       "self-test": [
         {
@@ -2885,7 +2885,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-019.01",
       "self-test": [
         {
@@ -2903,7 +2903,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-019.02",
       "self-test": [
         {
@@ -2913,7 +2913,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-019.03",
       "self-test": [
         {
@@ -2923,7 +2923,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-019.04",
       "self-test": [
         {
@@ -2933,7 +2933,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-020.01",
       "self-test": [
         {
@@ -2943,7 +2943,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-021.01",
       "self-test": [
         {
@@ -2953,7 +2953,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-021.03",
       "self-test": [
         {
@@ -2963,7 +2963,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-022.01",
       "self-test": [
         {
@@ -2973,7 +2973,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-022.02",
       "self-test": [
         {
@@ -2987,7 +2987,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-023.03",
       "self-test": [
         {
@@ -2997,7 +2997,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-024.01",
       "self-test": [
         {
@@ -3007,7 +3007,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-024.02",
       "self-test": [
         {
@@ -3017,7 +3017,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-024.03",
       "self-test": [
         {
@@ -3027,7 +3027,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-025.01",
       "self-test": [
         {
@@ -3037,7 +3037,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-025.02",
       "self-test": [
         {
@@ -3047,7 +3047,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-025.03",
       "self-test": [
         {
@@ -3057,7 +3057,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-026.01",
       "self-test": [
         {
@@ -3067,7 +3067,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-027.01",
       "self-test": [
         {
@@ -3081,7 +3081,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-027.02",
       "self-test": [
         {
@@ -3091,7 +3091,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-028.01",
       "self-test": [
         {
@@ -3101,7 +3101,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-028.02",
       "self-test": [
         {
@@ -3111,7 +3111,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-029.01",
       "self-test": [
         {
@@ -3125,7 +3125,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-029.02",
       "self-test": [
         {
@@ -3135,7 +3135,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-029.04",
       "self-test": [
         {
@@ -3145,7 +3145,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-030.01",
       "self-test": [
         {
@@ -3155,7 +3155,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-031.01",
       "self-test": [
         {
@@ -3173,7 +3173,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-031.02",
       "self-test": [
         {
@@ -3183,7 +3183,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-032.02",
       "self-test": [
         {
@@ -3193,7 +3193,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-033.01",
       "self-test": [
         {
@@ -3203,7 +3203,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-033.02",
       "self-test": [
         {
@@ -3213,7 +3213,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-034.01",
       "self-test": [
         {
@@ -3223,7 +3223,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-035.01",
       "self-test": [
         {
@@ -3233,7 +3233,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-036.01",
       "self-test": [
         {
@@ -3243,7 +3243,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-037.01",
       "self-test": [
         {
@@ -3253,7 +3253,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-037.02",
       "self-test": [
         {
@@ -3263,7 +3263,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-037.03",
       "self-test": [
         {
@@ -3273,7 +3273,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-038.01",
       "self-test": [
         {
@@ -3284,11 +3284,11 @@
     },
     {
       "by-design": "The rule applies to the generation of types by a binding, which no store script can observe.",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-038.02"
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-038.03",
       "self-test": [
         {
@@ -3298,7 +3298,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-039.01",
       "self-test": [
         {
@@ -3308,7 +3308,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-039.02",
       "self-test": [
         {
@@ -3318,7 +3318,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-039.03",
       "self-test": [
         {
@@ -3328,14 +3328,14 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "corpus": [
         "round-trip/group-without-distinguishing-property"
       ],
       "id": "STO-040.01"
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-041.01",
       "self-test": [
         {
@@ -3345,7 +3345,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-041.02",
       "self-test": [
         {
@@ -3355,7 +3355,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-041.03",
       "self-test": [
         {
@@ -3370,16 +3370,16 @@
     },
     {
       "by-design": "The rule applies to the generation of types by a binding, which no store script can observe.",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-042.01"
     },
     {
       "by-design": "The rule applies to the generation of types by a binding, which no store script can observe.",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-042.02"
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-043.01",
       "self-test": [
         {
@@ -3389,7 +3389,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-043.02",
       "self-test": [
         {
@@ -3399,7 +3399,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-043.03",
       "self-test": [
         {
@@ -3409,7 +3409,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-043.04",
       "self-test": [
         {
@@ -3419,7 +3419,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-043.05",
       "self-test": [
         {
@@ -3429,7 +3429,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-043.06",
       "self-test": [
         {
@@ -3439,7 +3439,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-044.02",
       "self-test": [
         {
@@ -3449,7 +3449,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-044.03",
       "self-test": [
         {
@@ -3459,7 +3459,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-045.01",
       "self-test": [
         {
@@ -3469,7 +3469,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-045.02",
       "self-test": [
         {
@@ -3479,7 +3479,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-045.03",
       "self-test": [
         {
@@ -3489,7 +3489,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-045.04",
       "self-test": [
         {
@@ -3499,7 +3499,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-045.05",
       "self-test": [
         {
@@ -3509,7 +3509,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-046.01",
       "self-test": [
         {
@@ -3519,7 +3519,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-047.01",
       "self-test": [
         {
@@ -3529,7 +3529,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-047.02",
       "self-test": [
         {
@@ -3539,7 +3539,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-048.01",
       "self-test": [
         {
@@ -3549,7 +3549,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-048.02",
       "self-test": [
         {
@@ -3559,7 +3559,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-048.03",
       "self-test": [
         {
@@ -3569,7 +3569,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-048.04",
       "self-test": [
         {
@@ -3579,7 +3579,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-049.01",
       "self-test": [
         {
@@ -3589,7 +3589,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-049.02",
       "self-test": [
         {
@@ -3599,7 +3599,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-049.03",
       "self-test": [
         {
@@ -3613,7 +3613,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-049.04",
       "self-test": [
         {
@@ -3623,7 +3623,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-050.01",
       "self-test": [
         {
@@ -3633,7 +3633,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-051.01",
       "self-test": [
         {
@@ -3643,7 +3643,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-052.01",
       "self-test": [
         {
@@ -3653,7 +3653,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-052.02",
       "self-test": [
         {
@@ -3663,7 +3663,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-052.03",
       "self-test": [
         {
@@ -3677,7 +3677,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-052.04",
       "self-test": [
         {
@@ -3687,7 +3687,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-053.01",
       "self-test": [
         {
@@ -3697,7 +3697,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-053.02",
       "self-test": [
         {
@@ -3715,7 +3715,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-053.03",
       "self-test": [
         {
@@ -3725,7 +3725,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-053.04",
       "self-test": [
         {
@@ -3735,7 +3735,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-054.01",
       "self-test": [
         {
@@ -3745,7 +3745,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-054.02",
       "self-test": [
         {
@@ -3759,7 +3759,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-054.03",
       "self-test": [
         {
@@ -3769,7 +3769,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-055.01",
       "self-test": [
         {
@@ -3779,7 +3779,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-055.02",
       "self-test": [
         {
@@ -3789,7 +3789,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-055.03",
       "self-test": [
         {
@@ -3799,7 +3799,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-055.04",
       "self-test": [
         {
@@ -3809,47 +3809,47 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-055.05",
       "self-test": [
         {
           "script": "scripts/templates.ts",
-          "test": "STO-055.05 a guide that cites an unknown store identifier fails and names it"
+          "test": "STO-055.05 a guide that cites an unknown contract store identifier fails and names it"
         }
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-056.01",
       "self-test": [
         {
           "script": "scripts/check-spec-ids.ts",
-          "test": "STO-056.01 the binding checker fails and names the store prefix PRS"
+          "test": "STO-056.01 the binding checker fails and names the contract store prefix PRS"
         }
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-056.02",
       "self-test": [
         {
           "script": "scripts/check-spec-ids.ts",
-          "test": "STO-056.02 citations of the store identifiers PRS-001 and PRS-001.01 resolve"
+          "test": "STO-056.02 citations of the contract store identifiers PRS-001 and PRS-001.01 resolve"
         }
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-056.03",
       "self-test": [
         {
           "script": "scripts/check-spec-ids.ts",
-          "test": "STO-056.03 a citation of the unknown store identifier PRS-999 fails"
+          "test": "STO-056.03 a citation of the unknown contract store identifier PRS-999 fails"
         }
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-056.04",
       "self-test": [
         {
@@ -3859,7 +3859,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-057.01",
       "self-test": [
         {
@@ -3869,7 +3869,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-057.02",
       "self-test": [
         {
@@ -3879,7 +3879,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-057.03",
       "self-test": [
         {
@@ -3889,7 +3889,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-057.04",
       "self-test": [
         {
@@ -3899,7 +3899,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-057.05",
       "self-test": [
         {
@@ -3909,7 +3909,7 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-058.01",
       "self-test": [
         {
@@ -3919,22 +3919,22 @@
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-058.02",
       "self-test": [
         {
           "script": "scripts/templates.ts",
-          "test": "STO-058.02 a store config without the find text of an edit fails and names the text"
+          "test": "STO-058.02 a contract store config without the find text of an edit fails and names the text"
         }
       ]
     },
     {
-      "capability": "spec-store",
+      "capability": "contract-store",
       "id": "STO-058.03",
       "self-test": [
         {
           "script": "scripts/templates.ts",
-          "test": "STO-058.03 the template names the binding checker for each store command"
+          "test": "STO-058.03 the template names the binding checker for each contract store command"
         }
       ]
     },

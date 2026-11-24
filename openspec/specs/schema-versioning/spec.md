@@ -59,9 +59,9 @@ even if a tag moves. The pinned, hash-verified artifact version is the contract 
 ### Requirement: VER-007 Each binding keeps its own expected conformance failures
 
 A binding that fails a corpus case SHALL record the expected failure in its own repository. A change to that record
-MUST NOT need a change or a release of the store. The corpus states the same expected result for every binding.
+MUST NOT need a change or a release of the contract store. The corpus states the same expected result for every binding.
 
-#### Scenario: VER-007.01 A binding fix needs no store change
+#### Scenario: VER-007.01 A binding fix needs no contract store change
 
 - **WHEN** a binding fixes a defect that a corpus case exercises
-- **THEN** the binding removes its own expected-failure entry, and the store does not change
+- **THEN** the binding removes its own expected-failure entry, and the contract store does not change

@@ -48,6 +48,6 @@
 
 ## Workflow follow-up
 
-- After the store release, open a pin-move issue in each binding tracker that does not call `pin-move-check.yml`.
+- After the contract store release, open a pin-move issue in each binding tracker that does not call `pin-move-check.yml`.
 - Open an issue in each binding tracker to move its record to format 2, remove `spec-pin.json` and the workflow
   badge, and add the sticker.

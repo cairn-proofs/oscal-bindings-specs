@@ -1,9 +1,9 @@
 /**
- * Checks that the store links no individual issue or pull request in a binding repository (STO-003). A binding keeps
- * its own expected failures, so no store content depends on the state of a binding.
+ * Checks that the contract store links no individual issue or pull request in a binding repository (STO-003). A binding keeps
+ * its own expected failures, so no contract store content depends on the state of a binding.
  *
  * 1. The binding repositories are the GitHub repositories that `## Known implementations` in README.md links, and
- *    each GitHub repository named `oscal-bindings-<name>` other than the store, `oscal-bindings-specs`.
+ *    each GitHub repository named `oscal-bindings-<name>` other than the contract store, `oscal-bindings-specs`.
  * 2. The section must exist and link at least one repository.
  * 3. No tracked file outside openspec/changes/ contains `github.com/<owner>/<repo>/issues/<N>`,
  *    `github.com/<owner>/<repo>/pull/<N>`, or the reference `<owner>/<repo>#<N>` for a binding repository. The match
@@ -108,7 +108,7 @@ function selfTest(): number {
     ["line number is reported", run(doc(`one\ntwo ${PY}#6`)), "docs/note.md:2"],
     ["listed repository with another name fails", run(doc("acme/oscal-go#1")), "acme/oscal-go#1"],
     ["unlisted oscal-bindings-* repository fails", run(doc(`github.com/${GO}/issues/1`)), "oscal-bindings-go"],
-    ["store issue passes", run(doc(`${STORE_REPO}#23 github.com/${STORE_REPO}/issues/23`)), null],
+    ["contract store issue passes", run(doc(`${STORE_REPO}#23 github.com/${STORE_REPO}/issues/23`)), null],
     [
       "unrelated repository passes",
       run(doc("usnistgov/oscal-content#5 github.com/usnistgov/oscal-content/issues/5")),

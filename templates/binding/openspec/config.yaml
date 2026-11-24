@@ -1,4 +1,4 @@
-# Generated from openspec/config.yaml of the OSCAL bindings spec store (oscal-bindings-specs).
+# Generated from openspec/config.yaml of the OSCAL bindings contract store (oscal-bindings-specs).
 # Copy it into openspec/config.yaml of a binding from the spec artifact that the binding pins. On each pin move,
 # copy it again and add the entries of the binding again. The binding checker of the same spec artifact enforces the
 # identifier rules.
@@ -74,11 +74,11 @@ rules:
       Requirements MUST be 500 chars or less.
     - >-
       A prefix in `openspec/spec-ids.yaml` is never a prefix in the ledger `openspec/spec-ids.yaml` of the pinned
-      spec artifact of the store (SRF-010). The binding checker fails for such a prefix.
+      spec artifact of the contract store (SRF-010). The binding checker fails for such a prefix.
     - >-
-      A spec can cite a requirement or a scenario of the store, such as `[PRS-001]` or `[PRS-001.01]`. The citation
-      resolves in the pinned spec artifact of the store. The binding checker fails for a citation with a store
-      prefix that names no live or retired identifier of the store.
+      A spec can cite a requirement or a scenario of the contract store, such as `[PRS-001]` or `[PRS-001.01]`. The
+      citation resolves in the pinned spec artifact of the contract store. The binding checker fails for a citation
+      with a contract store prefix that names no live or retired identifier of the contract store.
     - >-
       Specs MUST NOT change behavior defined by the contract in the upstream store `oscal-bindings-specs`.
 

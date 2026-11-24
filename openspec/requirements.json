@@ -424,7 +424,7 @@
     {
       "id": "SRF-008",
       "capability": "binding-surface",
-      "title": "The store publishes a README sticker for bindings"
+      "title": "The contract store publishes a README sticker for bindings"
     },
     {
       "id": "SRF-009",
@@ -434,297 +434,297 @@
     {
       "id": "SRF-010",
       "capability": "binding-surface",
-      "title": "A binding-local requirement does not use a store prefix"
+      "title": "A binding-local requirement does not use a contract store prefix"
     },
     {
       "id": "STO-001",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "The shared spec artifact uses Semantic Versioning for its own compatibility"
     },
     {
       "id": "STO-002",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "The OSCAL release is recorded as Semantic Versioning build metadata"
     },
     {
       "id": "STO-003",
-      "capability": "spec-store",
-      "title": "Dependencies run from bindings to the store, never back"
+      "capability": "contract-store",
+      "title": "Dependencies run from bindings to the contract store, never back"
     },
     {
       "id": "STO-004",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "The version is the latest release or one step above it"
     },
     {
       "id": "STO-005",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "The valid corpus uses each listed key pair"
     },
     {
       "id": "STO-006",
-      "capability": "spec-store",
-      "title": "The store vendors the metaschema of each vendored OSCAL release"
+      "capability": "contract-store",
+      "title": "The contract store vendors the metaschema of each vendored OSCAL release"
     },
     {
       "id": "STO-007",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "A constraint that cannot work as written is defective"
     },
     {
       "id": "STO-008",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "The exclusion list names each defective constraint with its issue"
     },
     {
       "id": "STO-009",
-      "capability": "spec-store",
-      "title": "The store publishes a constraint manifest for each release"
+      "capability": "contract-store",
+      "title": "The contract store publishes a constraint manifest for each release"
     },
     {
       "id": "STO-010",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "The manifest holds each constraint that can decide validity"
     },
     {
       "id": "STO-011",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "An entry is reportable unless it cannot fail"
     },
     {
       "id": "STO-012",
-      "capability": "spec-store",
-      "title": "The store checks the queries against a reference evaluator"
+      "capability": "contract-store",
+      "title": "The contract store checks the queries against a reference evaluator"
     },
     {
       "id": "STO-013",
-      "capability": "spec-store",
-      "title": "The store checks the failures of the manifest against the reference evaluator"
+      "capability": "contract-store",
+      "title": "The contract store checks the failures of the manifest against the reference evaluator"
     },
     {
       "id": "STO-014",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "The corpus has a failing case for each reportable entry"
     },
     {
       "id": "STO-015",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "A type is identified by JSON pointers into the complete schema"
     },
     {
       "id": "STO-016",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "The manifest records each canonical type with its name, kind, and kind data"
     },
     {
       "id": "STO-017",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "Each kind of manifest entry adds fixed data"
     },
     {
       "id": "STO-018",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "The manifest records no field names, enum values, or enum member names"
     },
     {
       "id": "STO-019",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "Canonical names are unique PascalCase identifiers"
     },
     {
       "id": "STO-020",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "Each manifest format holds its format version in the member `format`"
     },
     {
       "id": "STO-021",
-      "capability": "spec-store",
-      "title": "The store publishes a JSON Schema for each manifest file"
+      "capability": "contract-store",
+      "title": "The contract store publishes a JSON Schema for each manifest file"
     },
     {
       "id": "STO-022",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "The JSON Schemas of the manifest files constrain every string"
     },
     {
       "id": "STO-023",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "The override data is the only hand-edited naming input"
     },
     {
       "id": "STO-024",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "Each override resolves and has an effect"
     },
     {
       "id": "STO-025",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "The manifest is generated from fixed inputs and is reproducible"
     },
     {
       "id": "STO-026",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "The generation checks the manifest of the previous release before use"
     },
     {
       "id": "STO-027",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "Published names stay the same in later releases"
     },
     {
       "id": "STO-028",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "The generation reports each dropped name"
     },
     {
       "id": "STO-029",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "A changed released name needs a breaking version increment"
     },
     {
       "id": "STO-030",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "The latest released artifact is the release tag with the highest precedence"
     },
     {
       "id": "STO-031",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "The name check fails when it cannot read the release tags"
     },
     {
       "id": "STO-032",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "Canonical type names derive from OSCAL name scopes, not from generator ordinals"
     },
     {
       "id": "STO-033",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "Each place in the schema has a local name"
     },
     {
       "id": "STO-034",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "A definition is named from its local name"
     },
     {
       "id": "STO-035",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "The root schema is named OscalDocument"
     },
     {
       "id": "STO-036",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "An override name has the status of a rule-derived name"
     },
     {
       "id": "STO-037",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "Document wrapper names derive from each wrapper's single body field"
     },
     {
       "id": "STO-038",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "Definitions that share a local name across modules get module-prefixed names"
     },
     {
       "id": "STO-039",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "Union branches are named from the union and the property that only the branch has"
     },
     {
       "id": "STO-040",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "A distinguishing property identifies a branch only when an object holds it"
     },
     {
       "id": "STO-041",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "Derivation guards abort on ambiguity, count mismatch, or uncovered collision"
     },
     {
       "id": "STO-042",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "The naming manifest is the shared source of truth across languages"
     },
     {
       "id": "STO-043",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "Inline types are named from the canonical name of their parent and their own local name"
     },
     {
       "id": "STO-044",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "Each enum site is a named type, marked open or closed"
     },
     {
       "id": "STO-045",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "An enum is named from its owner type and its property"
     },
     {
       "id": "STO-046",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "A property that holds one item or a list of items is a single-or-many type"
     },
     {
       "id": "STO-047",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "Scalar root wrappers collapse to plain aliased types"
     },
     {
       "id": "STO-048",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "Each pointer of an entry resolves and belongs to that entry only"
     },
     {
       "id": "STO-049",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "Types deduplicate only for union-branch copies and explicit merges"
     },
     {
       "id": "STO-050",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "Merged places are structurally identical"
     },
     {
       "id": "STO-051",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "A merge is not a name collision"
     },
     {
       "id": "STO-052",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "Derivation guards abort on a missing singular name, an ambiguous branch, or an unequal merge"
     },
     {
       "id": "STO-053",
-      "capability": "spec-store",
-      "title": "The store publishes a requirement index"
+      "capability": "contract-store",
+      "title": "The contract store publishes a requirement index"
     },
     {
       "id": "STO-054",
-      "capability": "spec-store",
-      "title": "The store publishes a JSON Schema for the traceability record"
+      "capability": "contract-store",
+      "title": "The contract store publishes a JSON Schema for the traceability record"
     },
     {
       "id": "STO-055",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "The spec artifact holds the binding templates"
     },
     {
       "id": "STO-056",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "The binding checker applies the identifier rules to the specs of a binding"
     },
     {
       "id": "STO-057",
-      "capability": "spec-store",
+      "capability": "contract-store",
       "title": "The binding checker checks the traceability record"
     },
     {
       "id": "STO-058",
-      "capability": "spec-store",
-      "title": "The template config follows the store config"
+      "capability": "contract-store",
+      "title": "The template config follows the contract store config"
     },
     {
       "id": "VER-001",

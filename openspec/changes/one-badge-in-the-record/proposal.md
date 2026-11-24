@@ -16,7 +16,7 @@ binding must keep in step on each pin move.
 2. The traceability record moves to format 2. It holds the pin (version, archive path, `sha256`), the operations,
    an optional corpus result, and the badge text. `spec-pin.json` and the workflow badge are removed.
 3. The requirement index marks each requirement that has a corpus case. This is the set of requirements that a
-   record can cite. The mark comes from `openspec/coverage.json`, so the store keeps no new list.
+   record can cite. The mark comes from `openspec/coverage.json`, so the contract store keeps no new list.
 4. The binding checker computes the badge text and fails when the committed text differs. It can write the derived
    members of the record.
 5. The pre-commit hook and the install script read the pin from the record. A pin move edits one file, then runs

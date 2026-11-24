@@ -1,6 +1,6 @@
 /**
  * Evaluates the constraint manifest on the JSON documents of a clone of usnistgov/oscal-content, and reports the result for
- * each document (tasks.md 3.5 of the change validate-metaschema-constraints). The clone is not part of the store. The
+ * each document (tasks.md 3.5 of the change validate-metaschema-constraints). The clone is not part of the contract store. The
  * reference evaluator (STO-012) gives the failures. The RFC 9535 evaluation of the manifest (STO-013) must give the same
  * number of failures for each entry.
  *

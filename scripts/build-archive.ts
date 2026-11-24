@@ -58,7 +58,7 @@ function selfTest(): number {
   const releases = fs.readdirSync("metaschema", { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name);
   const inArchive = archivePaths("HEAD", CONTENTS);
   test("STO-006.02: the archive holds each file of metaschema/<release>/, with each module, the datatypes file and SHA256SUMS", () => {
-    if (releases.length === 0) return "the store holds no metaschema release";
+    if (releases.length === 0) return "the contract store holds no metaschema release";
     for (const release of releases) {
       const dir = `metaschema/${release}`;
       const listed = fs

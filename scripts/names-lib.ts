@@ -1,6 +1,6 @@
 /**
  * The naming manifest: JSON pointers, the derivation of canonical type names from the complete OSCAL schema, the
- * writer, and the manifest validator. The rules are in openspec/specs/spec-store. design.md of the change
+ * writer, and the manifest validator. The rules are in openspec/specs/contract-store. design.md of the change
  * define-names-manifest-format explains the choices.
  *
  * The derivation walks the schema without following `$ref`, so recursive OSCAL types cannot make it loop. Pointers
@@ -132,7 +132,7 @@ export interface DeriveInput {
   schemaFile: string;
   schemaBytes: Buffer | string;
   overrides: Overrides;
-  /** The manifest of the previous OSCAL release, already validated, when the store holds one. */
+  /** The manifest of the previous OSCAL release, already validated, when the contract store holds one. */
   previous?: Manifest;
 }
 
@@ -491,7 +491,7 @@ export function validateOverrides(data: unknown, schemaPath = "manifest/override
   return schemaErrors(validatorFor(schemaPath), data, "overrides.json");
 }
 
-/** The manifest format versions that the store supports (GEN-003). */
+/** The manifest format versions that the contract store supports (GEN-003). */
 const SUPPORTED_FORMATS: readonly unknown[] = [1];
 
 /**
