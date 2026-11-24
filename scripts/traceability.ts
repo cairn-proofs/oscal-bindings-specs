@@ -28,14 +28,14 @@ interface Entry {
 
 /**
  * Checks `record` against the JSON Schema `schema` and the requirement index `index` of the contract store. `files` holds the
- * main specs of the binding. `storePrefixes` holds the prefixes of the contract store ledger.
+ * main specs of the binding. `contractStorePrefixes` holds the prefixes of the contract store ledger.
  */
 export function checkRecord(
   record: unknown,
   schema: object,
   index: RequirementIndex,
   files: Files,
-  storePrefixes: Set<string>,
+  contractStorePrefixes: Set<string>,
 ): string[] {
   const failures: string[] = [];
 
@@ -71,7 +71,7 @@ export function checkRecord(
   for (const entry of entries) {
     const id = entry["binding-local"];
     if (id === undefined) continue;
-    if (storePrefixes.has(id.split("-")[0])) {
+    if (contractStorePrefixes.has(id.split("-")[0])) {
       failures.push(`[record-local] ${entry.name}: ${id} uses a prefix of the contract store.`);
     } else if (!local.has(canonical(id)!)) {
       failures.push(`[record-local] ${entry.name}: ${id} names no requirement in the main specs of the binding.`);
@@ -91,7 +91,7 @@ export function checkRecord(
 function selfTest(): number {
   const schema = JSON.parse(fs.readFileSync(RECORD_SCHEMA, "utf8"));
   const index: RequirementIndex = JSON.parse(fs.readFileSync(INDEX, "utf8"));
-  const storePrefixes = new Set(index.requirements.map((r) => r.id.split("-")[0]));
+  const contractStorePrefixes = new Set(index.requirements.map((r) => r.id.split("-")[0]));
   const files: Files = {
     "openspec/specs/python-api/spec.md":
       "# python-api Specification\n\n## Purpose\nTest.\n\n## Requirements\n\n" +
@@ -107,7 +107,7 @@ function selfTest(): number {
   let failed = 0;
   /** `expect` null: zero failures. Otherwise some failure starts with `[rule]` and contains `needle`. */
   const scenario = (name: string, data: unknown, expect: { rule: string; needle: string } | null) => {
-    const out = checkRecord(data, schema, index, files, storePrefixes);
+    const out = checkRecord(data, schema, index, files, contractStorePrefixes);
     const ok =
       expect === null
         ? out.length === 0

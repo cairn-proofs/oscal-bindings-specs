@@ -54,5 +54,5 @@ GIT_DIR=$(cd "$(git rev-parse --git-dir)" && pwd)
 export GIT_DIR
 cd "$work/staged"
 
-node "$checker" --store "$store" --record "$RECORD"
+node "$checker" --contract-store "$store" --record "$RECORD"
 openspec validate --all --strict

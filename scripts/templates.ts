@@ -188,7 +188,7 @@ entries of the binding to \`openspec/config.yaml\` again.
 ## Run the checker
 
 \`\`\`sh
-node <extracted archive>/templates/binding/bin/check-binding.mjs --store <extracted archive> [--record <path>]
+node <extracted archive>/templates/binding/bin/check-binding.mjs --contract-store <extracted archive> [--record <path>]
 \`\`\`
 
 Run it in the root directory of the binding. \`<extracted archive>\` is the top directory of the extracted spec
@@ -388,19 +388,23 @@ async function selfTest(): Promise<number> {
     // The fixtures are new repositories, so a base ref of the contract store, such as the one CI sets, does not apply to them.
     const fixtureEnv = { ...process.env, SPEC_IDS_BASE: "" };
     const run = (dir: string) =>
-      spawnSync("node", [path.join(bin, "check-binding.mjs"), "--store", root], { cwd: dir, encoding: "utf8", env: fixtureEnv });
+      spawnSync("node", [path.join(bin, "check-binding.mjs"), "--contract-store", root], { cwd: dir, encoding: "utf8", env: fixtureEnv });
     await test("STO-055.03 the bundle runs with no node_modules and passes a valid binding", () => {
       const r = run(fixture("valid"));
       return r.status === 0 || `exit ${r.status}: ${r.stderr}`;
     });
+    await test("the bundle still accepts the former option --store", () => {
+      const r = spawnSync("node", [path.join(bin, "check-binding.mjs"), "--store", root], { cwd: fixture("alias"), encoding: "utf8", env: fixtureEnv });
+      return r.status === 0 || `exit ${r.status}: ${r.stderr}`;
+    });
     await test("the bundle fails a binding with a contract store prefix", () => {
       const r = run(
-        fixture("store-prefix", (dir) => {
+        fixture("contract-store-prefix", (dir) => {
           const ledger = path.join(dir, "openspec/spec-ids.yaml");
           fs.writeFileSync(ledger, fs.readFileSync(ledger, "utf8").replace("prefixes:", "prefixes:\n  PRS:\n    capability: other\n    next: 1"));
         }),
       );
-      return (r.status === 1 && r.stderr.includes("[store-prefix]")) || `exit ${r.status}: ${r.stderr}`;
+      return (r.status === 1 && r.stderr.includes("[contract-store-prefix]")) || `exit ${r.status}: ${r.stderr}`;
     });
     await test("the bundle fails a binding with a duplicate operation name", () => {
       const r = run(
@@ -446,7 +450,7 @@ async function selfTest(): Promise<number> {
       const r = install(dir, first);
       const missing = installed.filter((f) => !fs.existsSync(path.join(dir, f)));
       const hooksPath = execFileSync("git", ["config", "--get", "core.hooksPath"], { cwd: dir, encoding: "utf8" }).trim();
-      const checker = spawnSync("node", [path.join(bin, "check-binding.mjs"), "--store", root], { cwd: dir, encoding: "utf8", env: fixtureEnv });
+      const checker = spawnSync("node", [path.join(bin, "check-binding.mjs"), "--contract-store", root], { cwd: dir, encoding: "utf8", env: fixtureEnv });
       return (
         (r.status === 0 && missing.length === 0 && hooksPath === ".githooks" &&
           fs.readFileSync(path.join(dir, ".githooks/pre-commit"), "utf8").includes(first.sha) && checker.status === 0) ||

@@ -44,7 +44,7 @@ entries of the binding to `openspec/config.yaml` again.
 ## Run the checker
 
 ```sh
-node <extracted archive>/templates/binding/bin/check-binding.mjs --store <extracted archive> [--record <path>]
+node <extracted archive>/templates/binding/bin/check-binding.mjs --contract-store <extracted archive> [--record <path>]
 ```
 
 Run it in the root directory of the binding. `<extracted archive>` is the top directory of the extracted spec

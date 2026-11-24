@@ -93,11 +93,11 @@ export function checkSpecIds(files: Files, base: Files | Error, store?: StoreSpe
 
   const ledger = parseLedger(files[LEDGER], failures);
 
-  // store-prefix: a prefix of a binding is never a prefix of its contract store (SRF-010).
+  // contract-store-prefix: a prefix of a binding is never a prefix of its contract store (SRF-010).
   if (ledger && store) {
     for (const prefix of ledger.prefixes.keys()) {
       if (store.ledger.prefixes.has(prefix)) {
-        failures.push(`[store-prefix] prefix ${prefix} of ${LEDGER} is a prefix of the contract store.`);
+        failures.push(`[contract-store-prefix] prefix ${prefix} of ${LEDGER} is a prefix of the contract store.`);
       }
     }
   }
@@ -542,12 +542,12 @@ function selfTest(): number {
   const storePrefix = (files: Files) =>
     (files[LEDGER] = bindingLedger("  PRS:\n    capability: python-parse\n    next: 1\n"));
   bindingScenario("SRF-010.01 a binding ledger with the contract store prefix PRS fails", storePrefix, {
-    rule: "store-prefix",
+    rule: "contract-store-prefix",
     needle: "prefix PRS",
   });
   bindingScenario("SRF-010.02 the binding prefix PYB, which the contract store does not hold, passes", () => {}, null);
   bindingScenario("STO-056.01 the binding checker fails and names the contract store prefix PRS", storePrefix, {
-    rule: "store-prefix",
+    rule: "contract-store-prefix",
     needle: "prefix PRS of openspec/spec-ids.yaml is a prefix of the contract store",
   });
   bindingScenario(

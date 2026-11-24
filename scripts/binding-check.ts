@@ -4,7 +4,7 @@
  * the extracted spec artifact that the binding pins. `npm run templates:write` bundles this file into
  * templates/binding/bin/check-binding.mjs, which runs with Node.js and git, and no installed package.
  *
- *   node check-binding.mjs --store <dir> [--record <path>]
+ *   node check-binding.mjs --contract-store <dir> [--record <path>]
  *
  * SPEC_IDS_BASE names the git ref whose scenario identifiers must not vanish (default HEAD). Each failure starts with
  * the name of the rule that failed. The exit code is 1 on a failure, 2 on a usage error, and 0 otherwise.
@@ -17,7 +17,7 @@ import { LEDGER } from "./spec-ids.js";
 import { readRepository } from "./spec-markdown.js";
 import { checkRecord, INDEX, RECORD, RECORD_SCHEMA } from "./traceability.js";
 
-const USAGE = "usage: node check-binding.mjs --store <dir> [--record <path>]";
+const USAGE = "usage: node check-binding.mjs --contract-store <dir> [--record <path>]";
 
 /** Runs the binding checker with the arguments `argv` in the directory `cwd`. Gives the exit code. */
 export function main(argv: string[], cwd: string): number {
@@ -25,7 +25,8 @@ export function main(argv: string[], cwd: string): number {
     const at = argv.indexOf(name);
     return at === -1 ? undefined : argv[at + 1];
   };
-  const storeDir = option("--store");
+  // `--store` is the former name of the option. A hook that an earlier release installed still passes it.
+  const storeDir = option("--contract-store") ?? option("--store");
   if (storeDir === undefined) {
     console.error(USAGE);
     return 2;
