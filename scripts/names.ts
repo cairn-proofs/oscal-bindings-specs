@@ -294,6 +294,21 @@ function selfTest(): number {
     );
     return nameAt(r, `${D(group)}/anyOf/0`) === "GroupWithGroups" && nameAt(r, `${D(group)}/anyOf/1`) === "GroupWithControls";
   });
+  test("STO-040.01 each variant records its distinguishing property when the branch defines it as optional", () => {
+    const r = run(
+      schemaOf({
+        [group]: {
+          type: "object",
+          anyOf: [{ properties: { title: str, groups: list(ref(group)) } }, { properties: { title: str, controls: list(str) } }],
+        },
+      }),
+    );
+    const u = entryNamed(r, "Group");
+    return (
+      u?.kind === "union" &&
+      JSON.stringify(u.variants) === '[{"type":"GroupWithControls","property":"controls"},{"type":"GroupWithGroups","property":"groups"}]'
+    );
+  });
   test("STO-043.01 inline object named from its parent", () =>
     nameAt(run(schemaOf({ [sysComp]: obj({ status: obj({ state: str }) }) })), `${D(sysComp)}/properties/status`) === "SystemComponentStatus");
   test("STO-043.02 two inline types with the same local name stay distinct", () => {

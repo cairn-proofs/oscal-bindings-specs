@@ -144,7 +144,7 @@
       "input": "documents/valid/group-without-distinguishing-property.json",
       "document-type": "catalog",
       "expected": "expected/group-without-distinguishing-property.json",
-      "requirements": ["STO-040.01"],
+      "requirements": ["PRS-024.01"],
       "notes": "Written for this corpus. The group holds a title and neither groups nor controls, so it conforms to both branches of the catalog group union."
     },
     {

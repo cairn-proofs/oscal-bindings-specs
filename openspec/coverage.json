@@ -2158,6 +2158,13 @@
       "id": "PRS-023.04"
     },
     {
+      "capability": "document-parsing",
+      "corpus": [
+        "round-trip/group-without-distinguishing-property"
+      ],
+      "id": "PRS-024.01"
+    },
+    {
       "capability": "serialization",
       "corpus": [
         "round-trip/component-definition"
@@ -3329,10 +3336,13 @@
     },
     {
       "capability": "contract-store",
-      "corpus": [
-        "round-trip/group-without-distinguishing-property"
-      ],
-      "id": "STO-040.01"
+      "id": "STO-040.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-040.01 each variant records its distinguishing property when the branch defines it as optional"
+        }
+      ]
     },
     {
       "capability": "contract-store",

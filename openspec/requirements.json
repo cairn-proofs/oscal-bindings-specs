@@ -372,6 +372,11 @@
       "title": "A JSON string has no lone surrogate escape"
     },
     {
+      "id": "PRS-024",
+      "capability": "document-parsing",
+      "title": "An object without an optional distinguishing property conforms to each branch"
+    },
+    {
       "id": "SER-001",
       "capability": "serialization",
       "title": "Serialization emits OSCAL property keys"

@@ -789,14 +789,13 @@ place in the schema.
 ### Requirement: STO-040 A distinguishing property identifies a branch only when an object holds it
 
 The `property` member of each variant of a `union` entry of [STO-017] SHALL hold the distinguishing property of
-[STO-039] for that branch. The branch can define that property as optional. An object that holds no distinguishing
-property can then conform to more than one branch.
+[STO-039] for that branch, also when the branch defines that property as optional.
 
-#### Scenario: STO-040.01 Object without an optional distinguishing property conforms to each branch
+#### Scenario: STO-040.01 Variant records its distinguishing property when the branch defines it as optional
 
-- **WHEN** the `CatalogGroup` entry records the distinguishing properties `groups` and `controls`, each branch defines
-  its distinguishing property as optional, and a group object holds `title` and neither distinguishing property
-- **THEN** the object conforms to both `CatalogGroupWithGroups` and `CatalogGroupWithControls`
+- **WHEN** the `CatalogGroup` entry records the distinguishing properties `groups` and `controls`, and each branch
+  defines its distinguishing property as optional
+- **THEN** the `property` member of the two variants is `groups` and `controls`
 
 ### Requirement: STO-041 Derivation guards abort on ambiguity, count mismatch, or uncovered collision
 
