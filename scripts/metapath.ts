@@ -215,7 +215,7 @@ export function callsDoc(x: Expr): boolean {
   }
 }
 
-/** The part of a target that selects nodes of the same document (CNS-007.01), and whether a `doc()` part was dropped. */
+/** The part of a target that selects nodes of the same document (STO-060.02), and whether a `doc()` part was dropped. */
 export function localPart(e: Expr): { expr: Expr | null; dropped: boolean } {
   if (e.t === "union") {
     const keep = e.parts.filter((p) => !callsDoc(p));

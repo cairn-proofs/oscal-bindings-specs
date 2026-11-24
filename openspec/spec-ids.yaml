@@ -40,7 +40,7 @@ prefixes:
     next: 4
   STO:
     capability: contract-store
-    next: 59
+    next: 61
   YML:
     capability: yaml-documents
     next: 12
@@ -427,3 +427,7 @@ retired:
     reason: >-
       PRS-004 and VER-002 state the same rule, and PRS-004.01 is the scenario MDL-008.01.
     replaced_by: PRS-004
+  - id: CNS-007.01
+    reason: >-
+      The scenario describes how the constraint manifest is generated, so it moved to the contract-store capability.
+    replaced_by: STO-060.02

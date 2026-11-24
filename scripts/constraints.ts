@@ -182,8 +182,10 @@ function selfTest(): number {
   test("STO-009.01: an edit that changes only the layout of the file fails the check", () =>
     checkCommitted(schema, fileOf("1.2.3"), `${committedText}\n`, generated1).some((p) => p.includes("differs from the generator output")));
   test("STO-009.01: a manifest file that does not exist fails the check", () => checkCommitted(schema, fileOf("1.2.3"), undefined, generated1).some((p) => p.includes("does not exist")));
-  test("CNS-006: a pattern that is not an I-Regexp fails the check", () => checkManifest(schema, edited((m) => (m.entries.find((e) => e.id === "oscal-check-hash-length-SHA2-3-256")!.pattern = "\\d+"))).length > 0);
-  test("CNS-006: every query compiles and every pattern is an I-Regexp", () => checkManifest(schema, manifest).length === 0);
+  test("STO-059.01: a pattern that is not an I-Regexp fails the check", () => checkManifest(schema, edited((m) => (m.entries.find((e) => e.id === "oscal-check-hash-length-SHA2-3-256")!.pattern = "\\d+"))).length > 0);
+  test("STO-059.02: every query compiles and every pattern is an I-Regexp", () => checkManifest(schema, manifest).length === 0);
+  test("STO-060.01: an entry without target queries fails the check", () =>
+    checkManifest(schema, edited((m) => delete (m.entries[0] as Partial<Entry>).target)).length > 0);
   test("STO-010.01: the manifest holds no entry of the level WARNING", () => entries.every((e) => e.level === "ERROR" || e.level === "CRITICAL"));
   test("STO-010.02: the manifest holds no excluded constraint", () =>
     gen.exclusions.excluded.every((x) => !("id" in x) || byId(x.id!).length === 0) && byId("oscal-metadata-action-type-values").length === 0);
@@ -200,7 +202,7 @@ function selfTest(): number {
 
   // D9, CNS-014, CNS-015
   test("CNS-014.02: the index entry with a doc() branch states that its index is partial", () => one("oscal-ssp-by-component-uuid-index").partial === true && one("oscal-index-metadata-party-uuid", "index").partial === false);
-  test("CNS-007.01: the target queries of that entry select the nodes of the same document", () => !one("oscal-ssp-by-component-uuid-index").target.some((q) => q.includes("doc")));
+  test("STO-060.02: the target queries of that entry select the nodes of the same document", () => !one("oscal-ssp-by-component-uuid-index").target.some((q) => q.includes("doc")));
 
   // D7, CNS-012, CNS-013
   test("CNS-012.02: a key field with the pattern #(.*) has the prefix #", () => JSON.stringify(one("oscal-by-component-uuid-index")["key-fields"]![0].prefix) === '"#"');
@@ -238,7 +240,7 @@ function selfTest(): number {
     const q = e.context.elements["hash"];
     return (q !== undefined && q.some((x) => run(x, [{ algorithm: "SHA-256", value: "x" }]).length === 1)) || JSON.stringify(q);
   });
-  test("CNS-007: the document context queries select the instances of the declaring definition", () => {
+  test("STO-060: the document context queries select the instances of the declaring definition", () => {
     const e = one("oscal-check-hash-length-SHA2-3-256");
     const doc = { catalog: { "back-matter": { resources: [{ rlinks: [{ hashes: [{ algorithm: "SHA-256", value: "x" }] }] }] } } };
     return e.context.document.flatMap((q) => run(q, doc)).length === 1;
@@ -248,10 +250,10 @@ function selfTest(): number {
     return e.context.elements["property"] === undefined && e.context.elements["control"] !== undefined;
   });
   test("CNS-009: an entry on a control has element context queries for the type control", () => one("oscal-control-prop-name").context.elements["control"] !== undefined);
-  test("CNS-007: a document context query of a root assembly selects the root", () => one("oscal-catalog-parts").context.document.join() === "$['catalog']");
+  test("STO-060: a document context query of a root assembly selects the root", () => one("oscal-catalog-parts").context.document.join() === "$['catalog']");
   test("D8: the elements of the index entries are kept, and an element context query runs on an array", () =>
     Object.values(one("oscal-catalog-parts").context.elements).every((qs) => qs.every((q) => q.startsWith("$"))) );
-  test("CNS-007: the entries on a flag select the flag of each definition that has it", () => {
+  test("STO-060: the entries on a flag select the flag of each definition that has it", () => {
     const e = byId("oscal-assessment-part-values")[0];
     return e.definition === "flag:name" && e.context.document.length > 0 && e.context.document.every((q) => q.endsWith("['name']"));
   });
@@ -371,7 +373,7 @@ function selfTest(): number {
       .map((f) => f.location);
     return JSON.stringify(got) === JSON.stringify(["$[0][1]['props'][0]['name']"]) || JSON.stringify(got);
   });
-  test("CNS-007: the element types of kind document hold context nodes",() => one("oscal-catalog-parts").context.elements["catalog-document"] !== undefined);
+  test("STO-060: the element types of kind document hold context nodes",() => one("oscal-catalog-parts").context.elements["catalog-document"] !== undefined);
 
   // STO-012, STO-013: the checks against the reference evaluator
   const schemaFile = "schemas/1.2.3/oscal_complete_schema.json";

@@ -29,12 +29,12 @@
     {
       "id": "CNS-006",
       "capability": "constraint-validation",
-      "title": "The manifest selects nodes with RFC 9535 queries"
+      "title": "A binding evaluates the queries of the manifest as RFC 9535 defines"
     },
     {
       "id": "CNS-007",
       "capability": "constraint-validation",
-      "title": "Each entry selects context nodes and target nodes"
+      "title": "A binding runs each query of an entry on its own input"
     },
     {
       "id": "CNS-008",
@@ -730,6 +730,16 @@
       "id": "STO-058",
       "capability": "contract-store",
       "title": "The template config follows the contract store config"
+    },
+    {
+      "id": "STO-059",
+      "capability": "contract-store",
+      "title": "The manifest selects nodes with RFC 9535 queries"
+    },
+    {
+      "id": "STO-060",
+      "capability": "contract-store",
+      "title": "Each entry of the constraint manifest holds three groups of queries"
     },
     {
       "id": "VER-001",

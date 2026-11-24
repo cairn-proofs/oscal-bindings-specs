@@ -129,20 +129,6 @@
     },
     {
       "capability": "constraint-validation",
-      "id": "CNS-007.01",
-      "self-test": [
-        {
-          "script": "scripts/constraint-reference.ts",
-          "test": "CNS-007.01: the target of a constraint with a doc() branch selects the nodes of the same document only"
-        },
-        {
-          "script": "scripts/constraints.ts",
-          "test": "CNS-007.01: the target queries of that entry select the nodes of the same document"
-        }
-      ]
-    },
-    {
-      "capability": "constraint-validation",
       "id": "CNS-007.02",
       "self-test": [
         {
@@ -3945,6 +3931,50 @@
         {
           "script": "scripts/templates.ts",
           "test": "STO-058.03 the template names the binding checker for each contract store command"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-059.01",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "STO-059.01: a pattern that is not an I-Regexp fails the check"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-059.02",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "STO-059.02: every query compiles and every pattern is an I-Regexp"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-060.01",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "STO-060.01: an entry without target queries fails the check"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-060.02",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "STO-060.02: the target of a constraint with a doc() branch selects the nodes of the same document only"
+        },
+        {
+          "script": "scripts/constraints.ts",
+          "test": "STO-060.02: the target queries of that entry select the nodes of the same document"
         }
       ]
     },

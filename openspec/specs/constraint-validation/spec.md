@@ -8,36 +8,21 @@ failure.
 
 ## Requirements
 
-### Requirement: CNS-006 The manifest selects nodes with RFC 9535 queries
+### Requirement: CNS-006 A binding evaluates the queries of the manifest as RFC 9535 defines
 
-Each entry SHALL select nodes with queries in the syntax of RFC 9535 (JSONPath). A query of the
-manifest SHALL use only the syntax and the functions of RFC 9535. Each regular expression in it
-SHALL be an I-Regexp of RFC 9485. An implementation SHALL evaluate each query as RFC 9535
-defines. When several queries of one entry select nodes for the same purpose, the result is the
-union of their nodes, each node once.
+A binding SHALL evaluate each query of the manifest as RFC 9535 defines. When several queries of one entry select
+nodes for the same purpose, the result is the union of their nodes, each node once.
 
 #### Scenario: CNS-006.01 Two queries select the same node
 
 - **WHEN** two queries of one entry select the same node for the same purpose
 - **THEN** the result holds that node once
 
-### Requirement: CNS-007 Each entry selects context nodes and target nodes
+### Requirement: CNS-007 A binding runs each query of an entry on its own input
 
-Each entry SHALL hold these queries of [CNS-006]:
-
-1. Document context queries. They select from a document the context nodes, to which the
-   constraint applies.
-2. Element context queries for each element type whose element can hold a context node. They run
-   on an array that holds only the element. An `allowed-values` entry can lack them for a type,
-   as a later requirement states.
-3. Target queries. They run on an array that holds only one context node, and select its target
-   nodes.
-
-#### Scenario: CNS-007.01 A target in another document
-
-- **WHEN** the Metapath target of a constraint is a union of a path in the same document and a
-  `doc()` path into another document
-- **THEN** the target queries select only the nodes of that union in the same document
+A binding SHALL run the queries that [STO-060] names as follows. It runs the document context queries on the document.
+It runs the element context queries on an array that holds only the element. It runs the target queries on an array
+that holds only one context node, and they select the target nodes of that context node.
 
 #### Scenario: CNS-007.02 Element context queries of a type
 
@@ -145,7 +130,7 @@ the value in this comparison.
 
 ### Requirement: CNS-009 An element decides an allowed-values entry only with its applicable set
 
-An `allowed-values` entry SHALL have the element context queries of [CNS-007] for an element type
+An `allowed-values` entry SHALL have the element context queries of [STO-060] for an element type
 when, and only when, the element holds the context node of each entry that can be in the
 applicable set of [CNS-008] of each target node of the entry in an element of that type.
 
@@ -274,7 +259,7 @@ failure.
 ### Requirement: CNS-017 A document meets the manifest when no entry fails for it
 
 A document meets the constraint manifest when no entry gives a failure for it, with the document
-context queries of [CNS-007]. The requirement for the kind of an entry states when the entry
+context queries of [STO-060]. The requirement for the kind of an entry states when the entry
 gives a failure. Each failure SHALL have a location and the `id` of its entry. The location is the
 location of [CNS-024] of the target node, or of the context node for a `has-cardinality` entry.
 An entry SHALL give at most one failure for one location, or for one location and one key of

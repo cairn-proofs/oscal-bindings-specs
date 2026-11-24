@@ -28,7 +28,7 @@ the binding pins. A scenario identifier, a retired requirement identifier, or an
 
 ### Requirement: SRF-008 The store publishes a README sticker for bindings
 
-**Reason**: The sticker is one badge that reads the traceability record. [STO-060] replaces this requirement.
+**Reason**: The sticker is one badge that reads the traceability record. [STO-062] replaces this requirement.
 
 **Migration**: A binding replaces both badges with the badge in `docs/sticker.md`, and removes `spec-pin.json`.
 
@@ -108,7 +108,7 @@ whole percentage.
 
 ### Requirement: SRF-018 A binding shows the sticker only when it meets the sticker conditions
 
-A binding that shows the sticker of [STO-060] MUST meet all of these conditions:
+A binding that shows the sticker of [STO-062] MUST meet all of these conditions:
 
 1. `pin.version` of its record is the spec artifact version that the binding pins, as [VER-005] defines.
 2. The record passes the binding checker.

@@ -1,5 +1,5 @@
 /**
- * The RFC 9535 implementation of the contract store tooling (openspec/specs/constraint-validation, CNS-006): json-p3 in strict
+ * The RFC 9535 implementation of the contract store tooling (openspec/specs/contract-store, STO-059): json-p3 in strict
  * mode, which turns off its extensions to the standard.
  */
 import { JSONPathEnvironment, type JSONPathQuery } from "json-p3";

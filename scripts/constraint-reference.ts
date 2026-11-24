@@ -162,7 +162,7 @@ export function evaluate(constraints: Constraint[], tree: MNode, release = "1.2.
   for (const phase of ["index", "other"] as const) {
     for (const c of constraints) {
       if ((c.kind === "index") !== (phase === "index")) continue;
-      const { expr, dropped } = localPart(parse(c.target)); // CNS-007.01: the nodes of the same document
+      const { expr, dropped } = localPart(parse(c.target)); // STO-060.02: the nodes of the same document
       if (c.kind === "index" && dropped) partial.add(c.indexName!);
       const matcher = c.kind === "matches" ? valueMatcher(release, c) : undefined;
       const keyExprs = (c.keyFields ?? []).map((kf) => parse(kf.target));
@@ -449,7 +449,7 @@ function selfTest(): number {
     same(run(sspConstraints, ssp([byComponent("a", [{ href: "#only-in-the-leveraged-ssp", rel: "provided-by" }])])).failures.length, 0));
   test("D9: a constraint of an index without a part in another document is not partial", () =>
     same(run(byId("oscal-index-metadata-party-uuid", "index"), withMeta({})).partialIndexes, []));
-  test("CNS-007.01: the target of a constraint with a doc() branch selects the nodes of the same document only", () => {
+  test("STO-060.02: the target of a constraint with a doc() branch selects the nodes of the same document only", () => {
     const e = parseMetapath(byId("oscal-ssp-by-component-uuid-index")[0].target);
     const { expr, dropped } = localPart(e);
     return (dropped && expr !== null && !callsDoc(expr)) || "doc() branch not dropped";
