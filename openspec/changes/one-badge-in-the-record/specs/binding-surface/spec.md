@@ -5,9 +5,9 @@
 ### Requirement: SRF-004 Contract identifiers in a traceability record resolve in the requirement index
 
 Each contract requirement identifier in a traceability record MUST name a requirement in the requirement index of
-[STO-053] that the index marks `binding`. The index is the one in the spec artifact version that the binding pins. A
-scenario identifier, a retired requirement identifier, or an identifier that the index does not mark `binding` does not
-meet this rule.
+[STO-053], and the entry MUST have `implemented-by` `binding`. The index is the one in the spec artifact version that
+the binding pins. A scenario identifier, a retired requirement identifier, or an identifier whose entry has another
+`implemented-by` does not meet this rule.
 
 #### Scenario: SRF-004.01 Live requirement resolves
 
@@ -19,9 +19,9 @@ meet this rule.
 - **WHEN** a record entry holds the retired identifier [MDL-004]
 - **THEN** the record is invalid, because the index has no entry for that identifier
 
-#### Scenario: SRF-004.03 Requirement for the contract store only does not resolve
+#### Scenario: SRF-004.03 Requirement that the contract store implements does not resolve
 
-- **WHEN** a record entry holds [STO-053], and the index marks it `binding` false
+- **WHEN** a record entry holds [STO-053], and the index gives it `implemented-by` `contract-store`
 - **THEN** the record is invalid
 
 ## REMOVED Requirements
@@ -56,20 +56,20 @@ have `corpus`, which holds `cases`, `failed` and `expected`. The JSON Schema of 
 - **WHEN** a record has `format`, `pin`, `operations`, `requirements` and `badge`, and has no `corpus` member
 - **THEN** the record conforms to the JSON Schema
 
-### Requirement: SRF-016 Each requirement for a binding has a status in the record
+### Requirement: SRF-016 Each requirement that a binding implements has a status in the record
 
 The member `requirements` SHALL hold one status for each requirement that the requirement index of the pinned version
-marks `binding`, and for no other requirement. A status is `implemented` or `not-implemented`. A requirement that an
+gives `implemented-by` `binding`, and for no other requirement. A status is `implemented` or `not-implemented`. A requirement that an
 operation entry cites MUST have the status `implemented`.
 
 #### Scenario: SRF-016.01 Every binding requirement has a status
 
-- **WHEN** the index of the pinned version marks 100 requirements `binding`
+- **WHEN** the index of the pinned version gives 100 requirements `implemented-by` `binding`
 - **THEN** `requirements` holds 100 statuses
 
-#### Scenario: SRF-016.02 Requirement for the contract store only has no status
+#### Scenario: SRF-016.02 Requirement that the contract store implements has no status
 
-- **WHEN** `requirements` holds a status for [STO-053], and the index marks it `binding` false
+- **WHEN** `requirements` holds a status for [STO-053], and the index gives it `implemented-by` `contract-store`
 - **THEN** the record is invalid
 
 #### Scenario: SRF-016.03 Cited requirement is implemented

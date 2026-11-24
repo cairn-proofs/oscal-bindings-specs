@@ -2,10 +2,10 @@
 
 ## 1. Ledger and index
 
-- [ ] 1.1 In `scripts/check-spec-ids.ts`, require `binding` in each prefix entry of the contract store ledger, and read
-  it. A binding ledger needs no `binding`. Add `binding` to each prefix entry of `openspec/spec-ids.yaml`: false for
-  `STO`, true for each other prefix. Verify: self-tests `STO-059.01` and `STO-059.02` pass.
-- [ ] 1.2 In `scripts/requirements.ts`, add `binding` to each index entry from the ledger. Verify: self-tests
+- [ ] 1.1 In `scripts/check-spec-ids.ts`, require `implemented-by` in each prefix entry of the contract store ledger, and
+  read it. A binding ledger needs no `implemented-by`. Add `implemented-by` to each prefix entry of
+  `openspec/spec-ids.yaml`: `contract-store` for `STO`, `binding` for each other prefix. Verify: self-tests `STO-059.01` and `STO-059.02` pass.
+- [ ] 1.2 In `scripts/requirements.ts`, add `implemented-by` to each index entry from the ledger. Verify: self-tests
   `STO-053.05` and `STO-053.06` pass.
 - [ ] 1.3 Rewrite `openspec/traceability.schema.json` for format 2 ([SRF-015]). Verify: the self-test of
   `scripts/requirements.ts` covers `SRF-015.01` and `SRF-015.02`.
@@ -53,6 +53,6 @@
 - After the contract store release, open a pin-move issue in each binding tracker that does not call
   `pin-move-check.yml`.
 - Open an issue in each binding tracker to move its record to format 2, give a status to each requirement that the
-  index marks `binding`, remove `spec-pin.json` and the workflow badge, and add the sticker.
+  index gives `implemented-by` `binding`, remove `spec-pin.json` and the workflow badge, and add the sticker.
 - Open an issue in the contract store for the requirements that have no corpus case, starting with the generated
   names, so that a binding can check them.

@@ -6,7 +6,8 @@
 
 The contract store SHALL publish `openspec/requirements.json`, generated from the main specs. It holds a format version
 and one entry for each requirement in the main specs, in identifier order. Each entry holds the identifier, the
-capability, the title, and `binding`. The value of `binding` is that of its capability in `openspec/spec-ids.yaml`. The contract store checks MUST fail when the committed index differs from the generator output. The spec
+capability, the title, and `implemented-by`. The value of `implemented-by` is that of its capability in
+`openspec/spec-ids.yaml`. The contract store checks MUST fail when the committed index differs from the generator output. The spec
 artifact SHALL hold the index.
 
 #### Scenario: STO-053.01 Index entry of a requirement
@@ -30,32 +31,32 @@ artifact SHALL hold the index.
 - **WHEN** the contract store builds the spec artifact
 - **THEN** the archive holds `openspec/requirements.json`
 
-#### Scenario: STO-053.05 Entry of a binding-facing requirement
+#### Scenario: STO-053.05 Entry of a requirement that a binding implements
 
-- **WHEN** the ledger gives the document-parsing capability `binding` true
-- **THEN** the index entry of [PRS-001] has `binding` true
+- **WHEN** the ledger gives the document-parsing capability `implemented-by` `binding`
+- **THEN** the index entry of [PRS-001] has `implemented-by` `binding`
 
-#### Scenario: STO-053.06 Entry of a requirement for the contract store only
+#### Scenario: STO-053.06 Entry of a requirement that the contract store implements
 
-- **WHEN** the ledger gives the contract-store capability `binding` false
-- **THEN** the index entry of [STO-053] has `binding` false
+- **WHEN** the ledger gives the contract-store capability `implemented-by` `contract-store`
+- **THEN** the index entry of [STO-053] has `implemented-by` `contract-store`
 
 ## ADDED Requirements
 
-### Requirement: STO-059 The ledger says which capabilities a binding implements
+### Requirement: STO-059 The ledger says who implements the requirements of each capability
 
-Each prefix entry of `openspec/spec-ids.yaml` SHALL hold `binding`, a boolean. The value is true when the capability
-holds requirements that a binding implements. It is false when the capability holds requirements for the contract store
-only. The contract store checks MUST fail when a prefix entry has no `binding`.
+Each prefix entry of `openspec/spec-ids.yaml` SHALL hold `implemented-by`. The value is `binding` when a binding
+implements the requirements of the capability, and `contract-store` when the contract store implements them. The
+contract store checks MUST fail when a prefix entry has no `implemented-by`, or has another value.
 
 #### Scenario: STO-059.01 Prefix entry without the flag fails
 
-- **WHEN** a prefix entry of the ledger has no `binding`
+- **WHEN** a prefix entry of the ledger has no `implemented-by`
 - **THEN** the contract store checks fail and name the prefix
 
 #### Scenario: STO-059.02 New capability needs the flag
 
-- **WHEN** a pull request adds a capability and its prefix entry has no `binding`
+- **WHEN** a pull request adds a capability and its prefix entry has no `implemented-by`
 - **THEN** the contract store checks fail
 
 ### Requirement: STO-060 The contract store publishes one README sticker for bindings
@@ -122,7 +123,7 @@ The binding checker SHALL fail when:
 
 #### Scenario: STO-062.04 Missing status fails
 
-- **WHEN** the index marks [PRS-001] `binding` and `requirements` has no status for it
+- **WHEN** the index gives [PRS-001] `implemented-by` `binding`, and `requirements` has no status for it
 - **THEN** the binding checker fails and names `PRS-001`
 
 ### Requirement: STO-063 The hook and the install script read the pin from the record

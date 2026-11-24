@@ -31,11 +31,12 @@ pinned artifact that they cover or that do not apply, each with a reason.
 
 1. **One file: the record.** The record exists in each binding, and the hook checks it against a JSON Schema. Format 2
    adds `pin`, `requirements`, `corpus` and `badge`, and keeps `operations`.
-2. **The ledger marks the audience.** Each prefix entry holds `binding`. The identifier check fails when it is missing,
-   so a new capability forces the decision. The index copies the value to each requirement. The denominator of the
-   implemented share is the number of requirements that the index marks `binding`. No list is new: the ledger already
+2. **The ledger says who implements each capability.** Each prefix entry holds `implemented-by`, with the value
+   `binding` or `contract-store`. The identifier check fails when it is missing, so a new capability forces the
+   decision. The index copies the value to each requirement. The denominator of the implemented share is the number
+   of requirements whose index entry has `implemented-by` `binding`. No list is new: the ledger already
    has one entry for each capability.
-3. **A status for each requirement.** The record maps each binding-facing requirement to `implemented` or
+3. **A status for each requirement.** The record maps each requirement that a binding implements to `implemented` or
    `not-implemented`. The checker fails on a missing status, so a pin move that brings a new requirement forces a
    decision. An operation entry cites requirements that define the operation. Cross-cutting requirements, such as
    the error categories, define no operation, so the citations alone cannot give the share.
@@ -74,7 +75,7 @@ pinned artifact that they cover or that do not apply, each with a reason.
 2. [Only about half of the scenarios have a corpus case, so `implemented` rests on the word of the binding for the rest.]
    → The badge says `implemented`, not `conformant`, and the pass share measures the corpus only. A later change can
    add corpus cases for the requirements that have none.
-3. [The classification of a requirement as binding-facing can be wrong.] → The ledger value is reviewed with the
+3. [The classification of a requirement as implemented by a binding can be wrong.] → The ledger value is reviewed with the
    ledger, and a requirement can move to another capability.
 4. [A format 2 record is not valid under a contract store that pins format 1.] → Each version checks the record against
    its own JSON Schema. A binding moves to format 2 with the pin move that brings the schema.
