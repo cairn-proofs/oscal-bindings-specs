@@ -1,6 +1,6 @@
 /**
- * Generates and checks the constraint manifest of each OSCAL release in the store (openspec/specs/constraint-validation,
- * CNS-004). The inputs of manifest/<release>/constraints.json are metaschema/<release>/, manifest/<release>/names.json,
+ * Generates and checks the constraint manifest of each OSCAL release in the contract store (openspec/specs/constraint-validation,
+ * STO-009). The inputs of manifest/<release>/constraints.json are metaschema/<release>/, manifest/<release>/names.json,
  * schemas/<release>/oscal_complete_schema.json and manifest/<release>/constraint-exclusions.json.
  *
  *   npm run constraints:write       regenerate each constraints.json
@@ -75,7 +75,7 @@ export function checkManifest(schema: object, data: unknown): string[] {
   return failures;
 }
 
-/** CNS-019 and CNS-022: the queries and the failures of the manifest on the generated and the corpus documents. */
+/** STO-012 and STO-013: the queries and the failures of the manifest on the generated and the corpus documents. */
 function checkAgainstReference(gen: Generator, entries: Entry[]): string[] {
   const schemaFile = `schemas/${gen.release}/oscal_complete_schema.json`;
   const docs = [
@@ -87,7 +87,7 @@ function checkAgainstReference(gen: Generator, entries: Entry[]): string[] {
   return [...checkQueries(selected, entries, units), ...checkFailures(selected, entries, units)];
 }
 
-/** CNS-004: the problems of a committed manifest file, given the text that the generation gives. */
+/** STO-009: the problems of a committed manifest file, given the text that the generation gives. */
 export function checkCommitted(schema: object, file: string, committed: string | undefined, output: string): string[] {
   const problems = committed === undefined ? [`${file} does not exist`] : checkManifest(schema, JSON.parse(committed));
   if (committed !== undefined && committed !== output) problems.push(`${file} differs from the generator output. Run npm run constraints:write.`);
@@ -165,42 +165,44 @@ function selfTest(): number {
 
   test("D5: the generation succeeds and gives 319 entries, of which 233 are reportable", () =>
     (result.failures.length === 0 && entries.length === 319 && entries.filter((e) => e.reportable).length === 233) || JSON.stringify([result.failures, entries.length]));
-  test("CNS-004.02: the manifest conforms to its JSON Schema", () => checkSchema(schema, manifest).length === 0 || JSON.stringify(checkSchema(schema, manifest).slice(0, 3)));
-  test("CNS-004.02: a manifest that does not conform fails the check", () =>
+  test("STO-009.02: the manifest conforms to its JSON Schema", () => checkSchema(schema, manifest).length === 0 || JSON.stringify(checkSchema(schema, manifest).slice(0, 3)));
+  test("STO-009.02: a manifest that does not conform fails the check", () =>
     checkManifest(schema, edited((m) => delete (m.entries[0] as Partial<Entry>).kind)).length > 0 &&
     checkManifest(schema, edited((m) => m.entries.push({ ...m.entries[0], bogus: 1 } as Entry))).length > 0 &&
     checkManifest(schema, edited((m) => (m.format = 2))).length > 0);
   const committedText = fs.readFileSync(fileOf("1.2.3"), "utf8");
   const generated1 = serializeManifest(manifest);
-  test("CNS-004.01: the committed manifest is the result of the generation, so the check passes", () =>
+  test("STO-009.01: the committed manifest is the result of the generation, so the check passes", () =>
     checkCommitted(schema, fileOf("1.2.3"), committedText, generated1).length === 0 || JSON.stringify(checkCommitted(schema, fileOf("1.2.3"), committedText, generated1).slice(0, 3)));
-  test("CNS-004.01: a manifest that a person edits by hand differs from the generation and fails the check", () => {
+  test("STO-009.01: a manifest that a person edits by hand differs from the generation and fails the check", () => {
     const edit = committedText.replace('"reportable": true', '"reportable": false');
     const problems = checkCommitted(schema, fileOf("1.2.3"), edit, generated1);
     return (edit !== committedText && problems.length === 1 && problems[0].includes("differs from the generator output")) || JSON.stringify(problems);
   });
-  test("CNS-004.01: an edit that changes only the layout of the file fails the check", () =>
+  test("STO-009.01: an edit that changes only the layout of the file fails the check", () =>
     checkCommitted(schema, fileOf("1.2.3"), `${committedText}\n`, generated1).some((p) => p.includes("differs from the generator output")));
-  test("CNS-004.01: a manifest file that does not exist fails the check", () => checkCommitted(schema, fileOf("1.2.3"), undefined, generated1).some((p) => p.includes("does not exist")));
-  test("CNS-006: a pattern that is not an I-Regexp fails the check", () => checkManifest(schema, edited((m) => (m.entries.find((e) => e.id === "oscal-check-hash-length-SHA2-3-256")!.pattern = "\\d+"))).length > 0);
-  test("CNS-006: every query compiles and every pattern is an I-Regexp", () => checkManifest(schema, manifest).length === 0);
-  test("CNS-005.01: the manifest holds no entry of the level WARNING", () => entries.every((e) => e.level === "ERROR" || e.level === "CRITICAL"));
-  test("CNS-005.02: the manifest holds no excluded constraint", () =>
+  test("STO-009.01: a manifest file that does not exist fails the check", () => checkCommitted(schema, fileOf("1.2.3"), undefined, generated1).some((p) => p.includes("does not exist")));
+  test("STO-059.01: a pattern that is not an I-Regexp fails the check", () => checkManifest(schema, edited((m) => (m.entries.find((e) => e.id === "oscal-check-hash-length-SHA2-3-256")!.pattern = "\\d+"))).length > 0);
+  test("STO-059.02: every query compiles and every pattern is an I-Regexp", () => checkManifest(schema, manifest).length === 0);
+  test("STO-060.01: an entry without target queries fails the check", () =>
+    checkManifest(schema, edited((m) => delete (m.entries[0] as Partial<Entry>).target)).length > 0);
+  test("STO-010.01: the manifest holds no entry of the level WARNING", () => entries.every((e) => e.level === "ERROR" || e.level === "CRITICAL"));
+  test("STO-010.02: the manifest holds no excluded constraint", () =>
     gen.exclusions.excluded.every((x) => !("id" in x) || byId(x.id!).length === 0) && byId("oscal-metadata-action-type-values").length === 0);
-  test("CNS-005: two entries can have the same id", () => byId("oscal-metadata-prop-name-values").length === 2);
+  test("STO-010: two entries can have the same id", () => byId("oscal-metadata-prop-name-values").length === 2);
 
-  // CNS-021
-  test("CNS-021.01: an open allowed-values entry is not reportable", () => !one("oscal-assessment-part-values").reportable);
-  test("CNS-021: an allowed-values entry that the JSON Schema enforces is not reportable", () => !one("oscal-timing-unit-values").reportable);
-  test("CNS-021: a closed allowed-values entry that the schema does not enforce is reportable", () => one("oscal-control-prop-name").reportable);
-  test("CNS-021.02: an entry that the list cannot-fail names is not reportable", () => !one("oscal-profile-req-merge-combine").reportable && !one("oscal-diagram-datatype-uri-reference").reportable);
-  test("CNS-021: an index-has-key entry with a partial index is not reportable", () => !one("oscal-by-component-uuid-index").reportable);
-  test("CNS-021: the entries without an id are not reportable", () => entries.filter((e) => e.id === null).every((e) => !e.reportable) && entries.filter((e) => e.id === null).length === 9);
-  test("CNS-021: the generation fails for a reportable entry without an id", () => failsBuild(custom("oscal-parameter-depends-on-deprecated", { id: null }), "no id"));
+  // STO-011
+  test("STO-011.01: an open allowed-values entry is not reportable", () => !one("oscal-assessment-part-values").reportable);
+  test("STO-011: an allowed-values entry that the JSON Schema enforces is not reportable", () => !one("oscal-timing-unit-values").reportable);
+  test("STO-011: a closed allowed-values entry that the schema does not enforce is reportable", () => one("oscal-control-prop-name").reportable);
+  test("STO-011.02: an entry that the list cannot-fail names is not reportable", () => !one("oscal-profile-req-merge-combine").reportable && !one("oscal-diagram-datatype-uri-reference").reportable);
+  test("STO-011: an index-has-key entry with a partial index is not reportable", () => !one("oscal-by-component-uuid-index").reportable);
+  test("STO-011: the entries without an id are not reportable", () => entries.filter((e) => e.id === null).every((e) => !e.reportable) && entries.filter((e) => e.id === null).length === 9);
+  test("STO-011: the generation fails for a reportable entry without an id", () => failsBuild(custom("oscal-parameter-depends-on-deprecated", { id: null }), "no id"));
 
   // D9, CNS-014, CNS-015
   test("CNS-014.02: the index entry with a doc() branch states that its index is partial", () => one("oscal-ssp-by-component-uuid-index").partial === true && one("oscal-index-metadata-party-uuid", "index").partial === false);
-  test("CNS-007.01: the target queries of that entry select the nodes of the same document", () => !one("oscal-ssp-by-component-uuid-index").target.some((q) => q.includes("doc")));
+  test("STO-060.02: the target queries of that entry select the nodes of the same document", () => !one("oscal-ssp-by-component-uuid-index").target.some((q) => q.includes("doc")));
 
   // D7, CNS-012, CNS-013
   test("CNS-012.02: a key field with the pattern #(.*) has the prefix #", () => JSON.stringify(one("oscal-by-component-uuid-index")["key-fields"]![0].prefix) === '"#"');
@@ -238,7 +240,7 @@ function selfTest(): number {
     const q = e.context.elements["hash"];
     return (q !== undefined && q.some((x) => run(x, [{ algorithm: "SHA-256", value: "x" }]).length === 1)) || JSON.stringify(q);
   });
-  test("CNS-007: the document context queries select the instances of the declaring definition", () => {
+  test("STO-060: the document context queries select the instances of the declaring definition", () => {
     const e = one("oscal-check-hash-length-SHA2-3-256");
     const doc = { catalog: { "back-matter": { resources: [{ rlinks: [{ hashes: [{ algorithm: "SHA-256", value: "x" }] }] }] } } };
     return e.context.document.flatMap((q) => run(q, doc)).length === 1;
@@ -248,10 +250,10 @@ function selfTest(): number {
     return e.context.elements["property"] === undefined && e.context.elements["control"] !== undefined;
   });
   test("CNS-009: an entry on a control has element context queries for the type control", () => one("oscal-control-prop-name").context.elements["control"] !== undefined);
-  test("CNS-007: a document context query of a root assembly selects the root", () => one("oscal-catalog-parts").context.document.join() === "$['catalog']");
+  test("STO-060: a document context query of a root assembly selects the root", () => one("oscal-catalog-parts").context.document.join() === "$['catalog']");
   test("D8: the elements of the index entries are kept, and an element context query runs on an array", () =>
     Object.values(one("oscal-catalog-parts").context.elements).every((qs) => qs.every((q) => q.startsWith("$"))) );
-  test("CNS-007: the entries on a flag select the flag of each definition that has it", () => {
+  test("STO-060: the entries on a flag select the flag of each definition that has it", () => {
     const e = byId("oscal-assessment-part-values")[0];
     return e.definition === "flag:name" && e.context.document.length > 0 && e.context.document.every((q) => q.endsWith("['name']"));
   });
@@ -371,9 +373,9 @@ function selfTest(): number {
       .map((f) => f.location);
     return JSON.stringify(got) === JSON.stringify(["$[0][1]['props'][0]['name']"]) || JSON.stringify(got);
   });
-  test("CNS-007: the element types of kind document hold context nodes",() => one("oscal-catalog-parts").context.elements["catalog-document"] !== undefined);
+  test("STO-060: the element types of kind document hold context nodes",() => one("oscal-catalog-parts").context.elements["catalog-document"] !== undefined);
 
-  // CNS-019, CNS-022: the checks against the reference evaluator
+  // STO-012, STO-013: the checks against the reference evaluator
   const schemaFile = "schemas/1.2.3/oscal_complete_schema.json";
   const generated = generatedDocuments(model, schemaFile, (d, n) => gen.schemaHoldsFlag(d, n));
   const units = unitsOf(generated, []);
@@ -388,27 +390,27 @@ function selfTest(): number {
     const json = { catalog: { "back-matter": { resources: [{ rlinks: [{ hashes: [{ algorithm: "SHA-256", value }] }] }] } } };
     return unitsOf([{ name: "hash", json, tree: loadDoc(json, model.roots), nodes: allNodes(loadDoc(json, model.roots)) }], []);
   };
-  test("CNS-019: the generated documents conform to the schema and hold both forms of mappings", () =>
+  test("STO-012: the generated documents conform to the schema and hold both forms of mappings", () =>
     generated.some((d) => JSON.stringify(d.json).includes('"mappings":{')) && generated.some((d) => JSON.stringify(d.json).includes('"mappings":[')));
-  test("CNS-019: the query check passes for the unchanged entry", () => {
+  test("STO-012: the query check passes for the unchanged entry", () => {
     const { constraints, entries: es } = alone(hash, () => {});
     return checkQueries(constraints, es, units).length === 0;
   });
-  test("CNS-019.01: the query check fails for a context query that selects a node of another definition", () => {
+  test("STO-012.01: the query check fails for a context query that selects a node of another definition", () => {
     const { constraints, entries: es } = alone(hash, (c) => c.context.document.push("$..['rlinks'][*]"));
     return checkQueries(constraints, es, units).some((m) => m.includes("no context node")) || "the check passed";
   });
-  test("CNS-019: the query check fails for a flag query that misses the singleton form of mappings", () => {
+  test("STO-012: the query check fails for a flag query that misses the singleton form of mappings", () => {
     const flag = entries.find((e) => e.definition === "flag:status" && e.context.document.some((q) => q.includes("['mappings']['status']")))!;
     const both = alone(flag, () => {});
     const list = alone(flag, (c) => (c.context.document = c.context.document.filter((q) => q.includes("['mappings'][*]"))));
     return checkQueries(both.constraints, both.entries, units).length === 0 && checkQueries(list.constraints, list.entries, units).some((m) => m.includes("miss")) || "the check passed";
   });
-  test("CNS-022: the failure check passes for a valid hash and a wrong one", () => {
+  test("STO-013: the failure check passes for a valid hash and a wrong one", () => {
     const { constraints, entries: es } = alone(hash, () => {});
     return checkFailures(constraints, es, hashDoc("a".repeat(64))).length === 0 && checkFailures(constraints, es, hashDoc("a".repeat(63))).length === 0;
   });
-  test("CNS-022.01: the failure check fails for a pattern that rejects a valid value", () => {
+  test("STO-013.01: the failure check fails for a pattern that rejects a valid value", () => {
     const { constraints, entries: es } = alone(hash, (c) => (c.pattern = "[0-9a-f]{63}"));
     return checkFailures(constraints, es, hashDoc("a".repeat(64))).length > 0 || "the check passed";
   });

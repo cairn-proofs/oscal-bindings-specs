@@ -1,6 +1,6 @@
 /**
- * The constraint failures of a corpus input (openspec/specs/constraint-validation, CNS-020). The failures come from the
- * reference evaluator (CNS-019) and the entries of the committed constraint manifest. The failures of an element follow
+ * The constraint failures of a corpus input (openspec/specs/constraint-validation, STO-014). The failures come from the
+ * reference evaluator (STO-012) and the entries of the committed constraint manifest. The failures of an element follow
  * CNS-018: the entries that have element context queries for its type, except the index kinds.
  */
 import fs from "node:fs";

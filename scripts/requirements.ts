@@ -1,12 +1,12 @@
 /**
- * Generates and checks the requirement index openspec/requirements.json (openspec/specs/binding-surface, SRF-006).
+ * Generates and checks the requirement index openspec/requirements.json (openspec/specs/binding-surface, STO-053).
  * The index lists each requirement of the main specs with its identifier, capability, and title. A binding checks the
  * contract identifiers of its traceability record against the index of the spec artifact version that it pins.
  *
  *   npm run requirements:write       regenerate openspec/requirements.json
  *   npm run requirements:check       regenerate in memory and compare with the committed file
  *   npm run requirements:self-test   run the generator scenarios on in-memory specs, and check the traceability
- *                                    record JSON Schema openspec/traceability.schema.json (SRF-007) on sample records
+ *                                    record JSON Schema openspec/traceability.schema.json (STO-054) on sample records
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -111,7 +111,7 @@ function selfTest(): number {
     const data = output === undefined ? undefined : JSON.parse(output);
     const entry = data?.requirements.find((e: IndexEntry) => e.id === "WID-002");
     scenario(
-      "SRF-006.01: Index entry of a requirement",
+      "STO-053.01: Index entry of a requirement",
       failures.length === 0 &&
         data?.format === FORMAT &&
         JSON.stringify(entry) === JSON.stringify({ id: "WID-002", capability: "widget-parsing", title: "Widget key form" }),
@@ -131,10 +131,10 @@ function selfTest(): number {
     const files = fixture();
     files["openspec/specs/element-widgets/spec.md"] += req("EWD-002", "Report an unknown widget");
     const stale = compareIndex(committed, buildIndex(files).output!);
-    scenario("SRF-006.02: Stale index fails the check", stale.some((f) => f.includes("requirements:write")), stale);
+    scenario("STO-053.02: Stale index fails the check", stale.some((f) => f.includes("requirements:write")), stale);
     const missing = compareIndex(undefined, committed!);
-    scenario("SRF-006.02: Missing index fails the check", missing.some((f) => f.includes("does not exist")), missing);
-    scenario("SRF-006.02: Current index passes the check", compareIndex(committed, committed!).length === 0, null);
+    scenario("STO-053.02: Missing index fails the check", missing.some((f) => f.includes("does not exist")), missing);
+    scenario("STO-053.02: Current index passes the check", compareIndex(committed, committed!).length === 0, null);
   }
   {
     const files = fixture();
@@ -143,7 +143,7 @@ function selfTest(): number {
       "",
     );
     const out = ids(buildIndex(files).output);
-    scenario("SRF-006.03: Retired requirement has no entry", !out.includes("WID-005") && out.includes("WID-010"), out);
+    scenario("STO-053.03: Retired requirement has no entry", !out.includes("WID-005") && out.includes("WID-010"), out);
   }
   {
     const files = fixture();
@@ -160,7 +160,7 @@ function selfTest(): number {
   return failed + recordSchemaSelfTest() ? 1 : 0;
 }
 
-/** Checks openspec/traceability.schema.json (SRF-007) against valid and invalid records. */
+/** Checks openspec/traceability.schema.json (STO-054) against valid and invalid records. */
 function recordSchemaSelfTest(): number {
   const validate = new Ajv({ allErrors: true, strict: true }).compile(JSON.parse(fs.readFileSync(RECORD_SCHEMA, "utf8")));
   const record = (...operations: unknown[]) => ({ format: FORMAT, operations });
@@ -172,9 +172,9 @@ function recordSchemaSelfTest(): number {
   const cases: Array<[string, unknown, boolean]> = [
     ["design D3 example conforms", example, true],
     ["empty record conforms", record(), true],
-    ["SRF-007.01: Entry with both kinds of identifier is invalid", record({ name: "f", requirements: ["PRS-001"], "binding-local": "PYB-001" }), false],
-    ["SRF-007.02: Scenario identifier is invalid", record({ name: "f", requirements: ["PRS-001.01"] }), false],
-    ["SRF-007.02: Scenario identifier as binding-local is invalid", record({ name: "f", "binding-local": "PYB-001.01" }), false],
+    ["STO-054.01: Entry with both kinds of identifier is invalid", record({ name: "f", requirements: ["PRS-001"], "binding-local": "PYB-001" }), false],
+    ["STO-054.02: Scenario identifier is invalid", record({ name: "f", requirements: ["PRS-001.01"] }), false],
+    ["STO-054.02: Scenario identifier as binding-local is invalid", record({ name: "f", "binding-local": "PYB-001.01" }), false],
     ["unknown member in an entry is invalid", record({ name: "f", requirements: ["PRS-001"], deprecated: true }), false],
     ["unknown member at the top is invalid", { ...example, version: "0.4.0" }, false],
     ["empty requirements list is invalid", record({ name: "f", requirements: [] }), false],

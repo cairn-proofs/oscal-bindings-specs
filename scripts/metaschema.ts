@@ -1,6 +1,6 @@
 /**
  * Loads the vendored OSCAL metaschema modules of a release into a small model: the definitions, their flags and
- * children, and their constraints (CNS-002). Store tooling only.
+ * children, and their constraints (STO-007). Store tooling only.
  */
 import { readFileSync, readdirSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";

@@ -115,152 +115,6 @@
     },
     {
       "capability": "constraint-validation",
-      "id": "CNS-001.01",
-      "self-test": [
-        {
-          "script": "scripts/check-metaschema-digests.ts",
-          "test": "CNS-001.01: a changed byte in a module fails the digest check"
-        },
-        {
-          "script": "scripts/check-metaschema-digests.ts",
-          "test": "CNS-001.01: a changed byte in metaschema-datatypes.xsd fails the digest check"
-        },
-        {
-          "script": "scripts/check-metaschema-digests.ts",
-          "test": "CNS-001.01: a missing module fails the digest check"
-        },
-        {
-          "script": "scripts/check-metaschema-digests.ts",
-          "test": "CNS-001.01: the unchanged files pass the digest check"
-        }
-      ]
-    },
-    {
-      "capability": "constraint-validation",
-      "id": "CNS-001.02",
-      "self-test": [
-        {
-          "script": "scripts/build-archive.ts",
-          "test": "CNS-001.02: the archive holds each file of metaschema/<release>/, with each module, the datatypes file and SHA256SUMS"
-        },
-        {
-          "script": "scripts/build-archive.ts",
-          "test": "CNS-001.02: the archive of a list without metaschema holds no metaschema file"
-        }
-      ]
-    },
-    {
-      "capability": "constraint-validation",
-      "id": "CNS-002.01",
-      "self-test": [
-        {
-          "script": "scripts/constraint-reference.ts",
-          "test": "CNS-002.01: a constraint that targets a child `type` of `action`, where `type` is a flag, selects nothing and is excluded"
-        }
-      ]
-    },
-    {
-      "capability": "constraint-validation",
-      "id": "CNS-002.02",
-      "self-test": [
-        {
-          "script": "scripts/constraint-reference.ts",
-          "test": "CNS-002.02: a has-cardinality constraint with a filter on @name='objective' fails for an assessment part with another name, and is excluded"
-        }
-      ]
-    },
-    {
-      "capability": "constraint-validation",
-      "id": "CNS-002.03",
-      "self-test": [
-        {
-          "script": "scripts/constraint-reference.ts",
-          "test": "CNS-002.03: a has-cardinality constraint on local objectives fails for each local objective, and no other constraint allows its target"
-        }
-      ]
-    },
-    {
-      "capability": "constraint-validation",
-      "id": "CNS-003.01",
-      "self-test": [
-        {
-          "script": "scripts/check-constraint-exclusions.ts",
-          "test": "CNS-003.01: an unknown id fails"
-        }
-      ]
-    },
-    {
-      "capability": "constraint-validation",
-      "id": "CNS-003.02",
-      "self-test": [
-        {
-          "script": "scripts/check-constraint-exclusions.ts",
-          "test": "CNS-003.02: an issue outside usnistgov/OSCAL fails the schema"
-        },
-        {
-          "script": "scripts/check-constraint-exclusions.ts",
-          "test": "CNS-003.02: an item without an issue fails the schema"
-        }
-      ]
-    },
-    {
-      "capability": "constraint-validation",
-      "id": "CNS-004.01",
-      "self-test": [
-        {
-          "script": "scripts/constraints.ts",
-          "test": "CNS-004.01: a manifest file that does not exist fails the check"
-        },
-        {
-          "script": "scripts/constraints.ts",
-          "test": "CNS-004.01: a manifest that a person edits by hand differs from the generation and fails the check"
-        },
-        {
-          "script": "scripts/constraints.ts",
-          "test": "CNS-004.01: an edit that changes only the layout of the file fails the check"
-        },
-        {
-          "script": "scripts/constraints.ts",
-          "test": "CNS-004.01: the committed manifest is the result of the generation, so the check passes"
-        }
-      ]
-    },
-    {
-      "capability": "constraint-validation",
-      "id": "CNS-004.02",
-      "self-test": [
-        {
-          "script": "scripts/constraints.ts",
-          "test": "CNS-004.02: a manifest that does not conform fails the check"
-        },
-        {
-          "script": "scripts/constraints.ts",
-          "test": "CNS-004.02: the manifest conforms to its JSON Schema"
-        }
-      ]
-    },
-    {
-      "capability": "constraint-validation",
-      "id": "CNS-005.01",
-      "self-test": [
-        {
-          "script": "scripts/constraints.ts",
-          "test": "CNS-005.01: the manifest holds no entry of the level WARNING"
-        }
-      ]
-    },
-    {
-      "capability": "constraint-validation",
-      "id": "CNS-005.02",
-      "self-test": [
-        {
-          "script": "scripts/constraints.ts",
-          "test": "CNS-005.02: the manifest holds no excluded constraint"
-        }
-      ]
-    },
-    {
-      "capability": "constraint-validation",
       "id": "CNS-006.01",
       "self-test": [
         {
@@ -270,20 +124,6 @@
         {
           "script": "scripts/constraints.ts",
           "test": "CNS-006.01: two target queries that select the same node count the node once"
-        }
-      ]
-    },
-    {
-      "capability": "constraint-validation",
-      "id": "CNS-007.01",
-      "self-test": [
-        {
-          "script": "scripts/constraint-reference.ts",
-          "test": "CNS-007.01: the target of a constraint with a doc() branch selects the nodes of the same document only"
-        },
-        {
-          "script": "scripts/constraints.ts",
-          "test": "CNS-007.01: the target queries of that entry select the nodes of the same document"
         }
       ]
     },
@@ -765,76 +605,6 @@
         {
           "script": "scripts/check-corpus.ts",
           "test": "CNS-018.02: a hash element with a short value fails the entry of its algorithm"
-        }
-      ]
-    },
-    {
-      "capability": "constraint-validation",
-      "id": "CNS-019.01",
-      "self-test": [
-        {
-          "script": "scripts/constraints.ts",
-          "test": "CNS-019.01: the query check fails for a context query that selects a node of another definition"
-        }
-      ]
-    },
-    {
-      "capability": "constraint-validation",
-      "id": "CNS-020.01",
-      "self-test": [
-        {
-          "script": "scripts/check-corpus.ts",
-          "test": "CNS-020.01: a reportable entry without a case fails the check, one message for each entry"
-        }
-      ]
-    },
-    {
-      "capability": "constraint-validation",
-      "id": "CNS-020.02",
-      "self-test": [
-        {
-          "script": "scripts/check-corpus.ts",
-          "test": "CNS-020.02: a valid input that fails an entry fails the check"
-        }
-      ]
-    },
-    {
-      "capability": "constraint-validation",
-      "id": "CNS-020.03",
-      "self-test": [
-        {
-          "script": "scripts/check-corpus.ts",
-          "test": "CNS-020.03: a failure at another location than the case lists fails the check, and the order of the list does not matter"
-        }
-      ]
-    },
-    {
-      "capability": "constraint-validation",
-      "id": "CNS-021.01",
-      "self-test": [
-        {
-          "script": "scripts/constraints.ts",
-          "test": "CNS-021.01: an open allowed-values entry is not reportable"
-        }
-      ]
-    },
-    {
-      "capability": "constraint-validation",
-      "id": "CNS-021.02",
-      "self-test": [
-        {
-          "script": "scripts/constraints.ts",
-          "test": "CNS-021.02: an entry that the list cannot-fail names is not reportable"
-        }
-      ]
-    },
-    {
-      "capability": "constraint-validation",
-      "id": "CNS-022.01",
-      "self-test": [
-        {
-          "script": "scripts/constraints.ts",
-          "test": "CNS-022.01: the failure check fails for a pattern that rejects a valid value"
         }
       ]
     },
@@ -1349,931 +1119,42 @@
       "id": "FAC-007.03"
     },
     {
-      "capability": "model-derivation",
-      "id": "MDL-001.02",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-001.02 schema reorder does not change names"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-002.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-002.01 wrapper named from its body field"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-002.02",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-002.02 schema directive field is excluded"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-002.03",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-002.03 the eight wrapper names"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-003.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-003.01 scalar wrapper has no object entry"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-003.02",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-003.02 preserved wrappers stay wrappers"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-005.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-005.01 colliding short names get module-prefixed names"
-        }
-      ]
-    },
-    {
-      "by-design": "The rule applies to the generation of types by a binding, which no store script can observe.",
-      "capability": "model-derivation",
-      "id": "MDL-005.02"
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-005.03",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-005.03 a definition that clashes only with an inline type keeps its local name"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-006.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-006.01 merge branches are named With their property"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-006.02",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-006.02 branch named from its distinguishing property"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-006.03",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-006.03 branch children use the union name"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-007.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-007.01 ambiguous wrapper aborts and names it"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-007.02",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-007.02 wrapper count mismatch aborts"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-007.03",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-007.03 every collision appears in one report"
-        },
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-007.03 uncovered collisions are all reported"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "corpus": [
-        "parse/unknown-field-top"
-      ],
-      "id": "MDL-008.01"
-    },
-    {
-      "by-design": "The rule applies to the generation of types by a binding, which no store script can observe.",
-      "capability": "model-derivation",
-      "id": "MDL-009.01"
-    },
-    {
-      "by-design": "The rule applies to the generation of types by a binding, which no store script can observe.",
-      "capability": "model-derivation",
-      "id": "MDL-009.02"
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-010.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-010.01 inline object named from its parent"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-010.02",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-010.02 two inline types with the same local name stay distinct"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-010.03",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-010.03 nested inline type uses the canonical name of its parent"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-010.04",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-010.04 inline type in a union branch uses the name of the union"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-010.05",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-010.05 override name of a parent carries down"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-010.06",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-010.06 list items use the singular local name"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-011.02",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-011.02 closed enum gets a type"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-011.03",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-011.03 open enum is marked open"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-012.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-012.01 one-or-list property is a single-or-many type"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-013.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-013.01 a shared type used by many document types yields one canonical type"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-013.02",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-013.02 same local name with different structure is not deduplicated"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-013.03",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-013.03 combine copies in three branches merge into one type"
-        },
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-013.03 copies in union branches merge"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-013.04",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-013.04 equal enum values at unrelated places do not merge"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-014.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-014.01 local name of a definition"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-014.02",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-014.02 local name of a list item"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-015.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-015.01 local name maps to PascalCase"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-016.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-016.01 root schema name"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-017.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-017.01 override name replaces a rule-derived name"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-018.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-018.01 enum named from owner and property"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-018.02",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-018.02 enum held directly by a definition"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-018.03",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-018.03 enums of an inline owner share its canonical name"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-018.04",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-018.04 enums with the same owner local name stay distinct"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-018.05",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-018.05 enum in a list property uses the singular name"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-019.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-019.01 identical places merge into one type that records both places"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-020.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-020.01 clashing definitions are not merged"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-021.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-021.01 missing singular name aborts and names the list"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-021.02",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-021.02 branch without a distinguishing property aborts"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-021.03",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-021.03 branch copies that differ abort"
-        },
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-021.03 merge of different structures aborts and names both"
-        }
-      ]
-    },
-    {
-      "capability": "model-derivation",
-      "id": "MDL-021.04",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "MDL-021.04 each missing singular name is reported"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-001.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-001.01 definition identified by its definition pointer"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-002.03",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-002.03 schema hash mismatch is detected"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-003.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-003.01 a name with - fails"
-        },
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-003.01 a name with a quote fails"
-        },
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-003.01 a name with a space fails"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-003.02",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-003.02 duplicate name is invalid"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-003.03",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-003.03 a name with a final newline fails"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-003.04",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-003.04 reference to a missing entry is invalid"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-004.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-004.01 an entry without a kind fails"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-004.03",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-004.03 distinguishing property that is not a key fails"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-005.03",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-005.03 a name change is an override edit"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-006.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-006.01 hand edit of the manifest fails the check"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-006.02",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-006.02 generation is reproducible"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-006.03",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-006.03 edit of a previous release manifest fails the check"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-007.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-007.01 existing type keeps its name"
-        },
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-007.01 pinned name wins over a changed rule"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-007.02",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-007.02 new clashing definition is qualified"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-008.01",
-      "self-test": [
-        {
-          "script": "scripts/check-releases.ts",
-          "test": "NAM-008.01 removed released name fails"
-        },
-        {
-          "script": "scripts/check-releases.ts",
-          "test": "NAM-008.01 rename without a breaking increment fails"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-008.02",
-      "self-test": [
-        {
-          "script": "scripts/check-releases.ts",
-          "test": "NAM-008.02 added type passes without a breaking increment"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-008.04",
-      "self-test": [
-        {
-          "script": "scripts/check-releases.ts",
-          "test": "NAM-008.04 permitted rename is listed"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-009.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-009.01 a pointer in two entries is invalid"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-009.02",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-009.02 unresolvable pointer is invalid"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-009.03",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-009.03 scalar definition with an enum has an entry"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-009.04",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-009.04 scalar definition without an enum has no entry"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-010.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-010.01 document entry records its body field"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-010.02",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-010.02 union entry records each branch"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-010.03",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-010.03 enum entry records whether it is open"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-010.04",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-010.04 single-or-many entry records its item type"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-011.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-011.01 enum entry holds no enum value"
-        }
-      ]
+      "by-design": "The rule applies to a consumer of the manifest, which no store script can observe.",
+      "capability": "generated-models",
+      "id": "GEN-001.01"
     },
     {
-      "capability": "naming-manifest",
-      "id": "NAM-011.02",
+      "capability": "generated-models",
+      "id": "GEN-001.02",
       "self-test": [
         {
           "script": "scripts/names.ts",
-          "test": "NAM-011.02 object entry holds no field name"
+          "test": "GEN-001.02 manifest of another OSCAL release is rejected"
         }
       ]
     },
     {
       "by-design": "The rule applies to a consumer of the manifest, which no store script can observe.",
-      "capability": "naming-manifest",
-      "id": "NAM-012.01"
+      "capability": "generated-models",
+      "id": "GEN-002.01"
     },
     {
-      "capability": "naming-manifest",
-      "id": "NAM-012.02",
+      "capability": "generated-models",
+      "id": "GEN-003.01",
       "self-test": [
         {
           "script": "scripts/names.ts",
-          "test": "NAM-012.02 manifest of another OSCAL release is rejected"
+          "test": "GEN-003.01 format 2 gives one manifest failure that names 2"
         }
       ]
     },
     {
-      "capability": "naming-manifest",
-      "id": "NAM-013.01",
+      "capability": "generated-models",
+      "id": "GEN-003.02",
       "self-test": [
         {
           "script": "scripts/names.ts",
-          "test": "NAM-013.01 schema file name with a path fails"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-013.02",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-013.02 an unknown member fails in an entry of each kind"
-        },
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-013.02 an unknown member of an entry fails"
-        }
-      ]
-    },
-    {
-      "by-design": "The rule applies to a consumer of the manifest, which no store script can observe.",
-      "capability": "naming-manifest",
-      "id": "NAM-014.01"
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-015.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-015.01 override with an unknown pointer fails"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-015.02",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-015.02 unused override fails"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-015.03",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-015.03 explicit merge with an unknown pointer fails"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-016.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-016.01 previous manifest with a wrong schema hash"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-017.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-017.01 dropped name is reported"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-017.02",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-017.02 each dropped name is reported"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-018.01",
-      "self-test": [
-        {
-          "script": "scripts/check-releases.ts",
-          "test": "NAM-018.01 highest precedence tag is the latest release"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-019.01",
-      "self-test": [
-        {
-          "script": "scripts/check-releases.ts",
-          "test": "NAM-019.01 clone without release tags fails"
-        },
-        {
-          "script": "scripts/check-releases.ts",
-          "test": "NAM-019.01 git error fails"
-        },
-        {
-          "script": "scripts/check-releases.ts",
-          "test": "NAM-019.01 shallow clone fails"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-019.02",
-      "self-test": [
-        {
-          "script": "scripts/check-releases.ts",
-          "test": "NAM-019.02 no tag holds a manifest: pass without comparison"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "corpus": [
-        "round-trip/group-without-distinguishing-property"
-      ],
-      "id": "NAM-020.01"
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-021.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-021.01 a manifest that is not an object, or has no format member, gives one manifest failure"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-022.01",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-022.01 format 2 gives one manifest failure that names 2"
-        }
-      ]
-    },
-    {
-      "capability": "naming-manifest",
-      "id": "NAM-022.02",
-      "self-test": [
-        {
-          "script": "scripts/names.ts",
-          "test": "NAM-022.02 format 2 and an unknown member give one failure and no json-schema failure"
+          "test": "GEN-003.02 format 2 and an unknown member give one failure and no json-schema failure"
         }
       ]
     },
@@ -3263,6 +2144,13 @@
       "id": "PRS-023.04"
     },
     {
+      "capability": "document-parsing",
+      "corpus": [
+        "round-trip/group-without-distinguishing-property"
+      ],
+      "id": "PRS-024.01"
+    },
+    {
       "capability": "serialization",
       "corpus": [
         "round-trip/component-definition"
@@ -3366,16 +2254,6 @@
       "id": "SER-005.03"
     },
     {
-      "capability": "serialization",
-      "id": "SER-006.01",
-      "self-test": [
-        {
-          "script": "scripts/check-corpus.ts",
-          "test": "SER-006.01: a listed key pair that no valid document uses fails the check, and a pair that a document uses passes"
-        }
-      ]
-    },
-    {
       "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
       "capability": "binding-surface",
       "id": "SRF-001.01"
@@ -3462,88 +2340,6 @@
     },
     {
       "capability": "binding-surface",
-      "id": "SRF-006.01",
-      "self-test": [
-        {
-          "script": "scripts/requirements.ts",
-          "test": "SRF-006.01: Index entry of a requirement"
-        }
-      ]
-    },
-    {
-      "capability": "binding-surface",
-      "id": "SRF-006.02",
-      "self-test": [
-        {
-          "script": "scripts/requirements.ts",
-          "test": "SRF-006.02: Current index passes the check"
-        },
-        {
-          "script": "scripts/requirements.ts",
-          "test": "SRF-006.02: Missing index fails the check"
-        },
-        {
-          "script": "scripts/requirements.ts",
-          "test": "SRF-006.02: Stale index fails the check"
-        }
-      ]
-    },
-    {
-      "capability": "binding-surface",
-      "id": "SRF-006.03",
-      "self-test": [
-        {
-          "script": "scripts/requirements.ts",
-          "test": "SRF-006.03: Retired requirement has no entry"
-        }
-      ]
-    },
-    {
-      "capability": "binding-surface",
-      "id": "SRF-006.04",
-      "self-test": [
-        {
-          "script": "scripts/build-archive.ts",
-          "test": "SRF-006.04 the spec artifact holds the requirement index"
-        }
-      ]
-    },
-    {
-      "capability": "binding-surface",
-      "id": "SRF-007.01",
-      "self-test": [
-        {
-          "script": "scripts/requirements.ts",
-          "test": "SRF-007.01: Entry with both kinds of identifier is invalid"
-        }
-      ]
-    },
-    {
-      "capability": "binding-surface",
-      "id": "SRF-007.02",
-      "self-test": [
-        {
-          "script": "scripts/requirements.ts",
-          "test": "SRF-007.02: Scenario identifier as binding-local is invalid"
-        },
-        {
-          "script": "scripts/requirements.ts",
-          "test": "SRF-007.02: Scenario identifier is invalid"
-        }
-      ]
-    },
-    {
-      "capability": "binding-surface",
-      "id": "SRF-007.03",
-      "self-test": [
-        {
-          "script": "scripts/build-archive.ts",
-          "test": "SRF-007.03 the spec artifact holds the traceability JSON Schema"
-        }
-      ]
-    },
-    {
-      "capability": "binding-surface",
       "id": "SRF-008.01",
       "self-test": [
         {
@@ -3588,7 +2384,7 @@
       "self-test": [
         {
           "script": "scripts/check-spec-ids.ts",
-          "test": "SRF-010.01 a binding ledger with the store prefix PRS fails"
+          "test": "SRF-010.01 a binding ledger with the contract store prefix PRS fails"
         }
       ]
     },
@@ -3598,177 +2394,1587 @@
       "self-test": [
         {
           "script": "scripts/check-spec-ids.ts",
-          "test": "SRF-010.02 the binding prefix PYB, which the store does not hold, passes"
+          "test": "SRF-010.02 the binding prefix PYB, which the contract store does not hold, passes"
         }
       ]
     },
     {
-      "capability": "binding-surface",
-      "id": "SRF-011.01",
+      "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
+      "capability": "contract-store",
+      "id": "STO-001.01"
+    },
+    {
+      "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
+      "capability": "contract-store",
+      "id": "STO-001.02"
+    },
+    {
+      "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
+      "capability": "contract-store",
+      "id": "STO-001.03"
+    },
+    {
+      "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
+      "capability": "contract-store",
+      "id": "STO-001.04"
+    },
+    {
+      "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
+      "capability": "contract-store",
+      "id": "STO-001.05"
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-001.06",
+      "self-test": [
+        {
+          "script": "scripts/check-version.ts",
+          "test": "STO-001.06 pre-release label fails"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-002.01",
+      "self-test": [
+        {
+          "script": "scripts/check-version.ts",
+          "test": "STO-002.01 OSCAL release appears as build metadata"
+        }
+      ]
+    },
+    {
+      "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
+      "capability": "contract-store",
+      "id": "STO-002.02"
+    },
+    {
+      "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
+      "capability": "contract-store",
+      "id": "STO-002.03"
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-002.04",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "STO-002.04 build metadata does not change precedence"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-003.01",
+      "self-test": [
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "STO-003.01: a case with a known-defects field fails the check"
+        },
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "STO-003.01: an index with a defect-twins field fails the check"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-003.02",
+      "self-test": [
+        {
+          "script": "scripts/check-binding-links.ts",
+          "test": "STO-003.02 issue URL fails"
+        },
+        {
+          "script": "scripts/check-binding-links.ts",
+          "test": "STO-003.02 pull URL fails"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-003.03",
+      "self-test": [
+        {
+          "script": "scripts/check-binding-links.ts",
+          "test": "STO-003.03 repository and tracker links pass"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-004.01",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "STO-004.01 one step above the latest release passes"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-004.02",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "STO-004.02 the latest release passes"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-004.03",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "STO-004.03 two steps above the latest release fail and name it"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-004.04",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "STO-004.04 a version below the latest release fails and names it"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-004.05",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "STO-004.05 the latest version with other build metadata fails and names the latest release"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-004.06",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "STO-004.06 a release for another OSCAL release is the latest release"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-004.07",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "STO-004.07 no release on the main branch fails"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-005.01",
+      "self-test": [
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "STO-005.01: a listed key pair that no valid document uses fails the check, and a pair that a document uses passes"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-006.01",
+      "self-test": [
+        {
+          "script": "scripts/check-metaschema-digests.ts",
+          "test": "STO-006.01: a changed byte in a module fails the digest check"
+        },
+        {
+          "script": "scripts/check-metaschema-digests.ts",
+          "test": "STO-006.01: a changed byte in metaschema-datatypes.xsd fails the digest check"
+        },
+        {
+          "script": "scripts/check-metaschema-digests.ts",
+          "test": "STO-006.01: a missing module fails the digest check"
+        },
+        {
+          "script": "scripts/check-metaschema-digests.ts",
+          "test": "STO-006.01: the unchanged files pass the digest check"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-006.02",
       "self-test": [
         {
           "script": "scripts/build-archive.ts",
-          "test": "SRF-011.01 the archive holds each file of templates/binding/"
+          "test": "STO-006.02: the archive holds each file of metaschema/<release>/, with each module, the datatypes file and SHA256SUMS"
+        },
+        {
+          "script": "scripts/build-archive.ts",
+          "test": "STO-006.02: the archive of a list without metaschema holds no metaschema file"
         }
       ]
     },
     {
-      "capability": "binding-surface",
-      "id": "SRF-011.02",
+      "capability": "contract-store",
+      "id": "STO-007.01",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "STO-007.01: a constraint that targets a child `type` of `action`, where `type` is a flag, selects nothing and is excluded"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-007.02",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "STO-007.02: a has-cardinality constraint with a filter on @name='objective' fails for an assessment part with another name, and is excluded"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-007.03",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "STO-007.03: a has-cardinality constraint on local objectives fails for each local objective, and no other constraint allows its target"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-008.01",
+      "self-test": [
+        {
+          "script": "scripts/check-constraint-exclusions.ts",
+          "test": "STO-008.01: an unknown id fails"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-008.02",
+      "self-test": [
+        {
+          "script": "scripts/check-constraint-exclusions.ts",
+          "test": "STO-008.02: an issue outside usnistgov/OSCAL fails the schema"
+        },
+        {
+          "script": "scripts/check-constraint-exclusions.ts",
+          "test": "STO-008.02: an item without an issue fails the schema"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-009.01",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "STO-009.01: a manifest file that does not exist fails the check"
+        },
+        {
+          "script": "scripts/constraints.ts",
+          "test": "STO-009.01: a manifest that a person edits by hand differs from the generation and fails the check"
+        },
+        {
+          "script": "scripts/constraints.ts",
+          "test": "STO-009.01: an edit that changes only the layout of the file fails the check"
+        },
+        {
+          "script": "scripts/constraints.ts",
+          "test": "STO-009.01: the committed manifest is the result of the generation, so the check passes"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-009.02",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "STO-009.02: a manifest that does not conform fails the check"
+        },
+        {
+          "script": "scripts/constraints.ts",
+          "test": "STO-009.02: the manifest conforms to its JSON Schema"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-010.01",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "STO-010.01: the manifest holds no entry of the level WARNING"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-010.02",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "STO-010.02: the manifest holds no excluded constraint"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-011.01",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "STO-011.01: an open allowed-values entry is not reportable"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-011.02",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "STO-011.02: an entry that the list cannot-fail names is not reportable"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-012.01",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "STO-012.01: the query check fails for a context query that selects a node of another definition"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-013.01",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "STO-013.01: the failure check fails for a pattern that rejects a valid value"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-014.01",
+      "self-test": [
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "STO-014.01: a reportable entry without a case fails the check, one message for each entry"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-014.02",
+      "self-test": [
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "STO-014.02: a valid input that fails an entry fails the check"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-014.03",
+      "self-test": [
+        {
+          "script": "scripts/check-corpus.ts",
+          "test": "STO-014.03: a failure at another location than the case lists fails the check, and the order of the list does not matter"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-015.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-015.01 definition identified by its definition pointer"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-016.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-016.03 schema hash mismatch is detected"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-017.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-017.01 document entry records its body field"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-017.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-017.02 union entry records each branch"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-017.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-017.03 enum entry records whether it is open"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-017.04",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-017.04 single-or-many entry records its item type"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-018.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-018.01 enum entry holds no enum value"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-018.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-018.02 object entry holds no field name"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-019.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-019.01 a name with - fails"
+        },
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-019.01 a name with a quote fails"
+        },
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-019.01 a name with a space fails"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-019.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-019.02 duplicate name is invalid"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-019.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-019.03 a name with a final newline fails"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-019.04",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-019.04 reference to a missing entry is invalid"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-020.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-020.01 a manifest that is not an object, or has no format member, gives one manifest failure"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-021.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-021.01 an entry without a kind fails"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-021.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-021.03 distinguishing property that is not a key fails"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-022.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-022.01 schema file name with a path fails"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-022.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-022.02 an unknown member fails in an entry of each kind"
+        },
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-022.02 an unknown member of an entry fails"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-023.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-023.03 a name change is an override edit"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-024.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-024.01 override with an unknown pointer fails"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-024.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-024.02 unused override fails"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-024.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-024.03 explicit merge with an unknown pointer fails"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-025.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-025.01 hand edit of the manifest fails the check"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-025.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-025.02 generation is reproducible"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-025.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-025.03 edit of a previous release manifest fails the check"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-026.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-026.01 previous manifest with a wrong schema hash"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-027.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-027.01 existing type keeps its name"
+        },
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-027.01 pinned name wins over a changed rule"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-027.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-027.02 new clashing definition is qualified"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-028.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-028.01 dropped name is reported"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-028.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-028.02 each dropped name is reported"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-029.01",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "STO-029.01 removed released name fails"
+        },
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "STO-029.01 rename without a breaking increment fails"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-029.02",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "STO-029.02 added type passes without a breaking increment"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-029.04",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "STO-029.04 permitted rename is listed"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-030.01",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "STO-030.01 highest precedence tag is the latest release"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-031.01",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "STO-031.01 clone without release tags fails"
+        },
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "STO-031.01 git error fails"
+        },
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "STO-031.01 shallow clone fails"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-031.02",
+      "self-test": [
+        {
+          "script": "scripts/check-releases.ts",
+          "test": "STO-031.02 no tag holds a manifest: pass without comparison"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-032.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-032.02 schema reorder does not change names"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-033.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-033.01 local name of a definition"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-033.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-033.02 local name of a list item"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-034.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-034.01 local name maps to PascalCase"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-035.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-035.01 root schema name"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-036.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-036.01 override name replaces a rule-derived name"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-037.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-037.01 wrapper named from its body field"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-037.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-037.02 schema directive field is excluded"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-037.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-037.03 the eight wrapper names"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-038.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-038.01 colliding short names get module-prefixed names"
+        }
+      ]
+    },
+    {
+      "by-design": "The rule applies to the generation of types by a binding, which no store script can observe.",
+      "capability": "contract-store",
+      "id": "STO-038.02"
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-038.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-038.03 a definition that clashes only with an inline type keeps its local name"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-039.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-039.01 merge branches are named With their property"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-039.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-039.02 branch named from its distinguishing property"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-039.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-039.03 branch children use the union name"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-040.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-040.01 each variant records its distinguishing property when the branch defines it as optional"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-041.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-041.01 ambiguous wrapper aborts and names it"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-041.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-041.02 wrapper count mismatch aborts"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-041.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-041.03 every collision appears in one report"
+        },
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-041.03 uncovered collisions are all reported"
+        }
+      ]
+    },
+    {
+      "by-design": "The rule applies to the generation of types by a binding, which no store script can observe.",
+      "capability": "contract-store",
+      "id": "STO-042.01"
+    },
+    {
+      "by-design": "The rule applies to the generation of types by a binding, which no store script can observe.",
+      "capability": "contract-store",
+      "id": "STO-042.02"
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-043.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-043.01 inline object named from its parent"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-043.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-043.02 two inline types with the same local name stay distinct"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-043.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-043.03 nested inline type uses the canonical name of its parent"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-043.04",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-043.04 inline type in a union branch uses the name of the union"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-043.05",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-043.05 override name of a parent carries down"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-043.06",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-043.06 list items use the singular local name"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-044.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-044.02 closed enum gets a type"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-044.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-044.03 open enum is marked open"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-045.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-045.01 enum named from owner and property"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-045.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-045.02 enum held directly by a definition"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-045.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-045.03 enums of an inline owner share its canonical name"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-045.04",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-045.04 enums with the same owner local name stay distinct"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-045.05",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-045.05 enum in a list property uses the singular name"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-046.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-046.01 one-or-list property is a single-or-many type"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-047.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-047.01 scalar wrapper has no object entry"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-047.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-047.02 preserved wrappers stay wrappers"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-048.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-048.01 a pointer in two entries is invalid"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-048.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-048.02 unresolvable pointer is invalid"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-048.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-048.03 scalar definition with an enum has an entry"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-048.04",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-048.04 scalar definition without an enum has no entry"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-049.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-049.01 a shared type used by many document types yields one canonical type"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-049.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-049.02 same local name with different structure is not deduplicated"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-049.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-049.03 combine copies in three branches merge into one type"
+        },
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-049.03 copies in union branches merge"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-049.04",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-049.04 equal enum values at unrelated places do not merge"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-050.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-050.01 identical places merge into one type that records both places"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-051.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-051.01 clashing definitions are not merged"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-052.01",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-052.01 missing singular name aborts and names the list"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-052.02",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-052.02 branch without a distinguishing property aborts"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-052.03",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-052.03 branch copies that differ abort"
+        },
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-052.03 merge of different structures aborts and names both"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-052.04",
+      "self-test": [
+        {
+          "script": "scripts/names.ts",
+          "test": "STO-052.04 each missing singular name is reported"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-053.01",
+      "self-test": [
+        {
+          "script": "scripts/requirements.ts",
+          "test": "STO-053.01: Index entry of a requirement"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-053.02",
+      "self-test": [
+        {
+          "script": "scripts/requirements.ts",
+          "test": "STO-053.02: Current index passes the check"
+        },
+        {
+          "script": "scripts/requirements.ts",
+          "test": "STO-053.02: Missing index fails the check"
+        },
+        {
+          "script": "scripts/requirements.ts",
+          "test": "STO-053.02: Stale index fails the check"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-053.03",
+      "self-test": [
+        {
+          "script": "scripts/requirements.ts",
+          "test": "STO-053.03: Retired requirement has no entry"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-053.04",
+      "self-test": [
+        {
+          "script": "scripts/build-archive.ts",
+          "test": "STO-053.04 the spec artifact holds the requirement index"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-054.01",
+      "self-test": [
+        {
+          "script": "scripts/requirements.ts",
+          "test": "STO-054.01: Entry with both kinds of identifier is invalid"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-054.02",
+      "self-test": [
+        {
+          "script": "scripts/requirements.ts",
+          "test": "STO-054.02: Scenario identifier as binding-local is invalid"
+        },
+        {
+          "script": "scripts/requirements.ts",
+          "test": "STO-054.02: Scenario identifier is invalid"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-054.03",
+      "self-test": [
+        {
+          "script": "scripts/build-archive.ts",
+          "test": "STO-054.03 the spec artifact holds the traceability JSON Schema"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-055.01",
+      "self-test": [
+        {
+          "script": "scripts/build-archive.ts",
+          "test": "STO-055.01 the archive holds each file of templates/binding/"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-055.02",
       "self-test": [
         {
           "script": "scripts/templates.ts",
-          "test": "SRF-011.02 a changed bundle fails the check"
+          "test": "STO-055.02 a changed bundle fails the check"
         }
       ]
     },
     {
-      "capability": "binding-surface",
-      "id": "SRF-011.03",
+      "capability": "contract-store",
+      "id": "STO-055.03",
       "self-test": [
         {
           "script": "scripts/templates.ts",
-          "test": "SRF-011.03 the bundle runs with no node_modules and passes a valid binding"
+          "test": "STO-055.03 the bundle runs with no node_modules and passes a valid binding"
         }
       ]
     },
     {
-      "capability": "binding-surface",
-      "id": "SRF-011.04",
+      "capability": "contract-store",
+      "id": "STO-055.04",
       "self-test": [
         {
           "script": "scripts/templates.ts",
-          "test": "SRF-011.04 the hook fails for an archive with another hash, and runs no checker"
+          "test": "STO-055.04 the hook fails for an archive with another hash, and runs no checker"
         }
       ]
     },
     {
-      "capability": "binding-surface",
-      "id": "SRF-011.05",
+      "capability": "contract-store",
+      "id": "STO-055.05",
       "self-test": [
         {
           "script": "scripts/templates.ts",
-          "test": "SRF-011.05 a guide that cites an unknown store identifier fails and names it"
+          "test": "STO-055.05 a guide that cites an unknown contract store identifier fails and names it"
         }
       ]
     },
     {
-      "capability": "binding-surface",
-      "id": "SRF-012.01",
+      "capability": "contract-store",
+      "id": "STO-056.01",
       "self-test": [
         {
           "script": "scripts/check-spec-ids.ts",
-          "test": "SRF-012.01 the binding checker fails and names the store prefix PRS"
+          "test": "STO-056.01 the binding checker fails and names the contract store prefix PRS"
         }
       ]
     },
     {
-      "capability": "binding-surface",
-      "id": "SRF-012.02",
+      "capability": "contract-store",
+      "id": "STO-056.02",
       "self-test": [
         {
           "script": "scripts/check-spec-ids.ts",
-          "test": "SRF-012.02 citations of the store identifiers PRS-001 and PRS-001.01 resolve"
+          "test": "STO-056.02 citations of the contract store identifiers PRS-001 and PRS-001.01 resolve"
         }
       ]
     },
     {
-      "capability": "binding-surface",
-      "id": "SRF-012.03",
+      "capability": "contract-store",
+      "id": "STO-056.03",
       "self-test": [
         {
           "script": "scripts/check-spec-ids.ts",
-          "test": "SRF-012.03 a citation of the unknown store identifier PRS-999 fails"
+          "test": "STO-056.03 a citation of the unknown contract store identifier PRS-999 fails"
         }
       ]
     },
     {
-      "capability": "binding-surface",
-      "id": "SRF-012.04",
+      "capability": "contract-store",
+      "id": "STO-056.04",
       "self-test": [
         {
           "script": "scripts/check-spec-ids.ts",
-          "test": "SRF-012.04 a binding heading at or above next of its ledger fails"
+          "test": "STO-056.04 a binding heading at or above next of its ledger fails"
         }
       ]
     },
     {
-      "capability": "binding-surface",
-      "id": "SRF-013.01",
+      "capability": "contract-store",
+      "id": "STO-057.01",
       "self-test": [
         {
           "script": "scripts/traceability.ts",
-          "test": "SRF-013.01 an entry with both kinds of identifier fails the JSON Schema"
+          "test": "STO-057.01 an entry with both kinds of identifier fails the JSON Schema"
         }
       ]
     },
     {
-      "capability": "binding-surface",
-      "id": "SRF-013.02",
+      "capability": "contract-store",
+      "id": "STO-057.02",
       "self-test": [
         {
           "script": "scripts/traceability.ts",
-          "test": "SRF-013.02 the retired contract identifier MDL-004 fails"
+          "test": "STO-057.02 the retired contract identifier MDL-004 fails"
         }
       ]
     },
     {
-      "capability": "binding-surface",
-      "id": "SRF-013.03",
+      "capability": "contract-store",
+      "id": "STO-057.03",
       "self-test": [
         {
           "script": "scripts/traceability.ts",
-          "test": "SRF-013.03 the binding-local identifier PYB-009 with no heading fails"
+          "test": "STO-057.03 the binding-local identifier PYB-009 with no heading fails"
         }
       ]
     },
     {
-      "capability": "binding-surface",
-      "id": "SRF-013.04",
+      "capability": "contract-store",
+      "id": "STO-057.04",
       "self-test": [
         {
           "script": "scripts/traceability.ts",
-          "test": "SRF-013.04 an operation name in two entries fails"
+          "test": "STO-057.04 an operation name in two entries fails"
         }
       ]
     },
     {
-      "capability": "binding-surface",
-      "id": "SRF-013.05",
+      "capability": "contract-store",
+      "id": "STO-057.05",
       "self-test": [
         {
           "script": "scripts/traceability.ts",
-          "test": "SRF-013.05 a record with PRS-001 and the live binding-local PYB-001 passes"
+          "test": "STO-057.05 a record with PRS-001 and the live binding-local PYB-001 passes"
         }
       ]
     },
     {
-      "capability": "binding-surface",
-      "id": "SRF-014.01",
+      "capability": "contract-store",
+      "id": "STO-058.01",
       "self-test": [
         {
           "script": "scripts/templates.ts",
-          "test": "SRF-014.01 a changed store rule fails the check until the template follows"
+          "test": "STO-058.01 a changed store rule fails the check until the template follows"
         }
       ]
     },
     {
-      "capability": "binding-surface",
-      "id": "SRF-014.02",
+      "capability": "contract-store",
+      "id": "STO-058.02",
       "self-test": [
         {
           "script": "scripts/templates.ts",
-          "test": "SRF-014.02 a store config without the find text of an edit fails and names the text"
+          "test": "STO-058.02 a contract store config without the find text of an edit fails and names the text"
         }
       ]
     },
     {
-      "capability": "binding-surface",
-      "id": "SRF-014.03",
+      "capability": "contract-store",
+      "id": "STO-058.03",
       "self-test": [
         {
           "script": "scripts/templates.ts",
-          "test": "SRF-014.03 the template names the binding checker for each store command"
+          "test": "STO-058.03 the template names the binding checker for each contract store command"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-059.01",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "STO-059.01: a pattern that is not an I-Regexp fails the check"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-059.02",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "STO-059.02: every query compiles and every pattern is an I-Regexp"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-060.01",
+      "self-test": [
+        {
+          "script": "scripts/constraints.ts",
+          "test": "STO-060.01: an entry without target queries fails the check"
+        }
+      ]
+    },
+    {
+      "capability": "contract-store",
+      "id": "STO-060.02",
+      "self-test": [
+        {
+          "script": "scripts/constraint-reference.ts",
+          "test": "STO-060.02: the target of a constraint with a doc() branch selects the nodes of the same document only"
+        },
+        {
+          "script": "scripts/constraints.ts",
+          "test": "STO-060.02: the target queries of that entry select the nodes of the same document"
         }
       ]
     },
@@ -3793,71 +3999,6 @@
       "id": "VER-002.02"
     },
     {
-      "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
-      "capability": "schema-versioning",
-      "id": "VER-003.01"
-    },
-    {
-      "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
-      "capability": "schema-versioning",
-      "id": "VER-003.02"
-    },
-    {
-      "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
-      "capability": "schema-versioning",
-      "id": "VER-003.03"
-    },
-    {
-      "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
-      "capability": "schema-versioning",
-      "id": "VER-003.04"
-    },
-    {
-      "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
-      "capability": "schema-versioning",
-      "id": "VER-003.05"
-    },
-    {
-      "capability": "schema-versioning",
-      "id": "VER-003.06",
-      "self-test": [
-        {
-          "script": "scripts/check-version.ts",
-          "test": "VER-003.06 pre-release label fails"
-        }
-      ]
-    },
-    {
-      "capability": "schema-versioning",
-      "id": "VER-004.01",
-      "self-test": [
-        {
-          "script": "scripts/check-version.ts",
-          "test": "VER-004.01 OSCAL release appears as build metadata"
-        }
-      ]
-    },
-    {
-      "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
-      "capability": "schema-versioning",
-      "id": "VER-004.02"
-    },
-    {
-      "by-design": "A reviewer decides the kind of each change, and no store script can observe the decision.",
-      "capability": "schema-versioning",
-      "id": "VER-004.03"
-    },
-    {
-      "capability": "schema-versioning",
-      "id": "VER-004.04",
-      "self-test": [
-        {
-          "script": "scripts/check-releases.ts",
-          "test": "VER-004.04 build metadata does not change precedence"
-        }
-      ]
-    },
-    {
       "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
       "capability": "schema-versioning",
       "id": "VER-005.01"
@@ -3868,117 +4009,9 @@
       "id": "VER-005.02"
     },
     {
-      "capability": "schema-versioning",
-      "id": "VER-006.01",
-      "self-test": [
-        {
-          "script": "scripts/check-corpus.ts",
-          "test": "VER-006.01: a case with a known-defects field fails the check"
-        },
-        {
-          "script": "scripts/check-corpus.ts",
-          "test": "VER-006.01: an index with a defect-twins field fails the check"
-        }
-      ]
-    },
-    {
-      "capability": "schema-versioning",
-      "id": "VER-006.02",
-      "self-test": [
-        {
-          "script": "scripts/check-binding-links.ts",
-          "test": "VER-006.02 issue URL fails"
-        },
-        {
-          "script": "scripts/check-binding-links.ts",
-          "test": "VER-006.02 pull URL fails"
-        }
-      ]
-    },
-    {
-      "capability": "schema-versioning",
-      "id": "VER-006.03",
-      "self-test": [
-        {
-          "script": "scripts/check-binding-links.ts",
-          "test": "VER-006.03 repository and tracker links pass"
-        }
-      ]
-    },
-    {
       "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",
       "capability": "schema-versioning",
       "id": "VER-007.01"
-    },
-    {
-      "capability": "schema-versioning",
-      "id": "VER-008.01",
-      "self-test": [
-        {
-          "script": "scripts/check-releases.ts",
-          "test": "VER-008.01 one step above the latest release passes"
-        }
-      ]
-    },
-    {
-      "capability": "schema-versioning",
-      "id": "VER-008.02",
-      "self-test": [
-        {
-          "script": "scripts/check-releases.ts",
-          "test": "VER-008.02 the latest release passes"
-        }
-      ]
-    },
-    {
-      "capability": "schema-versioning",
-      "id": "VER-008.03",
-      "self-test": [
-        {
-          "script": "scripts/check-releases.ts",
-          "test": "VER-008.03 two steps above the latest release fail and name it"
-        }
-      ]
-    },
-    {
-      "capability": "schema-versioning",
-      "id": "VER-008.04",
-      "self-test": [
-        {
-          "script": "scripts/check-releases.ts",
-          "test": "VER-008.04 a version below the latest release fails and names it"
-        }
-      ]
-    },
-    {
-      "capability": "schema-versioning",
-      "id": "VER-008.05",
-      "self-test": [
-        {
-          "script": "scripts/check-releases.ts",
-          "test": "VER-008.05 the latest version with other build metadata fails and names the latest release"
-        }
-      ]
-    },
-    {
-      "capability": "schema-versioning",
-      "id": "VER-008.06",
-      "self-test": [
-        {
-          "script": "scripts/check-releases.ts",
-          "test": "VER-008.06 a release for another OSCAL release is the latest release"
-        }
-      ]
-    },
-    {
-      "capability": "schema-versioning",
-      "id": "VER-008.07",
-      "self-test": [
-        {
-          "script": "scripts/check-releases.ts",
-          "test": "VER-008.07 no release on the main branch fails"
-        }
-      ]
     },
     {
       "by-design": "The rule applies to the process of a binding repository, which no store script can observe.",

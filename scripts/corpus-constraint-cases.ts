@@ -1,10 +1,10 @@
 /**
- * Generates the `parse` cases for the constraint failures of the corpus (openspec/specs/constraint-validation, CNS-020;
+ * Generates the `parse` cases for the constraint failures of the corpus (openspec/specs/constraint-validation, STO-014;
  * tasks.md 4.3 of the change validate-metaschema-constraints). For each reportable entry of the constraint manifest it
  * writes one input under documents/invalid/constraints/ and one case at the end of cases.json.
  *
  * Each input starts from the smallest document that conforms to the JSON Schema (the required members only). The
- * generator adds the context node of the entry at the place where the generated documents of CNS-019 hold it, and the
+ * generator adds the context node of the entry at the place where the generated documents of STO-012 hold it, and the
  * target nodes that the target queries of the entry select. It then makes one change: the value of a target node, a
  * copy of a target node, or the absence of a node. The corpus check (scripts/check-corpus.ts) runs the reference
  * evaluator on each input, so a wrong input fails the check, and this script needs no check of its own.
@@ -612,7 +612,7 @@ function slugs(entries: Entry[], indexes: number[]): Map<number, string> {
   return out;
 }
 
-/** The expected failures of a case: the `id` and the location of each failure (CNS-020), sorted by `id`, then by location. */
+/** The expected failures of a case: the `id` and the location of each failure (STO-014), sorted by `id`, then by location. */
 export const expectedOf = (failures: EntryFailure[]): Array<{ id: string; location: string }> =>
   failures
     .map((f) => ({ id: idOf(f), location: f.location }))

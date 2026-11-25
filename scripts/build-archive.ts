@@ -57,8 +57,8 @@ function selfTest(): number {
   const test = (name: string, fn: () => boolean | string) => cases.push([name, fn]);
   const releases = fs.readdirSync("metaschema", { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name);
   const inArchive = archivePaths("HEAD", CONTENTS);
-  test("CNS-001.02: the archive holds each file of metaschema/<release>/, with each module, the datatypes file and SHA256SUMS", () => {
-    if (releases.length === 0) return "the store holds no metaschema release";
+  test("STO-006.02: the archive holds each file of metaschema/<release>/, with each module, the datatypes file and SHA256SUMS", () => {
+    if (releases.length === 0) return "the contract store holds no metaschema release";
     for (const release of releases) {
       const dir = `metaschema/${release}`;
       const listed = fs
@@ -72,16 +72,16 @@ function selfTest(): number {
     }
     return true;
   });
-  test("CNS-001.02: the archive of a list without metaschema holds no metaschema file", () =>
+  test("STO-006.02: the archive of a list without metaschema holds no metaschema file", () =>
     archivePaths("HEAD", CONTENTS.filter((c) => c !== "metaschema")).every((p) => !p.startsWith("metaschema/")) && inArchive.some((p) => p.startsWith("metaschema/")));
-  test("SRF-006.04 the spec artifact holds the requirement index", () => inArchive.includes("openspec/requirements.json"));
-  test("SRF-007.03 the spec artifact holds the traceability JSON Schema", () => inArchive.includes("openspec/traceability.schema.json"));
+  test("STO-053.04 the spec artifact holds the requirement index", () => inArchive.includes("openspec/requirements.json"));
+  test("STO-054.03 the spec artifact holds the traceability JSON Schema", () => inArchive.includes("openspec/traceability.schema.json"));
   test("SRF-008.01 the spec artifact holds the sticker file", () => inArchive.includes("docs/sticker.md"));
   test("SRF-008.02 the sticker file holds the version badge and the status badge", () => {
     const sticker = fs.readFileSync("docs/sticker.md", "utf8");
     return sticker.includes("https://img.shields.io/badge/dynamic/json?") && sticker.includes("https://img.shields.io/github/actions/workflow/status/");
   });
-  test("SRF-011.01 the archive holds each file of templates/binding/", () => {
+  test("STO-055.01 the archive holds each file of templates/binding/", () => {
     const files = git("ls-files", "templates/binding").split("\n").filter((f) => f.length > 0);
     const lacking = files.filter((f) => !inArchive.includes(f));
     return (files.length > 0 && lacking.length === 0) || `the archive lacks ${lacking.join(", ") || "templates/binding/"}. Commit the templates before the self-test, because it reads HEAD.`;

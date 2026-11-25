@@ -1,6 +1,6 @@
 /**
- * Checks that read git history (openspec/specs/naming-manifest, NAM-008, and design.md of define-names-manifest-format,
- * and openspec/specs/schema-versioning, VER-008):
+ * Checks that read git history (openspec/specs/contract-store, STO-029, and design.md of define-names-manifest-format,
+ * and openspec/specs/schema-versioning, STO-004):
  *
  * 0. The version step check: VERSION is the latest release, or one patch, minor or major step above it. The latest
  *    release is the release tag on origin/main with the highest precedence, for all OSCAL releases. It cannot find
@@ -83,7 +83,7 @@ export function latestRelease(git: Git): Version | undefined {
     .sort((a, b) => precedence(b, a))[0];
 }
 
-/** The failure of the version step check (VER-008), or undefined when `version` is an allowed version. */
+/** The failure of the version step check (STO-004), or undefined when `version` is an allowed version. */
 export function versionStepFailure(latest: Version, version: Version): string | undefined {
   const [major, minor, patch] = latest.core;
   const allowed = [`${major}.${minor}.${patch + 1}`, `${major}.${minor + 1}.0`, `${major + 1}.0.0`];
@@ -147,7 +147,7 @@ function releasedChanges(released: Manifest, current: Manifest | undefined): str
   return out;
 }
 
-/** The release name check (NAM-008) and the released schema check. */
+/** The release name check (STO-029) and the released schema check. */
 export function checkReleases(git: Git, files: Files, releases: string[], versionText: string | undefined): Report {
   const failures: string[] = [];
   const lines: string[] = [];
@@ -319,19 +319,19 @@ function selfTest(): number {
   const test = (name: string, fn: () => boolean | string) => cases.push([name, fn]);
   const check = (git: Git, now: Record<string, string>, version: string) => checkReleases(git, fakeFiles(now), ["1.2.3"], version);
 
-  test("NAM-008.01 rename without a breaking increment fails", () => {
+  test("STO-029.01 rename without a breaking increment fails", () => {
     const r = check(fakeGit({ tags: { "v0.2.0+oscal.1.2.3": tagged } }), { [N]: m([["Digest", "#/definitions/h"], ["Status", "#/definitions/s"]]), [S]: "{}" }, "0.2.1+oscal.1.2.3");
     return (r.failures.some((f) => f.includes("not a breaking increment")) && r.lines.some((l) => l.includes("changed Hash -> Digest"))) || JSON.stringify(r);
   });
-  test("NAM-008.01 removed released name fails", () => {
+  test("STO-029.01 removed released name fails", () => {
     const r = check(fakeGit({ tags: { "v0.2.0+oscal.1.2.3": tagged } }), { [N]: m([["Status", "#/definitions/s"]]), [S]: "{}" }, "0.2.1+oscal.1.2.3");
     return r.failures.length === 1 && r.lines.some((l) => l.includes("removed Hash"));
   });
-  test("NAM-008.02 added type passes without a breaking increment", () => {
+  test("STO-029.02 added type passes without a breaking increment", () => {
     const r = check(fakeGit({ tags: { "v0.2.0+oscal.1.2.3": tagged } }), { [N]: m([["Hash", "#/definitions/h"], ["Status", "#/definitions/s"], ["New", "#/definitions/n"]]), [S]: "{}" }, "0.2.1+oscal.1.2.3");
     return r.failures.length === 0 || JSON.stringify(r);
   });
-  test("VER-004.04 build metadata does not change precedence", () => {
+  test("STO-002.04 build metadata does not change precedence", () => {
     const a = parseVersion("2.4.1+oscal.1.2.3")!;
     const b = parseVersion("2.4.1+oscal.1.2.4")!;
     const c = parseVersion("2.4.2+oscal.1.2.3")!;
@@ -340,38 +340,38 @@ function selfTest(): number {
   const step = (version: string, tags: Record<string, { main?: boolean; files: Record<string, string> }> = { "v0.8.0+oscal.1.2.3": tagged }) =>
     check(fakeGit({ tags }), { [N]: released, [S]: "{}" }, version);
   const stepFails = (r: Report) => r.failures.filter((f) => f.startsWith("[version-step]"));
-  test("VER-008.01 one step above the latest release passes", () => {
+  test("STO-004.01 one step above the latest release passes", () => {
     const out = ["0.8.1+oscal.1.2.3", "0.9.0+oscal.1.2.3", "1.0.0+oscal.1.2.3"].map((v) => stepFails(step(v)));
     return out.every((f) => f.length === 0) || JSON.stringify(out);
   });
-  test("VER-008.02 the latest release passes", () => stepFails(step("0.8.0+oscal.1.2.3")).length === 0);
-  test("VER-008.03 two steps above the latest release fail and name it", () => {
+  test("STO-004.02 the latest release passes", () => stepFails(step("0.8.0+oscal.1.2.3")).length === 0);
+  test("STO-004.03 two steps above the latest release fail and name it", () => {
     const out = ["0.10.0+oscal.1.2.3", "0.9.1+oscal.1.2.3"].map((v) => stepFails(step(v)));
     return out.every((f) => f.length === 1 && f[0].includes("v0.8.0+oscal.1.2.3")) || JSON.stringify(out);
   });
-  test("VER-008.04 a version below the latest release fails and names it", () => {
+  test("STO-004.04 a version below the latest release fails and names it", () => {
     const f = stepFails(step("0.7.0+oscal.1.2.3"));
     return (f.length === 1 && f[0].includes("v0.8.0+oscal.1.2.3")) || JSON.stringify(f);
   });
-  test("VER-008.05 the latest version with other build metadata fails and names the latest release", () => {
+  test("STO-004.05 the latest version with other build metadata fails and names the latest release", () => {
     const f = stepFails(step("0.8.0+oscal.1.2.4"));
     return (f.length === 1 && f[0].includes("v0.8.0+oscal.1.2.3")) || JSON.stringify(f);
   });
-  test("VER-008.06 a release for another OSCAL release is the latest release", () => {
+  test("STO-004.06 a release for another OSCAL release is the latest release", () => {
     const r = checkReleases(fakeGit({ tags: { "v0.8.0+oscal.1.2.3": tagged } }), fakeFiles({ [N]: released, [S]: "{}" }), ["1.2.3"], "0.9.0+oscal.1.2.4");
     return stepFails(r).length === 0 || JSON.stringify(r);
   });
-  test("VER-008.07 no release on the main branch fails", () => {
+  test("STO-004.07 no release on the main branch fails", () => {
     const r = step("0.9.0+oscal.1.2.3", { "v0.8.0+oscal.1.2.3": { ...tagged, main: false } });
     return r.failures.some((f) => f.startsWith("[version-step]") && f.includes("no release tag")) || JSON.stringify(r);
   });
-  test("NAM-019.01 shallow clone fails", () => check(fakeGit({ shallow: true, tags: {} }), {}, "0.2.0+oscal.1.2.3").failures.some((f) => f.includes("shallow")));
-  test("NAM-019.01 clone without release tags fails", () => check(fakeGit({ tags: {} }), {}, "0.2.0+oscal.1.2.3").failures.some((f) => f.includes("no release tags")));
-  test("NAM-019.01 git error fails", () => {
+  test("STO-031.01 shallow clone fails", () => check(fakeGit({ shallow: true, tags: {} }), {}, "0.2.0+oscal.1.2.3").failures.some((f) => f.includes("shallow")));
+  test("STO-031.01 clone without release tags fails", () => check(fakeGit({ tags: {} }), {}, "0.2.0+oscal.1.2.3").failures.some((f) => f.includes("no release tags")));
+  test("STO-031.01 git error fails", () => {
     const git = { ...fakeGit({ tags: { "v0.2.0+oscal.1.2.3": tagged } }), onMain: () => { throw new Error("no origin/main"); } };
     return check(git, { [N]: released, [S]: "{}" }, "0.2.0+oscal.1.2.3").failures.some((f) => f.includes("git failed"));
   });
-  test("NAM-008.04 permitted rename is listed", () => {
+  test("STO-029.04 permitted rename is listed", () => {
     const r = check(fakeGit({ tags: { "v0.2.0+oscal.1.2.3": tagged } }), { [N]: m([["Digest", "#/definitions/h"], ["Status", "#/definitions/s"]]), [S]: "{}" }, "0.3.0+oscal.1.2.3");
     return (r.failures.length === 0 && r.lines.some((l) => l.includes("changed Hash -> Digest"))) || JSON.stringify(r);
   });
@@ -380,7 +380,7 @@ function selfTest(): number {
     const r = check(fakeGit({ tags: { "v0.9.0+oscal.1.2.3": old, "v0.10.0+oscal.1.2.3": tagged } }), { [N]: released, [S]: "{}" }, "0.10.1+oscal.1.2.3");
     return (r.failures.length === 0 && r.lines.some((l) => l.includes("v0.10.0"))) || JSON.stringify(r);
   });
-  test("NAM-018.01 highest precedence tag is the latest release", () => {
+  test("STO-030.01 highest precedence tag is the latest release", () => {
     const older = { files: { [N]: m([["Old", "#/definitions/h"]]), [S]: "{}" } };
     const r = check(fakeGit({ tags: { "v0.5.0+oscal.1.2.3": older, "v0.6.0+oscal.1.2.3": tagged } }), { [N]: released, [S]: "{}" }, "0.6.1+oscal.1.2.3");
     return (r.failures.length === 0 && r.lines.some((l) => l.includes("compared with v0.6.0+oscal.1.2.3"))) || JSON.stringify(r);
@@ -393,7 +393,7 @@ function selfTest(): number {
     const r = check(git, { [N]: released, [S]: "{}" }, "0.8.1+oscal.1.2.3");
     return (r.failures.length === 0 && r.lines.some((l) => l.includes("compared with v0.2.0"))) || JSON.stringify(r);
   });
-  test("NAM-019.02 no tag holds a manifest: pass without comparison", () => {
+  test("STO-031.02 no tag holds a manifest: pass without comparison", () => {
     const r = check(fakeGit({ tags: { "v0.1.0+oscal.1.2.3": { files: { [S]: "{}" } } } }), { [N]: released, [S]: "{}" }, "0.2.0+oscal.1.2.3");
     return (r.failures.length === 0 && r.lines.some((l) => l.includes("nothing to compare"))) || JSON.stringify(r);
   });

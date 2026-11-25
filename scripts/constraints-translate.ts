@@ -1,6 +1,6 @@
 /**
  * Translates the Metapath of a constraint into RFC 9535 queries over the JSON keys of OSCAL (openspec/specs/
- * constraint-validation, CNS-006, CNS-007, design D1), and finds the context queries that select the instances of one
+ * contract-store, STO-059, STO-060, design D1), and finds the context queries that select the instances of one
  * definition.
  *
  * Convention: a relative query runs on a ONE-ELEMENT ARRAY that holds the node that the query is relative to. RFC 9535

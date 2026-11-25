@@ -3,10 +3,10 @@
 ## Purpose
 
 Defines which public operations a binding can expose, and how a binding records the requirement that covers each one.
-Also defines the requirement index and the JSON Schema that the store publishes for that record. A binding is an
+A binding is an
 implementation of the OSCAL bindings contract in one programming language. A public operation is a function, a type, or
 a member of a type that the binding exports in its public API. A contract requirement is a requirement in the main
-specs of the store. A binding-local requirement is a requirement in the specs of one binding.
+specs of the contract store. A binding-local requirement is a requirement in the specs of one binding.
 
 ## Requirements
 
@@ -36,20 +36,20 @@ A binding-local requirement of the binding SHALL define each binding-local opera
 - **WHEN** a function parses an OSCAL document and accepts unknown fields
 - **THEN** the function is not binding-local, because it gives alternative behavior for [PRS-004]
 
-### Requirement: SRF-010 A binding-local requirement does not use a store prefix
+### Requirement: SRF-010 A binding-local requirement does not use a contract store prefix
 
-The identifier of a binding-local requirement MUST NOT start with a prefix that the store identifier ledger,
+The identifier of a binding-local requirement MUST NOT start with a prefix that the contract store identifier ledger,
 `openspec/spec-ids.yaml`, holds. The ledger is the one in the spec artifact version that the binding pins.
 
-#### Scenario: SRF-010.01 Store prefix
+#### Scenario: SRF-010.01 Contract contract store prefix
 
 - **WHEN** a binding defines a binding-local requirement with the identifier `PRS-101`
-- **THEN** the binding does not conform, because `PRS` is a prefix in the store identifier ledger
+- **THEN** the binding does not conform, because `PRS` is a prefix in the contract store identifier ledger
 
 #### Scenario: SRF-010.02 Prefix of the binding
 
-- **WHEN** a binding defines a binding-local requirement with the identifier `PYB-001`, and the store identifier
-  ledger has no prefix `PYB`
+- **WHEN** a binding defines a binding-local requirement with the identifier `PYB-001`, and the contract store
+  identifier ledger has no prefix `PYB`
 - **THEN** the identifier meets this rule
 
 ### Requirement: SRF-001 A binding exposes only operations that a requirement defines
@@ -59,7 +59,7 @@ A binding SHALL NOT expose a public operation unless one of these is true:
 1. A contract requirement defines the operation.
 2. The operation is binding-local, as [SRF-002] defines.
 
-This rule does not apply to a generated model type or to its members. The model-derivation capability and the naming
+This rule does not apply to a generated model type or to its members. The generated-models capability and the naming
 manifest govern them.
 
 #### Scenario: SRF-001.01 Operation that the contract defines
@@ -86,7 +86,7 @@ these:
 1. The identifiers of the contract requirements that define it.
 2. The identifier of the binding-local requirement that defines it.
 
-A generated model type and its members have no entry. The model-derivation capability and the naming manifest govern
+A generated model type and its members have no entry. The generated-models capability and the naming manifest govern
 them.
 
 #### Scenario: SRF-003.01 Contract operation is recorded
@@ -136,38 +136,10 @@ Condition 3 of [SRF-002] does not apply to a deprecated operation until the bind
   operation does not conform to that definition
 - **THEN** the binding deprecates the operation in the same release
 
-### Requirement: SRF-006 The store publishes a requirement index
-
-The store SHALL publish `openspec/requirements.json`, generated from the main specs. It holds a format version and one
-entry for each requirement in the main specs, in identifier order. Each entry holds the requirement identifier, the
-capability, and the title. The store checks MUST fail when the committed index differs from the generator output. The
-spec artifact SHALL hold the index.
-
-#### Scenario: SRF-006.01 Index entry of a requirement
-
-- **WHEN** the main specs hold [PRS-001] in the document-parsing capability
-- **THEN** the index has an entry with the identifier `PRS-001`, the capability `document-parsing`, and the title
-  `Parse an OSCAL document from text or bytes`
-
-#### Scenario: SRF-006.02 Stale index fails the store checks
-
-- **WHEN** a pull request adds a requirement to the main specs and does not regenerate the index
-- **THEN** the store checks fail
-
-#### Scenario: SRF-006.03 Retired requirement has no entry
-
-- **WHEN** the ledger retires a requirement identifier
-- **THEN** the index has no entry for that identifier
-
-#### Scenario: SRF-006.04 Spec artifact holds the index
-
-- **WHEN** the store builds the spec artifact
-- **THEN** the archive holds `openspec/requirements.json`
-
 ### Requirement: SRF-004 Contract identifiers in a traceability record resolve in the requirement index
 
 Each contract requirement identifier in a traceability record MUST name a requirement in the requirement index of
-[SRF-006]. The index is the one in the spec artifact version that the binding pins. A scenario identifier or a retired
+[STO-053]. The index is the one in the spec artifact version that the binding pins. A scenario identifier or a retired
 requirement identifier does not meet this rule.
 
 #### Scenario: SRF-004.01 Live requirement resolves
@@ -180,37 +152,13 @@ requirement identifier does not meet this rule.
 - **WHEN** a record entry holds the retired identifier [MDL-004]
 - **THEN** the record is invalid, because the index has no entry for that identifier
 
-### Requirement: SRF-007 The store publishes a JSON Schema for the traceability record
-
-The store SHALL publish `openspec/traceability.schema.json`, the JSON Schema of the traceability record of [SRF-003].
-The record SHALL conform to it. The spec artifact SHALL hold it. The JSON Schema SHALL constrain the record:
-
-1. Each requirement identifier is two to five uppercase letters, a hyphen, and three digits.
-2. Each entry holds contract requirement identifiers or one binding-local requirement identifier, not both.
-3. No object holds a member that the JSON Schema does not define.
-
-#### Scenario: SRF-007.01 Entry with both kinds of identifier is invalid
-
-- **WHEN** a record entry holds a contract requirement identifier and a binding-local requirement identifier
-- **THEN** the record does not conform to the JSON Schema
-
-#### Scenario: SRF-007.02 Scenario identifier is invalid
-
-- **WHEN** a record entry holds the scenario identifier `PRS-001.01`
-- **THEN** the record does not conform to the JSON Schema
-
-#### Scenario: SRF-007.03 Spec artifact holds the JSON Schema
-
-- **WHEN** the store builds the spec artifact
-- **THEN** the archive holds `openspec/traceability.schema.json`
-
-### Requirement: SRF-008 The store publishes a README sticker for bindings
-The store SHALL publish `docs/sticker.md`. The file holds the Markdown of a sticker for the README of a
+### Requirement: SRF-008 The contract store publishes a README sticker for bindings
+The contract store SHALL publish `docs/sticker.md`. The file holds the Markdown of a sticker for the README of a
 binding. The sticker has two badges. The first badge shows the `version` member of the file
 `spec-pin.json` in the repository of the binding. The second badge shows the status of a workflow of the
 binding. The spec artifact SHALL hold the file.
 #### Scenario: SRF-008.01 Spec artifact holds the sticker file
-- **WHEN** the store builds the spec artifact
+- **WHEN** the contract store builds the spec artifact
 - **THEN** the archive holds `docs/sticker.md`
 #### Scenario: SRF-008.02 Sticker file holds both badges
 - **WHEN** a reader opens `docs/sticker.md`
@@ -236,131 +184,3 @@ A binding that shows the sticker of [SRF-008] MUST meet all of these conditions:
 - **WHEN** a binding fails one corpus case that its own record lists as an expected conformance failure, and
   passes every other case
 - **THEN** the binding meets condition 3
-
-### Requirement: SRF-011 The spec artifact holds the binding templates
-
-The spec artifact SHALL hold `templates/binding/`: the files that a binding copies to check its specs and its record
-before each commit. They include:
-
-1. The binding checker.
-2. A POSIX shell pre-commit hook that runs the binding checker and `openspec validate --all --strict`.
-3. The template config: a `config.yaml` for a binding.
-4. An agent guide, `AGENTS.md`.
-
-#### Scenario: SRF-011.01 Spec artifact holds the templates
-
-- **WHEN** the store builds the spec artifact
-- **THEN** the archive holds `templates/binding/`
-
-#### Scenario: SRF-011.02 Stale binding checker fails the store checks
-
-- **WHEN** a pull request changes the identifier checks of the store and does not regenerate the binding checker
-- **THEN** the store checks fail
-
-#### Scenario: SRF-011.03 Binding checker needs no installed package
-
-- **WHEN** a binding runs the binding checker with Node.js 22 or later and git, in a repository that has no
-  `node_modules` directory
-- **THEN** the checker runs and reports its result
-
-#### Scenario: SRF-011.04 Archive with another hash fails the hook
-
-- **WHEN** the archive file differs from the hash that the hook pins
-- **THEN** the hook fails before it runs the binding checker, and checks no staged file
-
-#### Scenario: SRF-011.05 Agent guide cites an unknown store identifier
-
-- **WHEN** the agent guide cites a store identifier that is neither live nor retired in the store
-- **THEN** the store checks fail and name the identifier
-
-### Requirement: SRF-012 The binding checker applies the identifier rules to the specs of a binding
-
-The binding checker SHALL apply each identifier check of the store to the main specs and the identifier ledger of a
-binding. It reads the store from the spec artifact that the binding pins. It SHALL also fail when:
-
-1. A prefix in the ledger of the binding is a prefix of the store, as [SRF-010] states.
-2. A citation that uses a prefix of the store names no live or retired identifier of the store.
-
-#### Scenario: SRF-012.01 Store prefix in the ledger of a binding fails
-
-- **WHEN** the ledger of a binding holds the prefix `PRS`
-- **THEN** the binding checker fails and names the prefix
-
-#### Scenario: SRF-012.02 Citation of a store identifier resolves
-
-- **WHEN** a binding spec cites [PRS-001] or `[PRS-001.01]`, and the pinned spec artifact holds that identifier
-- **THEN** the binding checker reports no failure for the citation
-
-#### Scenario: SRF-012.03 Citation of an unknown store identifier fails
-
-- **WHEN** a binding spec cites `[PRS-999]`, and the pinned spec artifact neither holds nor retires it
-- **THEN** the binding checker fails and names the citation
-
-#### Scenario: SRF-012.04 Identifier rule of the store applies to a binding
-
-- **WHEN** a requirement heading in a binding spec has a number at or above `next` for its prefix in the ledger of
-  the binding
-- **THEN** the binding checker fails, as the store check fails for the same heading in the store
-
-### Requirement: SRF-013 The binding checker checks the traceability record
-
-The binding checker SHALL check the traceability record of a binding against the spec artifact that the binding pins.
-It SHALL fail when:
-
-1. The record does not conform to the JSON Schema of [SRF-007].
-2. A contract requirement identifier does not resolve, as [SRF-004] states.
-3. A binding-local requirement identifier names no requirement in the main specs of the binding, or starts with a
-   prefix of the store, as [SRF-010] states.
-4. An operation name occurs in more than one entry.
-
-#### Scenario: SRF-013.01 Record that does not conform fails
-
-- **WHEN** a record entry holds a contract requirement identifier and a binding-local requirement identifier
-- **THEN** the binding checker fails
-
-#### Scenario: SRF-013.02 Retired contract identifier fails
-
-- **WHEN** a record entry holds the retired identifier [MDL-004]
-- **THEN** the binding checker fails and names the identifier
-
-#### Scenario: SRF-013.03 Unknown binding-local identifier fails
-
-- **WHEN** a record entry holds the binding-local identifier `PYB-009`, and the main specs of the binding have no
-  requirement `PYB-009`
-- **THEN** the binding checker fails and names the identifier
-
-#### Scenario: SRF-013.04 Operation name in two entries fails
-
-- **WHEN** two record entries have the same operation name
-- **THEN** the binding checker fails and names the operation
-
-#### Scenario: SRF-013.05 Valid record passes
-
-- **WHEN** one record entry holds [PRS-001], and one entry holds the binding-local identifier `PYB-001` of a
-  requirement in the main specs of the binding
-- **THEN** the binding checker reports no failure for the record
-
-### Requirement: SRF-014 The template config follows the store config
-
-The template config of [SRF-011] SHALL hold each entry of the store `openspec/config.yaml`, with each store
-command or store file in it replaced for a binding. It SHALL also hold the prefix rule of [SRF-010], the citation
-rule of [SRF-012], and a `references` entry for the store. The store checks MUST fail when:
-
-1. The template differs from the store config with these changes.
-2. A store-specific text that the template replaces is not in the store config.
-
-#### Scenario: SRF-014.01 Changed store rule fails the store checks until the template follows
-
-- **WHEN** a pull request changes an entry of the store `openspec/config.yaml` and does not regenerate the template
-- **THEN** the store checks fail
-
-#### Scenario: SRF-014.02 Stale replacement fails the store checks
-
-- **WHEN** a pull request rewords a store-specific sentence of the store `openspec/config.yaml`, and the template
-  replaces the old sentence
-- **THEN** the store checks fail and name the sentence
-
-#### Scenario: SRF-014.03 Template names the binding checker for a store command
-
-- **WHEN** an entry of the store `openspec/config.yaml` names `npm run spec-ids`
-- **THEN** the same entry in the template names the binding checker instead

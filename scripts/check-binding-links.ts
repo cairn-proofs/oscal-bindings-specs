@@ -1,9 +1,9 @@
 /**
- * Checks that the store links no individual issue or pull request in a binding repository (VER-006). A binding keeps
- * its own expected failures, so no store content depends on the state of a binding.
+ * Checks that the contract store links no individual issue or pull request in a binding repository (STO-003). A binding keeps
+ * its own expected failures, so no contract store content depends on the state of a binding.
  *
  * 1. The binding repositories are the GitHub repositories that `## Known implementations` in README.md links, and
- *    each GitHub repository named `oscal-bindings-<name>` other than the store, `oscal-bindings-specs`.
+ *    each GitHub repository named `oscal-bindings-<name>` other than the contract store, `oscal-bindings-specs`.
  * 2. The section must exist and link at least one repository.
  * 3. No tracked file outside openspec/changes/ contains `github.com/<owner>/<repo>/issues/<N>`,
  *    `github.com/<owner>/<repo>/pull/<N>`, or the reference `<owner>/<repo>#<N>` for a binding repository. The match
@@ -15,6 +15,8 @@
  */
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 
 const README = "README.md";
 const SECTION = "## Known implementations";
@@ -70,12 +72,29 @@ export function checkFiles(files: File[]): string[] {
       for (const pattern of [URL_LINK, REFERENCE]) {
         for (const m of line.matchAll(pattern)) {
           if (isBinding(m[1], m[2]))
-            fail(`${file.path}:${i + 1}: "${m[0]}" links an individual binding issue. Link the tracker (VER-006).`);
+            fail(`${file.path}:${i + 1}: "${m[0]}" links an individual binding issue. Link the tracker (STO-003).`);
         }
       }
     });
   }
   return failures;
+}
+
+/** The self-test cases of trackedText(), on a symbolic link to a directory and on a deleted path, in a temporary directory. */
+function symlinkCases(): Array<[string, string[], string | null]> {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "binding-links-"));
+  try {
+    fs.mkdirSync(path.join(dir, "target"));
+    fs.symlinkSync("target", path.join(dir, "link"));
+    const linkText = trackedText(path.join(dir, "link"));
+    const missing = trackedText(path.join(dir, "deleted"));
+    return [
+      ["symlink to a directory is read as its target text", linkText === "target" ? [] : [String(linkText)], null],
+      ["deleted path is skipped", missing === undefined ? [] : [missing], null],
+    ];
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
 }
 
 function selfTest(): number {
@@ -100,15 +119,15 @@ function selfTest(): number {
   const run = (extra: File[], text = readme) => checkFiles([{ path: README, text }, ...extra]);
   const doc = (text: string, path = "docs/note.md"): File[] => [{ path, text }];
   const cases: Array<[string, string[], string | null]> = [
-    ["VER-006.03 repository and tracker links pass", run([]), null],
-    ["VER-006.02 issue URL fails", run(doc(`https://github.com/${PY}/issues/6`)), "docs/note.md:1"],
-    ["VER-006.02 pull URL fails", run(doc(`x github.com/${PY}/pull/12 y`)), "/pull/12"],
+    ["STO-003.03 repository and tracker links pass", run([]), null],
+    ["STO-003.02 issue URL fails", run(doc(`https://github.com/${PY}/issues/6`)), "docs/note.md:1"],
+    ["STO-003.02 pull URL fails", run(doc(`x github.com/${PY}/pull/12 y`)), "/pull/12"],
     ["reference fails", run(doc(`See ${PY}#33.`)), "oscal-bindings-python#33"],
     ["match ignores case", run(doc(`GitHub.com/${PY.toUpperCase()}/issues/6`)), "links an individual"],
     ["line number is reported", run(doc(`one\ntwo ${PY}#6`)), "docs/note.md:2"],
     ["listed repository with another name fails", run(doc("acme/oscal-go#1")), "acme/oscal-go#1"],
     ["unlisted oscal-bindings-* repository fails", run(doc(`github.com/${GO}/issues/1`)), "oscal-bindings-go"],
-    ["store issue passes", run(doc(`${STORE_REPO}#23 github.com/${STORE_REPO}/issues/23`)), null],
+    ["contract store issue passes", run(doc(`${STORE_REPO}#23 github.com/${STORE_REPO}/issues/23`)), null],
     [
       "unrelated repository passes",
       run(doc("usnistgov/oscal-content#5 github.com/usnistgov/oscal-content/issues/5")),
@@ -121,6 +140,7 @@ function selfTest(): number {
     ["section without a repository fails", run([], `${SECTION}\n\nNone yet.\n`), "links no binding repository"],
     ["section ends at the next heading", run(doc("other/listed-after-section#1")), null],
     ["missing README fails", checkFiles(doc("text")), "does not exist"],
+    ...symlinkCases(),
   ];
   let failed = 0;
   for (const [name, out, needle] of cases) {
@@ -131,10 +151,27 @@ function selfTest(): number {
   return failed ? 1 : 0;
 }
 
+/**
+ * The text that git tracks for the path `p`. Git stores a symbolic link as the text of its target, so the check reads
+ * that text and does not follow the link, which can name a directory. Gives undefined for a path that the working tree
+ * deleted, because it has no content to check. Invalid UTF-8 decodes to U+FFFD.
+ */
+function trackedText(p: string): string | undefined {
+  let stat: fs.Stats;
+  try {
+    stat = fs.lstatSync(p);
+  } catch {
+    return undefined;
+  }
+  return stat.isSymbolicLink() ? fs.readlinkSync(p) : fs.readFileSync(p).toString("utf8");
+}
+
 function trackedFiles(): File[] {
   const paths = execFileSync("git", ["ls-files", "-z"], { encoding: "utf8" }).split("\0").filter(Boolean);
-  // A path that git tracks but the working tree deleted has no content to check. Invalid UTF-8 decodes to U+FFFD.
-  return paths.filter((p) => fs.existsSync(p)).map((p) => ({ path: p, text: fs.readFileSync(p).toString("utf8") }));
+  return paths.flatMap((p) => {
+    const text = trackedText(p);
+    return text === undefined ? [] : [{ path: p, text }];
+  });
 }
 
 if (process.argv.includes("--self-test")) {

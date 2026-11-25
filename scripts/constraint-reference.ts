@@ -1,5 +1,5 @@
 /**
- * The reference evaluation of the constraints of the vendored metaschema (openspec/specs/constraint-validation, CNS-019).
+ * The reference evaluation of the constraints of the vendored metaschema (openspec/specs/constraint-validation, STO-012).
  * It applies the rule of each constraint kind (CNS-008 to CNS-017) to the nodes that the Metapath evaluator of
  * scripts/metapath.ts selects, and it gives the failures of a document.
  *
@@ -162,7 +162,7 @@ export function evaluate(constraints: Constraint[], tree: MNode, release = "1.2.
   for (const phase of ["index", "other"] as const) {
     for (const c of constraints) {
       if ((c.kind === "index") !== (phase === "index")) continue;
-      const { expr, dropped } = localPart(parse(c.target)); // CNS-007.01: the nodes of the same document
+      const { expr, dropped } = localPart(parse(c.target)); // STO-060.02: the nodes of the same document
       if (c.kind === "index" && dropped) partial.add(c.indexName!);
       const matcher = c.kind === "matches" ? valueMatcher(release, c) : undefined;
       const keyExprs = (c.keyFields ?? []).map((kf) => parse(kf.target));
@@ -357,9 +357,9 @@ function selfTest(): number {
   test("CNS-016.01: a parameter with the flag depends-on gives one failure", () =>
     same(run(byId("oscal-parameter-depends-on-deprecated"), catalog({ params: [{ id: "a", "depends-on": "b" }, { id: "b" }] })).failures.map((f) => f.location), ["$['catalog']['params'][0]"]));
 
-  // CNS-002: the defective constraints of the exclusion list show each rule.
+  // STO-007: the defective constraints of the exclusion list show each rule.
   const excluded = (JSON.parse(fs.readFileSync("manifest/1.2.3/constraint-exclusions.json", "utf8")) as { excluded: Array<{ id?: string }> }).excluded.map((x) => x.id);
-  test("CNS-002.01: a constraint that targets a child `type` of `action`, where `type` is a flag, selects nothing and is excluded", () => {
+  test("STO-007.01: a constraint that targets a child `type` of `action`, where `type` is a flag, selects nothing and is excluded", () => {
     const c = byId("oscal-metadata-action-type-values")[0];
     const json = catalog({ metadata: { actions: [{ uuid: "u", date: "2020-01-01T00:00:00Z", type: "bogus", system: "s" }] } });
     const contexts = allNodes(loadDoc(json, model.roots)).filter((n) => n.def === c.def && n.kind !== "doc");
@@ -369,7 +369,7 @@ function selfTest(): number {
       JSON.stringify([contexts.length, selected.length, excluded.includes(c.id!)])
     );
   });
-  test("CNS-002.02: a has-cardinality constraint with a filter on @name='objective' fails for an assessment part with another name, and is excluded", () => {
+  test("STO-007.02: a has-cardinality constraint with a filter on @name='objective' fails for an assessment part with another name, and is excluded", () => {
     const c = byId("oscal-assesment-part-objective-cardinality")[0];
     const part = (name: string) => run(c, { "assessment-plan": { "terms-and-conditions": { parts: [{ name }] } } }).failures.map((f) => f.location);
     return (
@@ -378,7 +378,7 @@ function selfTest(): number {
       JSON.stringify(part("other"))
     );
   });
-  test("CNS-002.03: a has-cardinality constraint on local objectives fails for each local objective, and no other constraint allows its target", () => {
+  test("STO-007.03: a has-cardinality constraint on local objectives fails for each local objective, and no other constraint allows its target", () => {
     const c = byId("oscal-assessment-method-id-cardinality")[0];
     const all = model.constraints.filter((x) => x.level === "ERROR" || x.level === "CRITICAL");
     const document = (parts: object[], count = 2) => ({ "assessment-plan": { "local-definitions": { "objectives-and-methods": Array.from({ length: count }, (_, i) => ({ uuid: `u${i}`, "control-id": "c", parts })) } } });
@@ -449,7 +449,7 @@ function selfTest(): number {
     same(run(sspConstraints, ssp([byComponent("a", [{ href: "#only-in-the-leveraged-ssp", rel: "provided-by" }])])).failures.length, 0));
   test("D9: a constraint of an index without a part in another document is not partial", () =>
     same(run(byId("oscal-index-metadata-party-uuid", "index"), withMeta({})).partialIndexes, []));
-  test("CNS-007.01: the target of a constraint with a doc() branch selects the nodes of the same document only", () => {
+  test("STO-060.02: the target of a constraint with a doc() branch selects the nodes of the same document only", () => {
     const e = parseMetapath(byId("oscal-ssp-by-component-uuid-index")[0].target);
     const { expr, dropped } = localPart(e);
     return (dropped && expr !== null && !callsDoc(expr)) || "doc() branch not dropped";

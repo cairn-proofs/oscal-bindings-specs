@@ -1,7 +1,7 @@
 /**
  * Measures which corpus cases detect a wrong manifest evaluator (design.md of the report-scenario-checks change, D4 and
  * D5). Each fault is a set of text patches on scripts/constraints-manifest.ts, the RFC 9535 evaluation of the manifest
- * (CNS-022). The runner applies a fault, runs the patched evaluator on the document-level corpus cases of
+ * (STO-013). The runner applies a fault, runs the patched evaluator on the document-level corpus cases of
  * scripts/check-corpus.ts, and lists the cases whose result differs from the expected failures.
  *
  * 1. A patch that does not occur exactly once in the source fails the run, and the failure names the fault.
@@ -9,7 +9,7 @@
  * 3. A patched evaluator that throws for a case fails the run.
  * 4. A fault that no case detects fails the run.
  * 5. A fault is valid only when an input that conforms to the schema can change the list of pairs of `id` and location of
- *    the failures that the runner compares (CNS-020). A fault that changes only the entry or the key of a failure is not
+ *    the failures that the runner compares (STO-014). A fault that changes only the entry or the key of a failure is not
  *    valid, because the runner does not compare them. A fault that changes the location of a failure and no `id` is valid.
  *
  * The report goes to the output, and to $GITHUB_STEP_SUMMARY when that is set.
@@ -84,7 +84,7 @@ export const FAULTS: Fault[] = [
     ],
   },
   // The faults of the location of a failure and of the order of the nodes with the same key (CNS-017, CNS-013, CNS-014,
-  // CNS-026). An is-unique entry of the store selects the nodes of one array, so the order of its query is the order of
+  // CNS-026). An is-unique entry of the contract store selects the nodes of one array, so the order of its query is the order of
   // the locations, and no input can detect the order of the query for an is-unique entry.
   {
     id: "failure-at-context-node",

@@ -10,7 +10,7 @@
  * it to the pull request's target branch.
  *
  * scripts/binding-check.ts imports checkSpecIds() and passes the specs of the pinned store, so that the same rules
- * check the specs of a binding (openspec/specs/binding-surface, SRF-012).
+ * check the specs of a binding (openspec/specs/binding-surface, STO-056).
  */
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
@@ -40,14 +40,14 @@ import {
   REQUIREMENT_ID,
 } from "./spec-ids.js";
 
-/** The identifiers of a store, for a check of the specs of a binding. */
+/** The identifiers of a contract store, for a check of the specs of a binding. */
 export interface StoreSpecs {
   ledger: Ledger;
-  /** Canonical identifiers of every requirement and scenario heading in the main specs of the store. */
+  /** Canonical identifiers of every requirement and scenario heading in the main specs of the contract store. */
   live: Set<string>;
 }
 
-/** The ledger and the live identifiers of a store, from its openspec/spec-ids.yaml and openspec/specs/. */
+/** The ledger and the live identifiers of a contract store, from its openspec/spec-ids.yaml and openspec/specs/. */
 export function storeSpecs(files: Files, failures: string[]): StoreSpecs | undefined {
   const ledgerFailures: string[] = [];
   const ledger = parseLedger(files[LEDGER], ledgerFailures);
@@ -63,7 +63,7 @@ export function storeSpecs(files: Files, failures: string[]): StoreSpecs | undef
 
 /**
  * Runs every spec-ids check. `files` holds openspec/ and docs/; `base` the main specs at the base ref. `store`, when
- * present, holds the store of a binding: then `files` are the files of the binding.
+ * present, holds the contract store of a binding: then `files` are the files of the binding.
  */
 export function checkSpecIds(files: Files, base: Files | Error, store?: StoreSpecs): string[] {
   const failures: string[] = [];
@@ -93,11 +93,11 @@ export function checkSpecIds(files: Files, base: Files | Error, store?: StoreSpe
 
   const ledger = parseLedger(files[LEDGER], failures);
 
-  // store-prefix: a prefix of a binding is never a prefix of its store (SRF-010).
+  // contract-store-prefix: a prefix of a binding is never a prefix of its contract store (SRF-010).
   if (ledger && store) {
     for (const prefix of ledger.prefixes.keys()) {
       if (store.ledger.prefixes.has(prefix)) {
-        failures.push(`[store-prefix] prefix ${prefix} of ${LEDGER} is a prefix of the store.`);
+        failures.push(`[contract-store-prefix] prefix ${prefix} of ${LEDGER} is a prefix of the contract store.`);
       }
     }
   }
@@ -192,9 +192,9 @@ export function checkSpecIds(files: Files, base: Files | Error, store?: StoreSpe
             failures.push(`[citation] ${file}:${lineNo}: citation [${cited}] is neither live nor retired.`);
           }
         } else if (store?.ledger.prefixes.has(prefix)) {
-          // A citation with a store prefix resolves in the pinned store (SRF-012).
+          // A citation with a contract store prefix resolves in the pinned store (STO-056).
           if (!store.live.has(key) && !isRetired(store.ledger, key)) {
-            failures.push(`[citation] ${file}:${lineNo}: citation [${cited}] is neither live nor retired in the store.`);
+            failures.push(`[citation] ${file}:${lineNo}: citation [${cited}] is neither live nor retired in the contract store.`);
           }
         }
       }
@@ -513,10 +513,10 @@ function selfTest(): number {
     null,
   );
 
-  // Binding specs checked against a store (SRF-010, SRF-012). The store is this repository.
+  // Binding specs checked against a contract store (SRF-010, STO-056). The contract store is this repository.
   console.log("\n## spec-ids of a binding");
   const store = storeSpecs(readRepository(process.cwd(), [LEDGER]), []);
-  if (!store) throw new Error("cannot read the store specs of this repository");
+  if (!store) throw new Error("cannot read the contract store specs of this repository");
   const API = "openspec/specs/python-api/spec.md";
   const bindingLedger = (extra = "") =>
     `prefixes:\n  PYB:\n    capability: python-api\n    next: 2\n${extra}retired: []\n`;
@@ -541,27 +541,27 @@ function selfTest(): number {
   };
   const storePrefix = (files: Files) =>
     (files[LEDGER] = bindingLedger("  PRS:\n    capability: python-parse\n    next: 1\n"));
-  bindingScenario("SRF-010.01 a binding ledger with the store prefix PRS fails", storePrefix, {
-    rule: "store-prefix",
+  bindingScenario("SRF-010.01 a binding ledger with the contract store prefix PRS fails", storePrefix, {
+    rule: "contract-store-prefix",
     needle: "prefix PRS",
   });
-  bindingScenario("SRF-010.02 the binding prefix PYB, which the store does not hold, passes", () => {}, null);
-  bindingScenario("SRF-012.01 the binding checker fails and names the store prefix PRS", storePrefix, {
-    rule: "store-prefix",
-    needle: "prefix PRS of openspec/spec-ids.yaml is a prefix of the store",
+  bindingScenario("SRF-010.02 the binding prefix PYB, which the contract store does not hold, passes", () => {}, null);
+  bindingScenario("STO-056.01 the binding checker fails and names the contract store prefix PRS", storePrefix, {
+    rule: "contract-store-prefix",
+    needle: "prefix PRS of openspec/spec-ids.yaml is a prefix of the contract store",
   });
   bindingScenario(
-    "SRF-012.02 citations of the store identifiers PRS-001 and PRS-001.01 resolve",
+    "STO-056.02 citations of the contract store identifiers PRS-001 and PRS-001.01 resolve",
     (files) => (files[API] = files[API].replace("Text.", "Wraps [PRS-001] and meets [PRS-001.01].")),
     null,
   );
   bindingScenario(
-    "SRF-012.03 a citation of the unknown store identifier PRS-999 fails",
+    "STO-056.03 a citation of the unknown contract store identifier PRS-999 fails",
     (files) => (files[API] = files[API].replace("Text.", "Wraps [PRS-999].")),
-    { rule: "citation", needle: "citation [PRS-999] is neither live nor retired in the store" },
+    { rule: "citation", needle: "citation [PRS-999] is neither live nor retired in the contract store" },
   );
   bindingScenario(
-    "SRF-012.04 a binding heading at or above next of its ledger fails",
+    "STO-056.04 a binding heading at or above next of its ledger fails",
     (files) => (files[API] += req("PYB-002", "Too far", ["PYB-002.01 Example"])),
     { rule: "next", needle: '"PYB-002 Too far"' },
   );

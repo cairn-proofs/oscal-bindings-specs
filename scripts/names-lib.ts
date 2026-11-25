@@ -1,7 +1,7 @@
 /**
  * The naming manifest: JSON pointers, the derivation of canonical type names from the complete OSCAL schema, the
- * writer, and the manifest validator. The rules are in openspec/specs/model-derivation and
- * openspec/specs/naming-manifest. design.md of the change define-names-manifest-format explains the choices.
+ * writer, and the manifest validator. The rules are in openspec/specs/contract-store. design.md of the change
+ * define-names-manifest-format explains the choices.
  *
  * The derivation walks the schema without following `$ref`, so recursive OSCAL types cannot make it loop. Pointers
  * resolve through own properties only, so keys such as `__proto__` or `constructor` never resolve to inherited
@@ -132,7 +132,7 @@ export interface DeriveInput {
   schemaFile: string;
   schemaBytes: Buffer | string;
   overrides: Overrides;
-  /** The manifest of the previous OSCAL release, already validated, when the store holds one. */
+  /** The manifest of the previous OSCAL release, already validated, when the contract store holds one. */
   previous?: Manifest;
 }
 
@@ -220,7 +220,7 @@ export function derive(input: DeriveInput): DeriveResult {
   const pinned = new Map<string, string>();
   for (const entry of input.previous?.types ?? []) for (const site of entry.sites) pinned.set(site, entry.name);
 
-  // Override pointers must resolve (NAM-015).
+  // Override pointers must resolve (STO-024).
   const overridePointers = [
     ...localNames.keys(),
     ...overrideNames.keys(),
@@ -241,7 +241,7 @@ export function derive(input: DeriveInput): DeriveResult {
   const typeDefinitions: Array<{ key: string; local: string; module: string; node: Obj }> = [];
   for (const [key, node] of Object.entries(definitions)) {
     if (!key.includes(":") || !isObject(node)) continue;
-    if (!isObjectType(node) && !isUnion(node) && !enumBranch(node)) continue; // scalar definition (NAM-009)
+    if (!isObjectType(node) && !isUnion(node) && !enumBranch(node)) continue; // scalar definition (STO-048)
     const [namespace, local] = key.split(":");
     typeDefinitions.push({ key, local, module: namespace.replace(/^oscal-complete-oscal-/, ""), node });
   }
@@ -353,7 +353,7 @@ export function derive(input: DeriveInput): DeriveResult {
     }
   }
 
-  // Document wrappers and the document union (MDL-002, guards 1 and 2 of MDL-007).
+  // Document wrappers and the document union (STO-037, guards 1 and 2 of STO-041).
   const oneOf = Array.isArray(root.oneOf) ? root.oneOf : [];
   const members: string[] = [];
   for (const [i, wrapper] of oneOf.entries()) {
@@ -375,7 +375,7 @@ export function derive(input: DeriveInput): DeriveResult {
     places.push({ pointer: "#", key: "#", kind: "document-union", name, baseName, node: null, members: [...members].sort(byCodeUnit) });
   }
 
-  // Unused overrides (NAM-015).
+  // Unused overrides (STO-024).
   const placeByPointer = new Map(places.map((p) => [p.pointer, p]));
   for (const pointer of localNames.keys()) {
     if (!usedLocal.has(pointer)) fail("unused-override", `local-names ${pointer} is not a list item that needs a name`);
@@ -386,7 +386,7 @@ export function derive(input: DeriveInput): DeriveResult {
     else if (place.baseName === value) fail("unused-override", `names ${pointer} = ${value} is the name the rules give`);
   }
 
-  // Merges (MDL-013): branch copies by key, then explicit merges.
+  // Merges (STO-049): branch copies by key, then explicit merges.
   const groups = new Map<string, Place[]>();
   for (const place of places) {
     const id = `${place.key}\u0000${place.name}`;
@@ -425,7 +425,7 @@ export function derive(input: DeriveInput): DeriveResult {
     }
   }
 
-  // Collisions (guard 3 of MDL-007): one name for two types.
+  // Collisions (guard 3 of STO-041): one name for two types.
   const byName = new Map<string, string[]>();
   for (const list of groups.values()) byName.set(list[0].name, [...(byName.get(list[0].name) ?? []), list[0].pointer]);
   for (const [name, pointers] of byName) {
@@ -435,7 +435,7 @@ export function derive(input: DeriveInput): DeriveResult {
     if (!NAME.test(list[0].name)) fail("name", `${JSON.stringify(list[0].name)} at ${list[0].pointer} is not a valid name`);
   }
 
-  // Pinned names that the new manifest does not keep (NAM-017).
+  // Pinned names that the new manifest does not keep (STO-028).
   for (const entry of input.previous?.types ?? []) {
     const kept = entry.sites.some((site) => placeByPointer.get(site)?.name === entry.name);
     if (!kept) dropped.push(`${entry.name} (${entry.sites[0]})`);
@@ -468,7 +468,7 @@ export function derive(input: DeriveInput): DeriveResult {
 }
 
 // ---------------------------------------------------------------------------------------------------------------
-// Validation (NAM-003, NAM-012, NAM-004, NAM-013)
+// Validation (STO-019, GEN-001, STO-021, STO-022)
 
 const cache = new Map<string, ValidateFunction>();
 function validatorFor(file: string): ValidateFunction {
@@ -491,13 +491,13 @@ export function validateOverrides(data: unknown, schemaPath = "manifest/override
   return schemaErrors(validatorFor(schemaPath), data, "overrides.json");
 }
 
-/** The manifest format versions that the store supports (NAM-022). */
+/** The manifest format versions that the contract store supports (GEN-003). */
 const SUPPORTED_FORMATS: readonly unknown[] = [1];
 
 /**
  * Checks a manifest against its JSON Schema and against the rules that a JSON Schema cannot express. `schemaBytes`
  * are the bytes of the complete schema that the consumer uses, and `release` is its OSCAL release. The format version
- * is the first check (NAM-021, NAM-022).
+ * is the first check (STO-020, GEN-003).
  */
 export function validateManifest(
   data: unknown,

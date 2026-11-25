@@ -14463,7 +14463,7 @@ function checkSpecIds(files, base, store) {
   if (ledger && store) {
     for (const prefix of ledger.prefixes.keys()) {
       if (store.ledger.prefixes.has(prefix)) {
-        failures.push(`[store-prefix] prefix ${prefix} of ${LEDGER} is a prefix of the store.`);
+        failures.push(`[contract-store-prefix] prefix ${prefix} of ${LEDGER} is a prefix of the contract store.`);
       }
     }
   }
@@ -14546,7 +14546,7 @@ function checkSpecIds(files, base, store) {
           }
         } else if (store?.ledger.prefixes.has(prefix)) {
           if (!store.live.has(key) && !isRetired(store.ledger, key)) {
-            failures.push(`[citation] ${file}:${lineNo}: citation [${cited}] is neither live nor retired in the store.`);
+            failures.push(`[citation] ${file}:${lineNo}: citation [${cited}] is neither live nor retired in the contract store.`);
           }
         }
       }
@@ -14871,7 +14871,7 @@ ${extra}retired: ${retired}
   );
   console.log("\n## spec-ids of a binding");
   const store = storeSpecs(readRepository(process.cwd(), [LEDGER]), []);
-  if (!store) throw new Error("cannot read the store specs of this repository");
+  if (!store) throw new Error("cannot read the contract store specs of this repository");
   const API = "openspec/specs/python-api/spec.md";
   const bindingLedger = (extra = "") => `prefixes:
   PYB:
@@ -14893,28 +14893,28 @@ ${extra}retired: []
       ${JSON.stringify(out)}`}`);
   };
   const storePrefix = (files) => files[LEDGER] = bindingLedger("  PRS:\n    capability: python-parse\n    next: 1\n");
-  bindingScenario("SRF-010.01 a binding ledger with the store prefix PRS fails", storePrefix, {
-    rule: "store-prefix",
+  bindingScenario("SRF-010.01 a binding ledger with the contract store prefix PRS fails", storePrefix, {
+    rule: "contract-store-prefix",
     needle: "prefix PRS"
   });
-  bindingScenario("SRF-010.02 the binding prefix PYB, which the store does not hold, passes", () => {
+  bindingScenario("SRF-010.02 the binding prefix PYB, which the contract store does not hold, passes", () => {
   }, null);
-  bindingScenario("SRF-012.01 the binding checker fails and names the store prefix PRS", storePrefix, {
-    rule: "store-prefix",
-    needle: "prefix PRS of openspec/spec-ids.yaml is a prefix of the store"
+  bindingScenario("STO-056.01 the binding checker fails and names the contract store prefix PRS", storePrefix, {
+    rule: "contract-store-prefix",
+    needle: "prefix PRS of openspec/spec-ids.yaml is a prefix of the contract store"
   });
   bindingScenario(
-    "SRF-012.02 citations of the store identifiers PRS-001 and PRS-001.01 resolve",
+    "STO-056.02 citations of the contract store identifiers PRS-001 and PRS-001.01 resolve",
     (files) => files[API] = files[API].replace("Text.", "Wraps [PRS-001] and meets [PRS-001.01]."),
     null
   );
   bindingScenario(
-    "SRF-012.03 a citation of the unknown store identifier PRS-999 fails",
+    "STO-056.03 a citation of the unknown contract store identifier PRS-999 fails",
     (files) => files[API] = files[API].replace("Text.", "Wraps [PRS-999]."),
-    { rule: "citation", needle: "citation [PRS-999] is neither live nor retired in the store" }
+    { rule: "citation", needle: "citation [PRS-999] is neither live nor retired in the contract store" }
   );
   bindingScenario(
-    "SRF-012.04 a binding heading at or above next of its ledger fails",
+    "STO-056.04 a binding heading at or above next of its ledger fails",
     (files) => files[API] += req("PYB-002", "Too far", ["PYB-002.01 Example"]),
     { rule: "next", needle: '"PYB-002 Too far"' }
   );
@@ -14956,7 +14956,7 @@ import path3 from "node:path";
 var RECORD = "openspec/traceability.json";
 var RECORD_SCHEMA = "openspec/traceability.schema.json";
 var INDEX = "openspec/requirements.json";
-function checkRecord(record, schema, index, files, storePrefixes) {
+function checkRecord(record, schema, index, files, contractStorePrefixes) {
   const failures = [];
   const validate = new import_ajv.Ajv({ allErrors: true, strict: true }).compile(schema);
   if (!validate(record)) {
@@ -14970,7 +14970,7 @@ function checkRecord(record, schema, index, files, storePrefixes) {
   for (const entry of entries) {
     for (const id of entry.requirements ?? []) {
       if (!indexed.has(id)) {
-        failures.push(`[record-contract] ${entry.name}: ${id} is not in the requirement index of the store.`);
+        failures.push(`[record-contract] ${entry.name}: ${id} is not in the requirement index of the contract store.`);
       }
     }
   }
@@ -14984,8 +14984,8 @@ function checkRecord(record, schema, index, files, storePrefixes) {
   for (const entry of entries) {
     const id = entry["binding-local"];
     if (id === void 0) continue;
-    if (storePrefixes.has(id.split("-")[0])) {
-      failures.push(`[record-local] ${entry.name}: ${id} uses a prefix of the store.`);
+    if (contractStorePrefixes.has(id.split("-")[0])) {
+      failures.push(`[record-local] ${entry.name}: ${id} uses a prefix of the contract store.`);
     } else if (!local.has(canonical(id))) {
       failures.push(`[record-local] ${entry.name}: ${id} names no requirement in the main specs of the binding.`);
     }
@@ -15000,7 +15000,7 @@ function checkRecord(record, schema, index, files, storePrefixes) {
 function selfTest2() {
   const schema = JSON.parse(fs3.readFileSync(RECORD_SCHEMA, "utf8"));
   const index = JSON.parse(fs3.readFileSync(INDEX, "utf8"));
-  const storePrefixes = new Set(index.requirements.map((r) => r.id.split("-")[0]));
+  const contractStorePrefixes = new Set(index.requirements.map((r) => r.id.split("-")[0]));
   const files = {
     "openspec/specs/python-api/spec.md": "# python-api Specification\n\n## Purpose\nTest.\n\n## Requirements\n\n### Requirement: PYB-001 Parse with a callback\n\nText.\n\n#### Scenario: PYB-001.01 Callback gets the result\n\n- **WHEN** x\n- **THEN** y\n"
   };
@@ -15011,7 +15011,7 @@ function selfTest2() {
   );
   let failed = 0;
   const scenario = (name, data, expect) => {
-    const out = checkRecord(data, schema, index, files, storePrefixes);
+    const out = checkRecord(data, schema, index, files, contractStorePrefixes);
     const ok = expect === null ? out.length === 0 : out.some((line) => line.startsWith(`[${expect.rule}]`) && line.includes(expect.needle));
     if (!ok) failed++;
     console.log(`${ok ? "PASS" : "FAIL"}  ${name}${ok ? "" : `
@@ -15019,12 +15019,12 @@ function selfTest2() {
   };
   console.log("## traceability record");
   scenario(
-    "SRF-013.01 an entry with both kinds of identifier fails the JSON Schema",
+    "STO-057.01 an entry with both kinds of identifier fails the JSON Schema",
     record({ name: "f", requirements: ["PRS-001"], "binding-local": "PYB-001" }),
     { rule: "record-schema", needle: "/operations/0" }
   );
   const retired = record({ name: "build_model", requirements: ["MDL-004"] });
-  scenario("SRF-013.02 the retired contract identifier MDL-004 fails", retired, {
+  scenario("STO-057.02 the retired contract identifier MDL-004 fails", retired, {
     rule: "record-contract",
     needle: "MDL-004"
   });
@@ -15033,21 +15033,21 @@ function selfTest2() {
     needle: "MDL-004 is not in the requirement index"
   });
   scenario(
-    "SRF-013.03 the binding-local identifier PYB-009 with no heading fails",
+    "STO-057.03 the binding-local identifier PYB-009 with no heading fails",
     record({ name: "f", "binding-local": "PYB-009" }),
     { rule: "record-local", needle: "PYB-009 names no requirement" }
   );
   scenario(
-    "SRF-013.04 an operation name in two entries fails",
+    "STO-057.04 an operation name in two entries fails",
     record({ name: "parse_oscal", requirements: ["PRS-001"] }, { name: "parse_oscal", requirements: ["PRS-003"] }),
     { rule: "record-duplicate", needle: "operation parse_oscal" }
   );
-  scenario("SRF-013.05 a record with PRS-001 and the live binding-local PYB-001 passes", valid, null);
+  scenario("STO-057.05 a record with PRS-001 and the live binding-local PYB-001 passes", valid, null);
   scenario("SRF-004.01 the live requirement PRS-001 resolves in the index", valid, null);
   scenario(
-    "record-local: a binding-local identifier with a store prefix fails",
+    "record-local: a binding-local identifier with a contract store prefix fails",
     record({ name: "f", "binding-local": "PRS-101" }),
-    { rule: "record-local", needle: "PRS-101 uses a prefix of the store" }
+    { rule: "record-local", needle: "PRS-101 uses a prefix of the contract store" }
   );
   scenario("record-schema: an empty record passes", record(), null);
   console.log(failed ? `
@@ -15061,13 +15061,13 @@ if (process.argv[1] !== void 0 && path3.basename(process.argv[1]) === "traceabil
 }
 
 // scripts/binding-check.ts
-var USAGE = "usage: node check-binding.mjs --store <dir> [--record <path>]";
+var USAGE = "usage: node check-binding.mjs --contract-store <dir> [--record <path>]";
 function main(argv, cwd) {
   const option = (name) => {
     const at = argv.indexOf(name);
     return at === -1 ? void 0 : argv[at + 1];
   };
-  const storeDir = option("--store");
+  const storeDir = option("--contract-store") ?? option("--store");
   if (storeDir === void 0) {
     console.error(USAGE);
     return 2;

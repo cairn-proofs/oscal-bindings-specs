@@ -3,146 +3,26 @@
 ## Purpose
 
 Defines the constraints of the OSCAL metaschema that decide whether a document or an element is
-valid. Covers the vendored metaschema, the constraint manifest that the store generates from it,
-the rule for each constraint kind, and how the store checks the manifest.
+valid. Covers the rule for each kind of entry of the constraint manifest, and the location of a
+failure.
 
 ## Requirements
 
-### Requirement: CNS-001 The store vendors the metaschema of each vendored OSCAL release
+### Requirement: CNS-006 A binding evaluates the queries of the manifest as RFC 9535 defines
 
-For each vendored OSCAL release, `metaschema/<release>/` SHALL hold these files:
-
-1. The `oscal_*_metaschema_RESOLVED.xml` modules that the release of `usnistgov/OSCAL` publishes
-   as assets.
-2. `metaschema-datatypes.xsd` of `usnistgov/metaschema`, at the commit that `SOURCE.md` records.
-
-Each file SHALL have the bytes of its source, and `SHA256SUMS` SHALL list its digest. The store
-checks SHALL fail on a digest that does not match. The spec artifact SHALL hold the directory.
-
-#### Scenario: CNS-001.01 A changed module fails the store checks
-
-- **WHEN** a file in `metaschema/1.2.3/` differs from the digest that `SHA256SUMS` lists for it
-- **THEN** the store checks fail
-
-#### Scenario: CNS-001.02 The spec artifact holds the metaschema
-
-- **WHEN** a consumer reads the spec artifact
-- **THEN** it holds `metaschema/1.2.3/` with each module, `metaschema-datatypes.xsd` and its
-  `SHA256SUMS`
-
-### Requirement: CNS-002 A constraint that cannot work as written is defective
-
-A constraint is an `allowed-values`, `matches`, `has-cardinality`, `is-unique`, `index`,
-`index-has-key` or `expect` element of a module. The store SHALL treat an ERROR or CRITICAL
-constraint as defective when:
-
-1. Its target selects nothing in any document that conforms to the schema.
-2. It fails for a node that a filter of its target excludes.
-3. It fails for each node that it selects in each document that the schema and other
-   constraints allow.
-4. It gives a Metapath error for a target node.
-
-#### Scenario: CNS-002.01 A target that selects nothing
-
-- **WHEN** a constraint targets a child `type` of `action`, and `type` is a flag of `action`
-- **THEN** the constraint is defective
-
-#### Scenario: CNS-002.02 A failure for an excluded node
-
-- **WHEN** a `has-cardinality` constraint on assessment parts has a minimum of 1 and a target
-  that starts with a filter on `@name='objective'`, and an assessment part has another name
-- **THEN** the constraint fails for that part, and the constraint is defective
-
-#### Scenario: CNS-002.03 A has-cardinality constraint that no document meets
-
-- **WHEN** a `has-cardinality` constraint on local objectives has a minimum of 1, and no other
-  constraint allows its target
-- **THEN** the constraint fails for each local objective, and the constraint is defective
-
-### Requirement: CNS-003 The exclusion list names each defective constraint with its issue
-
-The store SHALL list each defective constraint of [CNS-002] in the list `excluded` of the
-exclusion list `manifest/<release>/constraint-exclusions.json`, and no other constraint. Each item
-SHALL identify one constraint by its `id`, or, for a constraint without an `id`, by its module,
-its declaring definition and its kind. Each item SHALL hold the URL of an issue of
-`usnistgov/OSCAL` that reports the defect. The store checks SHALL fail when an item identifies no
-constraint, or more than one.
-
-#### Scenario: CNS-003.01 An item that identifies no constraint
-
-- **WHEN** an item of the list `excluded` holds a constraint `id` that no vendored module holds
-- **THEN** the store checks fail
-
-#### Scenario: CNS-003.02 Each item holds its issue
-
-- **WHEN** a consumer reads an item of the list `excluded`
-- **THEN** the item holds the URL of an issue of `usnistgov/OSCAL`
-
-### Requirement: CNS-004 The store publishes a constraint manifest for each release
-
-The store SHALL publish the constraint manifest `manifest/<release>/constraints.json`. The store
-SHALL generate it from the vendored metaschema, the naming manifest and the exclusion list of
-[CNS-003]. The store checks SHALL fail when the file differs from the result of the generation.
-The manifest SHALL hold its format version in the member `format`. It SHALL conform to the JSON
-Schema `manifest/constraints.schema.json`. The spec artifact SHALL hold both files.
-
-#### Scenario: CNS-004.01 An edit by hand fails the store checks
-
-- **WHEN** a person edits `manifest/1.2.3/constraints.json` by hand
-- **THEN** the file differs from the result of the generation, and the store checks fail
-
-#### Scenario: CNS-004.02 The manifest conforms to its JSON Schema
-
-- **WHEN** the store checks read the manifest
-- **THEN** the manifest conforms to `manifest/constraints.schema.json`, or the store checks fail
-
-### Requirement: CNS-005 The manifest holds each constraint that can decide validity
-
-The manifest SHALL hold one entry for each constraint whose level is ERROR or CRITICAL, unless
-the list `excluded` of [CNS-003] lists it. A constraint without a level has the level ERROR. It
-SHALL hold no other entry. Each entry SHALL hold the kind and the level of its constraint, and the
-`id` of the constraint, or null when it has none. Two entries can have the same `id`.
-
-#### Scenario: CNS-005.01 A warning is not in the manifest
-
-- **WHEN** a constraint has the level WARNING
-- **THEN** the manifest holds no entry for it
-
-#### Scenario: CNS-005.02 An excluded constraint is not in the manifest
-
-- **WHEN** the list `excluded` lists a constraint of level ERROR
-- **THEN** the manifest holds no entry for it
-
-### Requirement: CNS-006 The manifest selects nodes with RFC 9535 queries
-
-Each entry SHALL select nodes with queries in the syntax of RFC 9535 (JSONPath). A query of the
-manifest SHALL use only the syntax and the functions of RFC 9535. Each regular expression in it
-SHALL be an I-Regexp of RFC 9485. An implementation SHALL evaluate each query as RFC 9535
-defines. When several queries of one entry select nodes for the same purpose, the result is the
-union of their nodes, each node once.
+A binding SHALL evaluate each query of the manifest as RFC 9535 defines. When several queries of one entry select
+nodes for the same purpose, the result is the union of their nodes, each node once.
 
 #### Scenario: CNS-006.01 Two queries select the same node
 
 - **WHEN** two queries of one entry select the same node for the same purpose
 - **THEN** the result holds that node once
 
-### Requirement: CNS-007 Each entry selects context nodes and target nodes
+### Requirement: CNS-007 A binding runs each query of an entry on its own input
 
-Each entry SHALL hold these queries of [CNS-006]:
-
-1. Document context queries. They select from a document the context nodes, to which the
-   constraint applies.
-2. Element context queries for each element type whose element can hold a context node. They run
-   on an array that holds only the element. An `allowed-values` entry can lack them for a type,
-   as a later requirement states.
-3. Target queries. They run on an array that holds only one context node, and select its target
-   nodes.
-
-#### Scenario: CNS-007.01 A target in another document
-
-- **WHEN** the Metapath target of a constraint is a union of a path in the same document and a
-  `doc()` path into another document
-- **THEN** the target queries select only the nodes of that union in the same document
+A binding SHALL run the queries that [STO-060] names as follows. It runs the document context queries on the document.
+It runs the element context queries on an array that holds only the element. It runs the target queries on an array
+that holds only one context node, and they select the target nodes of that context node.
 
 #### Scenario: CNS-007.02 Element context queries of a type
 
@@ -250,7 +130,7 @@ the value in this comparison.
 
 ### Requirement: CNS-009 An element decides an allowed-values entry only with its applicable set
 
-An `allowed-values` entry SHALL have the element context queries of [CNS-007] for an element type
+An `allowed-values` entry SHALL have the element context queries of [STO-060] for an element type
 when, and only when, the element holds the context node of each entry that can be in the
 applicable set of [CNS-008] of each target node of the entry in an element of that type.
 
@@ -379,7 +259,7 @@ failure.
 ### Requirement: CNS-017 A document meets the manifest when no entry fails for it
 
 A document meets the constraint manifest when no entry gives a failure for it, with the document
-context queries of [CNS-007]. The requirement for the kind of an entry states when the entry
+context queries of [STO-060]. The requirement for the kind of an entry states when the entry
 gives a failure. Each failure SHALL have a location and the `id` of its entry. The location is the
 location of [CNS-024] of the target node, or of the context node for a `has-cardinality` entry.
 An entry SHALL give at most one failure for one location, or for one location and one key of
@@ -418,76 +298,3 @@ Each failure SHALL have a location and an identifier, as [CNS-017] states for a 
 - **WHEN** an element of the type `hash` has the algorithm `SHA-256` and a value of 63
   hexadecimal digits
 - **THEN** the element does not meet the constraint manifest
-
-### Requirement: CNS-021 An entry is reportable unless it cannot fail
-
-Each entry SHALL state whether it is reportable. It is reportable unless:
-
-1. It is an `allowed-values` entry with `allow-other` true.
-2. It is an `allowed-values` entry, and the JSON Schema allows only values that it lists.
-3. It is an `index-has-key` entry whose index is partial.
-4. The list `cannot-fail` of the exclusion list names it as [CNS-003] states, with the reason.
-
-The generation SHALL fail for a reportable entry without an `id`.
-
-#### Scenario: CNS-021.01 An open entry is not reportable
-
-- **WHEN** an `allowed-values` entry has `allow-other` true
-- **THEN** the entry is not reportable
-
-#### Scenario: CNS-021.02 A test that the schema makes always true
-
-- **WHEN** the schema allows no node for which the test of an `expect` entry is false, and the
-  list `cannot-fail` names the entry with that reason
-- **THEN** the entry is not reportable
-
-### Requirement: CNS-019 The store checks the queries against a reference evaluator
-
-The store checks SHALL evaluate the vendored constraints with a reference evaluator that reads
-the metaschema and applies [CNS-011] to [CNS-017]. They SHALL fail when the queries of an entry
-select other nodes than the reference evaluator selects for its constraint. The check SHALL use
-the corpus documents that conform to the schema, and generated documents of each model that
-conform to it and together hold each definition, flag and choice branch of the model.
-
-#### Scenario: CNS-019.01 A query that selects too many nodes
-
-- **WHEN** the context queries of an entry select a node of another definition with the same key
-  name
-- **THEN** the store checks fail
-
-### Requirement: CNS-022 The store checks the failures of the manifest against the reference evaluator
-
-The store checks SHALL evaluate the manifest with an RFC 9535 implementation, as [CNS-017] states
-for a document and [CNS-018] for an element, on the documents of [CNS-019]. They SHALL fail when the number of failures of an
-entry differs from the number that the reference evaluator of [CNS-019] gives for its constraint.
-
-#### Scenario: CNS-022.01 A pattern that the generation writes wrong
-
-- **WHEN** the I-Regexp of a `matches` entry rejects a value that the pattern of its constraint
-  accepts
-- **THEN** the manifest gives a failure that the reference evaluator does not give, and the store
-  checks fail
-
-### Requirement: CNS-020 The corpus has a failing case for each reportable entry
-
-For each reportable entry of [CNS-021], the corpus SHALL hold a case with an input that conforms to
-the schema and fails that entry. The case lists the `id` and the location ([CNS-024]) of each
-failure, once for each failure. The store checks SHALL fail when such a case is missing, when the
-reference evaluator of [CNS-019] gives other failures (by `id` or location) than a case lists, or
-when it gives a failure for an input that a case expects to be valid or for a builder case result.
-
-#### Scenario: CNS-020.01 A reportable entry without a case
-
-- **WHEN** no corpus case expects a failure of a reportable entry
-- **THEN** the store checks fail
-
-#### Scenario: CNS-020.02 A valid corpus document that fails an entry
-
-- **WHEN** an input of `documents/valid/` gives a failure of an entry
-- **THEN** the store checks fail
-
-#### Scenario: CNS-020.03 A failure at another location
-
-- **WHEN** the reference evaluator gives a failure with the `id` that a case lists, at another
-  location than the case lists
-- **THEN** the store checks fail

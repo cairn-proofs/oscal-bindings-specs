@@ -1,6 +1,6 @@
 /**
- * Generates the constraint manifest of an OSCAL release (openspec/specs/constraint-validation, CNS-004 to CNS-016,
- * CNS-021; design D2, D5, D7, D8, D9, D11). The inputs are the vendored metaschema, the naming manifest, the JSON Schema
+ * Generates the constraint manifest of an OSCAL release (openspec/specs/constraint-validation, STO-009 to CNS-016,
+ * STO-011; design D2, D5, D7, D8, D9, D11). The inputs are the vendored metaschema, the naming manifest, the JSON Schema
  * and the exclusion list of the release.
  */
 import fs from "node:fs";
@@ -116,7 +116,7 @@ export class Generator {
   // -------------------------------------------------------------------------------------------------------------
   // The constraints of the manifest
 
-  /** The constraints that the manifest holds (CNS-005), and the failures of the exclusion list. */
+  /** The constraints that the manifest holds (STO-010), and the failures of the exclusion list. */
   select(): { selected: Constraint[]; cannotFail: Set<Constraint>; failures: string[] } {
     const all = rows(this.model.constraints);
     const failures: string[] = [];
@@ -396,7 +396,7 @@ export class Generator {
     return undefined;
   }
 
-  /** CNS-021: the JSON Schema allows only values that the constraint lists. */
+  /** STO-011: the JSON Schema allows only values that the constraint lists. */
   schemaEnforces(c: Constraint): boolean {
     if (c.kind !== "allowed-values" || c.allowOther || c.def.kind !== "flag" || c.target !== ".") return false;
     // A flag that no definition has holds no value, so the schema allows no other value than the listed ones.
@@ -468,7 +468,7 @@ export class Generator {
         entry.test = `$[?${unwrap(tr.pred(this.parse(c.test!), targetDefs, "@", c.def))}]`;
         break;
     }
-    // CNS-021: an entry is reportable unless it cannot fail.
+    // STO-011: an entry is reportable unless it cannot fail.
     entry.reportable = !(c.kind === "allowed-values" && (c.allowOther || this.schemaEnforces(c))) && !(c.kind === "index-has-key" && partialIndex) && !inputs.cannotFail.has(c);
     if (entry.reportable && c.id === null) throw new GenerationError(`${label(c)} is reportable and has no id`);
     entry.context.document = this.documentContext(c.def);

@@ -1,6 +1,6 @@
 /**
- * The checks of the constraint manifest against the reference evaluator (openspec/specs/constraint-validation, CNS-019
- * and CNS-022), on the documents and the elements of scripts/constraints-docs.ts.
+ * The checks of the constraint manifest against the reference evaluator (openspec/specs/constraint-validation, STO-012
+ * and STO-013), on the documents and the elements of scripts/constraints-docs.ts.
  *
  * The query check compares the nodes that the queries of each entry select with the nodes that the Metapath evaluator
  * selects for its constraint. The failure check compares the number of failures of each entry, as the RFC 9535
@@ -49,7 +49,7 @@ const dedupe = (hits: Hit[]): Hit[] => {
   return hits.filter((h) => (seen.has(h.path) ? false : (seen.add(h.path), true)));
 };
 
-/** CNS-019: the queries of each entry select the nodes that the reference evaluator selects for its constraint. */
+/** STO-012: the queries of each entry select the nodes that the reference evaluator selects for its constraint. */
 export function checkQueries(constraints: Constraint[], entries: Entry[], units: Unit[]): string[] {
   const report = new Report();
   const parsed = new Map<string, Expr>();
@@ -129,7 +129,7 @@ export function checkQueries(constraints: Constraint[], entries: Entry[], units:
   return report.messages();
 }
 
-/** CNS-022: the number of failures of each entry equals the number of the reference evaluator for its constraint. */
+/** STO-013: the number of failures of each entry equals the number of the reference evaluator for its constraint. */
 export function checkFailures(constraints: Constraint[], entries: Entry[], units: Unit[]): string[] {
   const report = new Report();
   for (const u of units) {

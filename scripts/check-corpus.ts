@@ -22,7 +22,7 @@
  *    yaml-parse-typed case is checked as a parse-typed case is, with the reference YAML reader reading its input.
  * 9. Each cited requirement or scenario identifier names a heading in the specs.
  * 10. No case has a `known-defects` field, and the index has no `defect-twins` field. Each binding keeps its own
- *     expected failures (VER-006).
+ *     expected failures (STO-003).
  * 11. An `expected-max-failures` value is consistent with PRS-013: the case is a parse case, the value is an integer of
  *     1 or more and not less than `expected-min-failures`, an input whose root keys name one document type is not
  *     valid against the schema branch of that type, and an input with two or more root keys has no maximum.
@@ -58,7 +58,7 @@
  *     form of the input, so the body, the metadata, the OSCAL version, and the identifier that the facade reads come
  *     from a known document. With `expected-category`, the category is not-found, the form is `path`, and the input
  *     does not exist.
- * 17. A case field `expected-constraints` (CNS-020) applies to a parse, validate-element, or builder case. Its input
+ * 17. A case field `expected-constraints` (STO-014) applies to a parse, validate-element, or builder case. Its input
  *     conforms to the schema, and the reference evaluator (scripts/constraint-reference.ts) gives the failures that the
  *     field lists. Each item is an object with the strings `id` and `location` (CNS-024). The lists of pairs are equal
  *     as multisets, so a pair that occurs more than once in the failures occurs as often in the field. A parse input that conforms to the schema, a validate-element input
@@ -75,7 +75,7 @@
  *     and each `additionalProperties` error and one for each other node with an error, and it writes each location as a
  *     Normalized Path. A location of an element starts with `$[0]`.
  *
- * 19. Each pair `a>b` in `required-keys.json` is used by a JSON document in `documents/valid/` (SER-006): the key `b` is
+ * 19. Each pair `a>b` in `required-keys.json` is used by a JSON document in `documents/valid/` (STO-005): the key `b` is
  *     a member of an object that is the value of the key `a`, or of an item of an array that is the value of `a`.
  *
  *   npm run corpus:check          check the corpus
@@ -146,9 +146,9 @@ export function inputFormAllowed(operation: string, form: string | undefined): b
   return form === undefined || (Object.hasOwn(INPUT_FORMS, operation) && INPUT_FORMS[operation].includes(form));
 }
 interface Expectations {
-  /** CNS-020: the failures equal the `expected-constraints` of the case, and each failed entry counts as covered. */
+  /** STO-014: the failures equal the `expected-constraints` of the case, and each failed entry counts as covered. */
   expectFailures: (c: Case, failures: EntryFailure[]) => void;
-  /** CNS-020: an input that the case expects to be valid fails no entry. */
+  /** STO-014: an input that the case expects to be valid fails no entry. */
   expectNone: (c: Case, failures: EntryFailure[]) => void;
 }
 function expectations(fail: (id: string, message: string) => void, covered: Set<number>): Expectations {
@@ -167,7 +167,7 @@ function expectations(fail: (id: string, message: string) => void, covered: Set<
 const TYPE_OF: Record<string, string> = { "build-hash": "hash", "build-rlink": "back-matter-resource-rlink", "build-resource": "back-matter-resource" };
 const ID = /^[A-Z]{2,5}-\d{3}(?:\.\d{2})?$/;
 
-/** CNS-020: an expected constraint failure, with the `id` of its entry and its location (CNS-024). */
+/** STO-014: an expected constraint failure, with the `id` of its entry and its location (CNS-024). */
 export interface ExpectedConstraint {
   id: string;
   location: string;
@@ -230,7 +230,7 @@ const sha256 = (bytes: Buffer) => createHash("sha256").update(bytes).digest("hex
 
 const idOf = (id: string | null) => id ?? "(no id)";
 /**
- * CNS-020: the pairs of `id` and location of the failures equal the list of the case, as multisets. Undefined when they
+ * STO-014: the pairs of `id` and location of the failures equal the list of the case, as multisets. Undefined when they
  * are equal.
  */
 export function constraintMismatch(listed: ExpectedConstraint[] | undefined, failures: EntryFailure[]): string | undefined {
@@ -241,13 +241,13 @@ export function constraintMismatch(listed: ExpectedConstraint[] | undefined, fai
   const show = (list: string[]) => JSON.stringify(list.map((x) => JSON.parse(x) as [string, string]).map(([id, location]) => ({ id, location })));
   return `expected-constraints is ${show(want)}, but the reference evaluator gives ${show(got)}`;
 }
-/** CNS-020: a message when `listed` is not a list of one or more objects with the strings `id` and `location`. */
+/** STO-014: a message when `listed` is not a list of one or more objects with the strings `id` and `location`. */
 export function expectedConstraintsProblem(listed: unknown): string | undefined {
   const isItem = (x: unknown) =>
     typeof x === "object" && x !== null && !Array.isArray(x) && Object.keys(x).sort().join() === "id,location" && typeof (x as ExpectedConstraint).id === "string" && typeof (x as ExpectedConstraint).location === "string";
   return Array.isArray(listed) && listed.length > 0 && listed.every(isItem) ? undefined : "expected-constraints is not a list of one or more objects with the strings id and location";
 }
-/** CNS-020: a message for each reportable entry that no case fails. */
+/** STO-014: a message for each reportable entry that no case fails. */
 export function uncoveredEntries(entries: Entry[], covered: Set<number>): string[] {
   return entries.flatMap((e, i) =>
     e.reportable && !covered.has(i) ? [`no case has an input that fails the reportable entry ${i} (${idOf(e.id)}, ${e.kind} on ${e.definition})`] : [],
@@ -293,7 +293,7 @@ export const isNormalizedPath = (text: string) => NORMALIZED_PATH.test(text);
  *
  * 1. An object that holds the distinguishing property of exactly one branch of a union selects that branch (PRS-014). The
  *    errors at that object from another branch are dropped. A property is distinguishing for a branch when only that
- *    branch defines or requires it (MDL-006).
+ *    branch defines or requires it (STO-039).
  * 2. An error with the keyword anyOf, oneOf or if only summarizes other errors, so it is dropped.
  * 3. Each `required` error and each `additionalProperties` error is one fault, at the object. Each other node that has an
  *    error is one fault.
@@ -461,7 +461,7 @@ export function keysPresent(value: unknown, keys: string[]): string[] {
   walk(value);
   return [...found];
 }
-/** A document that the corpus checks against the constraint manifest (CNS-020), and the failures that its case expects. */
+/** A document that the corpus checks against the constraint manifest (STO-014), and the failures that its case expects. */
 export interface DocumentInput {
   document: unknown;
   /** The expected failures, with each repeat. Empty for a case that expects a valid document. */
@@ -588,7 +588,7 @@ export function rootKeyBranches(schema: { $id: string; oneOf: { required?: strin
   return branchOfRootKey;
 }
 
-/** The pairs `a>b` that the documents use (check 19, SER-006). The key `b` is a member of the value of `a`, or of an item of it. */
+/** The pairs `a>b` that the documents use (check 19, STO-005). The key `b` is a member of the value of `a`, or of an item of it. */
 export function keyPairs(documents: unknown[]): Set<string> {
   const pairs = new Set<string>();
   const walk = (key: string, value: unknown) => {
@@ -604,7 +604,7 @@ export function keyPairs(documents: unknown[]): Set<string> {
   return pairs;
 }
 
-/** The pairs of required-keys.json that no document uses (check 19, SER-006). */
+/** The pairs of required-keys.json that no document uses (check 19, STO-005). */
 export function unusedKeyPairs(required: string[], documents: unknown[]): string[] {
   const used = keyPairs(documents);
   return required.filter((pair) => !used.has(pair));
@@ -654,7 +654,7 @@ function corpusFiles(): string[] {
 
 /** The checks of a builder case (check 14). The validators come from the schema. */
 function checkBuilderFactory(constraints: CorpusConstraints, { expectFailures, expectNone }: Expectations, fail: (id: string, message: string) => void) {
-  // CNS-020: the failures of the element of a builder case against the constraint manifest, or none when it is not valid.
+  // STO-014: the failures of the element of a builder case against the constraint manifest, or none when it is not valid.
   const manifestFailures = (type: string, element: unknown, valid: boolean): EntryFailure[] => (valid ? constraints.ofElement(type, element) : []);
   return (c: Case, v: { validateResource: ValidateFunction; validateRlink: ValidateFunction; validateHash: ValidateFunction }) => {
     const category = c["expected-category"];
@@ -723,7 +723,7 @@ function checkBuilderFactory(constraints: CorpusConstraints, { expectFailures, e
       return;
     }
     if (category !== "builder-error") fail(c.id, `a ${c.operation} case has the category builder-error`);
-    // CNS-020: an element that conforms to the schema and fails the manifest is invalid input (BMB-005), and the case lists the failures.
+    // STO-014: an element that conforms to the schema and fails the manifest is invalid input (BMB-005), and the case lists the failures.
     if (failures.length > 0 || c["expected-constraints"] !== undefined) expectFailures(c, failures);
     if (c.operation !== "build-resource") {
       if (valid && failures.length === 0) fail(c.id, "the element is valid and meets the constraint manifest, so the builder reports no error");
@@ -740,17 +740,17 @@ function compareElement(c: Case, element: unknown, expected: unknown, fail: (id:
     fail(c.id, `expected-element is not the element that the arguments give: ${JSON.stringify(element)}`);
 }
 
-/** The failure for binding-specific data in the corpus index (VER-006), or undefined. */
+/** The failure for binding-specific data in the corpus index (STO-003), or undefined. */
 export function indexBindingData(index: object): string | undefined {
   return Object.hasOwn(index, "defect-twins")
-    ? "the index has a defect-twins field. Each binding keeps its own expected failures (VER-006)."
+    ? "the index has a defect-twins field. Each binding keeps its own expected failures (STO-003)."
     : undefined;
 }
 
-/** The failure for binding-specific data in a corpus case (VER-006), or undefined. */
+/** The failure for binding-specific data in a corpus case (STO-003), or undefined. */
 export function caseBindingData(c: object): string | undefined {
   return Object.hasOwn(c, "known-defects")
-    ? "the case has a known-defects field. Each binding keeps its own expected failures (VER-006)."
+    ? "the case has a known-defects field. Each binding keeps its own expected failures (STO-003)."
     : undefined;
 }
 
@@ -1144,13 +1144,13 @@ function main(write: boolean): number {
     if (!used.has(file)) fail(file, "no case uses this file");
   }
   for (const message of uncoveredEntries(constraints.entries, coveredEntries)) fail("cases.json", message);
-  // Check 19 (SER-006).
+  // Check 19 (STO-005).
   const validDocuments = corpusFiles()
     .filter((file) => file.startsWith("documents/valid/") && file.endsWith(".json"))
     .map((file) => JSON.parse(fs.readFileSync(`${ROOT}/${file}`, "utf8")) as unknown);
   const required = (JSON.parse(fs.readFileSync(`${ROOT}/required-keys.json`, "utf8")) as { pairs: string[] }).pairs;
   for (const pair of unusedKeyPairs(required, validDocuments))
-    fail("required-keys.json", `no JSON document in documents/valid/ uses the key pair ${pair} (SER-006)`);
+    fail("required-keys.json", `no JSON document in documents/valid/ uses the key pair ${pair} (STO-005)`);
 
   for (const failure of failures) console.error(failure);
   console.log(
@@ -1161,7 +1161,7 @@ function main(write: boolean): number {
   return failures.length ? 1 : 0;
 }
 
-/** The rule scenarios of check 17 (CNS-020). They run the reference evaluator on documents made for the test. */
+/** The rule scenarios of check 17 (STO-014). They run the reference evaluator on documents made for the test. */
 function selfTest(): number {
   const constraints = CorpusConstraints.load(RELEASE);
   const { schema, ajv, validateDocument } = loadSchema();
@@ -1206,25 +1206,25 @@ function selfTest(): number {
     ["input-form: a case of any other operation has no form", () => ["parse-typed", "parse-file", "yaml-parse-typed", "yaml-parse-file", "assessment-period", "validate-element", "element-types", "build-hash", "toString"].every((o) => inputFormAllowed(o, undefined) && !inputFormAllowed(o, "bytes") && !inputFormAllowed(o, "path"))],
     ["input-form: a value that is not bytes or path is not valid", () => !inputFormAllowed("round-trip", "text") && !inputFormAllowed("facade", "")],
     ["a document with an unknown property name fails two closed entries, each with its id", () => JSON.stringify(bad.map((f) => f.id).sort()) === '["oscal-control-prop-name","oscal-metadata-prop-name-values"]' || JSON.stringify(bad)],
-    ["VER-006.01: a case with a known-defects field fails the check", () => caseBindingData({ id: "t", "known-defects": ["x"] }) !== undefined && caseBindingData({ id: "t" }) === undefined],
-    ["VER-006.01: an index with a defect-twins field fails the check", () => indexBindingData({ "defect-twins": [] }) !== undefined && indexBindingData({ cases: [] }) === undefined],
+    ["STO-003.01: a case with a known-defects field fails the check", () => caseBindingData({ id: "t", "known-defects": ["x"] }) !== undefined && caseBindingData({ id: "t" }) === undefined],
+    ["STO-003.01: an index with a defect-twins field fails the check", () => indexBindingData({ "defect-twins": [] }) !== undefined && indexBindingData({ cases: [] }) === undefined],
     ["a valid document fails no entry", () => constraints.ofDocument(catalog([{ name: "label", value: "1" }])).length === 0],
-    ["CNS-020: the listed pairs equal the failures, and the location of each failure is the name of the property", () => constraintMismatch(both, bad) === undefined && bad.every((f) => f.location === propName) || JSON.stringify(bad)],
-    ["CNS-020.01: a reportable entry without a case fails the check, one message for each entry", () => uncoveredEntries(constraints.entries, new Set()).length === reportable.length && uncoveredEntries(constraints.entries, new Set(reportable)).length === 0 && uncoveredEntries(constraints.entries, new Set(reportable.slice(1))).length === 1],
-    ["CNS-020: an entry that is not reportable needs no case", () => reportable.length < constraints.entries.length && uncoveredEntries(constraints.entries, new Set(reportable)).length === 0],
-    ["CNS-020: a wrong identifier fails the check", () => constraintMismatch([pair("oscal-metadata-prop-name-values"), pair("oscal-control-prop-names")], bad) !== undefined],
-    ["CNS-020.03: a failure at another location than the case lists fails the check, and the order of the list does not matter", () =>
+    ["STO-014: the listed pairs equal the failures, and the location of each failure is the name of the property", () => constraintMismatch(both, bad) === undefined && bad.every((f) => f.location === propName) || JSON.stringify(bad)],
+    ["STO-014.01: a reportable entry without a case fails the check, one message for each entry", () => uncoveredEntries(constraints.entries, new Set()).length === reportable.length && uncoveredEntries(constraints.entries, new Set(reportable)).length === 0 && uncoveredEntries(constraints.entries, new Set(reportable.slice(1))).length === 1],
+    ["STO-014: an entry that is not reportable needs no case", () => reportable.length < constraints.entries.length && uncoveredEntries(constraints.entries, new Set(reportable)).length === 0],
+    ["STO-014: a wrong identifier fails the check", () => constraintMismatch([pair("oscal-metadata-prop-name-values"), pair("oscal-control-prop-names")], bad) !== undefined],
+    ["STO-014.03: a failure at another location than the case lists fails the check, and the order of the list does not matter", () =>
       constraintMismatch([pair("oscal-metadata-prop-name-values"), pair("oscal-control-prop-name", "$['catalog']['controls'][0]['props'][0]")], bad) !== undefined &&
       constraintMismatch([pair("oscal-control-prop-name"), pair("oscal-metadata-prop-name-values")], bad) === undefined],
-    ["CNS-020: a missing repeat of a pair fails the check", () => constraintMismatch([pair("oscal-control-prop-name")], bad) !== undefined && constraintMismatch([pair("oscal-control-prop-name"), pair("oscal-control-prop-name"), pair("oscal-metadata-prop-name-values")], bad) !== undefined],
-    ["CNS-020: a pair repeated for two failures passes", () => constraintMismatch([pair("a", "$"), pair("a", "$")], twice) === undefined && constraintMismatch([pair("a", "$")], twice) !== undefined],
-    ["CNS-020: two failures with the same id at two locations are two pairs", () => constraintMismatch([pair("a", "$"), pair("a", "$['x']")], [{ entry: 0, id: "a", location: "$['x']" }, { entry: 0, id: "a", location: "$" }]) === undefined],
-    ["CNS-020: an item that is a string, or lacks the location, is not an expected failure", () =>
+    ["STO-014: a missing repeat of a pair fails the check", () => constraintMismatch([pair("oscal-control-prop-name")], bad) !== undefined && constraintMismatch([pair("oscal-control-prop-name"), pair("oscal-control-prop-name"), pair("oscal-metadata-prop-name-values")], bad) !== undefined],
+    ["STO-014: a pair repeated for two failures passes", () => constraintMismatch([pair("a", "$"), pair("a", "$")], twice) === undefined && constraintMismatch([pair("a", "$")], twice) !== undefined],
+    ["STO-014: two failures with the same id at two locations are two pairs", () => constraintMismatch([pair("a", "$"), pair("a", "$['x']")], [{ entry: 0, id: "a", location: "$['x']" }, { entry: 0, id: "a", location: "$" }]) === undefined],
+    ["STO-014: an item that is a string, or lacks the location, is not an expected failure", () =>
       [["oscal-control-prop-name"], [{ id: "a" }], [{ id: "a", location: "$", entry: 0 }], []].every((listed) => expectedConstraintsProblem(listed) !== undefined) &&
       expectedConstraintsProblem([{ id: "a", location: "$" }]) === undefined],
-    ["CNS-020: a case with failures that lists none fails the check", () => constraintMismatch(undefined, bad) !== undefined],
-    ["CNS-020.02: a valid input that fails an entry fails the check", () => run(expectNone, {}, bad) === 1 && run(expectNone, {}, []) === 0],
-    ["CNS-020: a listed failure that does not occur fails the check", () => run(expectFailures, { "expected-constraints": [pair("oscal-control-prop-name")] }, []) === 1],
+    ["STO-014: a case with failures that lists none fails the check", () => constraintMismatch(undefined, bad) !== undefined],
+    ["STO-014.02: a valid input that fails an entry fails the check", () => run(expectNone, {}, bad) === 1 && run(expectNone, {}, []) === 0],
+    ["STO-014: a listed failure that does not occur fails the check", () => run(expectFailures, { "expected-constraints": [pair("oscal-control-prop-name")] }, []) === 1],
     ["CNS-018.02: a hash element with a short value fails the entry of its algorithm", () => hashFailures.map((f) => f.id).join() === "oscal-check-hash-length-SHA2-3-256" || JSON.stringify(hashFailures)],
     ["FAC-005: an Assessment Plan with only at-frequency timing has empty bounds", () => {
       const plan = { "assessment-plan": { tasks: [{ timing: { "at-frequency": { period: 1, unit: "days" } }, tasks: [{ timing: { "at-frequency": { period: 2, unit: "days" } } }] }] } };
@@ -1342,7 +1342,7 @@ function selfTest(): number {
       problemOf({ "expected-locations": ["$['a']"], "expected-min-failures": 2, "expected-max-failures": 2 }) !== undefined &&
       problemOf({ "expected-locations": ["$['a']", "$['a']"], "expected-min-failures": 2, "expected-max-failures": 2 }) === undefined],
     ["PRS-015.02: a list with expected-constraints fails the case", () => problemOf({ "expected-locations": ["$['a']"], "expected-constraints": [{ id: "x", location: "$" }] }) !== undefined],
-    ["SER-006.01: a listed key pair that no valid document uses fails the check, and a pair that a document uses passes", () => {
+    ["STO-005.01: a listed key pair that no valid document uses fails the check, and a pair that a document uses passes", () => {
       const documents = [{ catalog: { controls: [{ id: "c", controls: [{ id: "d" }] }], metadata: { props: [] } } }];
       return (
         unusedKeyPairs(["controls>controls", "metadata>props", "catalog>controls"], documents).length === 0 &&

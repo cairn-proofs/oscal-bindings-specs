@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://github.com/cairn-proofs/oscal-bindings-specs/manifest/overrides.schema.json",
   "title": "OSCAL naming overrides, format 1",
-  "description": "The hand-edited naming input of one OSCAL release. See openspec/specs/naming-manifest.",
+  "description": "The hand-edited naming input of one OSCAL release. See openspec/specs/contract-store.",
   "type": "object",
   "additionalProperties": false,
   "required": ["format", "oscal-release", "local-names", "names", "merges"],

@@ -1,6 +1,6 @@
 # Naming manifest for OSCAL 1.2.3
 
-This directory holds the naming manifest for OSCAL 1.2.3. The naming-manifest capability in `openspec/specs/` defines
+This directory holds the naming manifest for OSCAL 1.2.3. The contract-store capability in `openspec/specs/` defines
 both files.
 
 1. `overrides.json` is the only naming data that a person edits. It holds the singular local name of each list item,

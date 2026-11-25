@@ -27,39 +27,14 @@
       "title": "A builder input is invalid when its element fails the constraint manifest"
     },
     {
-      "id": "CNS-001",
-      "capability": "constraint-validation",
-      "title": "The store vendors the metaschema of each vendored OSCAL release"
-    },
-    {
-      "id": "CNS-002",
-      "capability": "constraint-validation",
-      "title": "A constraint that cannot work as written is defective"
-    },
-    {
-      "id": "CNS-003",
-      "capability": "constraint-validation",
-      "title": "The exclusion list names each defective constraint with its issue"
-    },
-    {
-      "id": "CNS-004",
-      "capability": "constraint-validation",
-      "title": "The store publishes a constraint manifest for each release"
-    },
-    {
-      "id": "CNS-005",
-      "capability": "constraint-validation",
-      "title": "The manifest holds each constraint that can decide validity"
-    },
-    {
       "id": "CNS-006",
       "capability": "constraint-validation",
-      "title": "The manifest selects nodes with RFC 9535 queries"
+      "title": "A binding evaluates the queries of the manifest as RFC 9535 defines"
     },
     {
       "id": "CNS-007",
       "capability": "constraint-validation",
-      "title": "Each entry selects context nodes and target nodes"
+      "title": "A binding runs each query of an entry on its own input"
     },
     {
       "id": "CNS-008",
@@ -115,26 +90,6 @@
       "id": "CNS-018",
       "capability": "constraint-validation",
       "title": "An element meets the manifest when no entry that it can decide fails"
-    },
-    {
-      "id": "CNS-019",
-      "capability": "constraint-validation",
-      "title": "The store checks the queries against a reference evaluator"
-    },
-    {
-      "id": "CNS-020",
-      "capability": "constraint-validation",
-      "title": "The corpus has a failing case for each reportable entry"
-    },
-    {
-      "id": "CNS-021",
-      "capability": "constraint-validation",
-      "title": "An entry is reportable unless it cannot fail"
-    },
-    {
-      "id": "CNS-022",
-      "capability": "constraint-validation",
-      "title": "The store checks the failures of the manifest against the reference evaluator"
     },
     {
       "id": "CNS-023",
@@ -287,213 +242,18 @@
       "title": "The bounds of the assessment period are datetime values ordered by instant"
     },
     {
-      "id": "MDL-001",
-      "capability": "model-derivation",
-      "title": "Canonical type names derive from OSCAL name scopes, not from generator ordinals"
-    },
-    {
-      "id": "MDL-002",
-      "capability": "model-derivation",
-      "title": "Document wrapper names derive from each wrapper's single body field"
-    },
-    {
-      "id": "MDL-003",
-      "capability": "model-derivation",
-      "title": "Scalar root wrappers collapse to plain aliased types"
-    },
-    {
-      "id": "MDL-005",
-      "capability": "model-derivation",
-      "title": "Definitions that share a local name across modules get module-prefixed names"
-    },
-    {
-      "id": "MDL-006",
-      "capability": "model-derivation",
-      "title": "Union branches are named from the union and the property that only the branch has"
-    },
-    {
-      "id": "MDL-007",
-      "capability": "model-derivation",
-      "title": "Derivation guards abort on ambiguity, count mismatch, or uncovered collision"
-    },
-    {
-      "id": "MDL-008",
-      "capability": "model-derivation",
-      "title": "Models reject unknown fields (strict coverage)"
-    },
-    {
-      "id": "MDL-009",
-      "capability": "model-derivation",
-      "title": "The naming manifest is the shared source of truth across languages"
-    },
-    {
-      "id": "MDL-010",
-      "capability": "model-derivation",
-      "title": "Inline types are named from the canonical name of their parent and their own local name"
-    },
-    {
-      "id": "MDL-011",
-      "capability": "model-derivation",
-      "title": "Each enum site is a named type, marked open or closed"
-    },
-    {
-      "id": "MDL-012",
-      "capability": "model-derivation",
-      "title": "A property that holds one item or a list of items is a single-or-many type"
-    },
-    {
-      "id": "MDL-013",
-      "capability": "model-derivation",
-      "title": "Types deduplicate only for union-branch copies and explicit merges"
-    },
-    {
-      "id": "MDL-014",
-      "capability": "model-derivation",
-      "title": "Each place in the schema has a local name"
-    },
-    {
-      "id": "MDL-015",
-      "capability": "model-derivation",
-      "title": "A definition is named from its local name"
-    },
-    {
-      "id": "MDL-016",
-      "capability": "model-derivation",
-      "title": "The root schema is named OscalDocument"
-    },
-    {
-      "id": "MDL-017",
-      "capability": "model-derivation",
-      "title": "An override name has the status of a rule-derived name"
-    },
-    {
-      "id": "MDL-018",
-      "capability": "model-derivation",
-      "title": "An enum is named from its owner type and its property"
-    },
-    {
-      "id": "MDL-019",
-      "capability": "model-derivation",
-      "title": "Merged places are structurally identical"
-    },
-    {
-      "id": "MDL-020",
-      "capability": "model-derivation",
-      "title": "A merge is not a name collision"
-    },
-    {
-      "id": "MDL-021",
-      "capability": "model-derivation",
-      "title": "Derivation guards abort on a missing singular name, an ambiguous branch, or an unequal merge"
-    },
-    {
-      "id": "NAM-001",
-      "capability": "naming-manifest",
-      "title": "A type is identified by JSON pointers into the complete schema"
-    },
-    {
-      "id": "NAM-002",
-      "capability": "naming-manifest",
-      "title": "The manifest records each canonical type with its name, kind, and kind data"
-    },
-    {
-      "id": "NAM-003",
-      "capability": "naming-manifest",
-      "title": "Canonical names are unique PascalCase identifiers"
-    },
-    {
-      "id": "NAM-004",
-      "capability": "naming-manifest",
-      "title": "The store publishes a JSON Schema for each manifest file"
-    },
-    {
-      "id": "NAM-005",
-      "capability": "naming-manifest",
-      "title": "The override data is the only hand-edited naming input"
-    },
-    {
-      "id": "NAM-006",
-      "capability": "naming-manifest",
-      "title": "The manifest is generated from fixed inputs and is reproducible"
-    },
-    {
-      "id": "NAM-007",
-      "capability": "naming-manifest",
-      "title": "Published names stay the same in later releases"
-    },
-    {
-      "id": "NAM-008",
-      "capability": "naming-manifest",
-      "title": "A changed released name needs a breaking version increment"
-    },
-    {
-      "id": "NAM-009",
-      "capability": "naming-manifest",
-      "title": "Each pointer of an entry resolves and belongs to that entry only"
-    },
-    {
-      "id": "NAM-010",
-      "capability": "naming-manifest",
-      "title": "Each kind of manifest entry adds fixed data"
-    },
-    {
-      "id": "NAM-011",
-      "capability": "naming-manifest",
-      "title": "The manifest records no field names, enum values, or enum member names"
-    },
-    {
-      "id": "NAM-012",
-      "capability": "naming-manifest",
+      "id": "GEN-001",
+      "capability": "generated-models",
       "title": "The manifest matches the format version and the OSCAL release of the consumer"
     },
     {
-      "id": "NAM-013",
-      "capability": "naming-manifest",
-      "title": "The JSON Schemas of the manifest files constrain every string"
-    },
-    {
-      "id": "NAM-014",
-      "capability": "naming-manifest",
+      "id": "GEN-002",
+      "capability": "generated-models",
       "title": "A consumer writes a manifest string into code only as a name or an escaped literal"
     },
     {
-      "id": "NAM-015",
-      "capability": "naming-manifest",
-      "title": "Each override resolves and has an effect"
-    },
-    {
-      "id": "NAM-016",
-      "capability": "naming-manifest",
-      "title": "The generation checks the manifest of the previous release before use"
-    },
-    {
-      "id": "NAM-017",
-      "capability": "naming-manifest",
-      "title": "The generation reports each dropped name"
-    },
-    {
-      "id": "NAM-018",
-      "capability": "naming-manifest",
-      "title": "The latest released artifact is the release tag with the highest precedence"
-    },
-    {
-      "id": "NAM-019",
-      "capability": "naming-manifest",
-      "title": "The name check fails when it cannot read the release tags"
-    },
-    {
-      "id": "NAM-020",
-      "capability": "naming-manifest",
-      "title": "A distinguishing property identifies a branch only when an object holds it"
-    },
-    {
-      "id": "NAM-021",
-      "capability": "naming-manifest",
-      "title": "Each manifest format holds its format version in the member `format`"
-    },
-    {
-      "id": "NAM-022",
-      "capability": "naming-manifest",
+      "id": "GEN-003",
+      "capability": "generated-models",
       "title": "A consumer checks the format version before the other checks of the manifest"
     },
     {
@@ -612,6 +372,11 @@
       "title": "A JSON string has no lone surrogate escape"
     },
     {
+      "id": "PRS-024",
+      "capability": "document-parsing",
+      "title": "An object without an optional distinguishing property conforms to each branch"
+    },
+    {
       "id": "SER-001",
       "capability": "serialization",
       "title": "Serialization emits OSCAL property keys"
@@ -635,11 +400,6 @@
       "id": "SER-005",
       "capability": "serialization",
       "title": "A datetime keeps its instant and offset"
-    },
-    {
-      "id": "SER-006",
-      "capability": "serialization",
-      "title": "The valid corpus uses each listed key pair"
     },
     {
       "id": "SRF-001",
@@ -667,19 +427,9 @@
       "title": "A binding-local operation that the contract defines conforms or is deprecated"
     },
     {
-      "id": "SRF-006",
-      "capability": "binding-surface",
-      "title": "The store publishes a requirement index"
-    },
-    {
-      "id": "SRF-007",
-      "capability": "binding-surface",
-      "title": "The store publishes a JSON Schema for the traceability record"
-    },
-    {
       "id": "SRF-008",
       "capability": "binding-surface",
-      "title": "The store publishes a README sticker for bindings"
+      "title": "The contract store publishes a README sticker for bindings"
     },
     {
       "id": "SRF-009",
@@ -689,27 +439,307 @@
     {
       "id": "SRF-010",
       "capability": "binding-surface",
-      "title": "A binding-local requirement does not use a store prefix"
+      "title": "A binding-local requirement does not use a contract store prefix"
     },
     {
-      "id": "SRF-011",
-      "capability": "binding-surface",
+      "id": "STO-001",
+      "capability": "contract-store",
+      "title": "The shared spec artifact uses Semantic Versioning for its own compatibility"
+    },
+    {
+      "id": "STO-002",
+      "capability": "contract-store",
+      "title": "The OSCAL release is recorded as Semantic Versioning build metadata"
+    },
+    {
+      "id": "STO-003",
+      "capability": "contract-store",
+      "title": "Dependencies run from bindings to the contract store, never back"
+    },
+    {
+      "id": "STO-004",
+      "capability": "contract-store",
+      "title": "The version is the latest release or one step above it"
+    },
+    {
+      "id": "STO-005",
+      "capability": "contract-store",
+      "title": "The valid corpus uses each listed key pair"
+    },
+    {
+      "id": "STO-006",
+      "capability": "contract-store",
+      "title": "The contract store vendors the metaschema of each vendored OSCAL release"
+    },
+    {
+      "id": "STO-007",
+      "capability": "contract-store",
+      "title": "A constraint that cannot work as written is defective"
+    },
+    {
+      "id": "STO-008",
+      "capability": "contract-store",
+      "title": "The exclusion list names each defective constraint with its issue"
+    },
+    {
+      "id": "STO-009",
+      "capability": "contract-store",
+      "title": "The contract store publishes a constraint manifest for each release"
+    },
+    {
+      "id": "STO-010",
+      "capability": "contract-store",
+      "title": "The manifest holds each constraint that can decide validity"
+    },
+    {
+      "id": "STO-011",
+      "capability": "contract-store",
+      "title": "An entry is reportable unless it cannot fail"
+    },
+    {
+      "id": "STO-012",
+      "capability": "contract-store",
+      "title": "The contract store checks the queries against a reference evaluator"
+    },
+    {
+      "id": "STO-013",
+      "capability": "contract-store",
+      "title": "The contract store checks the failures of the manifest against the reference evaluator"
+    },
+    {
+      "id": "STO-014",
+      "capability": "contract-store",
+      "title": "The corpus has a failing case for each reportable entry"
+    },
+    {
+      "id": "STO-015",
+      "capability": "contract-store",
+      "title": "A type is identified by JSON pointers into the complete schema"
+    },
+    {
+      "id": "STO-016",
+      "capability": "contract-store",
+      "title": "The manifest records each canonical type with its name, kind, and kind data"
+    },
+    {
+      "id": "STO-017",
+      "capability": "contract-store",
+      "title": "Each kind of manifest entry adds fixed data"
+    },
+    {
+      "id": "STO-018",
+      "capability": "contract-store",
+      "title": "The manifest records no field names, enum values, or enum member names"
+    },
+    {
+      "id": "STO-019",
+      "capability": "contract-store",
+      "title": "Canonical names are unique PascalCase identifiers"
+    },
+    {
+      "id": "STO-020",
+      "capability": "contract-store",
+      "title": "Each manifest format holds its format version in the member `format`"
+    },
+    {
+      "id": "STO-021",
+      "capability": "contract-store",
+      "title": "The contract store publishes a JSON Schema for each manifest file"
+    },
+    {
+      "id": "STO-022",
+      "capability": "contract-store",
+      "title": "The JSON Schemas of the manifest files constrain every string"
+    },
+    {
+      "id": "STO-023",
+      "capability": "contract-store",
+      "title": "The override data is the only hand-edited naming input"
+    },
+    {
+      "id": "STO-024",
+      "capability": "contract-store",
+      "title": "Each override resolves and has an effect"
+    },
+    {
+      "id": "STO-025",
+      "capability": "contract-store",
+      "title": "The manifest is generated from fixed inputs and is reproducible"
+    },
+    {
+      "id": "STO-026",
+      "capability": "contract-store",
+      "title": "The generation checks the manifest of the previous release before use"
+    },
+    {
+      "id": "STO-027",
+      "capability": "contract-store",
+      "title": "Published names stay the same in later releases"
+    },
+    {
+      "id": "STO-028",
+      "capability": "contract-store",
+      "title": "The generation reports each dropped name"
+    },
+    {
+      "id": "STO-029",
+      "capability": "contract-store",
+      "title": "A changed released name needs a breaking version increment"
+    },
+    {
+      "id": "STO-030",
+      "capability": "contract-store",
+      "title": "The latest released artifact is the release tag with the highest precedence"
+    },
+    {
+      "id": "STO-031",
+      "capability": "contract-store",
+      "title": "The name check fails when it cannot read the release tags"
+    },
+    {
+      "id": "STO-032",
+      "capability": "contract-store",
+      "title": "Canonical type names derive from OSCAL name scopes, not from generator ordinals"
+    },
+    {
+      "id": "STO-033",
+      "capability": "contract-store",
+      "title": "Each place in the schema has a local name"
+    },
+    {
+      "id": "STO-034",
+      "capability": "contract-store",
+      "title": "A definition is named from its local name"
+    },
+    {
+      "id": "STO-035",
+      "capability": "contract-store",
+      "title": "The root schema is named OscalDocument"
+    },
+    {
+      "id": "STO-036",
+      "capability": "contract-store",
+      "title": "An override name has the status of a rule-derived name"
+    },
+    {
+      "id": "STO-037",
+      "capability": "contract-store",
+      "title": "Document wrapper names derive from each wrapper's single body field"
+    },
+    {
+      "id": "STO-038",
+      "capability": "contract-store",
+      "title": "Definitions that share a local name across modules get module-prefixed names"
+    },
+    {
+      "id": "STO-039",
+      "capability": "contract-store",
+      "title": "Union branches are named from the union and the property that only the branch has"
+    },
+    {
+      "id": "STO-040",
+      "capability": "contract-store",
+      "title": "A distinguishing property identifies a branch only when an object holds it"
+    },
+    {
+      "id": "STO-041",
+      "capability": "contract-store",
+      "title": "Derivation guards abort on ambiguity, count mismatch, or uncovered collision"
+    },
+    {
+      "id": "STO-042",
+      "capability": "contract-store",
+      "title": "The naming manifest is the shared source of truth across languages"
+    },
+    {
+      "id": "STO-043",
+      "capability": "contract-store",
+      "title": "Inline types are named from the canonical name of their parent and their own local name"
+    },
+    {
+      "id": "STO-044",
+      "capability": "contract-store",
+      "title": "Each enum site is a named type, marked open or closed"
+    },
+    {
+      "id": "STO-045",
+      "capability": "contract-store",
+      "title": "An enum is named from its owner type and its property"
+    },
+    {
+      "id": "STO-046",
+      "capability": "contract-store",
+      "title": "A property that holds one item or a list of items is a single-or-many type"
+    },
+    {
+      "id": "STO-047",
+      "capability": "contract-store",
+      "title": "Scalar root wrappers collapse to plain aliased types"
+    },
+    {
+      "id": "STO-048",
+      "capability": "contract-store",
+      "title": "Each pointer of an entry resolves and belongs to that entry only"
+    },
+    {
+      "id": "STO-049",
+      "capability": "contract-store",
+      "title": "Types deduplicate only for union-branch copies and explicit merges"
+    },
+    {
+      "id": "STO-050",
+      "capability": "contract-store",
+      "title": "Merged places are structurally identical"
+    },
+    {
+      "id": "STO-051",
+      "capability": "contract-store",
+      "title": "A merge is not a name collision"
+    },
+    {
+      "id": "STO-052",
+      "capability": "contract-store",
+      "title": "Derivation guards abort on a missing singular name, an ambiguous branch, or an unequal merge"
+    },
+    {
+      "id": "STO-053",
+      "capability": "contract-store",
+      "title": "The contract store publishes a requirement index"
+    },
+    {
+      "id": "STO-054",
+      "capability": "contract-store",
+      "title": "The contract store publishes a JSON Schema for the traceability record"
+    },
+    {
+      "id": "STO-055",
+      "capability": "contract-store",
       "title": "The spec artifact holds the binding templates"
     },
     {
-      "id": "SRF-012",
-      "capability": "binding-surface",
+      "id": "STO-056",
+      "capability": "contract-store",
       "title": "The binding checker applies the identifier rules to the specs of a binding"
     },
     {
-      "id": "SRF-013",
-      "capability": "binding-surface",
+      "id": "STO-057",
+      "capability": "contract-store",
       "title": "The binding checker checks the traceability record"
     },
     {
-      "id": "SRF-014",
-      "capability": "binding-surface",
-      "title": "The template config follows the store config"
+      "id": "STO-058",
+      "capability": "contract-store",
+      "title": "The template config follows the contract store config"
+    },
+    {
+      "id": "STO-059",
+      "capability": "contract-store",
+      "title": "The manifest selects nodes with RFC 9535 queries"
+    },
+    {
+      "id": "STO-060",
+      "capability": "contract-store",
+      "title": "Each entry of the constraint manifest holds three groups of queries"
     },
     {
       "id": "VER-001",
@@ -722,34 +752,14 @@
       "title": "A binding is generated from exactly one active OSCAL release"
     },
     {
-      "id": "VER-003",
-      "capability": "schema-versioning",
-      "title": "The shared spec artifact uses Semantic Versioning for its own compatibility"
-    },
-    {
-      "id": "VER-004",
-      "capability": "schema-versioning",
-      "title": "The OSCAL release is recorded as Semantic Versioning build metadata"
-    },
-    {
       "id": "VER-005",
       "capability": "schema-versioning",
       "title": "Spec artifacts are distributed pinned and hash-verified"
     },
     {
-      "id": "VER-006",
-      "capability": "schema-versioning",
-      "title": "Dependencies run from bindings to the store, never back"
-    },
-    {
       "id": "VER-007",
       "capability": "schema-versioning",
       "title": "Each binding keeps its own expected conformance failures"
-    },
-    {
-      "id": "VER-008",
-      "capability": "schema-versioning",
-      "title": "The version is the latest release or one step above it"
     },
     {
       "id": "YML-001",

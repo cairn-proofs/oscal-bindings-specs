@@ -88,6 +88,7 @@ The validity check of [ERR-002] returns false for such an input.
 - **WHEN** the caller runs the validity check on a JSON input that is a conformant document, except
   that one string value is the escape `\ud800` and nothing else
 - **THEN** it returns false and does not surface an error
+
 ### Requirement: PRS-002 Parse an OSCAL document from a file path
 
 The implementation SHALL provide a parse-from-file operation that reads a document from a path and returns the typed
@@ -124,8 +125,7 @@ reaches the body through the wrapper.
 ### Requirement: PRS-004 Unknown fields are rejected during parsing
 
 Parsing SHALL reject any field that the vendored schema release does not define, at any depth. An implementation MUST
-NOT silently ignore unknown fields. This ties the accepted input to the vendored release, consistent with the
-strict-coverage rule in the model-derivation capability.
+NOT silently ignore unknown fields. This ties the accepted input to the vendored release, as [VER-002] states.
 
 #### Scenario: PRS-004.01 Unknown field at the top level is rejected
 
@@ -189,7 +189,7 @@ write them as the serialization capability requires.
 
 ### Requirement: PRS-009 Enum values are checked by the kind of the enum
 
-Parsing SHALL check each enum value by the kind of its enum, as [MDL-011] defines. The rules apply at every depth of
+Parsing SHALL check each enum value by the kind of its enum, as [STO-044] defines. The rules apply at every depth of
 the document. Element validation applies the same rules to an element.
 
 1. For a closed enum, parsing MUST reject a value that is not in the enum, with a parse error of [ERR-001].
@@ -311,7 +311,7 @@ A parse error that identifies no limit SHALL NOT state that the list is incomple
 
 ### Requirement: PRS-013 The root key selects the document type of the parse failures
 
-The root key of a document type is the body field of its wrapper ([MDL-002]). A parse error of the parse operation of
+The root key of a document type is the body field of its wrapper ([STO-037]). A parse error of the parse operation of
 [PRS-001], or of an operation that the contract defines through it, SHALL meet these conditions:
 
 1. For an object whose root keys name exactly one document type, each structured entry is a failure of that type.
@@ -337,7 +337,7 @@ A parse error of [PRS-001] SHALL meet this condition when its document root name
 parse operation.
 1. If an object holds the distinguishing property of exactly one nested-union branch, that object
    selects the branch. Each structured entry for a failure of the object is a failure of that
-   branch ([NAM-020]).
+   branch ([STO-040]).
 #### Scenario: PRS-014.01 Invalid closed enum in a selected parameter branch
 - **WHEN** the caller parses a catalog in which the selection of the first parameter sets `how-many` to
   `seven`
@@ -560,3 +560,17 @@ MUST NOT apply another rule for the format of an email address.
 - **WHEN** the caller parses a catalog in which a party has the email address `a@b`, the character
   U+007F and `.org`, in this order
 - **THEN** parsing reports a parse error
+
+### Requirement: PRS-024 An object without an optional distinguishing property conforms to each branch
+
+An object of a nested union conforms to a branch when it meets the schema of that branch. When each branch defines its
+distinguishing property as optional, an object that holds none of them conforms to each branch ([STO-040]). Parsing
+SHALL accept such an object when it meets the other rules of the schema, and SHALL NOT select a branch for it
+([PRS-014]).
+
+#### Scenario: PRS-024.01 Group without a distinguishing property
+
+- **WHEN** each branch of the catalog group union defines its distinguishing property as optional, and a group object
+  holds `title` and neither `groups` nor `controls`
+- **THEN** the object conforms to both `CatalogGroupWithGroups` and `CatalogGroupWithControls`, and parsing reports no
+  failure for it
