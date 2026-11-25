@@ -15,6 +15,8 @@
  */
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 
 const README = "README.md";
 const SECTION = "## Known implementations";
@@ -78,6 +80,23 @@ export function checkFiles(files: File[]): string[] {
   return failures;
 }
 
+/** The self-test cases of trackedText(), on a symbolic link to a directory and on a deleted path, in a temporary directory. */
+function symlinkCases(): Array<[string, string[], string | null]> {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "binding-links-"));
+  try {
+    fs.mkdirSync(path.join(dir, "target"));
+    fs.symlinkSync("target", path.join(dir, "link"));
+    const linkText = trackedText(path.join(dir, "link"));
+    const missing = trackedText(path.join(dir, "deleted"));
+    return [
+      ["symlink to a directory is read as its target text", linkText === "target" ? [] : [String(linkText)], null],
+      ["deleted path is skipped", missing === undefined ? [] : [missing], null],
+    ];
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+}
+
 function selfTest(): number {
   // Each fixture builds its binding links from parts, so that this file holds no literal binding-issue link and
   // passes its own check as a tracked file.
@@ -121,6 +140,7 @@ function selfTest(): number {
     ["section without a repository fails", run([], `${SECTION}\n\nNone yet.\n`), "links no binding repository"],
     ["section ends at the next heading", run(doc("other/listed-after-section#1")), null],
     ["missing README fails", checkFiles(doc("text")), "does not exist"],
+    ...symlinkCases(),
   ];
   let failed = 0;
   for (const [name, out, needle] of cases) {
@@ -131,10 +151,27 @@ function selfTest(): number {
   return failed ? 1 : 0;
 }
 
+/**
+ * The text that git tracks for the path `p`. Git stores a symbolic link as the text of its target, so the check reads
+ * that text and does not follow the link, which can name a directory. Gives undefined for a path that the working tree
+ * deleted, because it has no content to check. Invalid UTF-8 decodes to U+FFFD.
+ */
+function trackedText(p: string): string | undefined {
+  let stat: fs.Stats;
+  try {
+    stat = fs.lstatSync(p);
+  } catch {
+    return undefined;
+  }
+  return stat.isSymbolicLink() ? fs.readlinkSync(p) : fs.readFileSync(p).toString("utf8");
+}
+
 function trackedFiles(): File[] {
   const paths = execFileSync("git", ["ls-files", "-z"], { encoding: "utf8" }).split("\0").filter(Boolean);
-  // A path that git tracks but the working tree deleted has no content to check. Invalid UTF-8 decodes to U+FFFD.
-  return paths.filter((p) => fs.existsSync(p)).map((p) => ({ path: p, text: fs.readFileSync(p).toString("utf8") }));
+  return paths.flatMap((p) => {
+    const text = trackedText(p);
+    return text === undefined ? [] : [{ path: p, text }];
+  });
 }
 
 if (process.argv.includes("--self-test")) {
