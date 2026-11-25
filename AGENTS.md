@@ -11,7 +11,8 @@ copy them. A longer knowledge base is in `.agents/summary/index.md` when it is p
 3. [The boundary between the contract store and a binding](#the-boundary-between-the-contract-store-and-a-binding): what the contract store must
    not hold.
 4. [Where a change goes](#where-a-change-goes): contract store, binding tracker, or pin-move issue.
-5. [Find your way](#find-your-way): directories, generated files, and the checks that surprise agents.
+5. [Find your way](#find-your-way): directories, generated files, regeneration order, and the checks that surprise
+   agents.
 6. [Custom Instructions](#custom-instructions): maintained by people and agents.
 
 ## What this contract store is
@@ -116,8 +117,8 @@ source of each file ([README.md, Layout](README.md)).
 These rules are not obvious from the code:
 
 1. `npm run releases:check` reads git tags and `origin/main`. It fails in a shallow clone or in a clone without tags.
-2. `SPEC_IDS_BASE` sets the base ref for the vanished-scenario check and the name diff. The default is `HEAD`. CI sets
-   it to the target branch of the pull request.
+2. `SPEC_IDS_BASE` sets the base ref for the vanished-scenario check, the coverage base rule, and the name diff. The
+   default is `HEAD`. CI sets it to the target branch of the pull request.
 3. A changed released name needs a breaking `VERSION` increment ([STO-029]). The PR template has a naming section for
    a change to `manifest/`.
 4. `scripts/verify-release.sh` reads `CONTENTS` in `build-archive.ts` as text. Keep `CONTENTS` a literal array of
@@ -127,6 +128,19 @@ These rules are not obvious from the code:
    CI, pins, and `VERSION`.
 7. A change to `openspec/config.yaml`, or to the identifier checks in `scripts/`, needs `npm run templates:write` in the
    same commit. `npm run templates:check` fails until then ([STO-058]).
+8. The generated files depend on each other. After a naming or constraint input changes, regenerate in this order:
+   `names:write`, `constraints:write`, `corpus:cases`, `corpus:write`, `coverage:write`. `corpus:cases` rewrites
+   `documents/invalid/constraints/` and the constraint cases at the end of `cases.json`.
+9. A self-test name that starts with a scenario identifier and `:` or a space, such as `"STO-006.02: ..."`, is the
+   check of that scenario in `openspec/coverage.json`. Renaming such a test can fail `coverage:check`.
+10. The store has two constraint evaluators that must agree: the Metapath reference (`metapath.ts`,
+    `constraint-reference.ts`) and the RFC 9535 manifest evaluator (`constraints-manifest.ts`). `coverage-faults.ts`
+    patches the text of `constraints-manifest.ts`, and a patch that does not match exactly once fails the run. An edit
+    to that file can need an edit to the faults.
+11. The ledger keeps the prefixes `MDL` and `NAM`, but their capabilities have no spec. Prefix entries are permanent.
+    Requirements that the contract store itself runs or publishes use `STO`.
+12. `schemas:verify` and `metaschema:verify` in `package.json` name the release `1.2.3`. A new OSCAL release needs
+    them changed.
 
 [STO-055]: openspec/specs/contract-store/spec.md#requirement-sto-055-the-spec-artifact-holds-the-binding-templates
 [STO-005]: openspec/specs/contract-store/spec.md#requirement-sto-005-the-valid-corpus-uses-each-listed-key-pair
