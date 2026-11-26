@@ -43,7 +43,8 @@ of bindings. Do not copy it. `scripts/check-binding-links.ts` reads it.
 A binding reads the contract store in two ways ([README.md, Use the contract store](README.md#use-the-contract-store)):
 
 1. For planning context, the binding adds an OpenSpec `references` entry for this contract store in its `openspec/config.yaml`.
-   This pins no version.
+   The entry cannot name a version. The checkout of the registered clone sets it
+   ([README.md, Use the contract store](README.md#use-the-contract-store)).
 2. For builds and conformance runs, the binding pins the tagged release archive by its `sha256` ([VER-005]).
    `scripts/build-archive.ts` (`CONTENTS`) lists the paths in the archive. A binding can rely on those paths only.
 

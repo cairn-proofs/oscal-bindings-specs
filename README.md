@@ -65,8 +65,10 @@ it (see [Verify a release](#verify-a-release)).
 ## Use the contract store
 
 1. Clone this repo.
-2. Register it: `openspec store register <path>`.
-3. In a binding repo, add the contract store to `openspec/config.yaml`:
+2. Check out the release tag that you plan against: `git -C <path> checkout v<version>`. Usually this is the release
+   that the binding pins. The pinned archive holds `VERSION`, so the tag is `v` followed by the text of that file.
+3. Register it: `openspec store register <path>`.
+4. In a binding repo, add the contract store to `openspec/config.yaml`:
 
    ```yaml
    references:
@@ -74,6 +76,12 @@ it (see [Verify a release](#verify-a-release)).
    ```
 
 A reference is planning context only. Builds and conformance runs use the tagged archive, pinned by its `sha256`.
+
+A reference cannot name a tag. OpenSpec reads only its `id` and `remote`, and it reads the specs from the working tree
+of the clone that is registered on the machine. So the checkout of that clone sets the version that an agent plans
+against. `git -C <path> describe --tags` shows that version. The tag holds the same `openspec/specs/` as the archive
+of that release. Check out a different tag when you have a reason, for example the next release when you plan a pin
+move. After a pin move, check out the new tag.
 
 The archive holds `templates/binding/`: an OpenSpec config, an empty identifier ledger, an empty traceability record,
 the binding checker, a pre-commit hook, and an agent guide (`AGENTS.md`) that states how a binding relates to the

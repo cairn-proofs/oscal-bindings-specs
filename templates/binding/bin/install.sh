@@ -64,6 +64,8 @@ src="${1%/}/templates/binding"
 for f in openspec/config.yaml openspec/spec-ids.yaml openspec/traceability.json AGENTS.md hooks/pre-commit; do
   [ -f "$src/$f" ] || fail "the archive $archive has no templates/binding/$f. No file changed."
 done
+version=""
+[ -f "${1%/}/VERSION" ] && version=$(tr -d '[:space:]' < "${1%/}/VERSION")
 
 # 2. The template config and the hook.
 mkdir -p openspec "$hooks_dir"
@@ -121,3 +123,7 @@ fi
 echo
 echo "Next: add the prefixes of the binding to openspec/spec-ids.yaml, fill the section \"Binding notes\" of"
 echo "AGENTS.md, and commit. The hook runs the binding checker before each commit."
+if [ -n "$version" ]; then
+  echo "To plan against this release, check out its tag in the contract store clone that OpenSpec reads:"
+  echo "  git -C <clone> checkout v$version"
+fi

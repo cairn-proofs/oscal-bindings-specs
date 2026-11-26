@@ -73,6 +73,8 @@ jobs:
             printf 'Pin the archive by its sha256:\n\n```\n%s\n```\n\n' "$sums"
             printf 'Verify the archive before you move the pin: '
             printf 'https://github.com/%s#verify-a-release\n\n' "$STORE"
+            printf 'To plan the move, check out %s in the contract store clone that OpenSpec reads: ' "$tag"
+            printf '`git -C <clone> fetch --tags && git -C <clone> checkout %s`\n\n' "$tag"
             printf 'Read the release notes of each release after `%s`, up to %s. ' "$PINNED" "$tag"
             printf 'Their upgrade notes state what a binding must change. A contract change can also have its own '
             printf 'issue in this tracker. This issue tracks the pin move.\n'
