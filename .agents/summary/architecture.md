@@ -30,7 +30,8 @@ graph LR
 
 ## Two ways a binding reads the store
 
-1. **Planning context.** A `references` entry in the binding's `openspec/config.yaml`. It pins no version and is never
+1. **Planning context.** A `references` entry in the binding's `openspec/config.yaml`. It cannot name a
+   version. The checkout of the registered clone sets the version, usually the tag of the pinned release. It is never
    used for a build or check.
 2. **Builds and checks.** The release archive, pinned by its `sha256` ([VER-005]). Only the paths in `CONTENTS` of
    `scripts/build-archive.ts` are in the archive: `LICENSE`, `VERSION`, `corpus`, `docs`, `manifest`, `metaschema`,

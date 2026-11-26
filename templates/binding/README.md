@@ -41,6 +41,21 @@ After the first install, add the prefixes of the binding to the ledger. A prefix
 (SRF-010). Add the facts of the binding to the section "Binding notes" of `AGENTS.md`. On each pin move, add the
 entries of the binding to `openspec/config.yaml` again.
 
+## Plan against a release
+
+The `references` entry in `openspec/config.yaml` cannot name a version. OpenSpec reads the specs of the contract
+store from the working tree of the clone that is registered on the machine. So clone the contract store, check out the
+tag that you plan against, and register the clone:
+
+```sh
+git clone https://github.com/cairn-proofs/oscal-bindings-specs.git <clone>
+git -C <clone> checkout v<version>
+openspec store register <clone>
+```
+
+Usually the tag is the pinned release: `v` followed by `VERSION` of the pinned archive. The install script prints
+it. To plan a pin move, check out the tag of the next release. After a pin move, check out the new tag.
+
 ## Run the checker
 
 ```sh

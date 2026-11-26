@@ -185,6 +185,21 @@ After the first install, add the prefixes of the binding to the ledger. A prefix
 (SRF-010). Add the facts of the binding to the section "Binding notes" of \`AGENTS.md\`. On each pin move, add the
 entries of the binding to \`openspec/config.yaml\` again.
 
+## Plan against a release
+
+The \`references\` entry in \`openspec/config.yaml\` cannot name a version. OpenSpec reads the specs of the contract
+store from the working tree of the clone that is registered on the machine. So clone the contract store, check out the
+tag that you plan against, and register the clone:
+
+\`\`\`sh
+git clone https://github.com/cairn-proofs/oscal-bindings-specs.git <clone>
+git -C <clone> checkout v<version>
+openspec store register <clone>
+\`\`\`
+
+Usually the tag is the pinned release: \`v\` followed by \`VERSION\` of the pinned archive. The install script prints
+it. To plan a pin move, check out the tag of the next release. After a pin move, check out the new tag.
+
 ## Run the checker
 
 \`\`\`sh
@@ -422,7 +437,8 @@ async function selfTest(): Promise<number> {
     // An archive with the contract store files that the installer and the checker read, from the working tree.
     const stage = path.join(tmp, "stage");
     const storeTop = path.join(stage, "store");
-    for (const p of [LEDGER, "openspec/specs", "openspec/requirements.json", "openspec/traceability.schema.json", DIR]) {
+    const staged = [LEDGER, "VERSION", "openspec/specs", "openspec/requirements.json", "openspec/traceability.schema.json", DIR];
+    for (const p of staged) {
       fs.cpSync(path.join(root, p), path.join(storeTop, p), { recursive: true });
     }
     for (const [file, text] of files) fs.writeFileSync(path.join(storeTop, file), text);
@@ -456,6 +472,12 @@ async function selfTest(): Promise<number> {
           fs.readFileSync(path.join(dir, ".githooks/pre-commit"), "utf8").includes(first.sha) && checker.status === 0) ||
         `exit ${r.status}, missing ${missing.join(", ")}, hooksPath ${hooksPath}, checker ${checker.status}: ${r.stderr}${checker.stderr}`
       );
+    });
+    await test("install: the install prints the tag of the release to check out for planning", () => {
+      const dir = repo("install-tag");
+      const r = install(dir, first);
+      const tag = `git -C <clone> checkout v${fs.readFileSync(path.join(root, "VERSION"), "utf8").trim()}`;
+      return (r.status === 0 && r.stdout.includes(tag)) || `exit ${r.status}, no "${tag}" in: ${r.stdout}`;
     });
     await test("install: another hash fails and changes no file", () => {
       const dir = repo("install-hash");

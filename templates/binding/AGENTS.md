@@ -21,7 +21,11 @@ spec artifact.
 ## How this binding reads the contract store
 
 1. For planning, the `references` entry in `openspec/config.yaml` makes the main specs of the contract store read-only
-   context. It pins no version. Do not use it for a build, a test or a check.
+   context. OpenSpec reads these specs from the working tree of the contract store clone that is registered on this
+   machine. The entry cannot name a version, so the checkout of that clone sets the version. Usually, check out the
+   tag of the pinned release: `v` followed by `VERSION` of the pinned archive. To plan a pin move, check out the tag of
+   the next release. `git -C <clone> describe --tags` shows the checkout. Do not use the reference for a build, a test
+   or a check.
 2. For builds, conformance runs and checks, use only the release archive that this binding pins by its sha256
    [VER-005]. Do not read the `main` branch of the contract store.
 3. Do not copy a contract file of the contract store into this binding and edit it. The schemas, the manifest and the
@@ -49,7 +53,8 @@ spec artifact.
    When a pinned release defines it, follow [SRF-005].
 4. A pin move changes the pin of this binding, applies the requirements of the new release, and runs
    `templates/binding/bin/install.sh` of the new spec artifact with its archive path and its sha256. The script
-   updates `openspec/config.yaml`, this file above this section, and the pre-commit hook.
+   updates `openspec/config.yaml`, this file above this section, and the pre-commit hook. Then check out the tag of
+   the new release in the registered contract store clone.
 
 ## Checks before each commit
 
